@@ -2,10 +2,11 @@
 
 $GLOBALS['config'] = array(
 	'db' => array(
-		'user' => 'root',
-		'pass' => '',
+		'user' => 'adminlvsuknv',
+		'pass' => 'pZpHurr8-UWK',
 		'host' => 'localhost',
-		'dbname' => 'mealbookers',
+		'port' => '5432',
+		'dbname' => 'app',
 	),
 	'log' => array(
 		'levels' => array(

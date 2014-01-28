@@ -1,8 +1,8 @@
 
-CREATE TABLE IF NOT EXISTS `config` (
-  `sql_version` int(10) unsigned NOT NULL,
-  `data_version` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE config (
+    sql_version integer NOT NULL,
+    data_version integer NOT NULL
+);
 
-INSERT INTO `config` (`sql_version`, `data_version`) VALUES
+INSERT INTO config (sql_version, data_version) VALUES
 (0, 0);
