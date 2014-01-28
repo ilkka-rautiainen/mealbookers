@@ -1,0 +1,9 @@
+<h2>Ruokalistat</h2>
+<ul ng-repeat="restaurant in restaurants">
+	<li>
+		{{ restaurant.name }}
+		<ul ng-repeat="meal in restaurant.menu[weekDay]">
+			<li>{{ meal }}</li>
+		</ul>
+	</li>
+</ul>
