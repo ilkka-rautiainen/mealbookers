@@ -1,7 +1,7 @@
 <h2>Ruokalistat</h2>
-<ul ng-repeat="restaurant in restaurants">
+<ul id="restaurantList" ng-repeat="restaurant in restaurants">
 	<li>
-		{{ restaurant.name }}
+		<div class="restaurantName">{{ restaurant.name }}</div>
 		<ul ng-repeat="meal in restaurant.menu[weekDay]">
 			<li>{{ meal }}</li>
 		</ul>
