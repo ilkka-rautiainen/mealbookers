@@ -8,6 +8,7 @@ class Restaurants
 	 */
 	function get()
 	{
+		Logger::debug(__METHOD__ . " /restaurants called");
 		$mock_data = array(
 			array(
 				'name' => 'Alvari',
@@ -71,6 +72,7 @@ class Restaurants
 	 */
 	function getRestaurant($restaurantId)
 	{
+		Logger::debug(__METHOD__ . " /restaurants/:restaurantId called");
 		if ($restaurantId == 1)
 			return array(
 				'id' => 1,
