@@ -1,9 +1,17 @@
-<h2>Ruokalistat</h2>
-<ul id="restaurantList" ng-repeat="restaurant in restaurants">
-	<li>
-		<div class="restaurantName">{{ restaurant.name }}</div>
-		<ul ng-repeat="meal in restaurant.menu[weekDay]">
-			<li>{{ meal }}</li>
-		</ul>
-	</li>
-</ul>
+
+<div class="container">
+	<h1 class="col-md-12 col-sm-12">Otaniemessä Tänään</h1>
+</div>
+<div class="container"><hr class="featurette-divider"></div>
+
+<div class="container">
+	<div class="col-md-4 col-sm-6" ng-repeat="restaurant in restaurants">
+		<div class="thumbnail">
+			<div class="caption">
+				<h3>Täffä</h3>
+				<p ng-repeat="meal in restaurant.menu[weekDay]">{{ meal }}</p>
+			</div>
+			<a href="#" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span> Mene Syömään</a>
+		</div>
+	</div>
+</div>
