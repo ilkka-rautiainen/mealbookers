@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="Mealbookers">
 <head>
+	<meta charset="utf-8">
 	<title ng-bind="title">Mealbookers</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
