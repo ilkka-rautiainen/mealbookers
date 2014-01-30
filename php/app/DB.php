@@ -20,7 +20,7 @@ class DB
 	private function __construct()
 	{
 		global $config;
-		$this->connection = pg_connect(
+		$this->connection = @pg_connect(
 			"host=" . $config["db"]["host"] .
 			" user=" . $config["db"]["user"] .
 			" password=" . $config["db"]["pass"] .
@@ -28,8 +28,11 @@ class DB
 			" port=" . $config["db"]["port"] .
 			" options='--client_encoding=UTF8'"
 		);
-		if ($this->connection === false)
-			throw new Exception("Unable to connect to database");
+		if ($this->connection === false) {
+			$this->connection = @pg_connect("dbname=" . $config["db"]["dbname"] . " options='--client_encoding=UTF8'");
+			if ($this->connection === false)
+				throw new Exception("Unable to connect to database");
+		}
 	}
 	
 	/**
