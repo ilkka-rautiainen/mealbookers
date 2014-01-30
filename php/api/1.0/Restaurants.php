@@ -81,7 +81,7 @@ class Restaurants
 			);
 		else if ($restaurantId == 2)
 			return array(
-				'id' => 1,
+				'id' => 2,
 				'name' => "Täffä",
 				'opening_hours' => "Kauan",
 			);
