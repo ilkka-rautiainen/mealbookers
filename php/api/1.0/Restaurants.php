@@ -85,6 +85,14 @@ class Restaurants
                             'id' => 16,
                             'name' => 'Makkispekkis',
                         ),
+                        array(
+                            'id' => 20,
+                            'name' => 'Pekkismakkis',
+                        ),
+                        array(
+                            'id' => 21,
+                            'name' => 'Pekkismakkis 2',
+                        ),
 					),
 					array(
                         array(
