@@ -1,7 +1,29 @@
 body {
   padding-top: 50px;
 }
+
 .starter-template {
   padding: 40px 15px;
   text-align: center;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.restricted_height {
+    max-height: 200px;
+    overflow: hidden;
+}
+
+.expand_button {
+    position: absolute;
+    top: :;0px;
+    right: 10px;
+    float: right;
+    font-size: 17pt;
+}
+
+.thumbnail {
+    position: relative;
 }

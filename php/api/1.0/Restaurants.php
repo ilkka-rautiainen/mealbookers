@@ -11,54 +11,98 @@ class Restaurants
 		Logger::debug(__METHOD__ . " /restaurants called");
 		$mock_data = array(
 			array(
-				'name' => 'Alvari',
-				'id' => 1,
-				'menu' => array(
-					array(
-						'Lihapullia',
-						'Puhalillia',
-					),
-					array(
-						'Spakettia',
-						'Ketsuppia',
-					),
-					array(
-						'Pizzaa',
-						'Oreganoa',
-					),
-					array(
-						'Eipä juuri mitään',
-						'Vähän sitä sun tätä',
-					),
-					array(
-						'Omenaa',
-						'Kaalia',
-					),
-				)
-			),
-			array(
 				'name' => 'Täffä',
 				'id' => 2,
 				'menu' => array(
 					array(
-						'Jäätelöä',
-						'Ben & Jerrys',
+                        array(
+                            'id' => 1,
+                            'name' => 'Jäätelöä',
+                        ),
+                        array(
+                            'id' => 2,
+                            'name' => 'Ben & Jerrys',
+                        ),
+                        array(
+                            'id' => 3,
+                            'name' => 'Ingman',
+                        ),
+                        array(
+                            'id' => 4,
+                            'name' => 'Valio',
+                        ),
 					),
 					array(
-						'Fis än kips',
-						'Soosi',
+                        array(
+                            'id' => 5,
+                            'name' => 'Fis än kips',
+                        ),
+                        array(
+                            'id' => 6,
+                            'name' => 'Soosi',
+                        ),
+                        array(
+                            'id' => 7,
+                            'name' => 'Sallaatti',
+                        ),
+                        array(
+                            'id' => 8,
+                            'name' => 'Salaatinkastike',
+                        ),
 					),
 					array(
-						'Polonesea',
-						'Kastiketta',
+                        array(
+                            'id' => 9,
+                            'name' => 'Polonesea',
+                        ),
+                        array(
+                            'id' => 10,
+                            'name' => 'Kastiketta',
+                        ),
+                        array(
+                            'id' => 11,
+                            'name' => 'Juupajuu',
+                        ),
+                        array(
+                            'id' => 12,
+                            'name' => 'Eippä ei',
+                        ),
 					),
 					array(
-						'Eksoottista sapuskaa',
-						'Ja vähän muutakin',
+                        array(
+                            'id' => 13,
+                            'name' => 'Eksoottista sapuskaa',
+                        ),
+                        array(
+                            'id' => 14,
+                            'name' => 'Ja vähän muutakin',
+                        ),
+                        array(
+                            'id' => 15,
+                            'name' => 'Sitä sun tätä',
+                        ),
+                        array(
+                            'id' => 16,
+                            'name' => 'Makkispekkis',
+                        ),
 					),
 					array(
-						'Limua',
-						'Ranskalaisia',
+                        array(
+                            'id' => 17,
+                            'name' => 'Limua',
+                        ),
+                        array(
+                            'id' => 18,
+                            'name' => 'Ranskalaisia',
+                        ),
+                        array(
+                            'id' => 19,
+                            'name' => 'Pihviä',
+                        ),
+                        array(
+                            'id' => 20,
+                            'name' => 'Lohkoperunoita',
+                        ),
 					),
 				)
 			),

@@ -7,9 +7,10 @@
 <div class="container">
 	<div class="col-md-4 col-sm-6" ng-repeat="restaurant in restaurants">
 		<div class="thumbnail">
-			<div class="caption">
-				<h3>Täffä</h3>
-				<p ng-repeat="meal in restaurant.menu[weekDay]">{{ meal }}</p>
+			<div class="caption" ng-class="{ 'restricted_height': restaurant.expanded != true }">
+            <span class="pointer glyphicon expand_button" ng-class="{ 'glyphicon-resize-small': restaurant.expanded == true, 'glyphicon-resize-full': restaurant.expanded == false }" ng-click="toggle($index)" ></span>
+				<h3>{{ restaurant.name }}</h3>
+				<p ng-repeat="meal in restaurant.menu[weekDay]">{{ meal.name }}</p>
 			</div>
 			<a href="#" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span> Mene Syömään</a>
 		</div>
