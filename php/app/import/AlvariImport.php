@@ -208,6 +208,30 @@ class AlvariImport extends Import
      */
     private function formatAttributes($line_html)
     {
+        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\, ))*(Veg|VS|G|L|VL|M|\*)\)/i", $line_html, $matches);
+
+        $subMatches = $matchStarts = array();
+        $lastMatchStart = -1;
+        foreach ($matches[0] as $subMatch) {
+            preg_match_all("/(?:Veg)|(?:VS)|G|L|(?:VL)|M|\*/i", $subMatch, $subMatchArray);
+            foreach ($subMatchArray[0] as $key => $value)
+                $subMatchArray[0][$key] = $value;
+            $lastMatchStart = stripos($line_html, $subMatch, $lastMatchStart+1);
+            $matchStarts[] = $lastMatchStart;
+            $subMatches[] = array(
+                'start' => $lastMatchStart,
+                'length' => strlen($subMatch),
+                'attributes' => $subMatchArray[0],
+            );
+        }
+        foreach ($subMatches as $subMatch) {
+            foreach ($subMatch['attributes'] as $key => $attribute)
+                $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
+            $line_html = substr($line_html, 0, $subMatch['start'])
+                . "<span class=\"attribute_group\">" . implode(" ", $subMatch['attributes']) . "</span>"
+                . substr($line_html, $subMatch['start'] + $subMatch['length']);
+        }
+
         return $line_html;
     }
 

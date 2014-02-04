@@ -1,11 +1,5 @@
 <?php
-/**
- * DB class
- */
 
-/**
- * Class for db handling
- */
 class DB
 {
     private static $instance = null;
