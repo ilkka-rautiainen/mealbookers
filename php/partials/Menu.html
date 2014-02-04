@@ -10,7 +10,7 @@
 			<div class="caption" ng-class="{ 'restricted_height': restaurant.expanded != true }">
             <span class="pointer glyphicon expand_button" ng-class="{ 'glyphicon-resize-small': restaurant.expanded == true, 'glyphicon-resize-full': restaurant.expanded == false }" ng-click="toggle($index)" ></span>
 				<h3>{{ restaurant.name }}</h3>
-				<p ng-repeat="meal in restaurant.menu[weekDay]">{{ meal.name }}</p>
+				<p ng-repeat="meal in restaurant.mealList[weekDay]"><span ng-bind-html="meal.name | mealRow"></span></p>
 			</div>
 			<a href="#" class="btn btn-primary" style="margin-top: 10px;">Mene syömään <span class="glyphicon glyphicon-arrow-right"></span></a>
 		</div>

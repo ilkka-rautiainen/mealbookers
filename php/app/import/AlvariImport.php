@@ -224,13 +224,13 @@ class AlvariImport extends Import
                 'attributes' => $subMatchArray[0],
             );
         }
-        foreach ($subMatches as $subMatch) {
-            foreach ($subMatch['attributes'] as $key => $attribute)
-                $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
-            $line_html = substr($line_html, 0, $subMatch['start'])
-                . "<span class=\"attribute_group\">" . implode(" ", $subMatch['attributes']) . "</span>"
-                . substr($line_html, $subMatch['start'] + $subMatch['length']);
-        }
+        // foreach ($subMatches as $subMatch) {
+        //     foreach ($subMatch['attributes'] as $key => $attribute)
+        //         $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
+        //     $line_html = substr($line_html, 0, $subMatch['start'])
+        //         . "<span class=\"attribute_group\">" . implode(" ", $subMatch['attributes']) . "</span>"
+        //         . substr($line_html, $subMatch['start'] + $subMatch['length']);
+        // }
 
         return $line_html;
     }

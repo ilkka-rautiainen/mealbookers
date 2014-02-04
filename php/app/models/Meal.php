@@ -6,9 +6,17 @@ class Meal {
     public $name;
     public $language;
     public $day;
-    public $attributes;
     public $section;
     public $restaurant;
+
+    public function populate($row)
+    {
+        $this->id = $row['id'];
+        $this->name = $row['name'];
+        $this->language = $row['language'];
+        $this->day = strtotime($row['day']);
+        $this->section = $row['section'];
+    }
 
     public function save()
     {
@@ -25,5 +33,16 @@ class Meal {
                 '" . date("Y-m-d", $this->day) . "',
                 {$this->restaurant->id}
             )");
+    }
+
+    public function getAsArray()
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'language' => $this->language,
+            'day' => $this->day,
+            'section' => $this->section,
+        );
     }
 }
