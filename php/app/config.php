@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Configuration file
+ */
 $GLOBALS['config'] = array(
 	'db' => array(
 		'user' => 'adminlvsuknv',
@@ -23,6 +25,7 @@ $GLOBALS['config'] = array(
 		'level' => 'trace',
 		'file' => 'mealbookers.log',
 	),
+    'useragent' => 'Mealbookers data crawler',
 );
 
 if (file_exists(__DIR__ . "/config_override.php"))
