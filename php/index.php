@@ -24,6 +24,5 @@
 <body>
 	<!-- Page content -->
 	<div ui-view></div>
-	
 </body>
 </html>
