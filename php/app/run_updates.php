@@ -4,4 +4,10 @@
  */
 
 require_once __DIR__ . '/app.php';
-DB::inst()->runUpdates();
+try {
+    DB::inst()->runUpdates();
+    print "updates ok";
+}
+catch (Exception $e) {
+    print "Error: " . $e->getMessage();
+}

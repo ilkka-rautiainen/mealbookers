@@ -5,7 +5,7 @@ header("Content-type: text/html; charset=utf-8");
 $importers = array(
     new AlvariImport(),
     new KvarkkiImport(),
-    new TuasImport(),
+    new TUASImport(),
     new Puu2Import(),
 );
 

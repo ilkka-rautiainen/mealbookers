@@ -198,7 +198,7 @@ class DB
         catch (Exception $e) {
             $this->rollbackTransaction();
             Logger::critical(__METHOD__ . " running sql update $file_name failed: " + $e->getMessage());
-            throw new Exception("SQL update failed");
+            throw new Exception("SQL update $file_name failed");
         }
     }
 
