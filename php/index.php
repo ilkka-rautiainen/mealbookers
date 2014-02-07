@@ -18,6 +18,8 @@
 	<script type="text/javascript" src="js/services.js"></script>
 	<script type="text/javascript" src="js/localization.js"></script>
 	<script type="text/javascript" src="lib/angular-ui-router.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 	<!-- Page content -->
