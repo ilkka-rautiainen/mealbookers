@@ -4,10 +4,9 @@
  */
 $GLOBALS['config'] = array(
 	'db' => array(
-		'user' => 'adminlvsuknv',
-		'pass' => 'pZpHurr8-UWK',
+		'user' => 'adminDDT3KhA',
+		'pass' => 'AaLdeR_I9ENs',
 		'host' => 'localhost',
-		'port' => '5432',
 		'dbname' => 'app',
 	),
 	'log' => array(

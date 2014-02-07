@@ -15,19 +15,19 @@ class DB
     private function __construct()
     {
         global $config;
-        $this->connection = @pg_connect(
-            "host=" . $config["db"]["host"] .
-            " user=" . $config["db"]["user"] .
-            " password=" . $config["db"]["pass"] .
-            " dbname=" . $config["db"]["dbname"] .
-            " port=" . $config["db"]["port"] .
-            " options='--client_encoding=UTF8'"
+        $this->connection = new mysqli(
+            $config["db"]["host"],
+            $config["db"]["user"],
+            $config["db"]["pass"]
         );
-        if ($this->connection === false) {
-            $this->connection = @pg_connect("dbname=" . $config["db"]["dbname"] . " options='--client_encoding=UTF8'");
-            if ($this->connection === false)
-                throw new Exception("Unable to connect to database");
-        }
+        if ($this->connection->connect_error)
+            throw new Exception($mysqli->connect_error);
+        
+        if (!$this->connection->set_charset("utf8"))
+            throw new Exception("Unable to set character set in db connection");
+
+        if (!$this->connection->select_db($config["db"]["dbname"]))
+            throw new Exception("Could not choose database");
     }
     
     /**
@@ -48,12 +48,13 @@ class DB
     public function query($queryString)
     {
         Logger::trace(__METHOD__ . " $queryString");
-        if (($result = @pg_query($this->connection, $queryString)) === false) {
-            Logger::error(__METHOD__ . " DB error: " . pg_last_error($this->connection));
-            throw new Exception(pg_last_error($this->connection));
+        if (!$result = $this->connection->query($queryString)) {
+            Logger::error(__METHOD__ . " MySQL error: " . $this->connection->error);
+            throw new Exception($this->connection->error);
         }
-        $this->lastResult = $result;
 
+        $this->insertId = $this->connection->insert_id;
+        
         return $result;
     }
     
@@ -63,7 +64,16 @@ class DB
      */
     public function fetchAssoc($result)
     {
-        return pg_fetch_assoc($result);
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * Returns the last inserted id
+     * @return id
+     */
+    public function getInsertId()
+    {
+        return $this->insertId;
     }
     
     /**
@@ -72,7 +82,7 @@ class DB
      */
     public function getRowCount()
     {
-        return pg_num_rows($this->lastResult);
+        return $this->connection->affected_rows;
     }
     
     /**
@@ -83,7 +93,7 @@ class DB
     public function getOne($queryString)
     {
         $result = $this->query($queryString);
-        $row = pg_fetch_array($result);
+        $row = $result->fetch_array();
         if (!$row || !is_array($row) || !isset($row[0]))
             return null;
         
@@ -97,8 +107,8 @@ class DB
      */
     public function getRowAssoc($queryString)
     {
-        $result = $this->query($queryString);
-        $row = pg_fetch_assoc($result);
+        $result = $this->connection->query($queryString);
+        $row = $result->fetch_assoc();
         if (!$row || !is_array($row))
             return null;
         
@@ -112,7 +122,7 @@ class DB
      */
     public function quote($string)
     {
-        return pg_escape_string($this->connection, $string);
+        return $this->connection->escape_string($string);
     }
 
     /**
@@ -123,7 +133,8 @@ class DB
         global $config;
         Logger::info(__METHOD__ . " init db");
         
-        if ($this->getOne("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'") == 0)
+        $this->query("SHOW TABLES");
+        if ($this->getRowCount() == 0)
             $this->runUpdate("initial_create_database.sql");
 
         $sql_version = (int)$this->getOne("SELECT sql_version FROM config LIMIT 1");

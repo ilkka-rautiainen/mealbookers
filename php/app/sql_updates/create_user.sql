@@ -1,0 +1,2 @@
+CREATE USER 'adminDDT3KhA'@'localhost' IDENTIFIED BY 'AaLdeR_I9ENs';
+GRANT ALL PRIVILEGES ON app.* TO 'adminDDT3KhA'@'localhost' WITH GRANT OPTION;
