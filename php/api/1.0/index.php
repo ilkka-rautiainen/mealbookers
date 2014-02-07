@@ -7,4 +7,5 @@ use Luracast\Restler\Restler;
 $r = new Restler();
 $r->setSupportedFormats('JsonFormat');
 $r->addAPIClass('Restaurants');
+$r->addAPIClass('App');
 $r->handle();
