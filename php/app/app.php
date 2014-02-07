@@ -15,4 +15,5 @@ function __autoload($name)
 	else if (file_exists(__DIR__ . "/exceptions/$name.php"))
 		require_once __DIR__ . "/exceptions/$name.php";
 }
-DB::inst()->init();
+Logger::info(__METHOD__ . " ## Start execution");
+DB::inst();

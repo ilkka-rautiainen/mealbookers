@@ -56,7 +56,11 @@ class DB
      */
     public function query($queryString)
     {
-        Logger::trace(__METHOD__ . " $queryString");
+        Logger::trace(__METHOD__ . " " . str_replace(
+            array("\r\n", "\n", "                    ", "                ", "            ", "        ", "    "),
+            array(" ", " ", " ", " ", " ", " ", " "),
+            $queryString
+        ));
         if (!$result = $this->connection->query($queryString)) {
             Logger::error(__METHOD__ . " MySQL error: " . $this->connection->error);
             throw new Exception($this->connection->error);
@@ -137,10 +141,10 @@ class DB
     /**
      * Runs sql updates
      */
-    public function init()
+    public function runUpdates()
     {
         global $config;
-        Logger::info(__METHOD__ . " init db");
+        Logger::info(__METHOD__ . " run sql updates");
         
         $this->query("SHOW TABLES");
         if ($this->getRowCount() == 0)

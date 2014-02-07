@@ -19,6 +19,6 @@ class App
 
 		$filename = "../../app/" . $config['log']['file'];
 
-		return array_slice(array_reverse(file($filename)), 0, $rows);
+		return array_reverse(array_slice(array_reverse(file($filename)), 0, $rows));
 	}
 }

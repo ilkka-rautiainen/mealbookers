@@ -8,7 +8,7 @@ class Restaurants
 	 */
 	function get()
 	{
-		Logger::debug(__METHOD__ . " /restaurants called");
+		Logger::debug(__METHOD__ . " GET /restaurants called");
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
