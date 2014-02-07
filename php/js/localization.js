@@ -37,7 +37,7 @@ angular.module('Mealbookers.localization', [])
 
         getLocalizedString: function (value) {
             // default the result to an empty string
-            var result = '';
+            var result = '- - - - -';
             // check to see if the resource file has been loaded
             if (!localize.resourceFileLoaded) {
                 // call the init method

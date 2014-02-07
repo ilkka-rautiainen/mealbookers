@@ -21,6 +21,7 @@ class AmicaImport extends Import
                 'Kahvila\:?' => 'cafe',
                 'A la carte\:?' => 'alacarte',
                 'Bistro\:?' => 'bistro',
+                'Tuunaa oma hampurilaisesi' => 'tune_own_burger',
             ),
             'ignore' => array(
                 'Hyvää ruokahalua!',
@@ -40,6 +41,7 @@ class AmicaImport extends Import
                 'Cafe\:?' => 'cafe',
                 'A la carte\:?' => 'alacarte',
                 'Bistro\:?' => 'bistro',
+                'Fine-tune your own burger' => 'tune_own_burger',
             ),
             'ignore' => array(
                 'Enjoy your meal!',
@@ -100,11 +102,19 @@ class AmicaImport extends Import
                 $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
                 if (!$p_list->length)
                     throw new ParseException("No <p> elements found in the menu");
-                
+
                 // Go through the menu
                 foreach ($p_list as $p) {
                     $html = pq($p)->html();
-                    $this->processLine(trim($html), $lang);
+
+                    // Check for corrupt line
+                    $pos = strpos(pq($p)->html(), "<br><strong>");
+                    if ($pos !== false) {
+                        $this->processLine(trim(substr(pq($p)->html(), 0, $pos)), $lang);
+                        $this->processLine(trim(substr(pq($p)->html(), $pos + 4)), $lang);
+                    }
+                    else
+                        $this->processLine(trim($html), $lang);
                 }
                 $this->endDayAndSave(); // Save the last day which is open
             }

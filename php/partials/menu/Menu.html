@@ -1,6 +1,5 @@
-
 <div class="container">
-	<h1 class="col-md-12 col-sm-12">Otaniemessä Tänään</h1>
+	<h1 class="col-md-12 col-sm-12">{{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n }}</h1>
 </div>
 <div class="container"><hr class="featurette-divider"></div>
 
@@ -8,7 +7,7 @@
 	<div class="col-md-4 col-sm-6" ng-repeat="restaurant in restaurants">
 		<div class="thumbnail">
 			<div class="caption" ng-class="{ 'restricted_height': restaurant.expanded != true }">
-            <span class="pointer glyphicon expand_button" ng-class="{ 'glyphicon-resize-small': restaurant.expanded == true, 'glyphicon-resize-full': restaurant.expanded == false }" ng-click="toggle($index)" ></span>
+				<span class="pointer glyphicon expand_button" ng-class="{ 'glyphicon-resize-small': restaurant.expanded == true, 'glyphicon-resize-full': restaurant.expanded == false }" ng-click="toggle($index)" ></span>
 				<h3>{{ restaurant.name }}</h3>
 				<p ng-repeat="meal in restaurant.mealList[weekDay]"><span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span><span ng-bind-html="meal.name | mealRow"></span></p>
 			</div>

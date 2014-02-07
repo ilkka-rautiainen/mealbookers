@@ -28,6 +28,10 @@ body {
     position: relative;
 }
 
+.navbar-nav {
+    cursor: pointer;
+}
+
 span.attribute-group {
     padding-left: 5px;
     display: inline-block;

@@ -6,9 +6,12 @@ class Restaurants
 	/**
 	 * Listens to /restaurants
 	 */
-	function get($lang = 'fi')
+	function get($lang = 'en')
 	{
 		Logger::debug(__METHOD__ . " GET /restaurants?lang=$lang called");
+
+        if (!in_array($lang, array('fi', 'en')))
+            $lang = 'en';
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();

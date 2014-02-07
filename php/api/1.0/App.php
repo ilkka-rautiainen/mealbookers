@@ -30,6 +30,9 @@ class App
         global $language;
         Logger::debug(__METHOD__ . " GET /app/language/$lang called");
 
-        return $language[$lang];
+        if (isset($language[$lang]))
+            return $language[$lang];
+        else
+            return $language['en'];
 	}
 }

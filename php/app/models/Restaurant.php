@@ -36,11 +36,11 @@ class Restaurant
                 WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
                 language = '" . DB::inst()->quote($lang) . "'");
 
-            // Fetch in default language if not present in current
-            if (!DB::inst()->getRowCount() && $lang != $config['mealDefaultLang'])
+            // Fetch in the another language if not present in current
+            if (!DB::inst()->getRowCount())
                 $result = DB::inst()->query("SELECT * FROM meals
                     WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
-                    language = '" . $config['mealDefaultLang'] . "'");
+                    language = '" . (($lang == 'en') ? 'fi' : 'en') . "'");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $meal = new Meal();

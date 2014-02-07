@@ -8,18 +8,27 @@ angular.module('Mealbookers', [
     'Mealbookers.services',
     'Mealbookers.directives',
     'Mealbookers.controllers',
-    'Mealbookers.localization'
+    'Mealbookers.localization',
+    'ui.router'
 ])
 
-.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/menu', {
-        templateUrl: 'partials/Menu.html', 
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+    
+    $stateProvider
+
+    .state('Navigation', {
+        url: "/app",
+        templateUrl: "partials/Navigation.html",
+        controller: 'NavigationController'
+    })
+    
+    .state('Navigation.Menu', {
+        url: "/menu",
+        templateUrl: "partials/menu/Menu.html",
         controller: 'MenuController'
     });
 
-    $routeProvider.otherwise({
-        redirectTo: '/menu'
-    });
+    $urlRouterProvider.otherwise("/app/menu");
 }])
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
