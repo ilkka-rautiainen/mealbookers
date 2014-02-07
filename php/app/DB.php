@@ -15,11 +15,20 @@ class DB
     private function __construct()
     {
         global $config;
-        $this->connection = new mysqli(
-            $config["db"]["host"],
-            $config["db"]["user"],
-            $config["db"]["pass"]
-        );
+        if (isset($_SERVER['OPENSHIFT_MYSQL_DB_HOST'])) {
+            $this->connection = new mysqli(
+                $_SERVER['OPENSHIFT_MYSQL_DB_HOST'],
+                $_SERVER['OPENSHIFT_MYSQL_DB_USERNAME'],
+                $_SERVER['OPENSHIFT_MYSQL_DB_PASSWORD']
+            );
+        }
+        else {
+            $this->connection = new mysqli(
+                $config["db"]["host"],
+                $config["db"]["user"],
+                $config["db"]["pass"]
+            );
+        }
         if ($this->connection->connect_error)
             throw new Exception($mysqli->connect_error);
         

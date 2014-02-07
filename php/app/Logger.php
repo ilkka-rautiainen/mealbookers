@@ -62,7 +62,7 @@ class Logger
         else
             $id = $currentUser->id;
         
-        if (fwrite($this->file, gmdate("d/m/y H:i:s") . " [$id][" . strtoupper($level) . "] $message\n") === false)
+        if (fwrite($this->file, gmdate("d/m/y H:i:s"). substr((string)microtime(), 1, 4) . " [$id][" . strtoupper($level) . "] $message\n") === false)
             throw new Exception("Couldn't put error message");
             
     }

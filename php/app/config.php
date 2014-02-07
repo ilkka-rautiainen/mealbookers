@@ -4,8 +4,8 @@
  */
 $GLOBALS['config'] = array(
 	'db' => array(
-		'user' => 'adminDDT3KhA',
-		'pass' => 'AaLdeR_I9ENs',
+		'user' => 'root',
+		'pass' => '',
 		'host' => 'localhost',
 		'dbname' => 'app',
 	),
