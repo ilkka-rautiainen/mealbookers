@@ -25,6 +25,7 @@ $GLOBALS['config'] = array(
 		'file' => 'mealbookers.log',
 	),
     'useragent' => 'Mealbookers data crawler',
+	'mealDefaultLang' => 'fi',
 );
 
 if (file_exists(__DIR__ . "/config_override.php"))

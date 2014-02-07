@@ -1,10 +1,10 @@
 body {
-  padding-top: 50px;
+    padding-top: 50px;
 }
 
 .starter-template {
-  padding: 40px 15px;
-  text-align: center;
+    padding: 40px 15px;
+    text-align: center;
 }
 
 .pointer {
@@ -18,7 +18,7 @@ body {
 
 .expand_button {
     position: absolute;
-    top: :;0px;
+    top: 0px;
     right: 10px;
     float: right;
     font-size: 17pt;
@@ -26,4 +26,32 @@ body {
 
 .thumbnail {
     position: relative;
+}
+
+span.attribute-group {
+    padding-left: 5px;
+    display: inline-block;
+}
+
+span.attribute {
+    /*background: #c0c0c0;*/
+    font-size: 10px;
+    text-transform: uppercase;
+    overflow: hidden;
+    /*display: inline-block;*/
+    color: #c0c0c0;
+    padding: 2px 0px;
+    font-style: italic;
+}
+
+span.line-break {
+    display: block;
+    height: 0;
+    width: 0;
+}
+
+.meal-section {
+    font-weight: bold;
+    display: block;
+    text-decoration: underline;
 }

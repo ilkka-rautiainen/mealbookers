@@ -26,13 +26,22 @@ class Restaurant
 
     public function fetchMealList($lang)
     {
+        global $config;
+
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $mealList = new MealList();
         for ($i=0; $i<7; $i++) {
             $time = strtotime("+$i days", $startTime);
             $result = DB::inst()->query("SELECT * FROM meals
                 WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
-                language = '$lang'");
+                language = '" . DB::inst()->quote($lang) . "'");
+
+            // Fetch in default language if not present in current
+            if (!DB::inst()->getRowCount() && $lang != $config['mealDefaultLang'])
+                $result = DB::inst()->query("SELECT * FROM meals
+                    WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
+                    language = '" . $config['mealDefaultLang'] . "'");
+
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $meal = new Meal();
                 $meal->populate($row);

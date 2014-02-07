@@ -2,14 +2,22 @@
 require_once '../app.php';
 header("Content-type: text/html; charset=utf-8");
 
+$importers = array(
+    new AlvariImport(),
+    new KvarkkiImport(),
+    new TuasImport(),
+    new Puu2Import(),
+);
+
 try {
-    $alvari = new Restaurant();
-    $alvari->fetch(1);
-    $alvariImport = new AlvariImport();
-    $alvariImport->init($alvari);
-    $alvariImport->run();
+    foreach ($importers as $importer) {
+        $importer->init();
+        $importer->run();
+    }
     print "import ok";
 }
 catch (ImportException $e) {
-    Logger::error(__FILE__ . ":" . __LINE__ . " Error in import: " . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine());
+    $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: " . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
+    Logger::error($errorMessage);
+    print $errorMessage;
 }

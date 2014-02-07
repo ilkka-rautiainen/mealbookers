@@ -12,7 +12,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.weekDay = new Date().getDay() - 1;
     var restaurants = Restaurants.query(null, function(){
         for (var i=0; i<restaurants.length; i++)
-            restaurants[i].expanded = false;
+            restaurants[i].expanded = true;
         $scope.restaurants = restaurants;
     });
 

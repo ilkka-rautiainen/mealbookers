@@ -13,10 +13,16 @@ abstract class Import
      */
     protected $activeSection = null;
 
-    public function init(Restaurant $restaurant)
+    public function init()
     {
-        Logger::info(__METHOD__ . " initializing menu import for restaurant {$restaurant->name} id {$restaurant->id}");
+        // Init the restaurant object
+        $restaurant = new Restaurant();
+        $restaurant->fetch($this->restaurantId); // restaurantId comes from sub class
         $this->restaurant = $restaurant;
+        
+        Logger::info(__METHOD__ . " initializing menu import for restaurant {$restaurant->name} id {$restaurant->id}");
+
+
         $this->isImportNeeded = (DB::inst()->getOne("SELECT COUNT(id) FROM meals
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND

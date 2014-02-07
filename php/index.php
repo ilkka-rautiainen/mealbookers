@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="js/directives.js"></script>
 	<script type="text/javascript" src="js/filters.js"></script>
 	<script type="text/javascript" src="js/services.js"></script>
+	<script type="text/javascript" src="js/localization.js"></script>
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
