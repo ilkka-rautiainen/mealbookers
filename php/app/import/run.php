@@ -12,6 +12,8 @@ $importers = array(
 try {
     foreach ($importers as $importer) {
         $importer->init();
+        if (isset($_GET['reset']) && !empty($_GET['reset']))
+            $importer->reset();
         $importer->run();
     }
     print "import ok";

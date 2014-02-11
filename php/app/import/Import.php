@@ -29,6 +29,21 @@ abstract class Import
                 day <= '" . $this->getWeekEndDay() . "'") == 0);
     }
 
+    /**
+     * Deletes the current week's meals
+     */
+    public function reset()
+    {
+        if (!$this->restaurant)
+            throw new Exception("reset() called before init() call");
+        
+        DB::inst()->query("DELETE FROM meals
+            WHERE restaurant_id = {$this->restaurant->id} AND
+                day >= '" . $this->getWeekStartDay() . "' AND
+                day <= '" . $this->getWeekEndDay() . "'");
+        $this->isImportNeeded = true;
+    }
+
     public function run()
     {
         throw new ImportException("Not implemented");
