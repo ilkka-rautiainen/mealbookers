@@ -218,6 +218,7 @@ class AmicaImport extends Import
                 return $name_en;
             }
         }
+
         return false;
     }
 
