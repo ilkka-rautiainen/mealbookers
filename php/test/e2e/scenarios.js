@@ -15,21 +15,24 @@ describe('Mealbookers', function() {
   });
 
 
-  it('should automatically redirect to /menu when location hash/fragment is empty', function() {
-    expect(browser().location().url()).toBe('/menu');
+  it('should automatically redirect to /app/menu when location hash/fragment is empty', function() {
+    expect(browser().location().url()).toBe('/app/menu');
   });
 
 
   describe('menu', function() {
     beforeEach(function() {
-      browser().navigateTo('#/menu');
+      browser().navigateTo('#/app/menu');
     });
 
     it('should render restaurant list', function() {
+      expect(element('#menuContainer .menu').count()).toBeGreaterThan(0);
+    });
 
-      var firstItem = element('#restaurantList li:nth-child(1) div.restaurantName');
-
-      expect(firstItem.html()).not().toBe(null);
+    it('should put meals to Alvari', function() {
+      if (!(new Date().getDay() == 0 || new Date().getDay() == 6)) {
+        expect(element('#menuContainer .restaurant_1 p.meal').count()).toBeGreaterThan(0);
+      }
     });
 
   });
