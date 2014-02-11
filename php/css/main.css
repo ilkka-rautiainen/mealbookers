@@ -23,7 +23,7 @@ body {
     position: relative;
     max-height: 200px;
     overflow: hidden;
-    transition: max-height 0.4s;
+    transition: height 0.4s;
 }
 
 .thumbnail .caption {

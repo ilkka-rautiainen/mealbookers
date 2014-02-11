@@ -1,9 +1,9 @@
 <div class="menu col-md-3 col-sm-6 restaurant_{{ restaurant.id }}">
-    <div class="thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
+    <div class="thumbnail restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <div class="overlay overlay_open" ng-click="toggle(restaurant.id)"><div class="overlay_sub"><i class="glyphicon glyphicon-chevron-down"></i></div></div>
         <div class="overlay overlay_close"><div class="overlay_sub"><i class="glyphicon glyphicon-chevron-up"></i></div></div>
         <div class="caption">
-            <h3>{{ restaurant.name }}</h3>
+            <h3 style="text-align: center;">{{ restaurant.name }}</h3>
             <p ng-repeat="meal in restaurant.mealList[weekDay]" class="meal"><span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span><span ng-bind-html="meal.name | mealRow"></span></p>
         </div>
     </div>

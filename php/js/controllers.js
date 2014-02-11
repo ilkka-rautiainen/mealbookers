@@ -31,7 +31,8 @@ angular.module('Mealbookers.controllers', [])
             restaurants[i].expanded = false;
         $scope.restaurants = restaurants;
     });
-
-    
-
+    $scope.restaurantData = {
+        height: 0,
+        expanded: false
+    };
 }])
