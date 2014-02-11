@@ -110,8 +110,8 @@ class AmicaImport extends Import
                     // Check for corrupt line
                     $pos = strpos(pq($p)->html(), "<br><strong>");
                     if ($pos !== false) {
-                        $this->processLine(trim(substr(pq($p)->html(), 0, $pos)), $lang);
-                        $this->processLine(trim(substr(pq($p)->html(), $pos + 4)), $lang);
+                        $this->processLine(trim(mb_substr(pq($p)->html(), 0, $pos)), $lang);
+                        $this->processLine(trim(mb_substr(pq($p)->html(), $pos + 4)), $lang);
                     }
                     else
                         $this->processLine(trim($html), $lang);
@@ -193,13 +193,13 @@ class AmicaImport extends Import
     private function getDayNumber(&$line_html, $lang)
     {
         foreach ($this->langs[$lang]['weekdays'] as $day_number => $weekday) {
-            if (stripos(trim(strip_tags($line_html)), $weekday) === 0) {
-                $strong_start = stripos($line_html, "</strong>");
+            if (mb_stripos(trim(strip_tags($line_html)), $weekday) === 0) {
+                $strong_start = mb_stripos($line_html, "</strong>");
 
                 if ($strong_start === false)
                     throw new ParseException("Couldn't find </strong> after weekday");
                     
-                $line_html = trim(substr($line_html, $strong_start + 9));
+                $line_html = trim(mb_substr($line_html, $strong_start + 9));
                 return $day_number;
             }
         }
@@ -213,8 +213,8 @@ class AmicaImport extends Import
     private function getSectionName(&$line_html, $lang)
     {
         foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
-            if (preg_match("/^" . preg_quote("<strong>", "/") . "[\\s]*" . $name_lang . "[\\s]*" . preg_quote("</strong>", "/") . "/", $line_html, $matches)) {
-                $line_html = trim(substr($line_html, strlen($matches[0])));
+            if (preg_match("/^" . preg_quote("<strong>", "/") . "[\\s]*" . $name_lang . "[\\s]*" . preg_quote("</strong>", "/") . "/i", $line_html, $matches)) {
+                $line_html = trim(mb_substr($line_html, strlen($matches[0])));
                 return $name_en;
             }
         }
@@ -252,7 +252,7 @@ class AmicaImport extends Import
             preg_match_all("/(?:Veg)|(?:VS)|G|L|(?:VL)|M|\*/i", $subMatch, $subMatchArray);
             foreach ($subMatchArray[0] as $key => $value)
                 $subMatchArray[0][$key] = $value;
-            $lastMatchStart = stripos($line_html, $subMatch, $lastMatchStart+1);
+            $lastMatchStart = mb_stripos($line_html, $subMatch, $lastMatchStart+1);
             $matchStarts[] = $lastMatchStart;
             $subMatches[] = array(
                 'start' => $lastMatchStart,
@@ -264,9 +264,9 @@ class AmicaImport extends Import
         foreach ($subMatches as $subMatch) {
             foreach ($subMatch['attributes'] as $key => $attribute)
                 $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
-            $line_html = substr($line_html, 0, $subMatch['start'])
+            $line_html = mb_substr($line_html, 0, $subMatch['start'])
                 . "<span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>"
-                . substr($line_html, $subMatch['start'] + $subMatch['length']);
+                . mb_substr($line_html, $subMatch['start'] + $subMatch['length']);
         }
 
         return $line_html;
