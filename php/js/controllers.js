@@ -36,4 +36,6 @@ angular.module('Mealbookers.controllers', [])
         $scope.restaurants[idx].expanded = !$scope.restaurants[idx].expanded;
     };
 
+    
+
 }])
