@@ -27,15 +27,6 @@ angular.module('Mealbookers.controllers', [])
     $rootScope.title = "Menu";
     $scope.restaurants = new Array();
     var restaurants = Restaurants.query(null, function(){
-        for (var i=0; i<restaurants.length; i++)
-            restaurants[i].expanded = true;
         $scope.restaurants = restaurants;
     });
-
-    $scope.toggle = function(idx) {
-        $scope.restaurants[idx].expanded = !$scope.restaurants[idx].expanded;
-    };
-
-    
-
 }])
