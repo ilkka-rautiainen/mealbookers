@@ -33,4 +33,6 @@ angular.module('Mealbookers', [
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
     $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
+    $rootScope.windowWidth = $($window).width();
+    console.log($rootScope.windowWidth);
 }]);

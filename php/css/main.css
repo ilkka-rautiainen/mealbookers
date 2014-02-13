@@ -24,18 +24,31 @@ body {
     font-size: 17pt;
 }
 
-.thumbnail .caption {
-    padding: 0 0 30px 0;
+#content, html {
+    background-color: whitesmoke;
 }
 
-.thumbnail .caption h3.restaurant-name {
+.restaurant-thumbnail {
+    padding: 10px;
+    background-color: white;
+    border-radius: 7px;
+-webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+-moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+}
+
+.restaurant-thumbnail h3.restaurant-name {
     margin: 0 0 5px 0;
 }
 
-.thumbnail .caption p {
+.restaurant-thumbnail p {
     font-family: Verdana;
     font-size: 11px;
     margin: 0 0 3px 0;
+}
+
+.restaurant-thumbnail .meal-divider {
+    margin: 2px 0 2px 0;
 }
 .menu_outer {
     position: relative;
