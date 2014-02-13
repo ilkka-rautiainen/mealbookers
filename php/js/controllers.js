@@ -9,14 +9,14 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.today = (new Date().getDay() - 1) % 7;
     $scope.tomorrow = $scope.today + 1;
-    $rootScope.weekDay = $scope.today;
+    $scope.weekDay = $scope.today;
 
     $scope.remainingDays = [];
-    for (var i=$rootScope.weekDay+2; i<7; i++)
+    for (var i=$scope.weekDay+2; i<7; i++)
         $scope.remainingDays.push(i);
 
     $scope.changeDay = function(num) {
-        $rootScope.weekDay = num;
+        $scope.weekDay = num;
     }
 
 }])
@@ -28,11 +28,14 @@ angular.module('Mealbookers.controllers', [])
     $scope.restaurants = new Array();
     var restaurants = Restaurants.query(null, function(){
         for (var i=0; i<restaurants.length; i++)
-            restaurants[i].expanded = false;
+            restaurants[i].expanded = true;
         $scope.restaurants = restaurants;
     });
-    $scope.restaurantData = {
-        height: 0,
-        expanded: false
+
+    $scope.toggle = function(idx) {
+        $scope.restaurants[idx].expanded = !$scope.restaurants[idx].expanded;
     };
+
+    
+
 }])
