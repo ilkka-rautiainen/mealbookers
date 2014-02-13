@@ -32,9 +32,16 @@ body {
     padding: 10px;
     background-color: white;
     border-radius: 7px;
--webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
--moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    margin-bottom: 20px;
+}
+
+.navbar-inverse {
+    background-image: none;
+    background-color: whitesmoke;
+    border-bottom: 1px solid gray;
 }
 
 .restaurant-thumbnail h3.restaurant-name {
