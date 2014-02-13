@@ -11,11 +11,6 @@ body {
     cursor: pointer;
 }
 
-.restricted_height {
-    max-height: 200px;
-    overflow: hidden;
-}
-
 .expand_button {
     position: absolute;
     top: 0px;
@@ -25,6 +20,89 @@ body {
 }
 
 .thumbnail {
+    position: relative;
+    max-height: 200px;
+    overflow: hidden;
+    transition: height 0.4s;
+}
+
+.thumbnail .caption {
+    padding: 0 0 30px 0;
+}
+
+.thumbnail .overlay {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.thumbnail .overlay i {
+    position: absolute;
+    left: 44%;
+    top: -40px;
+    font-size: 40px;
+}
+
+.thumbnail .overlay_open i {
+    opacity: 0.4;
+    position: absolute;
+    left: 44%;
+    top: 20%;
+    color: white;
+    font-size: 40px;
+}
+
+.thumbnail .overlay_open:hover i {
+    opacity: 1;
+}
+
+.thumbnail .overlay_open .overlay_sub {
+    position: absolute;
+    height: 50px;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    transition: opacity 0.4s;
+    background-image: -ms-linear-gradient(top, transparent 0%, #6E7B8C 100%);
+    background-image: -moz-linear-gradient(top, transparent 0%, #6E7B8C 100%);
+    background-image: -o-linear-gradient(top, transparent 0%, #6E7B8C 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.6, transparent), color-stop(1, #6E7B8C));
+    background-image: -webkit-linear-gradient(top, transparent 0%, #6E7B8C 100%);
+    background-image: linear-gradient(to bottom, transparent 0%, #6E7B8C 100%);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.thumbnail .overlay_close .overlay_sub {
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.thumbnail .overlay_close .overlay_long {
+    opacity: 1;
+}
+
+.thumbnail .overlay_open {
+    z-index: 2;
+}
+
+.thumbnail .overlay_open .overlay_long {
+    opacity: 0;
+}
+
+.col-md-3 {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.menu_outer {
+    position: relative;
+}
+
+.menu {
     position: relative;
 }
 

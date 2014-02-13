@@ -4,14 +4,10 @@
 <div class="container"><hr class="featurette-divider"></div>
 
 <div id="menuContainer" class="container">
-	<div class="menu col-md-4 col-sm-6 restaurant_{{ restaurant.id }}" ng-repeat="restaurant in restaurants">
-		<div class="thumbnail">
-			<div class="caption" ng-class="{ 'restricted_height': restaurant.expanded != true }">
-				<span class="pointer glyphicon expand_button" ng-class="{ 'glyphicon-resize-small': restaurant.expanded == true, 'glyphicon-resize-full': restaurant.expanded == false }" ng-click="toggle($index)" ></span>
-				<h3>{{ restaurant.name }}</h3>
-				<p ng-repeat="meal in restaurant.mealList[weekDay]" class="meal"><span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span><span ng-bind-html="meal.name | mealRow"></span></p>
-			</div>
-			<a href="#" class="btn btn-primary" style="margin-top: 10px;">Mene syömään <span class="glyphicon glyphicon-arrow-right"></span></a>
+	<div class="row">
+		<div class="menu_outer" ng-repeat="restaurant in restaurants">
+			<restaurant restaurant="restaurant" week-day="weekDay" restaurant-data="restaurantData"></restaurant>
+			<div class="clearfix visible-sm" ng-if="$index % 2 == 1"></div>
 		</div>
 	</div>
 </div>
