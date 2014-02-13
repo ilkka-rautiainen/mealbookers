@@ -106,15 +106,7 @@ class AmicaImport extends Import
                 // Go through the menu
                 foreach ($p_list as $p) {
                     $html = pq($p)->html();
-
-                    // Check for corrupt line
-                    $pos = strpos(pq($p)->html(), "<br><strong>");
-                    if ($pos !== false) {
-                        $this->processLine(trim(mb_substr(pq($p)->html(), 0, $pos)), $lang);
-                        $this->processLine(trim(mb_substr(pq($p)->html(), $pos + 4)), $lang);
-                    }
-                    else
-                        $this->processLine(trim($html), $lang);
+                    $this->processLine(trim($html), $lang);
                 }
                 $this->endDayAndSave(); // Save the last day which is open
             }
@@ -137,6 +129,16 @@ class AmicaImport extends Import
     private function processLine($line_html, $lang)
     {
         Logger::debug(__METHOD__ . " processing line: $line_html");
+
+        // Check for <br><strong> within the line
+        $pos = mb_stripos($line_html, "<br><strong>");
+        if ($pos !== false) {
+            Logger::debug(__METHOD__ . " <br><strong> found processing first part");
+            $this->processLine(trim(mb_substr($line_html, 0, $pos)), $lang);
+            Logger::debug(__METHOD__ . " <br><strong> found processing second part");
+            $this->processLine(trim(mb_substr($line_html, $pos + 4)), $lang);
+            return;
+        }
 
         // Do some replacements
         $line_html = str_replace(array('\r\n', '\n'), array(" ", " "), $line_html);
