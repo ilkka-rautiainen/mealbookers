@@ -57,4 +57,32 @@ $GLOBALS['language']['en'] = array(
         'key' => 'in_otaniemi',
         'value' => 'Otaniemi menu\'s on'
     ),
+    array(
+        'key' => 'log_in',
+        'value' => 'Log in'
+    ),
+    array(
+        'key' => 'email',
+        'value' => 'Email'
+    ),
+    array(
+        'key' => 'password',
+        'value' => 'Password'
+    ),
+    array(
+        'key' => 'log_in_remember_me',
+        'value' => 'Remember me'
+    ),
+    array(
+        'key' => 'close',
+        'value' => 'close'
+    ),
+    array(
+        'key' => 'register',
+        'value' => 'Register'
+    ),
+    array(
+        'key' => 'register_full_name',
+        'value' => 'Full name'
+    ),
 );

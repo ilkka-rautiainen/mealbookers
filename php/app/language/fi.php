@@ -57,4 +57,32 @@ $GLOBALS['language']['fi'] = array(
         'key' => 'in_otaniemi',
         'value' => 'Otaniemessä'
     ),
+    array(
+        'key' => 'log_in',
+        'value' => 'Kirjaudu sisään'
+    ),
+    array(
+        'key' => 'email',
+        'value' => 'Sähköposti'
+    ),
+    array(
+        'key' => 'password',
+        'value' => 'Salasana'
+    ),
+    array(
+        'key' => 'log_in_remember_me',
+        'value' => 'Muista minut'
+    ),
+    array(
+        'key' => 'close',
+        'value' => 'Sulje'
+    ),
+    array(
+        'key' => 'register',
+        'value' => 'Rekisteröidy'
+    ),
+    array(
+        'key' => 'register_full_name',
+        'value' => 'Koko nimi'
+    ),
 );
