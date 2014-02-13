@@ -82,7 +82,11 @@ $GLOBALS['language']['fi'] = array(
         'value' => 'Rekisteröidy'
     ),
     array(
-        'key' => 'register_full_name',
-        'value' => 'Koko nimi'
+        'key' => 'register_first_name',
+        'value' => 'Etunimi'
+    ),
+    array(
+        'key' => 'register_last_name',
+        'value' => 'Sukunimi'
     ),
 );

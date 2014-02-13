@@ -82,7 +82,11 @@ $GLOBALS['language']['en'] = array(
         'value' => 'Register'
     ),
     array(
-        'key' => 'register_full_name',
-        'value' => 'Full name'
+        'key' => 'register_first_name',
+        'value' => 'First name'
+    ),
+    array(
+        'key' => 'register_last_name',
+        'value' => 'Last nimi'
     ),
 );

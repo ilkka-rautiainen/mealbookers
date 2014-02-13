@@ -5,7 +5,7 @@
 angular.module('Mealbookers.controllers', [])
 
 
-.controller('NavigationController', ['$scope', '$rootScope', function($scope, $rootScope) {
+.controller('NavigationController', ['$scope', function($scope) {
 
     $scope.today = (new Date().getDay() - 1) % 7;
     $scope.tomorrow = $scope.today + 1;
@@ -18,6 +18,12 @@ angular.module('Mealbookers.controllers', [])
     $scope.changeDay = function(num) {
         $scope.weekDay = num;
     }
+
+}])
+
+.controller('LoginController', ['$scope', '$rootScope', function($scope, $rootScope) {
+
+    
 
 }])
 

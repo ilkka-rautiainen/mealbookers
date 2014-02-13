@@ -27,7 +27,7 @@
 </div>
 
 <!-- Login Modal -->
-<div class="modal fade" id="logInModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div ng-controller="LoginController" class="modal fade" id="logInModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -37,12 +37,12 @@
 			<div class="modal-body">
 				<form role="form">
 					<div class="form-group">
-						<label for="exampleInputEmail1">{{ 'email' | i18n }}</label>
-						<input type="email" class="form-control" id="exampleInputEmail1">
+						<label for="email_log_in">{{ 'email' | i18n }}</label>
+						<input type="email" class="form-control" id="email_log_in" ng-model="scope.main.email">
 					</div>
 					<div class="form-group">
-						<label for="exampleInputPassword1">{{ 'password' | i18n }}</label>
-						<input type="password" class="form-control" id="exampleInputPassword1">
+						<label for="password_log_in">{{ 'password' | i18n }}</label>
+						<input type="password" class="form-control" id="password_log_in" ng-model="scope.main.password">
 					</div>
 					<div class="checkbox">
 						<label>
@@ -70,16 +70,20 @@
 			<div class="modal-body">
 				<form role="form">
 					<div class="form-group">
-						<label for="exampleInputEmail1">{{ 'email' | i18n }}</label>
-						<input type="email" class="form-control" id="exampleInputEmail1">
+						<label for="email_register">{{ 'email' | i18n }}</label>
+						<input type="email" class="form-control" id="email_register">
 					</div>
 					<div class="form-group">
-						<label for="exampleInputEmail1">{{ 'password' | i18n }}</label>
-						<input type="email" class="form-control" id="exampleInputEmail1">
+						<label for="password_register">{{ 'password' | i18n }}</label>
+						<input type="email" class="form-control" id="password_register">
 					</div>
 					<div class="form-group">
-						<label for="exampleInputPassword1">{{ 'register_full_name' | i18n }}</label>
-						<input type="password" class="form-control" id="exampleInputPassword1">
+						<label for="first_name_register">{{ 'register_first_name' | i18n }}</label>
+						<input type="text" class="form-control" id="first_name_register">
+					</div>
+					<div class="form-group">
+						<label for="last_name_register">{{ 'register_last_name' | i18n }}</label>
+						<input type="text" class="form-control" id="last_name_register">
 					</div>
 
 					<button type="submit" class="btn btn-default">{{ 'register' | i18n }}</button>
