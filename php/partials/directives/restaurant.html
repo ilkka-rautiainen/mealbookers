@@ -1,8 +1,8 @@
-<div class="menu col-md-3 col-sm-6 restaurant_{{ restaurant.id }}">
+<div class="restaurant col-md-3 col-sm-6">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
-        <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
+        <h3 class="restaurant-name" style="text-align: center;"><a href="{{ restaurant.link }}" target="_blank">{{ restaurant.name }}</a></h3>
         <div ng-repeat="meal in restaurant.mealList[weekDay]">
-            <p class="meal">
+            <p class="meal" day="{{ weekDay }}">
                 <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
                 <span ng-bind-html="meal.name | mealRow"></span>
             </p>

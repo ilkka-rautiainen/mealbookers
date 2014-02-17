@@ -11,11 +11,6 @@ body {
     cursor: pointer;
 }
 
-.restricted_height {
-    max-height: 200px;
-    overflow: hidden;
-}
-
 .expand_button {
     position: absolute;
     top: 0px;
@@ -35,7 +30,6 @@ body {
     -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
     -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
     box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-    margin-bottom: 20px;
 }
 
 .navbar-inverse {
@@ -57,12 +51,9 @@ body {
 .restaurant-thumbnail .meal-divider {
     margin: 2px 0 2px 0;
 }
-.menu_outer {
-    position: relative;
-}
 
-.menu {
-    position: relative;
+.restaurant-row {
+    margin-bottom: 20px;
 }
 
 .navbar-nav {

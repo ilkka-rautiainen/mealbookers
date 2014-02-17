@@ -21,6 +21,7 @@ angular.module('Mealbookers.localization', [])
             localize.resourceFileLoaded = true;
             // broadcast that the file has been loaded
             $rootScope.$broadcast('localizeResourcesUpdates');
+            $rootScope.loaded.lang = true;
         },
 
         initLocalizedResources: function () {

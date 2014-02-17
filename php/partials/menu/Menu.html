@@ -4,10 +4,7 @@
 <div class="container"><hr class="featurette-divider"></div>
 
 <div id="menuContainer" class="container">
-	<div class="row">
-		<div class="menu_outer" ng-repeat="restaurant in restaurants">
-			<restaurant restaurant="restaurant" week-day="weekDay"></restaurant>
-			<div class="clearfix visible-sm" ng-if="$index % 2 == 1"></div>
-		</div>
+	<div class="row restaurant-row" ng-repeat="restaurantRow in restaurantRows">
+		<restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess" restaurants-emptied="restaurantsEmptied"></restaurant>
 	</div>
 </div>

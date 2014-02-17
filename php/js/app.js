@@ -33,6 +33,41 @@ angular.module('Mealbookers', [
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
     $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
-    $rootScope.windowWidth = $($window).width();
-    console.log($rootScope.windowWidth);
+    $rootScope.loaded = {
+        restaurants: false,
+        lang: false,
+        all: false
+    };
+
+    $rootScope.$watch('loaded', function(newValue) {
+        if (newValue.restaurants && newValue.lang)
+            $rootScope.loaded.all = true;
+    }, true);
+
+    $rootScope.pageReady = function() {
+        return !$rootScope.$$phase && $rootScope.loaded.all;
+    };
+
+    var setWidthClass = function() {
+        $rootScope.windowWidth = $($window).width();
+        if ($rootScope.windowWidth >= 1200) {
+            $rootScope.widthClass = "lg";
+            $rootScope.columns = 4;
+        }
+        else if ($rootScope.windowWidth >= 992) {
+            $rootScope.widthClass = "md";
+            $rootScope.columns = 4;
+        }
+        else if ($rootScope.windowWidth >= 768) {
+            $rootScope.widthClass = "sm";
+            $rootScope.columns = 2;
+        }
+        else {
+            $rootScope.widthClass = "xs";
+            $rootScope.columns = 1;
+        }
+    }
+
+    setWidthClass();
+    $($window).bind('resize', setWidthClass);
 }]);
