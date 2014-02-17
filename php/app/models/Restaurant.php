@@ -4,6 +4,7 @@ class Restaurant
 {
     public $id;
     public $name;
+    public $link;
     public $mealList;
 
     public function fetch($id)
@@ -14,6 +15,7 @@ class Restaurant
         $row = DB::inst()->fetchAssoc($result);
         $this->id = $row['id'];
         $this->name = $row['name'];
+        $this->link = $row['link'];
         if (!$this->id)
             throw new Exception("Error fetching restaurant: id is null");
     }
@@ -22,6 +24,7 @@ class Restaurant
     {
         $this->id = $row['id'];
         $this->name = $row['name'];
+        $this->link = $row['link'];
     }
 
     public function fetchMealList($lang)
@@ -56,6 +59,7 @@ class Restaurant
         return array(
             'id' => $this->id,
             'name' => $this->name,
+            'link' => $this->link,
             'mealList' => $this->mealList->getAsArray(),
         );
     }
