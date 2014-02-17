@@ -23,7 +23,7 @@ class RestaurantFactory
     public function getAllRestaurants()
     {
         $restaurants = array();
-        $result = DB::inst()->query("SELECT * FROM restaurants");
+        $result = DB::inst()->query("SELECT * FROM restaurants ORDER BY name ASC");
         while ($row = DB::inst()->fetchAssoc($result)) {
             $restaurant = new Restaurant();
             $restaurant->populate($row);
