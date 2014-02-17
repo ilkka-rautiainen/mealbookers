@@ -34,7 +34,9 @@ angular.module('Mealbookers.controllers', [])
 
     $rootScope.title = "Menu";
     $scope.restaurants = new Array();
+    $scope.restaurantRows = [];
     var restaurants = Restaurants.query(null, function() {
+        $scope.restaurants = restaurants;
         $scope.restaurantRows = new Array(Math.ceil(restaurants.length / $rootScope.columns));
         for (var i = 0; i < $scope.restaurantRows.length; i++)
             $scope.restaurantRows[i] = [];
@@ -43,7 +45,7 @@ angular.module('Mealbookers.controllers', [])
         $rootScope.loaded.restaurants = true;
     });
 
-    $scope.$watch('weekDay', function(newValue) {
+    var waitForHeights = function() {
         $(".restaurant-thumbnail").css("min-height", 0);
         var interval = setInterval(function() {
             if ($rootScope.pageReady()) {
@@ -51,25 +53,28 @@ angular.module('Mealbookers.controllers', [])
                 unifyHeights();
             }
         }, 10);
-    });
+    };
 
-    function unifyHeights() {
-        var maxHeight = 0;
-        $('.restaurant-row').find('.restaurant .restaurant-thumbnail').each(function() {
-            var height = $(this).outerHeight();
-            // alert(height);
-            if ( height > maxHeight ) {
-                maxHeight = height;
-            }
+    $scope.$watch('weekDay', waitForHeights);
+
+    var unifyHeights = function() {
+        $('.restaurant-row').each(function(idx, el) {
+            var maxHeight = 0;
+            $(el).find('.restaurant .restaurant-thumbnail').each(function(idx2, el2) {
+                var height = $(el2).outerHeight();
+                if (height > maxHeight)
+                    maxHeight = height;
+            });
+            $(el).find('.restaurant .restaurant-thumbnail').css('min-height', maxHeight);
         });
-        $('.restaurant-row').find('.restaurant .restaurant-thumbnail').css('min-height', maxHeight);
-    }
+    };
 
-    // $scope.$watch('weekDay', function() {
-    //     $(".restaurant-thumbnail").css("min-height", 0);
-    //     // $scope.$evalAsync(function() {
-    //     //     console.log("emptied");
-    //     //     $scope.restaurantsEmptied = true;
-    //     // });
-    // });
+    $rootScope.$watch('widthClass', function() {
+        $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
+        for (var i = 0; i < $scope.restaurantRows.length; i++)
+            $scope.restaurantRows[i] = [];
+        for (var i = 0; i < $scope.restaurants.length; i++)
+            $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
+        waitForHeights();
+    });
 }])

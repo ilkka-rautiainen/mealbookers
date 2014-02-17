@@ -49,23 +49,25 @@ angular.module('Mealbookers', [
     };
 
     var setWidthClass = function() {
-        $rootScope.windowWidth = $($window).width();
-        if ($rootScope.windowWidth >= 1200) {
-            $rootScope.widthClass = "lg";
-            $rootScope.columns = 4;
-        }
-        else if ($rootScope.windowWidth >= 992) {
-            $rootScope.widthClass = "md";
-            $rootScope.columns = 4;
-        }
-        else if ($rootScope.windowWidth >= 768) {
-            $rootScope.widthClass = "sm";
-            $rootScope.columns = 2;
-        }
-        else {
-            $rootScope.widthClass = "xs";
-            $rootScope.columns = 1;
-        }
+        $rootScope.$apply(function() {
+            $rootScope.windowWidth = $window.outerWidth;
+            if ($rootScope.windowWidth >= 1200) {
+                $rootScope.widthClass = "lg";
+                $rootScope.columns = 4;
+            }
+            else if ($rootScope.windowWidth >= 992) {
+                $rootScope.widthClass = "md";
+                $rootScope.columns = 4;
+            }
+            else if ($rootScope.windowWidth >= 768) {
+                $rootScope.widthClass = "sm";
+                $rootScope.columns = 2;
+            }
+            else {
+                $rootScope.widthClass = "xs";
+                $rootScope.columns = 1;
+            }
+        });
     }
 
     setWidthClass();
