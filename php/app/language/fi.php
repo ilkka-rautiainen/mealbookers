@@ -85,4 +85,12 @@ $GLOBALS['language']['fi'] = array(
         'key' => 'register_full_name',
         'value' => 'Koko nimi'
     ),
+    array(
+        'key' => 'suggest_eating_time',
+        'value' => 'Ehdota aikaa'
+    ),
+    array(
+        'key' => 'suggest',
+        'value' => 'Ehdota'
+    ),
 );

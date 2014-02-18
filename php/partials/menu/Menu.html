@@ -8,3 +8,21 @@
 		<restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess" restaurants-emptied="restaurantsEmptied"></restaurant>
 	</div>
 </div>
+
+<!-- Suggestion Modal -->
+<div class="modal fade" id="suggestionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ 'suggest_eating_time' | i18n }}</h4>
+            </div>
+            <div class="modal-body">
+                Ehoota aekaa
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'close' | i18n }}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

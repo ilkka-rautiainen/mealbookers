@@ -52,7 +52,7 @@ angular.module('Mealbookers.localization', [])
             if ((localize.dictionary !== []) && (localize.dictionary.length > 0)) {
                 // use the filter service to only return those entries which match the value
                 // and only take the first result
-                var entry = $filter('filter')(localize.dictionary, {key:value})[0];
+                var entry = $filter('filter')(localize.dictionary, {key:value}, true)[0];
                 // check to make sure we have a valid entry
                 if ((entry !== null) && (entry != undefined)) {
                     // set the result

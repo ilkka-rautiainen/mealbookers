@@ -85,4 +85,12 @@ $GLOBALS['language']['en'] = array(
         'key' => 'register_full_name',
         'value' => 'Full name'
     ),
+    array(
+        'key' => 'suggest_eating_time',
+        'value' => 'Suggest eating time'
+    ),
+    array(
+        'key' => 'suggest',
+        'value' => 'Suggest'
+    ),
 );

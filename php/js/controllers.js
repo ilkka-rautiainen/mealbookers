@@ -30,11 +30,15 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', 'Restaurants', function($scope, $rootScope, $window, Restaurants) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$state', 'Restaurants', function($scope, $rootScope, $window, $state, Restaurants) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = new Array();
     $scope.restaurantRows = [];
+
+    /**
+     * Load restaurants
+     */
     var restaurants = Restaurants.query(null, function() {
         $scope.restaurants = restaurants;
         $scope.restaurantRows = new Array(Math.ceil(restaurants.length / $rootScope.columns));
@@ -45,6 +49,9 @@ angular.module('Mealbookers.controllers', [])
         $rootScope.loaded.restaurants = true;
     });
 
+    /**
+     * Make boxes even
+     */
     var waitForHeights = function() {
         $(".restaurant-thumbnail").css("min-height", 0);
         var interval = setInterval(function() {
@@ -77,4 +84,11 @@ angular.module('Mealbookers.controllers', [])
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
         waitForHeights();
     });
+
+    /**
+     * Suggest a restaurant and time
+     */
+    $scope.suggest = function(restaurant) {
+        $("#suggestionModal").modal();
+    };
 }])

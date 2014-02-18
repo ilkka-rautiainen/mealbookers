@@ -26,7 +26,7 @@ angular.module('Mealbookers', [
         url: "/menu",
         templateUrl: "partials/menu/Menu.html",
         controller: 'MenuController'
-    });
+    })
 
     $urlRouterProvider.otherwise("/app/menu");
 }])
