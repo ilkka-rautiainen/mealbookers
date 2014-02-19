@@ -1,6 +1,7 @@
 body {
     padding-top: 50px;
     font-family: OpenSans;
+    background-color: #f5f8ff;
 }
 
 .starter-template {
@@ -20,18 +21,12 @@ body {
     font-size: 17pt;
 }
 
-.navbar-inverse {
-    background-image: none;
-    background-color: whitesmoke;
-    border-bottom: 1px solid gray;
+.navbar {
+    background-color: #D6E2FF;
 }
 
 .navbar-nav {
     cursor: pointer;
-}
-
-#content, html {
-    background-color: whitesmoke;
 }
 
 @font-face
@@ -79,6 +74,13 @@ body {
     -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
     -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
     box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    background-image: -ms-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -moz-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -o-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
+    background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+ 
 }
 
 @media all and (max-width: 768px) {
@@ -94,9 +96,14 @@ body {
 .restaurant-thumbnail h3.restaurant-name {
     margin: 0 0 5px 0;
     font-family: Aclonica;
+    color: #011850;
 }
 
 .navbar-brand, .page-header {
+    font-family: Aclonica;
+}
+
+.modal-header * {
     font-family: Aclonica;
 }
 
@@ -107,6 +114,7 @@ body {
 
 .restaurant-thumbnail .meal-divider {
     margin: 2px 0 2px 0;
+    border-color: #9CB9FF;
 }
 
 .restaurant-thumbnail .meal {
@@ -139,4 +147,9 @@ span.line-break {
     font-family: OpenSansBold;
     display: block;
     /*text-decoration: underline;*/
+}
+
+/* This repairs blue border in modals */
+.modal-open .modal,.btn:focus{
+    outline:none!important
 }

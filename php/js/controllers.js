@@ -22,7 +22,14 @@ angular.module('Mealbookers.controllers', [])
         $location.search();
         $location.search({day: num + 1});
         $scope.weekDay = num;
+        $scope.hideNavbarCollapse();
     };
+
+    $scope.hideNavbarCollapse = function() {
+        if ($('.navbar-toggle').css('display') != 'none') {
+            $(".navbar-toggle").trigger("click");
+        }
+    }
 
     var locationDay = $location.search().day;
     if (typeof locationDay != 'undefined' && locationDay > $scope.today && locationDay <= maxDay)

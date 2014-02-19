@@ -14,13 +14,13 @@
 			<ul class="nav navbar-nav">
 				<li ng-class="{active: weekDay == today}" ng-click="changeDay(today)"><a>{{ 'today' | i18n }}</a></li>
 				<li ng-if="tomorrow <= 6" ng-class="{active: weekDay == tomorrow}" ng-click="changeDay(tomorrow)"><a>{{ 'tomorrow' | i18n }}</a></li>
-				<li ng-repeat="day in remainingDays" ng-click="changeDay(day)" ng-class="{active: weekDay == day}" >
+				<li ng-repeat="day in remainingDays" ng-click="changeDay(day)" ng-class="{active: weekDay == day, 'hidden-sm': $index >= 1}">
 					<a>{{ 'weekday_' + day | i18n }}</a>
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#" data-toggle="modal" data-target="#logInModal">Kirjaudu Sisään</a></li>
-				<li><a href="#" data-toggle="modal" data-target="#registerModal">Rekisteröidy</a></li>
+				<li><a href="#" data-toggle="modal" data-target="#logInModal" ng-click="hideNavbarCollapse()">{{ 'log_in' | i18n}}</a></li>
+				<li><a href="#" data-toggle="modal" data-target="#registerModal" ng-click="hideNavbarCollapse()">{{ 'register' | i18n}}</a></li>
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div>
