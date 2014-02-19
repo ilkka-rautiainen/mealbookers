@@ -1,7 +1,9 @@
 <div class="container">
-	<h1 class="col-md-12 col-sm-12">{{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n }}</h1>
+	<div class="col-md-12 col-sm-12 page-header">
+        {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
+    </div>
 </div>
-<div class="container"><hr class="featurette-divider"></div>
+<!-- <div class="container"><hr class="featurette-divider"></div> -->
 
 <div id="menuContainer" class="container">
 	<div class="row restaurant-row" ng-repeat="restaurantRow in restaurantRows">

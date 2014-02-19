@@ -1,5 +1,6 @@
 body {
     padding-top: 50px;
+    font-family: OpenSans;
 }
 
 .starter-template {
@@ -33,6 +34,28 @@ body {
     background-color: whitesmoke;
 }
 
+@font-face
+{
+    font-family: OpenSans;
+    src: url(../fonts/OpenSans-Regular.ttf);
+}
+
+@font-face
+{
+    font-family: OpenSansBold;
+    src: url(../fonts/OpenSans-Bold.ttf);
+}
+
+@font-face
+{
+    font-family: Aclonica;
+    src: url(../fonts/Aclonica.ttf);
+}
+
+.featurette-divider {
+    margin: 5px 0 5px 0;
+}
+
 .restaurant-row:before, .restaurant-row:after {
     content: none;
 }
@@ -60,6 +83,16 @@ body {
 
 .restaurant-thumbnail h3.restaurant-name {
     margin: 0 0 5px 0;
+    font-family: Aclonica;
+}
+
+.navbar-brand, .page-header {
+    font-family: Aclonica;
+}
+
+.page-header {
+    text-align: center;
+    font-size: 30px;
 }
 
 .restaurant-thumbnail .meal-divider {
@@ -93,7 +126,7 @@ span.line-break {
 }
 
 .meal-section {
-    font-weight: bold;
+    font-family: OpenSansBold;
     display: block;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
 }
