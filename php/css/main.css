@@ -19,11 +19,37 @@ body {
     font-size: 17pt;
 }
 
+.navbar-inverse {
+    background-image: none;
+    background-color: whitesmoke;
+    border-bottom: 1px solid gray;
+}
+
+.navbar-nav {
+    cursor: pointer;
+}
+
 #content, html {
     background-color: whitesmoke;
 }
 
-.restaurant-thumbnail {
+.restaurant-row:before, .restaurant-row:after {
+    content: none;
+}
+
+.restaurant-row {
+    display: table;
+    border-spacing: 20px;
+    margin: 0 -20px -20px 0;
+    width: 100%;
+}
+
+.restaurant, .restaurant-placeholder {
+    display: table-cell;
+    float: none;
+}
+
+.restaurant {
     padding: 10px;
     background-color: white;
     border-radius: 7px;
@@ -32,32 +58,16 @@ body {
     box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
 }
 
-.navbar-inverse {
-    background-image: none;
-    background-color: whitesmoke;
-    border-bottom: 1px solid gray;
-}
-
 .restaurant-thumbnail h3.restaurant-name {
     margin: 0 0 5px 0;
-}
-
-.restaurant-thumbnail p {
-    font-family: Verdana;
-    font-size: 11px;
-    margin: 0 0 3px 0;
 }
 
 .restaurant-thumbnail .meal-divider {
     margin: 2px 0 2px 0;
 }
 
-.restaurant-row {
-    margin-bottom: 20px;
-}
-
-.navbar-nav {
-    cursor: pointer;
+.restaurant-thumbnail .meal {
+    margin: 2px 0 2px 0;
 }
 
 span.attribute-group {

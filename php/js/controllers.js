@@ -49,40 +49,12 @@ angular.module('Mealbookers.controllers', [])
         $rootScope.loaded.restaurants = true;
     });
 
-    /**
-     * Make boxes even
-     */
-    var waitForHeights = function() {
-        $(".restaurant-thumbnail").css("min-height", 0);
-        var interval = setInterval(function() {
-            if ($rootScope.pageReady()) {
-                clearInterval(interval);
-                unifyHeights();
-            }
-        }, 10);
-    };
-
-    $scope.$watch('weekDay', waitForHeights);
-
-    var unifyHeights = function() {
-        $('.restaurant-row').each(function(idx, el) {
-            var maxHeight = 0;
-            $(el).find('.restaurant .restaurant-thumbnail').each(function(idx2, el2) {
-                var height = $(el2).outerHeight();
-                if (height > maxHeight)
-                    maxHeight = height;
-            });
-            $(el).find('.restaurant .restaurant-thumbnail').css('min-height', maxHeight);
-        });
-    };
-
     $rootScope.$watch('widthClass', function() {
         $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
         for (var i = 0; i < $scope.restaurantRows.length; i++)
             $scope.restaurantRows[i] = [];
         for (var i = 0; i < $scope.restaurants.length; i++)
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
-        waitForHeights();
     });
 
     /**

@@ -1,12 +1,10 @@
-<div class="restaurant col-md-3 col-sm-6">
+<div class="col-md-3 col-sm-6 restaurant">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <h3 class="restaurant-name" style="text-align: center;"><a href="{{ restaurant.link }}" target="_blank">{{ restaurant.name }}</a></h3>
         <button ng-click="suggest(restaurant)">{{ 'suggest' | i18n }}</button>
         <div ng-repeat="meal in restaurant.mealList[weekDay]">
-            <p class="meal" day="{{ weekDay }}">
-                <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
-                <span ng-bind-html="meal.name | mealRow"></span>
-            </p>
+            <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
+            <span ng-bind-html="meal.name | mealRow"></span>
             <hr ng-if="$index < restaurant.mealList[weekDay].length - 1" class="featurette-divider meal-divider">
         </div>
     </div>

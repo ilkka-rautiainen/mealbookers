@@ -15,7 +15,14 @@ angular.module('Mealbookers.directives', [])
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: 'partials/directives/restaurant.html',
-        controller: function($scope, $element) { }
+        templateUrl: 'partials/directives/restaurant.html'
+    };
+})
+
+.directive('restaurantPlaceHolder', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        template: '<div class="col-md-3 col-sm-6 restaurant-placeholder"></div>'
     };
 })
