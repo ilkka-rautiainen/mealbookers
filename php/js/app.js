@@ -50,7 +50,7 @@ angular.module('Mealbookers', [
 
     var setWidthClass = function() {
         $rootScope.$apply(function() {
-            $rootScope.windowWidth = $window.outerWidth;
+            $rootScope.windowWidth = $window.innerWidth;
             if ($rootScope.windowWidth >= 1200) {
                 $rootScope.widthClass = "lg";
                 $rootScope.columns = 4;

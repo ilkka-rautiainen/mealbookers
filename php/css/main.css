@@ -81,6 +81,16 @@ body {
     box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
 }
 
+@media all and (max-width: 768px) {
+    #menuContainer {
+        padding: 0px;
+    }
+
+    .restaurant-row {
+        border-spacing: 5px 20px;
+    }
+}
+
 .restaurant-thumbnail h3.restaurant-name {
     margin: 0 0 5px 0;
     font-family: Aclonica;
