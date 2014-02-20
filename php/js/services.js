@@ -11,3 +11,9 @@ services.factory('Restaurants', ['$resource', '$rootScope', function($resource, 
           query: {method:'GET', params:{lang: $rootScope.userLang}, isArray:true}
         });
 }]);
+
+services.factory('Suggestion', ['$resource', '$rootScope', function($resource, $rootScope) {
+    return $resource('api/1.0/restaurants/:restaurantId/suggestions/:suggestionId', {}, {
+          query: {method:'GET', params:{restaurantId: '@id', suggestionId: '@id'}, isArray:true}
+        });
+}]);

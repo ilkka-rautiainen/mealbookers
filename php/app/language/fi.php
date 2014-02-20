@@ -78,6 +78,10 @@ $GLOBALS['language']['fi'] = array(
         'value' => 'Sulje'
     ),
     array(
+        'key' => 'cancel',
+        'value' => 'Peruuta'
+    ),
+    array(
         'key' => 'register',
         'value' => 'Rekisteröidy'
     ),
@@ -92,5 +96,17 @@ $GLOBALS['language']['fi'] = array(
     array(
         'key' => 'suggest',
         'value' => 'Ehdota'
+    ),
+    array(
+        'key' => 'suggest_time',
+        'value' => 'Aika'
+    ),
+    array(
+        'key' => 'suggest_time_placeholder',
+        'value' => 'hh:mm'
+    ),
+    array(
+        'key' => 'suggest_friends',
+        'value' => 'Ehdota kavereille'
     ),
 );

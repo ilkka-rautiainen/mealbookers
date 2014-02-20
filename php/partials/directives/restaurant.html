@@ -1,6 +1,9 @@
 <div class="col-md-3 col-sm-6 restaurant" ng-hide="!restaurant.mealList[weekDay].length">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
+        <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}">
+            <i class="glyphicon glyphicon-plus"></i>
+        </div>
         <!-- <button ng-click="suggest(restaurant)">{{ 'suggest' | i18n }}</button> -->
         <div ng-repeat="meal in restaurant.mealList[weekDay]">
             <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>

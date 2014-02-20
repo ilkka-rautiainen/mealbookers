@@ -78,6 +78,10 @@ $GLOBALS['language']['en'] = array(
         'value' => 'close'
     ),
     array(
+        'key' => 'cancel',
+        'value' => 'Cancel'
+    ),
+    array(
         'key' => 'register',
         'value' => 'Register'
     ),
@@ -92,5 +96,17 @@ $GLOBALS['language']['en'] = array(
     array(
         'key' => 'suggest',
         'value' => 'Suggest'
+    ),
+    array(
+        'key' => 'suggest_time',
+        'value' => 'Time'
+    ),
+    array(
+        'key' => 'suggest_time_placeholder',
+        'value' => 'tt:mm'
+    ),
+    array(
+        'key' => 'suggest_friends',
+        'value' => 'Suggest to friends'
     ),
 );
