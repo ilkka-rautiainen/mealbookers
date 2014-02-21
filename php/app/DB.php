@@ -79,6 +79,19 @@ class DB
     {
         return $result->fetch_assoc();
     }
+    
+    /**
+     * Fetches the first field from the result array
+     * @param $result got from query()
+     */
+    public function fetchFirstField($result)
+    {
+        $array = $result->fetch_row();
+        if (!isset($array[0]))
+            return null;
+        else
+            return $array[0];
+    }
 
     /**
      * Returns the last inserted id

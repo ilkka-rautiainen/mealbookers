@@ -5,7 +5,7 @@
 require __DIR__ . '/config.php';
 require __DIR__ . '/language/include.php';
 require_once __DIR__ . '/lib/phpQuery.php';
-function __autoload($name)
+function classLoader($name)
 {
     if (file_exists(__DIR__ . "/$name.php"))
         require_once __DIR__ . "/$name.php";
@@ -16,5 +16,6 @@ function __autoload($name)
 	else if (file_exists(__DIR__ . "/exceptions/$name.php"))
 		require_once __DIR__ . "/exceptions/$name.php";
 }
+spl_autoload_register('classLoader');
 Logger::info(__METHOD__ . " ## Start execution");
 DB::inst();

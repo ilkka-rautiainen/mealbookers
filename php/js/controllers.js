@@ -43,7 +43,7 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$state', 'Restaurants', function($scope, $rootScope, $window, $state, Restaurants) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$state', 'Restaurants', 'CurrentUser', 'Suggestions', function($scope, $rootScope, $window, $state, Restaurants, CurrentUser, Suggestions) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = new Array();
@@ -73,55 +73,18 @@ angular.module('Mealbookers.controllers', [])
     });
 
     /**
+     * Load user's groups
+     */
+    $scope.groups = CurrentUser.get({action: 'groups'});
+
+    /**
      * Suggest a restaurant and time
      */
     $scope.openSuggestion = function(restaurant) {
         $scope.suggestRestaurant = restaurant;
         $scope.suggestTime = "";
-        $scope.groups = [{
-            id: 0,
-            name: "Group 1",
-            members: [{
-                id: 0,
-                name: "Ilkka Rautiainen",
-                firstName: "Ilkka",
-                initials: "IR"
-            },
-            {
-                id: 1,
-                name: "Simo Haakana",
-                firstName: "Simo",
-                initials: "SH"
-            },
-            {
-                id: 2,
-                name: "Patrick Patoila",
-                firstName: "Patrick",
-                initials: "PP"
-            }]
-        },
-        {
-            id: 1,
-            name: "Group 2",
-            members: [{
-                id: 3,
-                name: "Casper Lassenius",
-                firstName: "Casper",
-                initials: "CL"
-            },
-            {
-                id: 4,
-                name: "Jukka Parviainen",
-                firstName: "Jukka",
-                initials: "JP"
-            },
-            {
-                id: 5,
-                name: "Jari Kurri",
-                firstName: "Jari",
-                initials: "JK"
-            }]
-        }];
+        $("#suggestionModal .group").removeClass("group-selected");
+        $("#suggestionModal .member").removeClass("member-selected");
         $("#suggestionModal").modal();
     };
 
@@ -143,22 +106,18 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.suggest = function() {
-        // var restaurants = Suggestion.post({
-        //     restaurantId: $scope.suggestRestaurant.id,
-        //     time: $scope.suggestTime
-        // }, function() {
-
-        // });
-        // var suggestion = $resource('api/1.0/restaurant/:restaurantId/suggestion', {}, {
-        //     query: {
-        //         method: 'POST',
-        //         params: {
-        //             restaurantId: $scope.suggestRestaurant.id,
-        //             time: $scope.suggestTime
-        //         },
-        //         isArray: true
-        //     }
-        // });
+        var data = {
+            time: $scope.suggestTime,
+            suggestion: "Syömään!"
+        };
+        var suggestions = Suggestions;
+        suggestions.time = $scope.suggestTime;
+        suggestions.suggestion = "Syömään";
+        var response = suggestions.post({
+            restaurantId: $scope.suggestRestaurant.id
+        }, function() {
+            console.log(response);
+        });
     };
 
     /**

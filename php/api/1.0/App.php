@@ -1,7 +1,9 @@
 <?php
-use Luracast\Restler\RestException;
 
-class App
+Flight::route('GET /app/log/@passphrase(/@rows)', array('AppAPI', 'getLog'));
+Flight::route('GET /app/language(/@lang)', array('AppAPI', 'getLanguage'));
+
+class AppAPI
 {
     /**
      * @url GET log/{passphrase}
@@ -19,7 +21,7 @@ class App
 
         $filename = "../../app/" . $config['log']['file'];
 
-        return array_reverse(array_slice(array_reverse(file($filename)), 0, $rows));
+        print json_encode(array_reverse(array_slice(array_reverse(file($filename)), 0, $rows)));
     }
 
 	/**
@@ -31,8 +33,8 @@ class App
         Logger::debug(__METHOD__ . " GET /app/language/$lang called");
 
         if (isset($language[$lang]))
-            return $language[$lang];
+            print json_encode($language[$lang]);
         else
-            return $language['en'];
+            print json_encode($language['en']);
 	}
 }

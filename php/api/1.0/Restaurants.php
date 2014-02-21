@@ -1,10 +1,12 @@
 <?php
-use Luracast\Restler\RestException;
 
-class Restaurants
+Flight::route('GET /restaurants(/@lang)', array('RestaurantsAPI', 'get'));
+Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'postSuggestions'));
+
+class RestaurantsAPI
 {
 	/**
-	 * Listens to /restaurants
+	 * Get list of restaurants to the main menu UI
 	 */
 	function get($lang = 'en')
 	{
@@ -19,6 +21,16 @@ class Restaurants
             $restaurant->fetchMealList($lang);
             $result[] = $restaurant->getAsArray();
         }
-        return $result;
+        print json_encode($result);
 	}
+
+    /**
+     * Make or update a suggestion
+     */
+    function postSuggestions($restaurantId) {
+        $data = getPostData();
+
+        print json_encode($data);
+        // print json_encode("ok");
+    }
 }

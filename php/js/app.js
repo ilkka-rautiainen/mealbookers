@@ -32,7 +32,12 @@ angular.module('Mealbookers', [
 }])
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
+
+    /**
+     * Load user
+     */
     $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
+
     $rootScope.loaded = {
         restaurants: false,
         lang: false,
