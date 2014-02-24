@@ -14,7 +14,7 @@
 			<ul class="nav navbar-nav">
 				<li ng-class="{active: weekDay == today}" ng-click="changeDay(today, true)"><a>{{ 'today' | i18n }}</a></li>
 				<li ng-if="tomorrow <= 6" ng-class="{active: weekDay == tomorrow}" ng-click="changeDay(tomorrow, true)"><a>{{ 'tomorrow' | i18n }}</a></li>
-				<li ng-repeat="day in remainingDays" ng-click="changeDay(day, true)" ng-class="{active: weekDay == day, 'hidden-sm': $index >= 1}">
+				<li ng-repeat="day in remainingDays" ng-click="changeDay(day, true)" ng-class="{active: weekDay == day, 'hidden-sm': $index >= 1, 'hidden-md': $index >= 3}">
 					<a>{{ 'weekday_' + day | i18n }}</a>
 				</li>
 			</ul>
