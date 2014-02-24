@@ -70,11 +70,12 @@ class Restaurant
         for ($i=0; $i<7; $i++) {
             $time = strtotime("+$i days", $startTime);
             $result = DB::inst()->query("SELECT * FROM suggestions
-                WHERE DATE(datetime) = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id}");
+                WHERE DATE(datetime) = '" . date("Y-m-d", $time) . "' AND
+                restaurant_id = {$this->id}");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();
-                $suggestion->populate($row);
+                $suggestion->populateFromRow($row);
                 $suggestionList->addSuggestion($i, $suggestion);
             }
         }

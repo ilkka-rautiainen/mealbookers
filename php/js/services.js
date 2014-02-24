@@ -13,8 +13,7 @@ services.factory('Restaurants', ['$resource', '$rootScope', function($resource, 
 }]);
 
 services.factory('Suggestions', ['$resource', '$rootScope', function($resource, $rootScope) {
-    return $resource('api/1.0/restaurants/:restaurantId/suggestions/:suggestionId', {}, {
-          get: {method: 'GET', params: {restaurantId: '@restaurantId', suggestionId: '@suggestionId'}, isArray:true},
+    return $resource('api/1.0/restaurants/:restaurantId/suggestions', {}, {
           post: {method: 'POST', params: {restaurantId: '@restaurantId'}}
         });
 }]);

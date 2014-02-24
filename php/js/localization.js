@@ -15,7 +15,7 @@ angular.module('Mealbookers.localization', [])
         resourceFileLoaded: false,
 
         successCallback: function (data) {
-            // store the returned array in the dictionary
+            // store the returned object in the dictionary
             localize.dictionary = data;
             // set the flag that the resource are loaded
             localize.resourceFileLoaded = true;
@@ -48,15 +48,15 @@ angular.module('Mealbookers.localization', [])
                 // return the empty string
                 return result;
             }
-            // amke sure the dictionary has valid data
-            if ((localize.dictionary !== []) && (localize.dictionary.length > 0)) {
+            // make sure the dictionary has valid data
+            if (typeof localize.dictionary == 'object') {
                 // use the filter service to only return those entries which match the value
                 // and only take the first result
-                var entry = $filter('filter')(localize.dictionary, {key:value}, true)[0];
+                var entry = localize.dictionary[value];
                 // check to make sure we have a valid entry
                 if ((entry !== null) && (entry != undefined)) {
                     // set the result
-                    result = entry.value;
+                    result = entry;
                 }
             }
             // return the value to the call

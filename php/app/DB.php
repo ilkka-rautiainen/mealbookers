@@ -72,12 +72,21 @@ class DB
     }
     
     /**
-     * Fetches the query result as array
+     * Fetches the query result as an associative array
      * @param $result got from query()
      */
     public function fetchAssoc($result)
     {
         return $result->fetch_assoc();
+    }
+    
+    /**
+     * Fetches the query result as numerically indexed array
+     * @param $result got from query()
+     */
+    public function fetchRow($result)
+    {
+        return $result->fetch_row();
     }
     
     /**
@@ -149,6 +158,24 @@ class DB
     public function quote($string)
     {
         return $this->connection->escape_string($string);
+    }
+
+    /**
+     * Resets the db
+     */
+    public function resetDB()
+    {
+        global $config;
+        Logger::note(__METHOD__ . " resetting db");
+        if (!$config['developerMode'])
+            throw new Exception("Operation permitted only in developer mode");
+
+        $this->query("SET foreign_key_checks = 0");
+        $result = $this->query("SHOW TABLES");
+        while ($row = $this->fetchRow($result)) {
+            $this->query("DROP TABLE `" . $row[0] . "`");
+        }
+        $this->query("SET foreign_key_checks = 1");
     }
 
     /**

@@ -1,116 +1,35 @@
 <?php
 
 $GLOBALS['language']['fi'] = array(
-    array(
-        'key' => 'cafe',
-        'value' => 'Kahvila'
-    ),
-    array(
-        'key' => 'alacarte',
-        'value' => 'À la carte'
-    ),
-    array(
-        'key' => 'bistro',
-        'value' => 'Bistro'
-    ),
-    array(
-        'key' => 'tune_own_burger',
-        'value' => 'Tuunaa oma hampurilaisesi'
-    ),
-    array(
-        'key' => 'today',
-        'value' => 'Tänään'
-    ),
-    array(
-        'key' => 'tomorrow',
-        'value' => 'Huomenna'
-    ),
-    array(
-        'key' => 'weekday_0',
-        'value' => 'Maanantaina'
-    ),
-    array(
-        'key' => 'weekday_1',
-        'value' => 'Tiistaina'
-    ),
-    array(
-        'key' => 'weekday_2',
-        'value' => 'Keskiviikkona'
-    ),
-    array(
-        'key' => 'weekday_3',
-        'value' => 'Torstaina'
-    ),
-    array(
-        'key' => 'weekday_4',
-        'value' => 'Perjantaina'
-    ),
-    array(
-        'key' => 'weekday_5',
-        'value' => 'Lauantaina'
-    ),
-    array(
-        'key' => 'weekday_6',
-        'value' => 'Sunnuntaina'
-    ),
-    array(
-        'key' => 'in_otaniemi',
-        'value' => 'Otaniemessä'
-    ),
-    array(
-        'key' => 'log_in',
-        'value' => 'Kirjaudu sisään'
-    ),
-    array(
-        'key' => 'email',
-        'value' => 'Sähköposti'
-    ),
-    array(
-        'key' => 'password',
-        'value' => 'Salasana'
-    ),
-    array(
-        'key' => 'log_in_remember_me',
-        'value' => 'Muista minut'
-    ),
-    array(
-        'key' => 'close',
-        'value' => 'Sulje'
-    ),
-    array(
-        'key' => 'cancel',
-        'value' => 'Peruuta'
-    ),
-    array(
-        'key' => 'register',
-        'value' => 'Rekisteröidy'
-    ),
-    array(
-        'key' => 'register_full_name',
-        'value' => 'Koko nimi'
-    ),
-    array(
-        'key' => 'suggest_eating_time',
-        'value' => 'Ehdota aikaa'
-    ),
-    array(
-        'key' => 'suggest',
-        'value' => 'Ehdota'
-    ),
-    array(
-        'key' => 'suggest_time',
-        'value' => 'Aika'
-    ),
-    array(
-        'key' => 'suggest_time_placeholder',
-        'value' => 'hh:mm'
-    ),
-    array(
-        'key' => 'suggest_friends',
-        'value' => 'Ehdota kavereille'
-    ),
-    array(
-        'key' => 'suggestion_save_error',
-        'value' => 'Virhe tallennettaessa ehdotusta'
-    ),
+    'cafe' => 'Kahvila',
+    'alacarte' => 'À la carte',
+    'bistro' => 'Bistro',
+    'tune_own_burger' => 'Tuunaa oma hampurilaisesi',
+    'today' => 'Tänään',
+    'tomorrow' => 'Huomenna',
+    'weekday_0' => 'Maanantaina',
+    'weekday_1' => 'Tiistaina',
+    'weekday_2' => 'Keskiviikkona',
+    'weekday_3' => 'Torstaina',
+    'weekday_4' => 'Perjantaina',
+    'weekday_5' => 'Lauantaina',
+    'weekday_6' => 'Sunnuntaina',
+    'in_otaniemi' => 'Otaniemessä',
+    'log_in' => 'Kirjaudu sisään',
+    'email' => 'Sähköposti',
+    'password' => 'Salasana',
+    'log_in_remember_me' => 'Muista minut',
+    'close' => 'Sulje',
+    'cancel' => 'Peruuta',
+    'register' => 'Rekisteröidy',
+    'register_full_name' => 'Koko nimi',
+    'suggest_eating_time' => 'Ehdota aikaa',
+    'suggest' => 'Ehdota',
+    'suggest_time' => 'Aika',
+    'suggest_time_placeholder' => 'hh:mm',
+    'suggest_friends' => 'Ehdota kavereille',
+    'suggestion_save_error' => 'Virhe tallennettaessa ehdotusta',
+    'suggestion_too_early' => 'Et voi luoda ehdotusta 5 min kauemmaksi menneisyyteen',
+    'mailer_sender_name' => 'Mealbookers',
+    'mailer_subject' => '{suggester} haluaa mennä kanssasi syömään',
 );

@@ -24,7 +24,7 @@
                     <h4 class="modal-title">{{ 'suggest_eating_time' | i18n }} - {{ suggestRestaurant.name }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger" ng-if="suggestionError.length">{{ suggestionError }}</div>
+                    <div class="alert" ng-class="{'alert-danger': suggestionMessage.type == 'alert-danger', 'alert-warning': suggestionMessage.type == 'alert-warning'}" ng-if="suggestionMessage.message.length">{{ suggestionMessage.message }}</div>
                     <div class="form-group">
                         <label for="time">{{ 'suggest_time' | i18n }}:</label>
                         <input class="form-control suggest-time hidden-xs" ng-model="suggestTime" maxlength="5" name="time" type="tel" placeholder="{{ 'suggest_time_placeholder' | i18n }}" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
