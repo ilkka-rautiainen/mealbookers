@@ -51,7 +51,7 @@ class User
 
     public function inviteToSuggestion(Suggestion $suggestion, $hash)
     {
-        Logger::info(__METHOD__ . " POST inviting user {$this->id} to suggestion {$suggestion->id}");
+        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id}");
         global $language;
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
@@ -63,17 +63,69 @@ class User
         $mail->CharSet = 'utf-8';
         $mail->Host = 'smtp.ayy.fi';
         $mail->Mailer = 'smtp';
-        $body = "Hei,<br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
+        $body = "Hei,<br /><br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
             . " syömään ravintolaan " . $restaurant->name . "."
             . " Hän ehdottaa sinulle aikaa " . $suggestion->getTime() . "."
-            . " Hyväksy ehdotus klikkaamalla"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?hash={$hash}\">tästä</a>"
-            . "<br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti, älä vastaa siihen</small>";
+            . " <br /><br />Hyväksy ehdotus klikkaamalla"
+            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?hash={$hash}\">tästä</a>."
+            . " <br /><br />Palvelun etusivulle"
+            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu\">tästä</a>."
+            . "<br /><br />- Mealbookers<br /><br />"
+            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
         $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
         $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace('{suggester}', $creator->getName(), $language[$this->language]['mailer_subject']);
+        $mail->Subject = str_replace(
+            '{suggester}',
+            $creator->getName(),
+            $language[$this->language]['mailer_subject_suggestion']
+        );
         $mail->MsgHTML($body);
         Logger::debug(__METHOD__ . " sending invitation message to {$this->email_address}");
+        $result = $mail->Send();
+        if (!$result)
+            Logger::error(__METHOD__ . " sending failed");
+        else
+            Logger::debug(__METHOD__ . " sending succeeded");
+        return $result;
+    }
+
+    public function notifyAcceptedSuggestion(Suggestion $suggestion)
+    {
+        global $language;
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion accepted");
+
+        if (!$user_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users WHERE
+            suggestion_id = {$suggestion->id} AND accepted = 1 LIMIT 1")) {
+            Logger::error(__METHOD__ . " no accepted user found for the suggestion {$suggestion->id}");
+            return;
+        }
+        $accepter = new User();
+        $accepter->fetch($user_id);
+        $restaurant = new Restaurant();
+        $restaurant->fetch($suggestion->restaurant_id);
+
+        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
+        $mail = new PHPMailer();
+        $mail->CharSet = 'utf-8';
+        $mail->Host = 'smtp.ayy.fi';
+        $mail->Mailer = 'smtp';
+        $body = "Hei,<br /><br />" . $accepter->getName() . " on hyväksynyt ehdotuksesi mennä "
+            . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name . "."
+            . " aikaan " . $suggestion->getTime() . "."
+            . " <br /><br />Voit siirtyä palvelun etusivulle"
+            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
+            . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
+            . "<br /><br />- Mealbookers<br /><br />"
+            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
+        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->AddAddress($this->email_address, $this->getName());
+        $mail->Subject = str_replace(
+            '{accepter}',
+            $accepter->getName(),
+            $language[$this->language]['mailer_subject_suggestion_accepted']
+        );
+        $mail->MsgHTML($body);
+        Logger::debug(__METHOD__ . " sending suggestion acceptance message to {$this->email_address}");
         $result = $mail->Send();
         if (!$result)
             Logger::error(__METHOD__ . " sending failed");

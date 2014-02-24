@@ -31,5 +31,6 @@ $GLOBALS['language']['en'] = array(
     'suggestion_save_error' => 'Error while saving the suggestion',
     'suggestion_too_early' => 'You cannot make a suggestion with a time more than 5 min ago',
     'mailer_sender_name' => 'Mealbookers',
-    'mailer_subject' => '{suggester} want\'s to eat with you',
+    'mailer_subject_suggestion' => '{suggester} want\'s to eat with you',
+    'mailer_subject_suggestion_accepted' => '{accepter} has accepted your suggestion',
 );

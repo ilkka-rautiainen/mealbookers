@@ -31,5 +31,6 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_save_error' => 'Virhe tallennettaessa ehdotusta',
     'suggestion_too_early' => 'Et voi luoda ehdotusta 5 min kauemmaksi menneisyyteen',
     'mailer_sender_name' => 'Mealbookers',
-    'mailer_subject' => '{suggester} haluaa mennä kanssasi syömään',
+    'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
+    'mailer_subject_suggestion_accepted' => '{accepter} on hyväksynyt ehdotuksesi',
 );

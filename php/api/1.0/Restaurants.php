@@ -136,8 +136,17 @@ class RestaurantsAPI
         $hash = $_GET['hash'];
         if (strlen($hash) != 32)
             sendHttpError(401, "Invalid hash");
-        DB::inst()->query("UPDATE suggestions_users SET accepted = 1 WHERE hash = '"
-            . DB::inst()->quote($hash) . "' LIMIT 1");
-        print json_encode(array('status' => 'ok'));
+
+        if (!$suggestion_user = DB::inst()->getRowAssoc("SELECT * FROM suggestions_users WHERE hash = '"
+            . DB::inst()->quote($hash) . "' LIMIT 1"))
+            sendHttpError(404, "No suggestion found with given hash");
+
+        $suggestion = new Suggestion();
+        $suggestion->fetch($suggestion_user['suggestion_id']);
+        $suggestion->accept($suggestion_user['id']);
+        print json_encode(array(
+            'status' => 'ok',
+            'weekDay' => $suggestion->getWeekDay(),
+        ));
     }
 }

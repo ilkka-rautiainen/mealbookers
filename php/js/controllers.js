@@ -19,13 +19,20 @@ angular.module('Mealbookers.controllers', [])
         $scope.remainingDays.push(i);
 
     $scope.changeDay = function(num, hideNavBar) {
-        $location.search();
-        $location.search({day: num + 1});
+        var search = $location.search();
+        search.day = num + 1;
+        $location.search(search);
         $scope.weekDay = num;
         if (hideNavBar) {
             $scope.hideNavbarCollapse();
         }
     };
+
+    $scope.$watch('weekDay', function(newValue) {
+        var search = $location.search();
+        search.day = $scope.weekDay + 1;
+        $location.search(search);
+    });
 
     $scope.navigateHome = function() {
         $scope.changeDay($scope.today, true);
@@ -80,9 +87,12 @@ angular.module('Mealbookers.controllers', [])
     });
 
     if (typeof $location.search().hash != 'undefined') {
-        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function() {
+        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
             loadRestaurants();
-            $location.search({});
+            var search = $location.search();
+            delete search.hash;
+            $location.search(search);
+            $scope.weekDay = result.weekDay;
         });
     }
 
