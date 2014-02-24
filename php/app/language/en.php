@@ -109,4 +109,8 @@ $GLOBALS['language']['en'] = array(
         'key' => 'suggest_friends',
         'value' => 'Suggest to friends'
     ),
+    array(
+        'key' => 'suggestion_save_error',
+        'value' => 'Error while saving the suggestion'
+    ),
 );

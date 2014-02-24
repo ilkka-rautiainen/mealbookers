@@ -16,7 +16,7 @@ class AppAPI
         $rows = (int)$rows;
 
         if ($passphrase != "mealilogi")
-            throw new RestException(404);
+            sendHttpError(404);
         
 
         $filename = "../../app/" . $config['log']['file'];

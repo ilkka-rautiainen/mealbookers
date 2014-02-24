@@ -109,4 +109,8 @@ $GLOBALS['language']['fi'] = array(
         'key' => 'suggest_friends',
         'value' => 'Ehdota kavereille'
     ),
+    array(
+        'key' => 'suggestion_save_error',
+        'value' => 'Virhe tallennettaessa ehdotusta'
+    ),
 );

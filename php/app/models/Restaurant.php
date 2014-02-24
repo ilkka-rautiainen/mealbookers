@@ -27,6 +27,9 @@ class Restaurant
         $this->link = $row['link'];
     }
 
+    /**
+     * @todo optimize to only one query
+     */
     public function fetchMealList($lang)
     {
         global $config;
@@ -54,6 +57,30 @@ class Restaurant
         $this->mealList = $mealList;
     }
 
+
+    /**
+     * @todo optimize to only one query
+     */
+    public function fetchSuggestionList()
+    {
+        global $config;
+
+        $startTime = strtotime("last monday", strtotime("tomorrow"));
+        $suggestionList = new SuggestionList();
+        for ($i=0; $i<7; $i++) {
+            $time = strtotime("+$i days", $startTime);
+            $result = DB::inst()->query("SELECT * FROM suggestions
+                WHERE DATE(datetime) = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id}");
+
+            while ($row = DB::inst()->fetchAssoc($result)) {
+                $suggestion = new Suggestion();
+                $suggestion->populate($row);
+                $suggestionList->addSuggestion($i, $suggestion);
+            }
+        }
+        $this->suggestionList = $suggestionList;
+    }
+
     public function getAsArray()
     {
         return array(
@@ -61,6 +88,7 @@ class Restaurant
             'name' => $this->name,
             'link' => $this->link,
             'mealList' => $this->mealList->getAsArray(),
+            'suggestionList' => $this->suggestionList->getAsArray(),
         );
     }
 }

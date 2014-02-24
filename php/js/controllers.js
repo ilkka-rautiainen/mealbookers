@@ -43,13 +43,14 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$state', 'Restaurants', 'CurrentUser', 'Suggestions', function($scope, $rootScope, $window, $state, Restaurants, CurrentUser, Suggestions) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$state', '$filter', 'Restaurants', 'CurrentUser', 'Suggestions', function($scope, $rootScope, $window, $state, $filter, Restaurants, CurrentUser, Suggestions) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = new Array();
     $scope.restaurantRows = [];
     $scope.suggestTime = "";
     $scope.suggestRestaurant;
+    $scope.suggestionError = "";
 
     /**
      * Load restaurants
@@ -94,29 +95,41 @@ angular.module('Mealbookers.controllers', [])
         $("#group_" + group.id).toggleClass("group-selected");
 
         if ($("#group_" + group.id).hasClass("group-selected")) {
-            $(".group_" + group.id + "_member").addClass("member-selected");
+            $(".group_" + group.id + "_member").each(function() {
+                $(".member_" + $(this).attr("data-member-id")).addClass("member-selected");
+            });
         }
         else {
-            $(".group_" + group.id + "_member").removeClass("member-selected");
+            $(".group_" + group.id + "_member").each(function() {
+                $(".member_" + $(this).attr("data-member-id")).removeClass("member-selected");
+            });
         }
     };
 
     $scope.toggleGroupMember = function(group, member) {
-        $("#member_" + member.id).toggleClass("member-selected");
+        $(".member_" + member.id).toggleClass("member-selected");
     };
 
     $scope.suggest = function() {
-        var data = {
+        var members = {};
+        $(".group-container .member-selected").each(function(idx, el) {
+            members[$(el).attr("data-member-id")] = true;
+        });
+        var response = Suggestions.post({
+            restaurantId: $scope.suggestRestaurant.id,
+            day: $scope.weekDay,
             time: $scope.suggestTime,
-            suggestion: "Syömään!"
-        };
-        var suggestions = Suggestions;
-        suggestions.time = $scope.suggestTime;
-        suggestions.suggestion = "Syömään";
-        var response = suggestions.post({
-            restaurantId: $scope.suggestRestaurant.id
+            members: members
         }, function() {
-            console.log(response);
+            if (typeof response.status != 'undefined' && response.status == "ok") {
+                $("#closeSuggestion").trigger('click');
+            }
+            else {
+                $scope.suggestionError = $filter('i18n')('suggestion_save_error');
+            }
+        },
+        function() {
+            $scope.suggestionError = $filter('i18n')('suggestion_save_error');
         });
     };
 

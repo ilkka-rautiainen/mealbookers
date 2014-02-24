@@ -15,16 +15,21 @@ class User
         if (!DB::inst()->getRowCount())
             throw new Exception("Unable to find user with id $id");
         $row = DB::inst()->fetchAssoc($result);
+        $this->populateFromRow($row);
+        if (!$this->id)
+            throw new Exception("Error fetching user: id is null");
+    }
+
+    public function populateFromRow($row)
+    {
         $this->id = $row['id'];
         $this->email_address = $row['email_address'];
         $this->first_name = $row['first_name'];
         $this->last_name = $row['last_name'];
         $this->active = $row['active'];
-        if (!$this->id)
-            throw new Exception("Error fetching user: id is null");
     }
 
-    public function getAsMemberArray()
+    public function getAsArray()
     {
         return array(
             'id' => $this->id,

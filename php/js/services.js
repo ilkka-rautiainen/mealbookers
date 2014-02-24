@@ -20,7 +20,7 @@ services.factory('Suggestions', ['$resource', '$rootScope', function($resource, 
 }]);
 
 services.factory('CurrentUser', ['$resource', function($resource) {
-    return $resource('api/1.0/users/1/:action', {}, {
+    return $resource('api/1.0/user/:action', {}, {
           get: {method: 'GET', params: {action: '@action'}, isArray: true}
         });
 }]);
