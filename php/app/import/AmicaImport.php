@@ -189,19 +189,23 @@ class AmicaImport extends Import
     }
 
     /**
-     * Get number of the day if a day starts at the current line
+     * Get number of the day if a day starts at the current line.
+     * This function strips the day also away from the line_html string.
      * @return int if start day is found, otherwise false
      */
     private function getDayNumber(&$line_html, $lang)
     {
         foreach ($this->langs[$lang]['weekdays'] as $day_number => $weekday) {
             if (mb_stripos(trim(strip_tags($line_html)), $weekday) === 0) {
-                $strong_start = mb_stripos($line_html, "</strong>");
 
-                if ($strong_start === false)
-                    throw new ParseException("Couldn't find </strong> after weekday");
-                    
-                $line_html = trim(mb_substr($line_html, $strong_start + 9));
+                // There's most oftenly <strong> around the day
+                $strong_end = mb_stripos($line_html, "</strong>");
+                if ($strong_end !== false)
+                    $line_html = trim(mb_substr($line_html, $strong_end + 9));
+                else { // But not always
+                    $weekday_pos = mb_stripos($line_html, $weekday);
+                    $line_html = trim(substr($line_html, $weekday_pos + mb_strlen($weekday)));
+                }
                 return $day_number;
             }
         }

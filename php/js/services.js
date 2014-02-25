@@ -11,3 +11,15 @@ services.factory('Restaurants', ['$resource', '$rootScope', function($resource, 
           query: {method:'GET', params:{lang: $rootScope.userLang}, isArray:true}
         });
 }]);
+
+services.factory('Suggestions', ['$resource', '$rootScope', function($resource, $rootScope) {
+    return $resource('api/1.0/restaurants/:restaurantId/suggestions', {}, {
+          post: {method: 'POST', params: {restaurantId: '@restaurantId'}}
+        });
+}]);
+
+services.factory('CurrentUser', ['$resource', function($resource) {
+    return $resource('api/1.0/user/:action', {}, {
+          get: {method: 'GET', params: {action: '@action'}, isArray: true}
+        });
+}]);

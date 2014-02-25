@@ -1,5 +1,7 @@
 body {
     padding-top: 50px;
+    font-family: OpenSans;
+    background-color: whitesmoke;
 }
 
 .starter-template {
@@ -11,11 +13,6 @@ body {
     cursor: pointer;
 }
 
-.restricted_height {
-    max-height: 200px;
-    overflow: hidden;
-}
-
 .expand_button {
     position: absolute;
     top: 0px;
@@ -24,42 +21,209 @@ body {
     font-size: 17pt;
 }
 
-#content, html {
-    background-color: whitesmoke;
-}
-
-.restaurant-thumbnail {
-    padding: 10px;
-    background-color: white;
-    border-radius: 7px;
--webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
--moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-}
-
-.restaurant-thumbnail h3.restaurant-name {
-    margin: 0 0 5px 0;
-}
-
-.restaurant-thumbnail p {
-    font-family: Verdana;
-    font-size: 11px;
-    margin: 0 0 3px 0;
-}
-
-.restaurant-thumbnail .meal-divider {
-    margin: 2px 0 2px 0;
-}
-.menu_outer {
-    position: relative;
-}
-
-.menu {
-    position: relative;
+.navbar {
+    background-color: #D6E2FF;
 }
 
 .navbar-nav {
     cursor: pointer;
+}
+
+@font-face
+{
+    font-family: OpenSans;
+    src: url(../fonts/OpenSans-Regular.ttf);
+}
+
+@font-face
+{
+    font-family: OpenSansBold;
+    src: url(../fonts/OpenSans-Bold.ttf);
+}
+
+@font-face
+{
+    font-family: Aclonica;
+    src: url(../fonts/Aclonica.ttf);
+}
+
+.featurette-divider {
+    margin: 5px 0 5px 0;
+}
+
+.restaurant-row:before, .restaurant-row:after {
+    content: none;
+}
+
+.restaurant-row {
+    display: table;
+    border-spacing: 20px;
+    margin: 0 -20px -20px 0;
+    width: 100%;
+}
+
+.restaurant, .restaurant-placeholder {
+    display: table-cell;
+    float: none;
+}
+
+.restaurant {
+    padding: 10px;
+    background-color: white;
+    border-radius: 7px;
+    -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    background-image: -ms-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -moz-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -o-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
+    background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+}
+
+@media all and (max-width: 768px) {
+    #menuContainer {
+        padding: 0px;
+    }
+
+    .restaurant-row {
+        border-spacing: 5px 20px;
+    }
+}
+
+.restaurant-thumbnail {
+    position: relative;
+}
+
+.restaurant-thumbnail .suggestion {
+    position: absolute;
+    top: -3px;
+    right: 0px;
+    color: #011850;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.restaurant-thumbnail .suggestion:hover {
+    color: #0939AD;
+}
+
+.restaurant-thumbnail h3.restaurant-name {
+    margin: 0 0 5px 0;
+    font-family: Aclonica;
+    color: #011850;
+}
+
+.restaurant .suggestion-list {
+    /*border: 1px solid black;*/
+    /*background-color: #ff7373;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 5px 3px rgba(255, 115, 115, 0.75);
+    -moz-box-shadow:    0px 0px 5px 3px rgba(255, 115, 115, 0.75);
+    box-shadow:         0px 0px 5px 3px rgba(255, 115, 115, 0.75);*/
+    margin-bottom: 3px;
+    color: black;
+}
+
+.restaurant .suggestion-time {
+    font-family: OpenSansBold;
+}
+
+.navbar-brand, .page-header {
+    font-family: Aclonica;
+}
+
+.modal-header * {
+    font-family: Aclonica;
+}
+
+.modal-header .close {
+    font-family: sans-serif;
+    padding: 10px;
+    margin: -5px -5px 0 0;
+}
+
+#suggestionModal input.suggest-time {
+    /*display: inline-block;*/
+    width: 95px;
+}
+
+#suggestionModal .group-container {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#suggestionModal .group, #suggestionModal .member {
+    -webkit-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.1s, box-shadow linear 0.1s;
+    -moz-transition: border linear 0.1s, box-shadow linear 0.1s;
+    -ms-transition: border linear 0.1s, box-shadow linear 0.1s;
+    -o-transition: border linear 0.1s, box-shadow linear 0.1s;
+    transition: border linear 0.1s, box-shadow linear 0.1s;
+    background-color: whitesmoke;
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid #e7e7e7;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#suggestionModal .group {
+    padding: 0 10px 0 10px;
+    min-height: 40px;
+    line-height: 40px;
+}
+
+#suggestionModal .member {
+    text-align: center;
+    line-height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    position: relative;
+}
+
+#suggestionModal .member .member-small-name {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    font-size: 7px;
+    line-height: 7px;
+    height: 7px;
+    overflow: hidden;
+    white-space: pre;
+    padding: 0 1px 0 1px;
+}
+
+#suggestionModal .group-selected, #suggestionModal .member-selected {
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    outline: 0;
+}
+
+.page-header {
+    text-align: center;
+    font-size: 30px;
+}
+
+.restaurant-thumbnail .meal-divider {
+    margin: 2px 0 2px 0;
+    border-color: #9CB9FF;
+}
+
+.restaurant-thumbnail .meal {
+    margin: 2px 0 2px 0;
 }
 
 span.attribute-group {
@@ -85,7 +249,12 @@ span.line-break {
 }
 
 .meal-section {
-    font-weight: bold;
+    font-family: OpenSansBold;
     display: block;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
+}
+
+/* This repairs blue border in modals */
+.modal-open .modal,.btn:focus{
+    outline:none!important
 }

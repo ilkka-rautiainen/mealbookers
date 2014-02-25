@@ -1,11 +1,5 @@
 <?php
-/**
- * Logger class
- */
 
-/**
- * Class for Log handling
- */
 class Logger
 {
     private static $instance = null;

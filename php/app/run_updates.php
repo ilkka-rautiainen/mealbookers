@@ -5,6 +5,8 @@
 
 require_once __DIR__ . '/app.php';
 try {
+    if (isset($_GET['reset']) && !empty($_GET['reset']))
+        DB::inst()->resetDB();
     DB::inst()->runUpdates();
     print "updates ok";
 }

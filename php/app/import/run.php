@@ -7,6 +7,7 @@ $importers = array(
     new KvarkkiImport(),
     new TUASImport(),
     new Puu2Import(),
+    new SilinteriImport(),
 );
 
 try {

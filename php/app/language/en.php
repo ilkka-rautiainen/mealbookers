@@ -1,92 +1,38 @@
 <?php
 
 $GLOBALS['language']['en'] = array(
-    array(
-        'key' => 'cafe',
-        'value' => 'Café: '
-    ),
-    array(
-        'key' => 'alacarte',
-        'value' => 'À la carte'
-    ),
-    array(
-        'key' => 'bistro',
-        'value' => 'Bistro'
-    ),
-    array(
-        'key' => 'tune_own_burger',
-        'value' => 'Fine-tune your own hamburger'
-    ),
-    array(
-        'key' => 'today',
-        'value' => 'Today'
-    ),
-    array(
-        'key' => 'tomorrow',
-        'value' => 'Tomorrow'
-    ),
-    array(
-        'key' => 'weekday_0',
-        'value' => 'Monday'
-    ),
-    array(
-        'key' => 'weekday_1',
-        'value' => 'Tuesday'
-    ),
-    array(
-        'key' => 'weekday_2',
-        'value' => 'Wednesday'
-    ),
-    array(
-        'key' => 'weekday_3',
-        'value' => 'Thursday'
-    ),
-    array(
-        'key' => 'weekday_4',
-        'value' => 'Friday'
-    ),
-    array(
-        'key' => 'weekday_5',
-        'value' => 'Saturday'
-    ),
-    array(
-        'key' => 'weekday_6',
-        'value' => 'Sunday'
-    ),
-    array(
-        'key' => 'in_otaniemi',
-        'value' => 'Otaniemi menu\'s on'
-    ),
-    array(
-        'key' => 'log_in',
-        'value' => 'Log in'
-    ),
-    array(
-        'key' => 'email',
-        'value' => 'Email'
-    ),
-    array(
-        'key' => 'password',
-        'value' => 'Password'
-    ),
-    array(
-        'key' => 'log_in_remember_me',
-        'value' => 'Remember me'
-    ),
-    array(
-        'key' => 'close',
-        'value' => 'close'
-    ),
-    array(
-        'key' => 'register',
-        'value' => 'Register'
-    ),
-    array(
-        'key' => 'register_first_name',
-        'value' => 'First name'
-    ),
-    array(
-        'key' => 'register_last_name',
-        'value' => 'Last nimi'
-    ),
+    'cafe' => 'Café',
+    'alacarte' => 'À la carte',
+    'bistro' => 'Bistro',
+    'tune_own_burger' => 'Fine-tune your own hamburger',
+    'today' => 'Today',
+    'tomorrow' => 'Tomorrow',
+    'weekday_0' => 'Monday',
+    'weekday_1' => 'Tuesday',
+    'weekday_2' => 'Wednesday',
+    'weekday_3' => 'Thursday',
+    'weekday_4' => 'Friday',
+    'weekday_5' => 'Saturday',
+    'weekday_6' => 'Sunday',
+    'in_otaniemi' => 'Otaniemi menu\'s on',
+    'log_in' => 'Log in',
+    'email' => 'Email',
+    'password' => 'Password',
+    'log_in_remember_me' => 'Remember me',
+    'close' => 'close',
+    'cancel' => 'Cancel',
+    'register' => 'Register',
+    'register_full_name' => 'Full name',
+    'register_first_name' => 'First name',
+    'register_last_name' => 'Last name',
+    'suggest_eating_time' => 'Suggest eating time',
+    'suggest' => 'Suggest',
+    'suggest_time' => 'Time',
+    'suggest_time_placeholder' => 'tt:mm',
+    'suggest_friends' => 'Suggest to friends',
+    'suggestion_save_error' => 'Error while saving the suggestion',
+    'suggestion_too_early' => 'You cannot make a suggestion with a time more than 5 min ago',
+    'mailer_sender_name' => 'Mealbookers',
+    'mailer_subject_suggestion' => '{suggester} want\'s to eat with you',
+    'mailer_subject_suggestion_accepted' => '{accepter} has accepted your suggestion',
 );
