@@ -65,18 +65,18 @@ INSERT INTO `users` (`id`, `email_address`, `passhash`, `first_name`, `last_name
 
 ALTER TABLE  `meals` DROP FOREIGN KEY  `meals_ibfk_1`;
 ALTER TABLE  `meals` ADD CONSTRAINT `meal_restaurant` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants` (`id`) ON DELETE CASCADE;
-ALTER TABLE  `groups` ADD INDEX (  `admin_id` ) COMMENT  '';
-ALTER TABLE  `groups` ADD INDEX (  `creator_id` ) COMMENT  '';
+ALTER TABLE  `groups` ADD INDEX (  `admin_id` );
+ALTER TABLE  `groups` ADD INDEX (  `creator_id` );
 ALTER TABLE  `groups` ADD FOREIGN KEY (  `admin_id` ) REFERENCES  `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE  `groups` ADD FOREIGN KEY (  `creator_id` ) REFERENCES  `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE  `group_memberships` ADD FOREIGN KEY (  `user_id` ) REFERENCES  `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE  `group_memberships` ADD FOREIGN KEY (  `group_id` ) REFERENCES  `groups` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE  `suggestions` ADD INDEX (  `restaurant_id` ) COMMENT  '';
-ALTER TABLE  `suggestions` ADD INDEX (  `creator_id` ) COMMENT  '';
+ALTER TABLE  `suggestions` ADD INDEX (  `restaurant_id` );
+ALTER TABLE  `suggestions` ADD INDEX (  `creator_id` );
 ALTER TABLE  `suggestions` ADD FOREIGN KEY (  `restaurant_id` ) REFERENCES  `restaurants` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE  `suggestions` ADD FOREIGN KEY (  `creator_id` ) REFERENCES  `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE  `suggestions_users` ADD INDEX (  `suggestion_id` ) COMMENT  '';
-ALTER TABLE  `suggestions_users` ADD INDEX (  `user_id` ) COMMENT  '';
+ALTER TABLE  `suggestions_users` ADD INDEX (  `suggestion_id` );
+ALTER TABLE  `suggestions_users` ADD INDEX (  `user_id` );
 ALTER TABLE  `suggestions_users` ADD FOREIGN KEY (  `suggestion_id` ) REFERENCES  `suggestions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE  `suggestions_users` ADD FOREIGN KEY (  `user_id` ) REFERENCES  `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE  `suggestions_users` ADD UNIQUE (`suggestion_id` ,`user_id`) COMMENT  '';
+ALTER TABLE  `suggestions_users` ADD UNIQUE (`suggestion_id` ,`user_id`);
