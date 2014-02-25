@@ -61,7 +61,14 @@ class User
         require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
         $mail = new PHPMailer();
         $mail->CharSet = 'utf-8';
-        $mail->Host = 'smtp.ayy.fi';
+        // $mail->SMTPDebug = true;
+        $mail->Port = 465;
+        $mail->SMTPAuth = true;
+        $mail->IsSMTP();
+        $mail->SMTPSecure = 'ssl';
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Username = '';
+        $mail->Password = '';
         $mail->Mailer = 'smtp';
         $body = "Hei,<br /><br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
             . " syömään ravintolaan " . $restaurant->name . "."
@@ -95,7 +102,8 @@ class User
         Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion accepted");
 
         if (!$user_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users WHERE
-            suggestion_id = {$suggestion->id} AND accepted = 1 LIMIT 1")) {
+            suggestion_id = {$suggestion->id} AND accepted = 1 AND user_id != {$suggestion->creator_id}
+            LIMIT 1")) {
             Logger::error(__METHOD__ . " no accepted user found for the suggestion {$suggestion->id}");
             return;
         }
@@ -107,7 +115,14 @@ class User
         require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
         $mail = new PHPMailer();
         $mail->CharSet = 'utf-8';
-        $mail->Host = 'smtp.ayy.fi';
+        // $mail->SMTPDebug = true;
+        $mail->Port = 465;
+        $mail->SMTPAuth = true;
+        $mail->IsSMTP();
+        $mail->SMTPSecure = 'ssl';
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Username = '';
+        $mail->Password = '';
         $mail->Mailer = 'smtp';
         $body = "Hei,<br /><br />" . $accepter->getName() . " on hyväksynyt ehdotuksesi mennä "
             . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name . "."
