@@ -21,7 +21,7 @@ class AppAPI
 
         $filename = "../../app/" . $config['log']['file'];
 
-        print json_encode(array_reverse(array_slice(array_reverse(file($filename)), 0, $rows)));
+        print implode("<br />", (array_reverse(array_slice(array_reverse(file($filename)), 0, $rows))));
     }
 
 	/**
