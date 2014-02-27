@@ -30,6 +30,7 @@ class AppAPI
 	function getLanguage($lang = 'en')
 	{
         global $language;
+        $lang = substr($lang, 0, 2);
         Logger::debug(__METHOD__ . " GET /app/language/$lang called");
 
         if (isset($language[$lang]))
