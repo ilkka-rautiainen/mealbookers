@@ -11,7 +11,7 @@ class RestaurantsAPI
 	 */
 	function get()
 	{
-        $lang = $_GET['lang'];
+        $lang = substr($_GET['lang'], 0, 2);
         Logger::debug(__METHOD__ . " GET /restaurants?lang=$lang called");
 
         if (!in_array($lang, array('fi', 'en')))
