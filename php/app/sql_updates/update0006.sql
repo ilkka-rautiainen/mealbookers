@@ -1,14 +1,13 @@
 CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(15) NOT NULL,
-  `admin_id` int(10) unsigned NOT NULL,
   `creator_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
-INSERT INTO `groups` (`id`, `name`, `admin_id`, `creator_id`) VALUES
-(1, 'Group 1', 1, 1),
-(2, 'Group 2', 1, 1);
+INSERT INTO `groups` (`id`, `name`, `creator_id`) VALUES
+(1, 'Group 1', 1),
+(2, 'Group 2', 1);
 
 
 
@@ -65,9 +64,7 @@ INSERT INTO `users` (`id`, `email_address`, `passhash`, `first_name`, `last_name
 
 ALTER TABLE  `meals` DROP FOREIGN KEY  `meals_ibfk_1`;
 ALTER TABLE  `meals` ADD CONSTRAINT `meal_restaurant` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants` (`id`) ON DELETE CASCADE;
-ALTER TABLE  `groups` ADD INDEX (  `admin_id` );
 ALTER TABLE  `groups` ADD INDEX (  `creator_id` );
-ALTER TABLE  `groups` ADD FOREIGN KEY (  `admin_id` ) REFERENCES  `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE  `groups` ADD FOREIGN KEY (  `creator_id` ) REFERENCES  `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 ALTER TABLE  `group_memberships` ADD FOREIGN KEY (  `user_id` ) REFERENCES  `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE  `group_memberships` ADD FOREIGN KEY (  `group_id` ) REFERENCES  `groups` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
