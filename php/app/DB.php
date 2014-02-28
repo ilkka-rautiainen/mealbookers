@@ -263,4 +263,9 @@ class DB
         $this->query("ROLLBACK");
         $this->transactionActive = false;
     }
+
+    public function isTransactionActive()
+    {
+        return $this->transactionActive;
+    }
 }

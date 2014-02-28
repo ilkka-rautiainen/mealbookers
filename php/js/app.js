@@ -44,6 +44,17 @@ angular.module('Mealbookers', [
         all: false
     };
 
+    $rootScope.errorMessage = {
+        message: '',
+        type: ''
+    };
+
+    $rootScope.$watch('errorMessage', function(newValue) {
+        if (newValue.message.length) {
+            $window.scrollTo(0,0);
+        }
+    }, true);
+
     $rootScope.$watch('loaded', function(newValue) {
         if (newValue.restaurants && newValue.lang)
             $rootScope.loaded.all = true;

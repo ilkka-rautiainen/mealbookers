@@ -37,5 +37,10 @@ function sendHttpError($number, $text = false) {
     else
         header("HTTP/1.1 $number $text");
     print "<h1>$number $text</h1>";
+
+    if (DB::inst()->isTransactionActive()) {
+        DB::inst()->rollbackTransaction();
+    }
+    
     die;
 }

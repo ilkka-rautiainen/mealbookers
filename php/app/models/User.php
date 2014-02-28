@@ -49,7 +49,7 @@ class User
         return substr($this->first_name, 0, 1) . substr($this->last_name, 0, 1);
     }
 
-    public function inviteToSuggestion(Suggestion $suggestion, $hash)
+    public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id}");
         global $language, $config;
@@ -95,7 +95,7 @@ class User
             Logger::debug(__METHOD__ . " sending succeeded");
         return $result;
     }
-
+    
     public function notifyAcceptedSuggestion(Suggestion $suggestion)
     {
         global $language, $config;

@@ -1,11 +1,12 @@
 <div class="container">
-	<div class="col-md-12 col-sm-12 page-header">
+    <div class="col-md-12 col-sm-12 page-header">
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
     </div>
 </div>
 <!-- <div class="container"><hr class="featurette-divider"></div> -->
 
 <div id="menuContainer" class="container">
+    <div class="alert alert-danger" ng-class="{'alert-danger': errorMessage.type == 'alert-danger', 'alert-warning': errorMessage.type == 'alert-warning'}" ng-if="errorMessage.message.length">{{ errorMessage.message }}</div>
 	<div class="row restaurant-row" ng-repeat="restaurantRow in restaurantRows">
 		<restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess" restaurants-emptied="restaurantsEmptied"></restaurant>
         <restaurant-place-holder ng-if="restaurantRow.length < columns - 2"></restaurant-place-holder>

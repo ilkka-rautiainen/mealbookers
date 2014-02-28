@@ -70,6 +70,21 @@ angular.module('Mealbookers.controllers', [])
     };
     loadRestaurants();
 
+
+    var updateSuggestion = function(restaurant, suggestion, day) {
+        for (var i = 0; i < $scope.restaurants.length; i++) {
+            if ($scope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $scope.restaurants[i].suggestionList[day - 1][j] = suggestion;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    };
+
     $rootScope.$watch('widthClass', function() {
         $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
         for (var i = 0; i < $scope.restaurantRows.length; i++)
@@ -155,14 +170,15 @@ angular.module('Mealbookers.controllers', [])
         });
         var response = Suggestions.post({
             restaurantId: $scope.suggestRestaurant.id,
-            day: $scope.weekDay,
+            day: $scope.weekDay - 1,
             time: $scope.suggestTime,
             members: members
         }, function() {
             if (typeof response.status != 'undefined' && response.status == "ok") {
-                if (typeof response.failed_to_invite === 'object') {
+                if (typeof response.failed_to_send_invitation_email === 'object') {
                     $scope.suggestionMessage.type = 'alert-warning';
-                    $scope.suggestionMessage.message = 'Failed to invite: ' + response.failed_to_invite.join(", ");
+                    $scope.suggestionMessage.message = $filter('i18n')('suggest_failed_to_send_invitation_email')
+                        + ' ' + response.failed_to_send_invitation_email.join(", ");
                 }
                 else {
                     $("#closeSuggestion").trigger('click');
@@ -177,6 +193,47 @@ angular.module('Mealbookers.controllers', [])
         function() {
             $scope.suggestionMessage.type = 'alert-danger';
             $scope.suggestionMessage.message = $filter('i18n')('suggestion_save_error');
+        });
+    };
+
+    $scope.acceptSuggestion = function(restaurant, suggestion, day, accept) {
+        if (suggestion.processing) {
+            return;
+        }
+
+        var action;
+        if (accept) {
+            action = 'accept';
+        }
+        else {
+            action = 'cancel';
+        }
+
+        suggestion.processing = true;
+        $http.post('api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
+            action: action
+        }).success(function(result) {
+            // Check the result
+            if (typeof result !== 'object' || result.status !== 'ok') {
+                suggestion.processing = false;
+                $rootScope.errorMessage = {
+                    message: $filter('i18n')('suggestion_join_failed'),
+                    type: 'alert'
+                };
+                console.error("Failed to accept/cancel, got response:");
+                console.error(response);
+            }
+            else {
+                updateSuggestion(restaurant, result.suggestion, day);
+            }
+        })
+        .error(function(response, httpCode) {
+            suggestion.processing = false;
+            $rootScope.errorMessage = {
+                message: $filter('i18n')('suggestion_join_failed'),
+                type: 'alert'
+            };
+            console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
         });
     };
 
