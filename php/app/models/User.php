@@ -52,7 +52,7 @@ class User
     public function inviteToSuggestion(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id}");
-        global $language;
+        global $language, $config;
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
         $restaurant = new Restaurant();
@@ -62,13 +62,13 @@ class User
         $mail = new PHPMailer();
         $mail->CharSet = 'utf-8';
         // $mail->SMTPDebug = true;
-        $mail->Port = 465;
+        $mail->Port = $config['mail']['smtp_port'];
         $mail->SMTPAuth = true;
         $mail->IsSMTP();
-        $mail->SMTPSecure = 'ssl';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Username = '';
-        $mail->Password = '';
+        $mail->SMTPSecure = $config['mail']['smtp_secure'];
+        $mail->Host = $config['mail']['smtp_host'];
+        $mail->Username = $config['mail']['smtp_username'];
+        $mail->Password = $config['mail']['smtp_password'];
         $mail->Mailer = 'smtp';
         $body = "Hei,<br /><br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
             . " syömään ravintolaan " . $restaurant->name . "."
@@ -98,7 +98,7 @@ class User
 
     public function notifyAcceptedSuggestion(Suggestion $suggestion)
     {
-        global $language;
+        global $language, $config;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion accepted");
 
         if (!$user_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users WHERE
@@ -116,13 +116,13 @@ class User
         $mail = new PHPMailer();
         $mail->CharSet = 'utf-8';
         // $mail->SMTPDebug = true;
-        $mail->Port = 465;
+        $mail->Port = $config['mail']['smtp_port'];
         $mail->SMTPAuth = true;
         $mail->IsSMTP();
-        $mail->SMTPSecure = 'ssl';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Username = '';
-        $mail->Password = '';
+        $mail->SMTPSecure = $config['mail']['smtp_secure'];
+        $mail->Host = $config['mail']['smtp_host'];
+        $mail->Username = $config['mail']['smtp_username'];
+        $mail->Password = $config['mail']['smtp_password'];
         $mail->Mailer = 'smtp';
         $body = "Hei,<br /><br />" . $accepter->getName() . " on hyväksynyt ehdotuksesi mennä "
             . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name . "."

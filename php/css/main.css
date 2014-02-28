@@ -57,6 +57,7 @@ body {
 
 .restaurant-row {
     display: table;
+    table-layout: fixed;
     border-spacing: 20px;
     margin: 0 -20px -20px 0;
     width: 100%;
@@ -251,10 +252,15 @@ span.line-break {
 .meal-section {
     font-family: OpenSansBold;
     display: block;
-    /*text-decoration: underline;*/
+}
+
+.chrome-fix-line {
+    font-family: OpenSansBold;
+    font-size: 0px;
+    display: block;
 }
 
 /* This repairs blue border in modals */
 .modal-open .modal,.btn:focus{
-    outline:none!important
+    outline: none !important;
 }

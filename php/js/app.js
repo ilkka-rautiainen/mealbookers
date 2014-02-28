@@ -62,7 +62,7 @@ angular.module('Mealbookers', [
             }
             else if ($rootScope.windowWidth >= 992) {
                 $rootScope.widthClass = "md";
-                $rootScope.columns = 4;
+                $rootScope.columns = 3;
             }
             else if ($rootScope.windowWidth >= 768) {
                 $rootScope.widthClass = "sm";

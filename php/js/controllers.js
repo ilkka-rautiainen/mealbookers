@@ -7,40 +7,36 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
 
-    $scope.today = (new Date().getDay() - 1) % 7;
+    $scope.changeDay = function(day) {
+        $scope.weekDay = day;
+        var search = $location.search();
+        search.day = day;
+        $location.search(search);
+    };
+
+    $scope.today = ((new Date().getDay() - 1) % 7) + 1;
     $scope.tomorrow = $scope.today + 1;
-    $scope.weekDay = $scope.today;
     $scope.weekDayChangeProcess = false;
     $scope.restaurantsEmptied = false;
-    var maxDay = 7
+    $scope.maxDay = 5;
+    $scope.hasData = true;
+    $scope.weekDay;
 
     $scope.remainingDays = [];
-    for (var i=$scope.weekDay+2; i<7; i++)
+    for (var i = $scope.today + 2; i <= $scope.maxDay; i++) {
         $scope.remainingDays.push(i);
+    }
 
-    $scope.changeDay = function(num) {
-        var search = $location.search();
-        search.day = num + 1;
-        $location.search(search);
-        $scope.weekDay = num;
-    };
-
-    $scope.$watch('weekDay', function(newValue) {
-        var search = $location.search();
-        search.day = $scope.weekDay + 1;
-        $location.search(search);
+    $scope.$watch(function() {
+        return $location.search().day;
+    }, function (newValue) {
+        if (newValue == undefined || parseInt(newValue) < $scope.today || parseInt(newValue) > $scope.maxDay)
+            return $scope.changeDay($scope.today);
+        $scope.weekDay = parseInt(newValue);
     });
 
-    $scope.navigateHome = function() {
-        $scope.changeDay($scope.today);
-    };
-
-    var locationDay = $location.search().day;
-    if (typeof locationDay != 'undefined' && locationDay > $scope.today && locationDay <= maxDay)
-        $scope.changeDay(parseInt($location.search().day) - 1);
-
     $(".navbar").on("click", "a", null, function () {
-        if ($rootScope.widthClass == 'xs')
+        if ($rootScope.widthClass === 'xs')
             $(".navbar-collapse").collapse('hide');
     });
 }])
@@ -82,6 +78,9 @@ angular.module('Mealbookers.controllers', [])
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
     });
 
+    /**
+     * @todo  visualize the acceptance process to user as a bootstrap alert or smth
+     */
     if (typeof $location.search().hash != 'undefined') {
         $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
             loadRestaurants();
