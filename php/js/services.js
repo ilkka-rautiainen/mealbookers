@@ -8,10 +8,11 @@ services.value('version', '0.1');
 
 services.factory('Localization', ['$http', '$rootScope', function($http, $rootScope) {
     return $http.get('api/1.0/app/language/' + $rootScope.userLang)
-        .success(function(data) {
-            $rootScope.localization = data;
-        })
-        .error(function(response) {
+        .then(function(result) {
+            $rootScope.localization = result.data;
+            return result.data;
+        },
+        function() {
             console.error("Error while loading translations");
         });
 }]);

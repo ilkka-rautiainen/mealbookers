@@ -33,7 +33,6 @@ angular.module('Mealbookers.controllers', [])
 
 
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
-
     $scope.changeDay = function(day) {
         $scope.weekDay = day;
         var search = $location.search();
@@ -41,7 +40,7 @@ angular.module('Mealbookers.controllers', [])
         $location.search(search);
     };
 
-    $scope.today = ((new Date().getDay() - 1) % 7) + 1;
+    $scope.today = ((new Date().getDay() + 6) % 7) + 1;
     $scope.tomorrow = $scope.today + 1;
     $scope.weekDayChangeProcess = false;
     $scope.restaurantsEmptied = false;
