@@ -30,7 +30,7 @@ angular.module('Mealbookers', [
     
     .state('AcceptSuggestion', {
         url: "/suggestion/accept",
-        template: '',
+        templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
     })
 
@@ -50,12 +50,12 @@ angular.module('Mealbookers', [
         all: false
     };
 
-    $rootScope.errorMessage = {
+    $rootScope.alertMessage = {
         message: '',
         type: ''
     };
 
-    $rootScope.$watch('errorMessage', function(newValue) {
+    $rootScope.$watch('alertMessage', function(newValue) {
         if (newValue.message.length) {
             $window.scrollTo(0, 0);
         }

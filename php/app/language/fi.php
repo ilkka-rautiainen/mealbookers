@@ -36,6 +36,7 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_accept' => 'Hyväksy',
     'suggestion_cancel' => 'Peru',
     'suggestion_accept_failed' => 'Ehdotuksen hyväksyminen/peruminen epäonnistui.',
+    'suggestion_accepting' => 'Hyväksytään ehdotusta...',
     'mailer_sender_name' => 'Mealbookers',
     'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
     'mailer_subject_suggestion_accepted' => '{accepter} on hyväksynyt ehdotuksesi',

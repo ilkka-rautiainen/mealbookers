@@ -1,4 +1,4 @@
-<div class="col-md-3 col-sm-6 restaurant" ng-if="restaurant.mealList[weekDay - 1].length">
+<div class="col-md-3 col-sm-6 restaurant" ng-hide="!restaurant.mealList[weekDay - 1].length">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
         <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}">

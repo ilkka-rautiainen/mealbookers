@@ -10,21 +10,21 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
             if (result.status == 'deleted') {
                 var message = $filter('i18n')('suggestion_been_deleted');
-                $rootScope.errorMessage = {
-                    message: message,
+                $rootScope.alertMessage = {
+                    message: "poistettu",
                     type: 'alert-warning'
                 };
             }
             else {
                 var message = $filter('i18n')('suggestion_accept_succeeded');
-                $rootScope.errorMessage = {
-                    message: message,
+                $rootScope.alertMessage = {
+                    message: "onnistu",
                     type: 'alert-success'
                 };
-                var search = $location.search();
-                delete search.hash;
-                search.day = result.weekDay;
-                $location.search(search);
+                // var search = $location.search();
+                // delete search.hash;
+                // search.day = result.weekDay;
+                // $location.search(search);
             }
             $state.go("Navigation.Menu");
         });
@@ -45,7 +45,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.tomorrow = $scope.today + 1;
     $scope.weekDayChangeProcess = false;
     $scope.restaurantsEmptied = false;
-    $scope.maxDay = 5;
+    $scope.maxDay = 7;
     $scope.hasData = true;
     $scope.weekDay;
 
@@ -244,7 +244,7 @@ angular.module('Mealbookers.controllers', [])
             // Check the result
             if (typeof result !== 'object' || result.status !== 'ok') {
                 suggestion.processing = false;
-                $rootScope.errorMessage = {
+                $rootScope.alertMessage = {
                     message: $filter('i18n')('suggestion_accept_failed'),
                     type: 'alert'
                 };
@@ -260,7 +260,7 @@ angular.module('Mealbookers.controllers', [])
         })
         .error(function(response, httpCode) {
             suggestion.processing = false;
-            $rootScope.errorMessage = {
+            $rootScope.alertMessage = {
                 message: $filter('i18n')('suggestion_accept_failed'),
                 type: 'alert'
             };
