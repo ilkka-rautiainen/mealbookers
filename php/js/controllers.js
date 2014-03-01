@@ -92,7 +92,6 @@ angular.module('Mealbookers.controllers', [])
                 $scope.restaurantRows[i] = [];
             for (var i = 0; i < restaurants.length; i++)
                 $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push(restaurants[i]);
-            $rootScope.loaded.restaurants = true;
         });
     };
     loadRestaurants();

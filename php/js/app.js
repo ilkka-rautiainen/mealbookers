@@ -44,12 +44,6 @@ angular.module('Mealbookers', [
      */
     $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
 
-    $rootScope.loaded = {
-        restaurants: false,
-        lang: false,
-        all: false
-    };
-
     $rootScope.alertMessage = {
         message: '',
         type: ''
@@ -60,16 +54,6 @@ angular.module('Mealbookers', [
             $window.scrollTo(0, 0);
         }
     }, true);
-
-    $rootScope.$watch('loaded', function(newValue) {
-        if (newValue.restaurants && newValue.lang) {
-            $rootScope.loaded.all = true;
-        }
-    }, true);
-
-    $rootScope.pageReady = function() {
-        return !$rootScope.$$phase && $rootScope.loaded.all;
-    };
 
     var setWidthClass = function() {
         $rootScope.$apply(function() {
