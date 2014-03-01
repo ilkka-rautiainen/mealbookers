@@ -6,7 +6,7 @@
 <!-- <div class="container"><hr class="featurette-divider"></div> -->
 
 <div id="menuContainer" class="container">
-    <div class="alert" ng-class="alertMessage.type" ng-if="alertMessage.message.length">{{ alertMessage.message }}</div>
+    <div class="alert main-alert" ng-class="alertMessage.type" ng-if="alertMessage.message.length">{{ alertMessage.message }}</div>
 	<div class="row restaurant-row" ng-repeat="restaurantRow in restaurantRows">
 		<restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess" restaurants-emptied="restaurantsEmptied"></restaurant>
         <restaurant-place-holder ng-if="restaurantRow.length < columns - 2"></restaurant-place-holder>
