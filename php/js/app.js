@@ -28,7 +28,7 @@ angular.module('Mealbookers', [
         controller: 'MenuController'
     })
     
-    .state('AcceptSuggestion', {
+    .state('Navigation.AcceptSuggestion', {
         url: "/suggestion/accept",
         templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
@@ -62,8 +62,9 @@ angular.module('Mealbookers', [
     }, true);
 
     $rootScope.$watch('loaded', function(newValue) {
-        if (newValue.restaurants && newValue.lang)
+        if (newValue.restaurants && newValue.lang) {
             $rootScope.loaded.all = true;
+        }
     }, true);
 
     $rootScope.pageReady = function() {

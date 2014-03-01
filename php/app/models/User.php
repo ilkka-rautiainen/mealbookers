@@ -74,7 +74,7 @@ class User
             . " syömään ravintolaan " . $restaurant->name . "."
             . " Hän ehdottaa sinulle aikaa " . $suggestion->getTime() . "."
             . " <br /><br />Hyväksy ehdotus klikkaamalla"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/suggestion/accept?hash={$hash}\">tästä</a>."
+            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/suggestion/accept?hash={$hash}\">tästä</a>."
             . " <br /><br />Palvelun etusivulle"
             . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu\">tästä</a>."
             . "<br /><br />- Mealbookers<br /><br />"
