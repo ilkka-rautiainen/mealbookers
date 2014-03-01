@@ -19,7 +19,10 @@ angular.module('Mealbookers', [
     .state('Navigation', {
         url: "/app",
         templateUrl: "partials/Navigation.html",
-        controller: 'NavigationController'
+        controller: 'NavigationController',
+        resolve: {
+            localization: "Localization"
+        }
     })
     
     .state('Navigation.Menu', {
