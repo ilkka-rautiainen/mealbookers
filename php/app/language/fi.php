@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['language']['fi'] = array(
+    'app_name' => 'Mealbookers',
     'cafe' => 'Kahvila',
     'alacarte' => 'À la carte',
     'bistro' => 'Bistro',
@@ -31,9 +32,10 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_save_error' => 'Virhe tallennettaessa ehdotusta',
     'suggestion_too_early' => 'Et voi luoda ehdotusta 5 min kauemmaksi menneisyyteen',
     'suggest_failed_to_send_invitation_email' => 'Kutsuviestien lähetys epäonnistui:',
-    'suggestion_join' => 'Liity',
+    'suggestion_been_deleted' => 'Hyväksymäsi ehdotus oli ehditty poistaa...',
+    'suggestion_accept' => 'Hyväksy',
     'suggestion_cancel' => 'Peru',
-    'suggestion_join_failed' => 'Ehdotukseen liittyminen/peruminen epäonnistui.',
+    'suggestion_accept_failed' => 'Ehdotuksen hyväksyminen/peruminen epäonnistui.',
     'mailer_sender_name' => 'Mealbookers',
     'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
     'mailer_subject_suggestion_accepted' => '{accepter} on hyväksynyt ehdotuksesi',

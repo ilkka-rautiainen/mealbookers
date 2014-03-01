@@ -18,6 +18,11 @@ class Suggestion {
             throw new Exception("Error fetching suggestion: id is null");
     }
 
+    private function delete()
+    {
+        DB::inst()->query("DELETE FROM suggestions WHERE id = {$this->id}");
+    }
+
     public function populateFromRow($row)
     {
         $this->id = $row['id'];
@@ -102,12 +107,13 @@ class Suggestion {
                 accepted,
                 accepted_timestamp
             ) VALUES (
-                {$suggestion->id},
-                {$user->id},
+                {$this->id},
+                {$member->id},
                 '$hash',
                 " . ($accepted ? '1' : '0') . ",
                 " . ($accepted ? time() : 'NULL') . "
             )");
+        return $hash;
     }
 
     /**
@@ -116,16 +122,20 @@ class Suggestion {
     public function accept($suggestions_users_id)
     {
         Logger::info(__METHOD__ . " accepting suggestion with suggestions_users_id $suggestions_users_id");
-        return $this->acceptOrCancel($suggestions_users_id, true);
+        $this->acceptOrCancel($suggestions_users_id, true);
     }
 
     /**
      * Inactivate suggestion membership
+     * @return  true if suggestion was deleted due to no users in it, otherwise false
      */
     public function cancel($suggestions_users_id)
     {
         Logger::info(__METHOD__ . " canceling suggestion with suggestions_users_id $suggestions_users_id");
-        return $this->acceptOrCancel($suggestions_users_id, false);
+        if ($this->acceptOrCancel($suggestions_users_id, false))
+            return true;
+        else
+            return false;
     }
 
     /**
@@ -157,13 +167,19 @@ class Suggestion {
                 WHERE id = $suggestions_users_id");
         }
 
+        $accepted_suggestions_after = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
+                suggestion_id = {$this->id} AND accepted = 1");
+
+        // No users there anymore
+        if ($accepted_suggestions_after == 0) {
+            $this->delete();
+            return true;
+        }
+
         // Update the creator to be the first accepted user
         DB::inst()->query("UPDATE suggestions SET creator_id = (SELECT user_id FROM suggestions_users
             WHERE suggestion_id = {$this->id} AND accepted = 1 ORDER BY accepted_timestamp ASC LIMIT 1)
-            WHERE id = {$this->id}");
-
-        $accepted_suggestions_after = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
-                suggestion_id = {$this->id} AND accepted = 1");
+                WHERE id = {$this->id}");
 
         // The first acceptance for the suggestion
         if ($accepted_suggestions_before == 1 && $accepted_suggestions_after > 1) {

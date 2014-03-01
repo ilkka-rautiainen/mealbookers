@@ -27,6 +27,12 @@ angular.module('Mealbookers', [
         templateUrl: "partials/menu/Menu.html",
         controller: 'MenuController'
     })
+    
+    .state('AcceptSuggestion', {
+        url: "/suggestion/accept",
+        template: '',
+        controller: 'AcceptSuggestionController'
+    })
 
     $urlRouterProvider.otherwise("/app/menu");
 }])
@@ -51,7 +57,7 @@ angular.module('Mealbookers', [
 
     $rootScope.$watch('errorMessage', function(newValue) {
         if (newValue.message.length) {
-            $window.scrollTo(0,0);
+            $window.scrollTo(0, 0);
         }
     }, true);
 

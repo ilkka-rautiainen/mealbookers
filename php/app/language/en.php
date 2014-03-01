@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['language']['en'] = array(
+    'app_name' => 'Mealbookers',
     'cafe' => 'Café',
     'alacarte' => 'À la carte',
     'bistro' => 'Bistro',
@@ -31,9 +32,10 @@ $GLOBALS['language']['en'] = array(
     'suggestion_save_error' => 'Error while saving the suggestion',
     'suggestion_too_early' => 'You cannot make a suggestion with a time more than 5 min ago',
     'suggest_failed_to_send_invitation_email' => 'Failed to send invitation email:',
-    'suggestion_join' => 'Join',
+    'suggestion_been_deleted' => 'The suggestion you accepted had been deleted...',
+    'suggestion_accept' => 'Accept',
     'suggestion_cancel' => 'Cancel',
-    'suggestion_join_failed' => 'Joining/canceling the suggestion failed.',
+    'suggestion_accept_failed' => 'Accept/canceling the suggestion failed.',
     'mailer_sender_name' => 'Mealbookers',
     'mailer_subject_suggestion' => '{suggester} want\'s to eat with you',
     'mailer_subject_suggestion_accepted' => '{accepter} has accepted your suggestion',

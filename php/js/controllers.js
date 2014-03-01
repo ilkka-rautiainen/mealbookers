@@ -5,6 +5,33 @@
 angular.module('Mealbookers.controllers', [])
 
 
+.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$location', function($http, $filter, $rootScope, $state, $location) {
+    if (typeof $location.search().hash != 'undefined') {
+        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
+            if (result.status == 'deleted') {
+                var message = $filter('i18n')('suggestion_been_deleted');
+                $rootScope.errorMessage = {
+                    message: message,
+                    type: 'alert-warning'
+                };
+            }
+            else {
+                var message = $filter('i18n')('suggestion_accept_succeeded');
+                $rootScope.errorMessage = {
+                    message: message,
+                    type: 'alert-success'
+                };
+                var search = $location.search();
+                delete search.hash;
+                search.day = result.weekDay;
+                $location.search(search);
+            }
+            $state.go("Navigation.Menu");
+        });
+    }
+}])
+
+
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
 
     $scope.changeDay = function(day) {
@@ -85,6 +112,20 @@ angular.module('Mealbookers.controllers', [])
         }
     };
 
+    var deleteSuggestion = function(restaurant, suggestion, day) {
+        for (var i = 0; i < $scope.restaurants.length; i++) {
+            if ($scope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $scope.restaurants[i].suggestionList[day - 1].splice(j, 1);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    };
+
     $rootScope.$watch('widthClass', function() {
         $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
         for (var i = 0; i < $scope.restaurantRows.length; i++)
@@ -92,19 +133,6 @@ angular.module('Mealbookers.controllers', [])
         for (var i = 0; i < $scope.restaurants.length; i++)
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
     });
-
-    /**
-     * @todo  visualize the acceptance process to user as a bootstrap alert or smth
-     */
-    if (typeof $location.search().hash != 'undefined') {
-        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
-            loadRestaurants();
-            var search = $location.search();
-            delete search.hash;
-            $location.search(search);
-            $scope.weekDay = result.weekDay;
-        });
-    }
 
     /**
      * Load user's groups
@@ -217,20 +245,23 @@ angular.module('Mealbookers.controllers', [])
             if (typeof result !== 'object' || result.status !== 'ok') {
                 suggestion.processing = false;
                 $rootScope.errorMessage = {
-                    message: $filter('i18n')('suggestion_join_failed'),
+                    message: $filter('i18n')('suggestion_accept_failed'),
                     type: 'alert'
                 };
                 console.error("Failed to accept/cancel, got response:");
                 console.error(response);
             }
             else {
-                updateSuggestion(restaurant, result.suggestion, day);
+                if (result.suggestionDeleted)
+                    deleteSuggestion(restaurant, suggestion, day);
+                else
+                    updateSuggestion(restaurant, result.suggestion, day);
             }
         })
         .error(function(response, httpCode) {
             suggestion.processing = false;
             $rootScope.errorMessage = {
-                message: $filter('i18n')('suggestion_join_failed'),
+                message: $filter('i18n')('suggestion_accept_failed'),
                 type: 'alert'
             };
             console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);

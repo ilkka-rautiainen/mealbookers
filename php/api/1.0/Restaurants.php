@@ -89,14 +89,14 @@ class RestaurantsAPI
                     sendHttpError(401, "Suggestion field 'members' contained invalid member ids");
                 }
                 else if (!DB::inst()->getOne("SELECT COUNT(user_id) FROM group_memberships WHERE group_id IN (
-                        SELECT group_id FROM group_memberships WHERE user_id = {$user->id}
+                        SELECT group_id FROM group_memberships WHERE user_id = {$current_user->id}
                     ) AND user_id = $member_id LIMIT 1"))
                 {
                     sendHttpError(401, "Can't add user $member_id to suggestion: he's not member in your groups");
                 }
                 $member = new User();
                 $member->fetch($member_id);
-                $suggestion->insertMember($member, false);
+                $hash = $suggestion->insertMember($member, false);
 
                 // Send suggestion email
                 if (!$member->sendSuggestionInviteEmail($suggestion, $hash)) {
@@ -136,7 +136,11 @@ class RestaurantsAPI
 
         if (!$suggestion_user = DB::inst()->getRowAssoc("SELECT * FROM suggestions_users WHERE hash = '"
             . DB::inst()->quote($hash) . "' LIMIT 1"))
-            sendHttpError(404, "No suggestion found with given hash");
+        {
+            return print json_encode(array(
+                'status' => 'deleted',
+            ));
+        }
 
         $suggestion = new Suggestion();
         $suggestion->fetch($suggestion_user['suggestion_id']);
@@ -181,17 +185,30 @@ class RestaurantsAPI
 
         $suggestion = new Suggestion();
         $suggestion->fetch($suggestionId);
+        $suggestionDeleted = false;
 
-        if ($action == 'accept')
+        if ($action == 'accept') {
             $suggestion->accept($suggestions_users_id);
-        else
-            $suggestion->cancel($suggestions_users_id);
+        }
+        else {
+            $suggestionDeleted = $suggestion->cancel($suggestions_users_id);
+        }
         
-        $suggestion->fetch($suggestionId);
+        if ($suggestionDeleted) {
+            print(json_encode(array(
+                'status' => 'ok',
+                'suggestion' => null,
+                'suggestionDeleted' => true
+            )));
+        }
+        else {
+            $suggestion->fetch($suggestionId);
 
-        print(json_encode(array(
-            'status' => 'ok',
-            'suggestion' => $suggestion->getAsArray(),
-        )));
+            print(json_encode(array(
+                'status' => 'ok',
+                'suggestion' => $suggestion->getAsArray(),
+                'suggestionDeleted' => false
+            )));
+        }
     }
 }

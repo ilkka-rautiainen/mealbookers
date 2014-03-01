@@ -28,12 +28,7 @@ angular.module('Mealbookers.localization', [])
             // build the url to retrieve the localized resource file
             var url = 'api/1.0/app/language/' + localize.language;
             // request the resource file
-            $http({ method:"GET", url:url, cache:false }).success(localize.successCallback).error(function () {
-                // the request failed set the url to the default resource file
-                var url = 'api/1.0/app/language';
-                // request the default resource file
-                $http({ method:"GET", url:url, cache:false }).success(localize.successCallback);
-            });
+            $http({ method:"GET", url:url, cache:false }).success(localize.successCallback);
         },
 
         getLocalizedString: function (value) {
