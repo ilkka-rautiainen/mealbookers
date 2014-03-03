@@ -33,7 +33,7 @@ $GLOBALS['config'] = array(
         'smtp_username' => 'mealbookers@gmail.com',
         'smtp_password' => 'booker123',
     ),
-	'developerMode' => false,
+	'developerMode' => true,
 );
 
 if (file_exists(__DIR__ . "/config_override.php"))
