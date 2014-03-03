@@ -31,6 +31,12 @@ angular.module('Mealbookers', [
         controller: 'MenuController'
     })
     
+    .state('Navigation.Menu.Suggestion', {
+        url: "/suggestion",
+        templateUrl: "partials/menu/Suggestion.html",
+        controller: 'SuggestionController'
+    })
+    
     .state('Navigation.AcceptSuggestion', {
         url: "/suggestion/accept",
         templateUrl: "partials/AcceptSuggestion.html",

@@ -91,7 +91,7 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', 'CurrentUser', 'Suggestions', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, CurrentUser, Suggestions) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', 'CurrentUser', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, CurrentUser) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = [];
@@ -114,7 +114,7 @@ angular.module('Mealbookers.controllers', [])
     /**
      * Load restaurants
      */
-    var loadRestaurants = function() {
+    $scope.loadRestaurants = function() {
         var restaurants = Restaurants.query(null, function() {
             $scope.restaurants = restaurants;
             $scope.restaurantRows = new Array(Math.ceil(restaurants.length / $rootScope.columns));
@@ -124,7 +124,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push(restaurants[i]);
         });
     };
-    loadRestaurants();
+    $scope.loadRestaurants();
 
 
     var updateSuggestion = function(restaurant, suggestion, day) {
@@ -165,24 +165,95 @@ angular.module('Mealbookers.controllers', [])
 
     // Load user's groups
     $scope.groups = CurrentUser.get({action: 'groups'});
-
+    
     /**
      * Suggest a restaurant and time
      */
     $scope.openSuggestion = function(restaurant) {
         $scope.suggestRestaurant = restaurant;
-        $scope.suggestTime = "";
-        $scope.suggestionMessage.type = '';
-        $scope.suggestionMessage.message = '';
-        $("#suggestionModal .group").removeClass("group-selected");
-        $("#suggestionModal .member").removeClass("member-selected");
-        $("#suggestionModal").modal();
-        $('#suggestionModal').on('shown.bs.modal', function (e) {
-            if ($rootScope.widthClass != 'xs') {
-                $("#suggestionModal input.suggest-time").focus();
+        $state.go(".Suggestion");
+    };
+
+    $scope.manageSuggestion = function(restaurant, suggestion, day, accept) {
+        if (suggestion.processing) {
+            return;
+        }
+
+        var action;
+        if (accept) {
+            action = 'accept';
+        }
+        else {
+            action = 'cancel';
+        }
+
+        // Execute the operation
+        suggestion.processing = true;
+        $http.post('api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
+            action: action
+        }).success(function(result) {
+            // Check the result
+            if (typeof result !== 'object' || result.status !== 'ok') {
+                // Too old
+                if (result.status == 'too_old') {
+                    $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
+                }
+                // Failed
+                else {
+                    $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+                    console.error("Failed to accept/cancel, got response:");
+                    console.error(result);
+                }
+                suggestion.processing = false;
             }
+            // OK
+            else {
+                // Canceled and deleted (last one out)
+                if (result.suggestionDeleted) {
+                    deleteSuggestion(restaurant, suggestion, day);
+                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
+                }
+                // Accepted or canceled (not last one out)
+                else {
+                    updateSuggestion(restaurant, result.suggestion, day);
+                    if (accept) {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
+                    }
+                    else {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
+                    }
+                }
+            }
+        })
+        .error(function(response, httpCode) {
+            suggestion.processing = false;
+            $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+            console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
         });
     };
+}])
+
+
+
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', 'Suggestions', function($scope, $rootScope, $state, $filter, Suggestions) {
+
+    $scope.suggestTime = "";
+    $scope.suggestionMessage.type = '';
+    $scope.suggestionMessage.message = '';
+    $("#suggestionModal .group").removeClass("group-selected");
+    $("#suggestionModal .member").removeClass("member-selected");
+    $("#suggestionModal").modal();
+    $('#suggestionModal').on('show.bs.modal', function () {
+        $(".container").addClass("modal-open");
+    });
+    $('#suggestionModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+    $('#suggestionModal').on('shown.bs.modal', function () {
+        if ($rootScope.widthClass != 'xs') {
+            $("#suggestionModal input.suggest-time").focus();
+        }
+    });
 
     $scope.suggestionSelectedMembers = [];
 
@@ -246,7 +317,7 @@ angular.module('Mealbookers.controllers', [])
                 }
                 else {
                     $("#closeSuggestion").trigger('click');
-                    loadRestaurants();
+                    $scope.loadRestaurants();
                     $rootScope.alert('alert-success', $filter('i18n')('suggestion_created'));
                 }
             }
@@ -258,64 +329,6 @@ angular.module('Mealbookers.controllers', [])
         function() {
             $scope.suggestionMessage.type = 'alert-danger';
             $scope.suggestionMessage.message = $filter('i18n')('suggestion_save_error');
-        });
-    };
-
-    $scope.manageSuggestion = function(restaurant, suggestion, day, accept) {
-        if (suggestion.processing) {
-            return;
-        }
-
-        var action;
-        if (accept) {
-            action = 'accept';
-        }
-        else {
-            action = 'cancel';
-        }
-
-        // Execute the operation
-        suggestion.processing = true;
-        $http.post('api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
-            action: action
-        }).success(function(result) {
-            // Check the result
-            if (typeof result !== 'object' || result.status !== 'ok') {
-                // Too old
-                if (result.status == 'too_old') {
-                    $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
-                }
-                // Failed
-                else {
-                    $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
-                    console.error("Failed to accept/cancel, got response:");
-                    console.error(result);
-                }
-                suggestion.processing = false;
-            }
-            // OK
-            else {
-                // Canceled and deleted (last one out)
-                if (result.suggestionDeleted) {
-                    deleteSuggestion(restaurant, suggestion, day);
-                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
-                }
-                // Accepted or canceled (not last one out)
-                else {
-                    updateSuggestion(restaurant, result.suggestion, day);
-                    if (accept) {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
-                    }
-                    else {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
-                    }
-                }
-            }
-        })
-        .error(function(response, httpCode) {
-            suggestion.processing = false;
-            $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
-            console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
         });
     };
 
