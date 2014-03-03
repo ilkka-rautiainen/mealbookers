@@ -105,7 +105,7 @@ angular.module('Mealbookers.controllers', [])
 
     // Show information passed from previous state
     if ($rootScope.stateData !== undefined && $rootScope.stateData.message !== undefined) {
-        $rootScope.alertMessage = $rootScope.stateData.message;
+        $rootScope.alert($rootScope.stateData.message.type, $rootScope.stateData.message.message);
     }
     if ($rootScope.stateData !== undefined && $rootScope.stateData.day !== undefined) {
         $scope.changeDay($rootScope.stateData.day);

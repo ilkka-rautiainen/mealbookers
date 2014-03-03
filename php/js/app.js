@@ -64,8 +64,8 @@ angular.module('Mealbookers', [
     var alertTimeouts = {
         'alert-danger': 30000,
         'alert-warning': 15000,
-        'alert-info': 5000,
-        'alert-success': 5000
+        'alert-info': 4000,
+        'alert-success': 3000
     };
 
     $rootScope.dismissAlert = function() {
@@ -87,6 +87,7 @@ angular.module('Mealbookers', [
             type: type,
             message: message
         };
+        $(".main-alert").finish();
         $(".main-alert").show();
         $window.scrollTo(0, 0);
         if (alertTimeout) {
