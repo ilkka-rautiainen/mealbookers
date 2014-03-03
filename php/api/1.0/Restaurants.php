@@ -147,7 +147,15 @@ class RestaurantsAPI
 
         $suggestion = new Suggestion();
         $suggestion->fetch($suggestion_user->suggestion_id);
-        $suggestion->accept($suggestion_user);
+        try {
+            $suggestion->accept($suggestion_user);
+        }
+        catch (TooOldException $e) {
+            return print json_encode(array(
+                'status' => 'too_old',
+                'weekDay' => $suggestion->getWeekDay(),
+            ));
+        }
         print json_encode(array(
             'status' => 'ok',
             'weekDay' => $suggestion->getWeekDay(),
@@ -195,11 +203,18 @@ class RestaurantsAPI
         $suggestion_user = new SuggestionUser();
         $suggestion_user->fetch($suggestions_users_id);
 
-        if ($action == 'accept') {
-            $suggestion->accept($suggestion_user);
+        try {
+            if ($action == 'accept') {
+                $suggestion->accept($suggestion_user);
+            }
+            else {
+                $suggestionDeleted = $suggestion->cancel($suggestion_user);
+            }
         }
-        else {
-            $suggestionDeleted = $suggestion->cancel($suggestion_user);
+        catch (TooOldException $e) {
+            return print json_encode(array(
+                'status' => 'too_old',
+            ));
         }
         
         if ($suggestionDeleted) {

@@ -9,10 +9,10 @@
             <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
                 <span class="suggestion-time">{{ suggestion.time }}</span>
                 <span ng-repeat="member in suggestion.members" ng-class="{'suggestion-creator': suggestion.creator.id == member.id}" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }} </span>
-                <span ng-if="!suggestion.accepted" class="suggestion-join" ng-class="{'suggestion-processing': suggestion.processing}" ng-click="acceptSuggestion(restaurant, suggestion, weekDay, true)">
+                <span ng-if="!suggestion.accepted" class="suggestion-join" ng-class="{'suggestion-processing': suggestion.processing}" ng-click="manageSuggestion(restaurant, suggestion, weekDay, true)">
                     {{ 'suggestion_accept' | i18n }}
                 </span>
-                <span ng-if="suggestion.accepted" class="suggestion-join" ng-class="{'suggestion-processing': suggestion.processing}" ng-click="acceptSuggestion(restaurant, suggestion, weekDay, false)">
+                <span ng-if="suggestion.accepted" class="suggestion-join" ng-class="{'suggestion-processing': suggestion.processing}" ng-click="manageSuggestion(restaurant, suggestion, weekDay, false)">
                     {{ 'suggestion_cancel' | i18n }}
                 </span>
             </div>

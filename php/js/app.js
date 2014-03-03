@@ -47,16 +47,66 @@ angular.module('Mealbookers', [
      */
     $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
 
-    $rootScope.alertMessage = {
+    var emptyMessage = {
         message: '',
         type: ''
     };
+    $rootScope.alertMessage = emptyMessage;
 
-    $rootScope.$watch('alertMessage', function(newValue) {
-        if (newValue.message !== undefined && newValue.message.length) {
-            $window.scrollTo(0, 0);
+    var alertTimeout = null;
+    var alertFadeTimeout = null;
+    var alertTimeouts = {
+        'alert-danger': 30000,
+        'alert-warning': 15000,
+        'alert-info': 5000,
+        'alert-success': 5000
+    };
+
+    $rootScope.dismissAlert = function() {
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
         }
-    }, true);
+        if (alertFadeTimeout) {
+            clearTimeout(alertFadeTimeout);
+        }
+        alertFadeout();
+    };
+
+    $rootScope.alert = function(type, message) {
+        if (!alertTimeouts[type]) {
+            return console.error("Invalid alert type: " + type);
+        }
+
+        $rootScope.alertMessage = {
+            type: type,
+            message: message
+        };
+        $(".main-alert").show();
+        $window.scrollTo(0, 0);
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
+        }
+        if (alertFadeTimeout) {
+            clearTimeout(alertFadeTimeout);
+        }
+        alertTimeout = setTimeout(alertFadeout, alertTimeouts[type]);
+    };
+
+    var alertFadeout = function() {
+        $(".main-alert").animate({
+            height: 'toggle',
+            'margin-top': 'toggle',
+            'margin-bottom': 'toggle',
+            'padding-top': 'toggle',
+            'padding-bottom': 'toggle',
+            'border-top': 'toggle',
+            'border-bottom': 'toggle',
+            opacity: 'toggle'
+        }, 1500);
+        alertFadeTimeout = setTimeout(function() {
+            $rootScope.alertMessage = emptyMessage;
+        }, 1500);
+    };
 
     $rootScope.getWeekDayText = function(day) {
         if (day < 1 || day > 7) {
