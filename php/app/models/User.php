@@ -206,4 +206,50 @@ class User
             Logger::debug(__METHOD__ . " sending succeeded");
         return $result;
     }
+    
+    public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler)
+    {
+        global $language, $config;
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for deletion of"
+            . " suggestion {$suggestion->id}");
+
+        $restaurant = new Restaurant();
+        $restaurant->fetch($suggestion->restaurant_id);
+
+        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
+        $mail = new PHPMailer();
+        $mail->CharSet = 'utf-8';
+        // $mail->SMTPDebug = true;
+        $mail->Port = $config['mail']['smtp_port'];
+        $mail->SMTPAuth = true;
+        $mail->IsSMTP();
+        $mail->SMTPSecure = $config['mail']['smtp_secure'];
+        $mail->Host = $config['mail']['smtp_host'];
+        $mail->Username = $config['mail']['smtp_username'];
+        $mail->Password = $config['mail']['smtp_password'];
+        $mail->Mailer = 'smtp';
+        $body = "Hei,<br /><br />  "
+            . $canceler->getName() . " peruikin ehdotuksensa mennä " . $suggestion->getDate()
+            . " syömään ravintolaan " . $restaurant->name . " aikaan " . $suggestion->getTime() . "."
+            . " <br /><br />Voit siirtyä palveluun"
+            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
+            . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
+            . "<br /><br />- Mealbookers<br /><br />"
+            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
+        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->AddAddress($this->email_address, $this->getName());
+        $mail->Subject = str_replace(
+            '{canceler}',
+            $canceler->getName(),
+            $language[$this->language]['mailer_subject_suggestion_deleted']
+        );
+        $mail->MsgHTML($body);
+        Logger::debug(__METHOD__ . " sending suggestion deletion message to {$this->email_address}");
+        $result = $mail->Send();
+        if (!$result)
+            Logger::error(__METHOD__ . " sending failed");
+        else
+            Logger::debug(__METHOD__ . " sending succeeded");
+        return $result;
+    }
 }

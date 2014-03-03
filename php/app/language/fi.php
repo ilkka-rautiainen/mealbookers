@@ -49,5 +49,6 @@ $GLOBALS['language']['fi'] = array(
     'mailer_subject_suggestion_accepted_creator' => '{accepter} on hyväksynyt ehdotuksesi',
     'mailer_subject_suggestion_accepted_other' => '{accepter} tulee kanssasi syömään',
     'mailer_subject_suggestion_left_alone' => '{canceler} ei pääsekään kanssasi syömään',
+    'mailer_subject_suggestion_deleted' => '{canceler} perui ehdotuksen',
     'action_failed' => 'Toimenpide epäonnistui',
 );

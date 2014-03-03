@@ -49,5 +49,6 @@ $GLOBALS['language']['en'] = array(
     'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
     'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
     'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
+    'mailer_subject_suggestion_deleted' => '{canceler} canceled the suggestion',
     'action_failed' => 'Action failed',
 );

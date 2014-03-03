@@ -18,8 +18,12 @@ class Suggestion {
             throw new Exception("Error fetching suggestion: id is null");
     }
 
-    private function delete()
+    /**
+     * Delete suggestion and notify all members
+     */
+    private function delete(User $canceler)
     {
+        $this->notifyDeletionToAll($canceler);
         DB::inst()->query("DELETE FROM suggestions WHERE id = {$this->id}");
     }
 
@@ -118,6 +122,20 @@ class Suggestion {
     }
 
     /**
+     * Sends a notification to all members when the suggestion is deleted
+     */
+    private function notifyDeletionToAll(User $canceler)
+    {
+        $result = DB::inst()->query("SELECT user_id FROM suggestions_users
+            WHERE suggestion_id = {$this->id} AND accepted = 0");
+        while ($member_id = DB::inst()->fetchFirstField($result)) {
+            $member = new User();
+            $member->fetch($member_id);
+            $member->sendSuggestionDeletionNotification($this, $canceler);
+        }
+    }
+
+    /**
      * Activate suggestion membership
      */
     public function accept(SuggestionUser $suggestion_user)
@@ -181,7 +199,9 @@ class Suggestion {
 
         // No users there anymore
         if ($accepted_suggestions_after == 0) {
-            $this->delete();
+            $canceler = new User();
+            $canceler->fetch($suggestion_user->user_id);
+            $this->delete($canceler);
             return true;
         }
 
