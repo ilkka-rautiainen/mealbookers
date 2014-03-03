@@ -177,6 +177,11 @@ angular.module('Mealbookers.controllers', [])
         $("#suggestionModal .group").removeClass("group-selected");
         $("#suggestionModal .member").removeClass("member-selected");
         $("#suggestionModal").modal();
+        $('#suggestionModal').on('shown.bs.modal', function (e) {
+            if ($rootScope.widthClass != 'xs') {
+                $("#suggestionModal input.suggest-time").focus();
+            }
+        });
     };
 
     $scope.suggestionSelectedMembers = [];
