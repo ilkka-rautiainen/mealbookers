@@ -9,30 +9,34 @@ angular.module('Mealbookers.controllers', [])
     if (typeof $location.search().hash != 'undefined') {
         $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
             if (result.status == 'deleted') {
-                var message = $filter('i18n')('suggestion_been_deleted');
-                $rootScope.alertMessage = {
-                    message: "poistettu",
-                    type: 'alert-warning'
+                $rootScope.stateData = {
+                    message: {
+                        message: $rootScope.localization['suggestion_been_deleted'],
+                        type: 'alert-warning'
+                    }
                 };
+                $state.go("Navigation.Menu");
             }
             else {
-                var message = $filter('i18n')('suggestion_accept_succeeded');
-                $rootScope.alertMessage = {
-                    message: "onnistu",
-                    type: 'alert-success'
+                $rootScope.stateData = {
+                    day: result.weekDay + 1,
+                    message: {
+                        message: $rootScope.localization['suggestion_accept_succeeded']
+                            + ', ' + result.restaurant + ', '
+                            + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay + 1)) + ' ' + result.time,
+                        type: 'alert-success'
+                    }
                 };
-                // var search = $location.search();
-                // delete search.hash;
-                // search.day = result.weekDay;
-                // $location.search(search);
+                $state.go("Navigation.Menu");
             }
-            $state.go("Navigation.Menu");
         });
     }
 }])
 
 
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
+    
+    // Changes day
     $scope.changeDay = function(day) {
         $scope.weekDay = day;
         var search = $location.search();
@@ -48,11 +52,13 @@ angular.module('Mealbookers.controllers', [])
     $scope.hasData = true;
     $scope.weekDay;
 
+    // Make remaining days array for navbar
     $scope.remainingDays = [];
     for (var i = $scope.today + 2; i <= $scope.maxDay; i++) {
         $scope.remainingDays.push(i);
     }
 
+    // Listens for weekday changes together with changeDay() function
     $scope.$watch(function() {
         return $location.search().day;
     }, function (newValue) {
@@ -61,6 +67,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.weekDay = parseInt(newValue);
     });
 
+    // Makes navbar hide when menu link clicked in xs-devices
     $(".navbar").on("click", "a", null, function () {
         if ($rootScope.widthClass === 'xs')
             $(".navbar-collapse").collapse('hide');
@@ -79,6 +86,14 @@ angular.module('Mealbookers.controllers', [])
         type: '',
         message: ''
     };
+
+    // Show information passed from previous state
+    if ($rootScope.stateData !== undefined && $rootScope.stateData.message !== undefined) {
+        $rootScope.alertMessage = $rootScope.stateData.message;
+    }
+    if ($rootScope.stateData !== undefined && $rootScope.stateData.day !== undefined) {
+        $scope.changeDay($rootScope.stateData.day);
+    }
 
     /**
      * Load restaurants
@@ -132,9 +147,7 @@ angular.module('Mealbookers.controllers', [])
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
     });
 
-    /**
-     * Load user's groups
-     */
+    // Load user's groups
     $scope.groups = CurrentUser.get({action: 'groups'});
 
     /**

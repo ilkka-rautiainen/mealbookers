@@ -33,6 +33,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_too_early' => 'You cannot make a suggestion with a time more than 5 min ago',
     'suggest_failed_to_send_invitation_email' => 'Failed to send invitation email:',
     'suggestion_been_deleted' => 'The suggestion you accepted had been deleted...',
+    'suggestion_accept_succeeded' => 'Suggestion accepted',
     'suggestion_accept' => 'Accept',
     'suggestion_cancel' => 'Cancel',
     'suggestion_accept_failed' => 'Accept/canceling the suggestion failed.',

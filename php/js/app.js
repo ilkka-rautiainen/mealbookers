@@ -53,10 +53,27 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.$watch('alertMessage', function(newValue) {
-        if (newValue.message.length) {
+        if (newValue.message !== undefined && newValue.message.length) {
             $window.scrollTo(0, 0);
         }
     }, true);
+
+    $rootScope.getWeekDayText = function(day) {
+        if (day < 1 || day > 7) {
+            return console.error("Incorrect day passed: " + day);
+        }
+        
+        var today = ((new Date().getDay() + 6) % 7) + 1;
+        if (day == today) {
+            return $rootScope.localization.today;
+        }
+        else if (day == today + 1) {
+            return $rootScope.localization.tomorrow;
+        }
+        else {
+            return $rootScope.localization['weekday_' + day];
+        }
+    }
 
     var setWidthClass = function() {
         $rootScope.$apply(function() {

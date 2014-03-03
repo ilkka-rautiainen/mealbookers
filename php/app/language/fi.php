@@ -33,6 +33,7 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_too_early' => 'Et voi luoda ehdotusta 5 min kauemmaksi menneisyyteen',
     'suggest_failed_to_send_invitation_email' => 'Kutsuviestien lähetys epäonnistui:',
     'suggestion_been_deleted' => 'Hyväksymäsi ehdotus oli ehditty poistaa...',
+    'suggestion_accept_succeeded' => 'Ehdotus hyväksytty',
     'suggestion_accept' => 'Hyväksy',
     'suggestion_cancel' => 'Peru',
     'suggestion_accept_failed' => 'Ehdotuksen hyväksyminen/peruminen epäonnistui.',

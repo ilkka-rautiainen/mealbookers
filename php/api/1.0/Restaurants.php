@@ -148,6 +148,8 @@ class RestaurantsAPI
         print json_encode(array(
             'status' => 'ok',
             'weekDay' => $suggestion->getWeekDay(),
+            'time' => $suggestion->getTime(),
+            'restaurant' => DB::inst()->getOne("SELECT name FROM restaurants WHERE id = {$suggestion->restaurant_id}"),
         ));
     }
 
