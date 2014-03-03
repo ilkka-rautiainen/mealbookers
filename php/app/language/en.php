@@ -40,6 +40,8 @@ $GLOBALS['language']['en'] = array(
     'suggestion_accepting' => 'Accepting the suggestion...',
     'mailer_sender_name' => 'Mealbookers',
     'mailer_subject_suggestion' => '{suggester} want\'s to eat with you',
-    'mailer_subject_suggestion_accepted' => '{accepter} has accepted your suggestion',
+    'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
+    'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
+    'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
     'action_failed' => 'Action failed',
 );

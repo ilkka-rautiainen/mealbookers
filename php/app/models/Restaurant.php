@@ -75,7 +75,8 @@ class Restaurant
                 WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
                     suggestions.restaurant_id = {$this->id} AND
                     suggestions_users.user_id = {$user->id}
-                GROUP BY suggestions.id");
+                GROUP BY suggestions.id
+                ORDER BY suggestions.datetime ASC");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();

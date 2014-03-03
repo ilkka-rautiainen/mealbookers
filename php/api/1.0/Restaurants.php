@@ -134,7 +134,7 @@ class RestaurantsAPI
         if (strlen($hash) != 32)
             sendHttpError(401, "Invalid hash");
 
-        if (!$suggestion_user = DB::inst()->getRowAssoc("SELECT * FROM suggestions_users WHERE hash = '"
+        if (!$suggestion_user_id = DB::inst()->getOne("SELECT id FROM suggestions_users WHERE hash = '"
             . DB::inst()->quote($hash) . "' LIMIT 1"))
         {
             return print json_encode(array(
@@ -142,9 +142,12 @@ class RestaurantsAPI
             ));
         }
 
+        $suggestion_user = new SuggestionUser();
+        $suggestion_user->fetch($suggestion_user_id);
+
         $suggestion = new Suggestion();
-        $suggestion->fetch($suggestion_user['suggestion_id']);
-        $suggestion->accept($suggestion_user['id']);
+        $suggestion->fetch($suggestion_user->suggestion_id);
+        $suggestion->accept($suggestion_user);
         print json_encode(array(
             'status' => 'ok',
             'weekDay' => $suggestion->getWeekDay(),
@@ -189,11 +192,14 @@ class RestaurantsAPI
         $suggestion->fetch($suggestionId);
         $suggestionDeleted = false;
 
+        $suggestion_user = new SuggestionUser();
+        $suggestion_user->fetch($suggestions_users_id);
+
         if ($action == 'accept') {
-            $suggestion->accept($suggestions_users_id);
+            $suggestion->accept($suggestion_user);
         }
         else {
-            $suggestionDeleted = $suggestion->cancel($suggestions_users_id);
+            $suggestionDeleted = $suggestion->cancel($suggestion_user);
         }
         
         if ($suggestionDeleted) {

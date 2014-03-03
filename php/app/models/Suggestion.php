@@ -54,7 +54,8 @@ class Suggestion {
         $members = array();
         $result = DB::inst()->query("SELECT users.* FROM users
             INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
-            WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1");
+            WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1
+            ORDER BY suggestions_users.accepted_timestamp ASC");
         while ($row = DB::inst()->fetchAssoc($result)) {
             $member = new User();
             $member->populateFromRow($row);
@@ -119,53 +120,51 @@ class Suggestion {
     /**
      * Activate suggestion membership
      */
-    public function accept($suggestions_users_id)
+    public function accept(SuggestionUser $suggestion_user)
     {
-        Logger::info(__METHOD__ . " accepting suggestion with suggestions_users_id $suggestions_users_id");
-        $this->acceptOrCancel($suggestions_users_id, true);
+        Logger::info(__METHOD__ . " accepting suggestion with suggestions_user {$suggestion_user->id}");
+        
+        $accepted_suggestions_before = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
+            suggestion_id = {$this->id} AND accepted = 1");
+
+        // Get the alone one's id
+        if ($accepted_suggestions_before == 1) {
+            $alone_member_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users
+                WHERE suggestion_id = {$this->id} AND accepted = 1 LIMIT 1");
+        }
+
+        // Accept it
+        $suggestion_user->accept();
+
+        $accepted_suggestions_after = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
+                suggestion_id = {$this->id} AND accepted = 1");
+
+        // Notify the alone one not to have to be alone anymore
+        if ($accepted_suggestions_before == 1 && $accepted_suggestions_after > 1) {
+            $is_creator = ($alone_member_id == $this->creator_id);
+
+            $accepter = new User();
+            $accepter->fetch($suggestion_user->user_id);
+
+            $alone_member = new User();
+            $alone_member->fetch($alone_member_id);
+            $alone_member->notifyAcceptedSuggestion($this, $accepter, $is_creator);
+        }
     }
 
     /**
      * Inactivate suggestion membership
      * @return  true if suggestion was deleted due to no users in it, otherwise false
      */
-    public function cancel($suggestions_users_id)
+    public function cancel(SuggestionUser $suggestion_user)
     {
-        Logger::info(__METHOD__ . " canceling suggestion with suggestions_users_id $suggestions_users_id");
-        if ($this->acceptOrCancel($suggestions_users_id, false))
-            return true;
-        else
-            return false;
-    }
+        Logger::info(__METHOD__ . " canceling suggestion with suggestions_user {$suggestion_user->id}");
 
-    /**
-     * Activate or inactivate suggestion membership
-     */
-    private function acceptOrCancel($suggestions_users_id, $accept = true)
-    {
         $accepted_suggestions_before = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
             suggestion_id = {$this->id} AND accepted = 1");
 
-        // Accept membership
-        if ($accept) {
-            // New joiner
-            if (!DB::inst()->getOne("SELECT accepted_timestamp FROM suggestions_users
-                WHERE id = $suggestions_users_id"))
-            {
-                DB::inst()->query("UPDATE suggestions_users SET accepted = 1,
-                    accepted_timestamp = " . time() . " WHERE id = $suggestions_users_id");
-            }
-            // Old joiner -> preserve timestamp of old join in order to get back the creator position
-            else {
-                DB::inst()->query("UPDATE suggestions_users SET accepted = 1
-                    WHERE id = $suggestions_users_id");
-            }
-        }
-        // Cancel membership
-        else {
-            DB::inst()->query("UPDATE suggestions_users SET accepted = 0
-                WHERE id = $suggestions_users_id");
-        }
+        // Cancel it
+        $suggestion_user->cancel();
 
         $accepted_suggestions_after = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
                 suggestion_id = {$this->id} AND accepted = 1");
@@ -176,16 +175,16 @@ class Suggestion {
             return true;
         }
 
-        // Update the creator to be the first accepted user
-        DB::inst()->query("UPDATE suggestions SET creator_id = (SELECT user_id FROM suggestions_users
-            WHERE suggestion_id = {$this->id} AND accepted = 1 ORDER BY accepted_timestamp ASC LIMIT 1)
-                WHERE id = {$this->id}");
-
-        // The first acceptance for the suggestion
-        if ($accepted_suggestions_before == 1 && $accepted_suggestions_after > 1) {
-            $current_user = new User();
-            $current_user->fetch($this->creator_id);
-            $current_user->notifyAcceptedSuggestion($this);
+        // Notify the alone one of being left alone
+        if ($accepted_suggestions_before >= 1 && $accepted_suggestions_after == 1) {
+            $canceler = new User();
+            $canceler->fetch($suggestion_user->user_id);
+            
+            $last_member_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users
+                WHERE suggestion_id = {$this->id} AND accepted = 1");
+            $last_member = new User();
+            $last_member->fetch($last_member_id);
+            $last_member->notifyBeenLeftAlone($this, $canceler);
         }
     }
 }
