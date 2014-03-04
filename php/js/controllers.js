@@ -195,7 +195,7 @@ angular.module('Mealbookers.controllers', [])
             // Check the result
             if (typeof result !== 'object' || result.status !== 'ok') {
                 // Too old
-                if (result.status == 'too_old') {
+                if (result.status == 'not_manageable') {
                     $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
                 }
                 // Failed

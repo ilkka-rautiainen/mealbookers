@@ -198,23 +198,24 @@ class RestaurantsAPI
 
         $suggestion = new Suggestion();
         $suggestion->fetch($suggestionId);
+
+        // Not manageable anymore
+        if (!$suggestion->isManageable(true)) {
+            return print(json_encode(array(
+                'status' => 'not_manageable'
+            )));
+        }
+
         $hasSuggestionBeenDeleted = false;
 
         $suggestion_user = new SuggestionUser();
         $suggestion_user->fetch($suggestions_users_id);
 
-        try {
-            if ($action == 'accept') {
-                $suggestion->accept($suggestion_user);
-            }
-            else {
-                $hasSuggestionBeenDeleted = $suggestion->cancel($suggestion_user);
-            }
+        if ($action == 'accept') {
+            $suggestion->accept($suggestion_user);
         }
-        catch (TooOldException $e) {
-            return print json_encode(array(
-                'status' => 'too_old',
-            ));
+        else {
+            $hasSuggestionBeenDeleted = $suggestion->cancel($suggestion_user);
         }
         
         if ($hasSuggestionBeenDeleted) {

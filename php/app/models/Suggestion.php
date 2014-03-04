@@ -102,9 +102,15 @@ class Suggestion {
         }
     }
 
-    private function isManageable()
+    public function isManageable($withBackendThreshold = false)
     {
-        return (strtotime($this->datetime) > time() - Conf::inst()->get('limits.suggestion_cancelable_time'));
+        $backendThreshold = 0;
+        if ($withBackendThreshold) {
+            $backendThreshold = Conf::inst()->get('limits.backend_threshold');
+        }
+
+        return (strtotime($this->datetime)
+            > time() - Conf::inst()->get('limits.suggestion_cancelable_time') - $backendThreshold);
     }
 
     public function insertMember(User $member, $accepted)
@@ -149,11 +155,6 @@ class Suggestion {
     public function accept(SuggestionUser $suggestion_user)
     {
         Logger::info(__METHOD__ . " accepting suggestion with suggestions_user {$suggestion_user->id}");
-
-        if (strtotime($this->datetime) < time() - 1800) {
-            Logger::error(__METHOD__ . " suggestion was too old: {$this->datetime}, now: " . date("Y-m-d H:i:s"));
-            throw new TooOldException("Suggestion datetime has past with more than half an hour");
-        }
         
         $accepted_suggestions_before = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
             suggestion_id = {$this->id} AND accepted = 1");
@@ -190,11 +191,6 @@ class Suggestion {
     public function cancel(SuggestionUser $suggestion_user)
     {
         Logger::info(__METHOD__ . " canceling suggestion with suggestions_user {$suggestion_user->id}");
-
-        if (strtotime($this->datetime) < time() - 1800) {
-            Logger::error(__METHOD__ . " suggestion was too old: {$this->datetime}, now: " . date("Y-m-d H:i:s"));
-            throw new TooOldException("Suggestion datetime has past with more than half an hour");
-        }
 
         $accepted_suggestions_before = DB::inst()->getOne("SELECT COUNT(id) FROM suggestions_users WHERE
             suggestion_id = {$this->id} AND accepted = 1");
