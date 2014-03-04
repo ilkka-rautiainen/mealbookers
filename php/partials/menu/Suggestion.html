@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group">
                         <label for="suggest_friends">{{ 'suggest_friends' | i18n }}:</label>
-                        <div ng-repeat="group in groups" class="group-container">
+                        <div ng-repeat="group in currentUser.groups" class="group-container">
                             <div ng-click="toggleGroup(group)" class="group" id="group_{{ group.id }}">{{ group.name }}</div>
                             <!-- <div class="clearfix"></div> -->
                             <div ng-repeat="member in group.members" class="member group_{{ group.id }}_member member_{{ member.id }}" data-member-id="{{ member.id }}" title="{{ member.name }}" ng-click="toggleGroupMember(group, member)">

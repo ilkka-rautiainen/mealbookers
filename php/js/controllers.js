@@ -51,7 +51,7 @@ angular.module('Mealbookers.controllers', [])
 
 
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
-    
+
     // Changes day
     $scope.changeDay = function(day) {
         $scope.weekDay = day;
@@ -91,7 +91,7 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', 'CurrentUser', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, CurrentUser) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = [];
@@ -162,9 +162,6 @@ angular.module('Mealbookers.controllers', [])
         for (var i = 0; i < $scope.restaurants.length; i++)
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
     });
-
-    // Load user's groups
-    $scope.groups = CurrentUser.get({action: 'groups'});
     
     /**
      * Suggest a restaurant and time

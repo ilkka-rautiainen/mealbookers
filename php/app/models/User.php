@@ -45,8 +45,36 @@ class User
         );
     }
 
-    public function getInitials() {
+    public function getInitials()
+    {
         return substr($this->first_name, 0, 1) . substr($this->last_name, 0, 1);
+    }
+
+    public function getGroups()
+    {
+        $groups = array();
+
+        $groups_result = DB::inst()->query("SELECT group_id FROM group_memberships WHERE user_id = {$this->id}");
+        while ($group_id = DB::inst()->fetchFirstField($groups_result)) {
+            $group_row = DB::inst()->getRowAssoc("SELECT id, name FROM groups WHERE id = $group_id");
+            $members = array();
+
+            $group_users_result = DB::inst()->query("SELECT user_id FROM group_memberships WHERE
+                group_id = $group_id AND user_id != {$this->id}");
+            while ($user_id = DB::inst()->fetchFirstField($group_users_result)) {
+                $user = new User();
+                $user->fetch($user_id);
+                $members[] = $user->getAsArray();
+            }
+
+            $groups[] = array(
+                'id' => $group_row['id'],
+                'name' => $group_row['name'],
+                'members' => $members,
+            );
+        }
+
+        return $groups;
     }
 
     public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)

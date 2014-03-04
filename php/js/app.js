@@ -17,11 +17,12 @@ angular.module('Mealbookers', [
     $stateProvider
 
     .state('Navigation', {
+        abstract: true,
         url: "/app",
         templateUrl: "partials/Navigation.html",
         controller: 'NavigationController',
         resolve: {
-            localization: "Localization"
+            initialization: "Initialization"
         }
     })
     
@@ -48,25 +49,23 @@ angular.module('Mealbookers', [
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
 
-    /**
-     * Load user
-     */
-    $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
-
     var emptyMessage = {
         message: '',
         type: ''
     };
     $rootScope.alertMessage = emptyMessage;
 
+    $rootScope.config = {
+        alertTimeouts: {
+            'alert-danger': 30000,
+            'alert-warning': 15000,
+            'alert-info': 4000,
+            'alert-success': 3000
+        }
+    }
+
     var alertTimeout = null;
     var alertFadeTimeout = null;
-    var alertTimeouts = {
-        'alert-danger': 30000,
-        'alert-warning': 15000,
-        'alert-info': 4000,
-        'alert-success': 3000
-    };
 
     $rootScope.dismissAlert = function() {
         if (alertTimeout) {
@@ -79,7 +78,7 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.alert = function(type, message) {
-        if (!alertTimeouts[type]) {
+        if (!$rootScope.config.alertTimeouts[type]) {
             return console.error("Invalid alert type: " + type);
         }
 
@@ -95,7 +94,7 @@ angular.module('Mealbookers', [
         if (alertFadeTimeout) {
             clearTimeout(alertFadeTimeout);
         }
-        alertTimeout = setTimeout(alertFadeout, alertTimeouts[type]);
+        alertTimeout = setTimeout(alertFadeout, $rootScope.config.alertTimeouts[type]);
     };
 
     var alertFadeout = function() {

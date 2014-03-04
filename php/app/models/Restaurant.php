@@ -27,6 +27,17 @@ class Restaurant
         $this->link = $row['link'];
     }
 
+    public function getAsArray()
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'link' => $this->link,
+            'mealList' => $this->mealList->getAsArray(),
+            'suggestionList' => $this->suggestionList->getAsArray(),
+        );
+    }
+
     /**
      * @todo optimize to only one query
      */
@@ -81,16 +92,5 @@ class Restaurant
             }
         }
         $this->suggestionList = $suggestionList;
-    }
-
-    public function getAsArray()
-    {
-        return array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'link' => $this->link,
-            'mealList' => $this->mealList->getAsArray(),
-            'suggestionList' => $this->suggestionList->getAsArray(),
-        );
     }
 }
