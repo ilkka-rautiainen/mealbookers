@@ -210,4 +210,11 @@ angular.module('Mealbookers.controllers', [])
             }
         }
     });
+
+    $scope.addPlusOne = function(restaurantId, mealId) {
+        $http.post('api/1.0/restaurants/' + restaurantId + '/meals/' + mealId + '/plus-one')
+        .success(function(result) {
+            console.log(result);
+        });
+    };
 }])

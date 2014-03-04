@@ -43,6 +43,18 @@ class Meal {
             'language' => $this->language,
             'day' => $this->day,
             'section' => $this->section,
+            'plus_ones' => $this->getPlusOnesAmount(),
         );
+    }
+
+    /**
+     * @todo implement with current user
+     */
+    public function getPlusOnesAmount()
+    {
+        DB::inst()->query("SELECT DISTINCT id FROM plus_ones
+            INNER JOIN group_memberships gm ON gm.user_id = plus_ones.user_id
+            WHERE plus_ones.meal_id = {$this->id} AND gm.group_id IN (1, 2)");
+        return (int)DB::inst()->getRowCount();
     }
 }

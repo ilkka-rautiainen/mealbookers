@@ -3,6 +3,7 @@
 Flight::route('GET /restaurants', array('RestaurantsAPI', 'get'));
 Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'createSuggestion'));
 Flight::route('POST /suggestion', array('RestaurantsAPI', 'acceptSuggestion'));
+Flight::route('POST /restaurants/@restaurantId/meals/@mealId/plus-one', array('RestaurantsAPI', 'createPlusOne'));
 
 class RestaurantsAPI
 {
@@ -147,6 +148,32 @@ class RestaurantsAPI
         print json_encode(array(
             'status' => 'ok',
             'weekDay' => $suggestion->getWeekDay(),
+        ));
+    }
+
+    /**
+     * @todo implement with real current user + auth
+     */
+    public function createPlusOne($restaurantId, $mealId)
+    {
+        $restaurantId = (int)$restaurantId;
+        $mealId = (int)$mealId;
+
+        if (!DB::inst()->getOne("SELECT id FROM restaurants WHERE id = $restaurantId"))
+            sendHttpError(404, "Restaurant $restaurantId not found");
+        else if (!DB::inst()->getOne("SELECT id FROM meals WHERE id = $mealId"))
+            sendHttpError(404, "Meal $mealId not found");
+
+        DB::inst()->query("INSERT INTO plus_ones (
+                meal_id,
+                user_id
+            ) VALUES (
+                $mealId,
+                1
+            )");
+        
+        print json_encode(array(
+            'status' => 'ok',
         ));
     }
 }

@@ -12,9 +12,12 @@
             <hr class="featurette-divider meal-divider">
         </div>
         <!-- <button ng-click="suggest(restaurant)">{{ 'suggest' | i18n }}</button> -->
-        <div ng-repeat="meal in restaurant.mealList[weekDay]">
-            <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
-            <span ng-bind-html="meal.name | mealRow"></span>
+        <div ng-repeat="meal in restaurant.mealList[weekDay]" class="meal">
+            <div class="meal-left">
+                <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
+                <span ng-bind-html="meal.name | mealRow" class="meal-name"></span>
+            </div>
+            <div class="meal-plus-one" ng-class="{'meal-plus-one-popular': meal.plus_ones}" ng-click="addPlusOne(restaurant.id, meal.id)">+{{ meal.plus_ones }}</div>
             <hr ng-if="$index < restaurant.mealList[weekDay].length - 1" class="featurette-divider meal-divider">
         </div>
     </div>

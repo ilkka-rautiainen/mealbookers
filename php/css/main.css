@@ -217,13 +217,52 @@ body {
     font-size: 30px;
 }
 
+.restaurant-thumbnail .meal {
+    margin: 2px 0 2px 0;
+}
+
+.restaurant-thumbnail .meal .meal-left {
+    float: left;
+    width: 87%;
+    min-height: 24px;
+    padding-top: 2px;
+}
+
+.restaurant-thumbnail .meal .meal-plus-one {
+    float: left;
+    width: 13%;
+    text-align: center;
+    border: 1px solid #78BBFF;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #555555;
+    opacity: .3;
+}
+
+.restaurant-thumbnail .meal .meal-plus-one-popular {
+    opacity: 1;
+    font-family: OpenSansBold;
+}
+
+.restaurant-thumbnail .meal .meal-plus-one-given {
+    font-family: OpenSansBold;
+}
+
+.restaurant-thumbnail .meal .meal-plus-one:hover {
+    opacity: 1;
+    background-image: -ms-linear-gradient(top, #78BBFF 0%, #9EDFFF 100%);
+    background-image: -moz-linear-gradient(top, #78BBFF 0%, #9EDFFF 100%);
+    background-image: -o-linear-gradient(top, #78BBFF 0%, #9EDFFF 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #78BBFF ), color-stop(1, #9EDFFF));
+    background-image: -webkit-linear-gradient(top, #78BBFF 0%, #9EDFFF 100%);
+    background-image: linear-gradient(to bottom, #78BBFF 0%, #9EDFFF 100%);
+    color: white;
+}
+
 .restaurant-thumbnail .meal-divider {
     margin: 2px 0 2px 0;
     border-color: #9CB9FF;
-}
-
-.restaurant-thumbnail .meal {
-    margin: 2px 0 2px 0;
+    clear: both;
 }
 
 span.attribute-group {
