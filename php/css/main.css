@@ -57,6 +57,7 @@ body {
 
 .restaurant-row {
     display: table;
+    table-layout: fixed;
     border-spacing: 20px;
     margin: 0 -20px -20px 0;
     width: 100%;
@@ -119,14 +120,28 @@ body {
 }
 
 .restaurant .suggestion-list {
-    /*border: 1px solid black;*/
-    /*background-color: #ff7373;
-    border-radius: 5px;
-    -webkit-box-shadow: 0px 0px 5px 3px rgba(255, 115, 115, 0.75);
-    -moz-box-shadow:    0px 0px 5px 3px rgba(255, 115, 115, 0.75);
-    box-shadow:         0px 0px 5px 3px rgba(255, 115, 115, 0.75);*/
     margin-bottom: 3px;
     color: black;
+}
+
+.restaurant .suggestion-join {
+    cursor: pointer;
+}
+
+.restaurant .suggestion-join:hover {
+    text-decoration: underline;
+}
+
+.restaurant .suggestion-processing {
+    color: gray;
+}
+
+.restaurant .suggestion-processing:hover {
+    text-decoration: none;
+}
+
+.restaurant .suggestion-processing:after {
+    content: "...";
 }
 
 .restaurant .suggestion-time {
@@ -212,9 +227,22 @@ body {
     outline: 0;
 }
 
-.page-header {
+ .page-header {
     text-align: center;
     font-size: 30px;
+}
+
+#main-alert-container {
+    float: right;
+    position: relative;
+}
+
+.main-alert {
+    position: absolute;
+    top: 10px;
+    right: 0px;
+    white-space: nowrap;
+    margin-right: 17px;
 }
 
 .restaurant-thumbnail .meal-divider {
@@ -251,10 +279,15 @@ span.line-break {
 .meal-section {
     font-family: OpenSansBold;
     display: block;
-    /*text-decoration: underline;*/
+}
+
+.chrome-fix-line {
+    font-family: OpenSansBold;
+    font-size: 0px;
+    display: block;
 }
 
 /* This repairs blue border in modals */
 .modal-open .modal,.btn:focus{
-    outline:none!important
+    outline: none !important;
 }

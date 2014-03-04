@@ -14,17 +14,16 @@ class Logger
      */
     private function __construct()
     {
-        global $config;
-        $levels = $config["log"]["levels"];
+        $levels = Conf::inst()->get('log.levels');
         $this->levels = $this->levelNames = array();
         foreach ($levels as $key => $name) {
             $this->levels[$name] = $key;
             $this->levelNames[] = $name;
         }
         
-        $loggingLevel = $config["log"]["level"];
+        $loggingLevel = Conf::inst()->get('log.level');
         $this->loggingLevel = $this->levels[$loggingLevel];
-        $this->file = fopen(__DIR__ . "/" . $config["log"]["file"], "a");
+        $this->file = fopen(__DIR__ . "/" . Conf::inst()->get('log.file'), "a");
     }
 
     /**
@@ -37,7 +36,7 @@ class Logger
     /**
      * Singleton pattern: Instance
      */
-    private static function Instance()
+    private static function inst()
     {
         if (is_null(self::$instance))
             self::$instance = new Logger();
@@ -47,6 +46,7 @@ class Logger
     
     /**
      * Put a log message to log
+     * @todo  check that this works with the real current user
      */
     private function log($level, $message)
     {
@@ -69,13 +69,13 @@ class Logger
      */
     public static function __callStatic($name, $arguments)
     {
-        if (!in_array($name, self::Instance()->levelNames))
+        if (!in_array($name, self::inst()->levelNames))
             throw new Exception("No such logging level: $name");
-        else if (self::Instance()->levels[$name] > self::Instance()->loggingLevel)
+        else if (self::inst()->levels[$name] > self::inst()->loggingLevel)
             return;
         else if (count($arguments) != 1)
             throw new Exception("Invalid number of arguments");
             
-        return self::Instance()->log($name, $arguments[0]);
+        return self::inst()->log($name, $arguments[0]);
     }
 }

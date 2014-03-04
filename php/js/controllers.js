@@ -5,48 +5,89 @@
 angular.module('Mealbookers.controllers', [])
 
 
+.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$location', function($http, $filter, $rootScope, $state, $location) {
+    if (typeof $location.search().hash != 'undefined') {
+        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
+            if (typeof result == 'object' && result.status == 'deleted') {
+                $rootScope.stateData = {
+                    message: {
+                        message: $rootScope.localization['suggestion_been_deleted'],
+                        type: 'alert-warning'
+                    }
+                };
+            }
+            else if (typeof result == 'object' && result.status == 'too_old') {
+                $rootScope.stateData = {
+                    day: result.weekDay + 1,
+                    message: {
+                        message: $rootScope.localization['suggestion_accept_gone'],
+                        type: 'alert-info'
+                    }
+                };
+            }
+            else if (typeof result == 'object' && result.status == 'ok') {
+                $rootScope.stateData = {
+                    day: result.weekDay + 1,
+                    message: {
+                        message: $rootScope.localization['suggestion_accept_succeeded']
+                            + ', ' + result.restaurant + ', '
+                            + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay + 1)) + ' ' + result.time,
+                        type: 'alert-success'
+                    }
+                };
+            }
+            else {
+                $rootScope.stateData = {
+                    message: {
+                        message: $rootScope.localization['suggestion_accept_failed'],
+                        type: 'alert-danger'
+                    }
+                };
+            }
+            $state.go("Navigation.Menu");
+        });
+    }
+}])
+
+
 .controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
 
-    $scope.today = (new Date().getDay() - 1) % 7;
+    // Changes day
+    $scope.changeDay = function(day) {
+        $scope.weekDay = day;
+        var search = $location.search();
+        search.day = day;
+        $location.search(search);
+    };
+
+    $scope.today = ((new Date().getDay() + 6) % 7) + 1;
     $scope.tomorrow = $scope.today + 1;
-    $scope.weekDay = $scope.today;
     $scope.weekDayChangeProcess = false;
     $scope.restaurantsEmptied = false;
-    var maxDay = 7
+    $scope.maxDay = 7;
+    $scope.hasData = true;
+    $scope.weekDay;
 
+    // Make remaining days array for navbar
     $scope.remainingDays = [];
-    for (var i=$scope.weekDay+2; i<7; i++)
+    for (var i = $scope.today + 2; i <= $scope.maxDay; i++) {
         $scope.remainingDays.push(i);
-
-    $scope.changeDay = function(num, hideNavBar) {
-        var search = $location.search();
-        search.day = num + 1;
-        $location.search(search);
-        $scope.weekDay = num;
-        if (hideNavBar) {
-            $scope.hideNavbarCollapse();
-        }
-    };
-
-    $scope.$watch('weekDay', function(newValue) {
-        var search = $location.search();
-        search.day = $scope.weekDay + 1;
-        $location.search(search);
-    });
-
-    $scope.navigateHome = function() {
-        $scope.changeDay($scope.today, true);
-    };
-
-    $scope.hideNavbarCollapse = function() {
-        if ($('.navbar-collapse').height() > 10) {
-            $(".navbar-toggle").trigger("click");
-        }
     }
 
-    var locationDay = $location.search().day;
-    if (typeof locationDay != 'undefined' && locationDay > $scope.today && locationDay <= maxDay)
-        $scope.changeDay(parseInt($location.search().day) - 1, false);
+    // Listens for weekday changes together with changeDay() function
+    $scope.$watch(function() {
+        return $location.search().day;
+    }, function (newValue) {
+        if (newValue == undefined || parseInt(newValue) < $scope.today || parseInt(newValue) > $scope.maxDay)
+            return $scope.changeDay($scope.today);
+        $scope.weekDay = parseInt(newValue);
+    });
+
+    // Makes navbar hide when menu link clicked in xs-devices
+    $(".navbar").on("click", "a", null, function () {
+        if ($rootScope.widthClass === 'xs')
+            $(".navbar-collapse").collapse('hide');
+    });
 }])
 
 .controller('LoginController', ['$scope', '$rootScope', function($scope, $rootScope) {
@@ -56,7 +97,7 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', 'CurrentUser', 'Suggestions', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, CurrentUser, Suggestions) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants) {
 
     $rootScope.title = "Menu";
     $scope.restaurants = [];
@@ -68,10 +109,18 @@ angular.module('Mealbookers.controllers', [])
         message: ''
     };
 
+    // Show information passed from previous state
+    if ($rootScope.stateData !== undefined && $rootScope.stateData.message !== undefined) {
+        $rootScope.alert($rootScope.stateData.message.type, $rootScope.stateData.message.message);
+    }
+    if ($rootScope.stateData !== undefined && $rootScope.stateData.day !== undefined) {
+        $scope.changeDay($rootScope.stateData.day);
+    }
+
     /**
      * Load restaurants
      */
-    var loadRestaurants = function() {
+    $scope.loadRestaurants = function() {
         var restaurants = Restaurants.query(null, function() {
             $scope.restaurants = restaurants;
             $scope.restaurantRows = new Array(Math.ceil(restaurants.length / $rootScope.columns));
@@ -79,10 +128,38 @@ angular.module('Mealbookers.controllers', [])
                 $scope.restaurantRows[i] = [];
             for (var i = 0; i < restaurants.length; i++)
                 $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push(restaurants[i]);
-            $rootScope.loaded.restaurants = true;
         });
     };
-    loadRestaurants();
+    $scope.loadRestaurants();
+
+
+    var updateSuggestion = function(restaurant, suggestion, day) {
+        for (var i = 0; i < $scope.restaurants.length; i++) {
+            if ($scope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $scope.restaurants[i].suggestionList[day - 1][j] = suggestion;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    };
+
+    var deleteSuggestion = function(restaurant, suggestion, day) {
+        for (var i = 0; i < $scope.restaurants.length; i++) {
+            if ($scope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $scope.restaurants[i].suggestionList[day - 1].splice(j, 1);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    };
 
     $rootScope.$watch('widthClass', function() {
         $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
@@ -91,34 +168,95 @@ angular.module('Mealbookers.controllers', [])
         for (var i = 0; i < $scope.restaurants.length; i++)
             $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
     });
-
-    if (typeof $location.search().hash != 'undefined') {
-        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
-            loadRestaurants();
-            var search = $location.search();
-            delete search.hash;
-            $location.search(search);
-            $scope.weekDay = result.weekDay;
-        });
-    }
-
-    /**
-     * Load user's groups
-     */
-    $scope.groups = CurrentUser.get({action: 'groups'});
-
+    
     /**
      * Suggest a restaurant and time
      */
     $scope.openSuggestion = function(restaurant) {
         $scope.suggestRestaurant = restaurant;
-        $scope.suggestTime = "";
-        $scope.suggestionMessage.type = '';
-        $scope.suggestionMessage.message = '';
-        $("#suggestionModal .group").removeClass("group-selected");
-        $("#suggestionModal .member").removeClass("member-selected");
-        $("#suggestionModal").modal();
+        $state.go(".Suggestion");
     };
+
+    $scope.manageSuggestion = function(restaurant, suggestion, day, accept) {
+        if (suggestion.processing) {
+            return;
+        }
+
+        var action;
+        if (accept) {
+            action = 'accept';
+        }
+        else {
+            action = 'cancel';
+        }
+
+        // Execute the operation
+        suggestion.processing = true;
+        $http.post('api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
+            action: action
+        }).success(function(result) {
+            // Check the result
+            if (typeof result !== 'object' || result.status !== 'ok') {
+                // Too old
+                if (result.status == 'not_manageable') {
+                    $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
+                }
+                // Failed
+                else {
+                    $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+                    console.error("Failed to accept/cancel, got response:");
+                    console.error(result);
+                }
+                suggestion.processing = false;
+            }
+            // OK
+            else {
+                // Canceled and deleted (last one out)
+                if (result.suggestionDeleted) {
+                    deleteSuggestion(restaurant, suggestion, day);
+                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
+                }
+                // Accepted or canceled (not last one out)
+                else {
+                    updateSuggestion(restaurant, result.suggestion, day);
+                    if (accept) {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
+                    }
+                    else {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
+                    }
+                }
+            }
+        })
+        .error(function(response, httpCode) {
+            suggestion.processing = false;
+            $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+            console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
+        });
+    };
+}])
+
+
+
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', 'Suggestions', function($scope, $rootScope, $state, $filter, Suggestions) {
+
+    $scope.suggestTime = "";
+    $scope.suggestionMessage.type = '';
+    $scope.suggestionMessage.message = '';
+    $("#suggestionModal .group").removeClass("group-selected");
+    $("#suggestionModal .member").removeClass("member-selected");
+    $("#suggestionModal").modal();
+    $('#suggestionModal').on('show.bs.modal', function () {
+        $(".container").addClass("modal-open");
+    });
+    $('#suggestionModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+    $('#suggestionModal').on('shown.bs.modal', function () {
+        if ($rootScope.widthClass != 'xs') {
+            $("#suggestionModal input.suggest-time").focus();
+        }
+    });
 
     $scope.suggestionSelectedMembers = [];
 
@@ -164,20 +302,26 @@ angular.module('Mealbookers.controllers', [])
         $(".group-container .member-selected").each(function(idx, el) {
             members[$(el).attr("data-member-id")] = true;
         });
+
+        $scope.suggestionMessage.type = 'alert-info';
+        $scope.suggestionMessage.message = $filter('i18n')('suggest_sending');
+
         var response = Suggestions.post({
             restaurantId: $scope.suggestRestaurant.id,
-            day: $scope.weekDay,
+            day: $scope.weekDay - 1,
             time: $scope.suggestTime,
             members: members
         }, function() {
             if (typeof response.status != 'undefined' && response.status == "ok") {
-                if (typeof response.failed_to_invite === 'object') {
+                if (typeof response.failed_to_send_invitation_email === 'object') {
                     $scope.suggestionMessage.type = 'alert-warning';
-                    $scope.suggestionMessage.message = 'Failed to invite: ' + response.failed_to_invite.join(", ");
+                    $scope.suggestionMessage.message = $filter('i18n')('suggest_failed_to_send_invitation_email')
+                        + ' ' + response.failed_to_send_invitation_email.join(", ");
                 }
                 else {
                     $("#closeSuggestion").trigger('click');
-                    loadRestaurants();
+                    $scope.loadRestaurants();
+                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_created'));
                 }
             }
             else {

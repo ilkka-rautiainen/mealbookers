@@ -27,13 +27,22 @@ class Restaurant
         $this->link = $row['link'];
     }
 
+    public function getAsArray()
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'link' => $this->link,
+            'mealList' => $this->mealList->getAsArray(),
+            'suggestionList' => $this->suggestionList->getAsArray(),
+        );
+    }
+
     /**
      * @todo optimize to only one query
      */
     public function fetchMealList($lang)
     {
-        global $config;
-
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $mealList = new MealList();
         for ($i=0; $i<7; $i++) {
@@ -59,19 +68,22 @@ class Restaurant
 
 
     /**
+     * Fetches the given user's suggestions in the restaurant
      * @todo optimize to only one query
      */
-    public function fetchSuggestionList()
+    public function fetchSuggestionListForUser(User $user)
     {
-        global $config;
-
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $suggestionList = new SuggestionList();
         for ($i=0; $i<7; $i++) {
             $time = strtotime("+$i days", $startTime);
-            $result = DB::inst()->query("SELECT * FROM suggestions
-                WHERE DATE(datetime) = '" . date("Y-m-d", $time) . "' AND
-                restaurant_id = {$this->id}");
+            $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
+                INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
+                WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
+                    suggestions.restaurant_id = {$this->id} AND
+                    suggestions_users.user_id = {$user->id}
+                GROUP BY suggestions.id
+                ORDER BY suggestions.datetime ASC");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();
@@ -80,16 +92,5 @@ class Restaurant
             }
         }
         $this->suggestionList = $suggestionList;
-    }
-
-    public function getAsArray()
-    {
-        return array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'link' => $this->link,
-            'mealList' => $this->mealList->getAsArray(),
-            'suggestionList' => $this->suggestionList->getAsArray(),
-        );
     }
 }

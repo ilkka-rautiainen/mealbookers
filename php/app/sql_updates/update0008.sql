@@ -1,0 +1,1 @@
+ALTER TABLE  `suggestions_users` ADD  `accepted_timestamp` INT( 10 ) UNSIGNED NULL DEFAULT NULL;

@@ -17,9 +17,13 @@ angular.module('Mealbookers', [
     $stateProvider
 
     .state('Navigation', {
+        abstract: true,
         url: "/app",
         templateUrl: "partials/Navigation.html",
-        controller: 'NavigationController'
+        controller: 'NavigationController',
+        resolve: {
+            initialization: "Initialization"
+        }
     })
     
     .state('Navigation.Menu', {
@@ -27,31 +31,104 @@ angular.module('Mealbookers', [
         templateUrl: "partials/menu/Menu.html",
         controller: 'MenuController'
     })
+    
+    .state('Navigation.Menu.Suggestion', {
+        url: "/suggestion",
+        templateUrl: "partials/menu/Suggestion.html",
+        controller: 'SuggestionController'
+    })
+    
+    .state('Navigation.AcceptSuggestion', {
+        url: "/suggestion/accept",
+        templateUrl: "partials/AcceptSuggestion.html",
+        controller: 'AcceptSuggestionController'
+    })
 
     $urlRouterProvider.otherwise("/app/menu");
 }])
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
 
-    /**
-     * Load user
-     */
-    $rootScope.userLang = $window.navigator.userLanguage || $window.navigator.language;
+    var emptyMessage = {
+        message: '',
+        type: ''
+    };
+    $rootScope.alertMessage = emptyMessage;
 
-    $rootScope.loaded = {
-        restaurants: false,
-        lang: false,
-        all: false
+    $rootScope.config = {
+        alertTimeouts: {
+            'alert-danger': 30000,
+            'alert-warning': 15000,
+            'alert-info': 4000,
+            'alert-success': 3000
+        }
+    }
+
+    var alertTimeout = null;
+    var alertFadeTimeout = null;
+
+    $rootScope.dismissAlert = function() {
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
+        }
+        if (alertFadeTimeout) {
+            clearTimeout(alertFadeTimeout);
+        }
+        alertFadeout();
     };
 
-    $rootScope.$watch('loaded', function(newValue) {
-        if (newValue.restaurants && newValue.lang)
-            $rootScope.loaded.all = true;
-    }, true);
+    $rootScope.alert = function(type, message) {
+        if (!$rootScope.config.alertTimeouts[type]) {
+            return console.error("Invalid alert type: " + type);
+        }
 
-    $rootScope.pageReady = function() {
-        return !$rootScope.$$phase && $rootScope.loaded.all;
+        $rootScope.alertMessage = {
+            type: type,
+            message: message
+        };
+        $(".main-alert").finish();
+        $(".main-alert").show();
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
+        }
+        if (alertFadeTimeout) {
+            clearTimeout(alertFadeTimeout);
+        }
+        alertTimeout = setTimeout(alertFadeout, $rootScope.config.alertTimeouts[type]);
     };
+
+    var alertFadeout = function() {
+        $(".main-alert").animate({
+            height: 'toggle',
+            'margin-top': 'toggle',
+            'margin-bottom': 'toggle',
+            'padding-top': 'toggle',
+            'padding-bottom': 'toggle',
+            'border-top': 'toggle',
+            'border-bottom': 'toggle',
+            opacity: 'toggle'
+        }, 1500);
+        alertFadeTimeout = setTimeout(function() {
+            $rootScope.alertMessage = emptyMessage;
+        }, 1500);
+    };
+
+    $rootScope.getWeekDayText = function(day) {
+        if (day < 1 || day > 7) {
+            return console.error("Incorrect day passed: " + day);
+        }
+        
+        var today = ((new Date().getDay() + 6) % 7) + 1;
+        if (day == today) {
+            return $rootScope.localization.today;
+        }
+        else if (day == today + 1) {
+            return $rootScope.localization.tomorrow;
+        }
+        else {
+            return $rootScope.localization['weekday_' + day];
+        }
+    }
 
     var setWidthClass = function() {
         $rootScope.$apply(function() {
@@ -62,7 +139,7 @@ angular.module('Mealbookers', [
             }
             else if ($rootScope.windowWidth >= 992) {
                 $rootScope.widthClass = "md";
-                $rootScope.columns = 4;
+                $rootScope.columns = 3;
             }
             else if ($rootScope.windowWidth >= 768) {
                 $rootScope.widthClass = "sm";

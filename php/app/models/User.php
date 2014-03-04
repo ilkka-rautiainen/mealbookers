@@ -45,107 +45,178 @@ class User
         );
     }
 
-    public function getInitials() {
+    public function getInitials()
+    {
         return substr($this->first_name, 0, 1) . substr($this->last_name, 0, 1);
     }
 
-    public function inviteToSuggestion(Suggestion $suggestion, $hash)
+    public function getGroups()
     {
-        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id}");
-        global $language;
+        $groups = array();
+
+        $groups_result = DB::inst()->query("SELECT group_id FROM group_memberships WHERE user_id = {$this->id}");
+        while ($group_id = DB::inst()->fetchFirstField($groups_result)) {
+            $group_row = DB::inst()->getRowAssoc("SELECT id, name FROM groups WHERE id = $group_id");
+            $members = array();
+
+            $group_users_result = DB::inst()->query("SELECT user_id FROM group_memberships WHERE
+                group_id = $group_id AND user_id != {$this->id}");
+            while ($user_id = DB::inst()->fetchFirstField($group_users_result)) {
+                $user = new User();
+                $user->fetch($user_id);
+                $members[] = $user->getAsArray();
+            }
+
+            $groups[] = array(
+                'id' => $group_row['id'],
+                'name' => $group_row['name'],
+                'members' => $members,
+            );
+        }
+
+        return $groups;
+    }
+
+    public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
+    {
+        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = 465;
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = 'ssl';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Username = '';
-        $mail->Password = '';
-        $mail->Mailer = 'smtp';
-        $body = "Hei,<br /><br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
-            . " syömään ravintolaan " . $restaurant->name . "."
-            . " Hän ehdottaa sinulle aikaa " . $suggestion->getTime() . "."
-            . " <br /><br />Hyväksy ehdotus klikkaamalla"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?hash={$hash}\">tästä</a>."
-            . " <br /><br />Palvelun etusivulle"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu\">tästä</a>."
-            . "<br /><br />- Mealbookers<br /><br />"
-            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace(
+        $subject = str_replace(
             '{suggester}',
             $creator->getName(),
-            $language[$this->language]['mailer_subject_suggestion']
+            Lang::inst()->get('mailer_subject_suggestion', $this)
         );
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending invitation message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        $body = str_replace(
+            array(
+                '{suggester}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{hash}',
+            ),
+            array(
+                $creator->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $hash,
+            ),
+            Lang::inst()->get('mailer_body_suggestion', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
-
-    public function notifyAcceptedSuggestion(Suggestion $suggestion)
+    
+    public function notifyAcceptedSuggestion(Suggestion $suggestion, User $accepter, $is_creator)
     {
-        global $language;
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion accepted");
+        Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
+            . " {$suggestion->id} accepted");
 
-        if (!$user_id = DB::inst()->getOne("SELECT user_id FROM suggestions_users WHERE
-            suggestion_id = {$suggestion->id} AND accepted = 1 AND user_id != {$suggestion->creator_id}
-            LIMIT 1")) {
-            Logger::error(__METHOD__ . " no accepted user found for the suggestion {$suggestion->id}");
-            return;
-        }
-        $accepter = new User();
-        $accepter->fetch($user_id);
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = 465;
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = 'ssl';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Username = '';
-        $mail->Password = '';
-        $mail->Mailer = 'smtp';
-        $body = "Hei,<br /><br />" . $accepter->getName() . " on hyväksynyt ehdotuksesi mennä "
-            . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name . "."
-            . " aikaan " . $suggestion->getTime() . "."
-            . " <br /><br />Voit siirtyä palvelun etusivulle"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
-            . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
-            . "<br /><br />- Mealbookers<br /><br />"
-            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace(
+        $version_postfix = ($is_creator) ? 'creator' : 'other';
+
+        $subject = str_replace(
             '{accepter}',
             $accepter->getName(),
-            $language[$this->language]['mailer_subject_suggestion_accepted']
+            Lang::inst()->get('mailer_subject_suggestion_accepted_' . $version_postfix, $this)
         );
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending suggestion acceptance message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        $body = str_replace(
+            array(
+                '{accepter}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
+                $accepter->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_accepted_' . $version_postfix, $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+    
+    public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
+    {
+        Logger::info(__METHOD__ . " notifying user {$this->id} for having"
+            . " been left alone for suggestion {$suggestion->id}");
+
+        $restaurant = new Restaurant();
+        $restaurant->fetch($suggestion->restaurant_id);
+
+        $subject = str_replace(
+            '{canceler}',
+            $canceler->getName(),
+            Lang::inst()->get('mailer_subject_suggestion_left_alone', $this)
+        );
+        $body = str_replace(
+            array(
+                '{canceler}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
+                $canceler->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_left_alone', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+    
+    public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
+    {
+        Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
+            . " suggestion {$suggestion->id}");
+
+        $subject = str_replace(
+            '{canceler}',
+            $canceler->getName(),
+            Lang::inst()->get('mailer_subject_suggestion_deleted', $this)
+        );
+        $body = str_replace(
+            array(
+                '{canceler}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
+                $canceler->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_deleted', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
 }

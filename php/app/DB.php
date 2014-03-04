@@ -14,7 +14,6 @@ class DB
      */
     private function __construct()
     {
-        global $config;
         if (isset($_SERVER['OPENSHIFT_MYSQL_DB_HOST'])) {
             $this->connection = new mysqli(
                 $_SERVER['OPENSHIFT_MYSQL_DB_HOST'],
@@ -24,9 +23,9 @@ class DB
         }
         else {
             $this->connection = new mysqli(
-                $config["db"]["host"],
-                $config["db"]["user"],
-                $config["db"]["pass"]
+                Conf::inst()->get('db.host'),
+                Conf::inst()->get('db.user'),
+                Conf::inst()->get('db.pass')
             );
         }
         if ($this->connection->connect_error)
@@ -35,7 +34,7 @@ class DB
         if (!$this->connection->set_charset("utf8"))
             throw new Exception("Unable to set character set in db connection");
 
-        if (!$this->connection->select_db($config["db"]["dbname"]))
+        if (!$this->connection->select_db(Conf::inst()->get('db.dbname')))
             throw new Exception("Could not choose database");
     }
     
@@ -165,9 +164,8 @@ class DB
      */
     public function resetDB()
     {
-        global $config;
         Logger::note(__METHOD__ . " resetting db");
-        if (!$config['developerMode'])
+        if (!Conf::inst()->get('developerMode'))
             throw new Exception("Operation permitted only in developer mode");
 
         $this->query("SET foreign_key_checks = 0");
@@ -262,5 +260,10 @@ class DB
             return;
         $this->query("ROLLBACK");
         $this->transactionActive = false;
+    }
+
+    public function isTransactionActive()
+    {
+        return $this->transactionActive;
     }
 }
