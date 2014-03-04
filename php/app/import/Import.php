@@ -9,7 +9,7 @@ abstract class Import
     protected $isImportNeeded;
 
     /**
-     * @var Section in a day's menu, like 'We recommend:'
+     * @var Section in a day's menu, like 'A la carte:'
      */
     protected $activeSection = null;
 
