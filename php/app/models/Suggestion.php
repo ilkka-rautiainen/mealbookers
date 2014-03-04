@@ -85,7 +85,7 @@ class Suggestion {
             'creator' => $creator->getAsArray(),
             'members' => $this->getMembers(),
             'accepted' => $this->hasUserAccepted($current_user),
-            'cancelable' => true,
+            'manageable' => $this->isManageable(),
         );
     }
 
@@ -100,6 +100,11 @@ class Suggestion {
         else {
             return true;
         }
+    }
+
+    private function isManageable()
+    {
+        return (strtotime($this->datetime) > time() - Conf::inst()->get('limits.suggestion_cancelable_time'));
     }
 
     public function insertMember(User $member, $accepted)

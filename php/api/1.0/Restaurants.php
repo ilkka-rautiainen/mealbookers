@@ -2,7 +2,7 @@
 
 Flight::route('GET /restaurants', array('RestaurantsAPI', 'getRestaurants'));
 Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'createSuggestion'));
-Flight::route('POST /restaurants/@restaurantId/suggestions/@suggestionId', array('RestaurantsAPI', 'acceptSuggestionFromSite'));
+Flight::route('POST /restaurants/@restaurantId/suggestions/@suggestionId', array('RestaurantsAPI', 'manageSuggestionFromSite'));
 Flight::route('POST /suggestion', array('RestaurantsAPI', 'acceptSuggestionFromEmail'));
 
 class RestaurantsAPI
@@ -14,7 +14,7 @@ class RestaurantsAPI
 	function getRestaurants()
 	{
         $lang = substr($_GET['lang'], 0, 2);
-        Logger::debug(__METHOD__ . " GET /restaurants?lang=$lang called");
+        Logger::info(__METHOD__ . " GET /restaurants?lang=$lang called");
 
         // Mockup current_user
         $current_user = new User();
@@ -167,7 +167,7 @@ class RestaurantsAPI
     /**
      * @todo  implement with real user + auth
      */
-    function acceptSuggestionFromSite($restaurantId, $suggestionId)
+    function manageSuggestionFromSite($restaurantId, $suggestionId)
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
         
@@ -198,7 +198,7 @@ class RestaurantsAPI
 
         $suggestion = new Suggestion();
         $suggestion->fetch($suggestionId);
-        $suggestionDeleted = false;
+        $hasSuggestionBeenDeleted = false;
 
         $suggestion_user = new SuggestionUser();
         $suggestion_user->fetch($suggestions_users_id);
@@ -208,7 +208,7 @@ class RestaurantsAPI
                 $suggestion->accept($suggestion_user);
             }
             else {
-                $suggestionDeleted = $suggestion->cancel($suggestion_user);
+                $hasSuggestionBeenDeleted = $suggestion->cancel($suggestion_user);
             }
         }
         catch (TooOldException $e) {
@@ -217,7 +217,7 @@ class RestaurantsAPI
             ));
         }
         
-        if ($suggestionDeleted) {
+        if ($hasSuggestionBeenDeleted) {
             print(json_encode(array(
                 'status' => 'ok',
                 'suggestion' => null,
