@@ -11,7 +11,7 @@ class AppAPI
      */
     function getLog($passphrase, $rows = 1000)
     {
-        Logger::debug(__METHOD__ . " GET /app/log called");
+        Logger::info(__METHOD__ . " GET /app/log called");
         $rows = (int)$rows;
 
         if ($passphrase != "mealilogi")
@@ -31,7 +31,7 @@ class AppAPI
         require __DIR__ . '/../../app/language/include.php';
         global $language;
         $lang = substr($lang, 0, 2);
-        Logger::debug(__METHOD__ . " GET /app/language/$lang called");
+        Logger::info(__METHOD__ . " GET /app/language/$lang called");
 
         if (isset($language[$lang]))
             $lang = $language[$lang];

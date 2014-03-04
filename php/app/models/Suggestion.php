@@ -84,7 +84,8 @@ class Suggestion {
             'time' => $this->getTime(),
             'creator' => $creator->getAsArray(),
             'members' => $this->getMembers(),
-            'accepted' => $this->hasUserAccepted($current_user)
+            'accepted' => $this->hasUserAccepted($current_user),
+            'cancelable' => true,
         );
     }
 
@@ -126,12 +127,14 @@ class Suggestion {
      */
     private function notifyDeletionToAll(User $canceler)
     {
+        $restaurant = new Restaurant();
+        $restaurant->fetch($this->restaurant_id);
         $result = DB::inst()->query("SELECT user_id FROM suggestions_users
-            WHERE suggestion_id = {$this->id} AND accepted = 0");
+            WHERE suggestion_id = {$this->id} AND accepted = 0 AND user_id != {$canceler->id}");
         while ($member_id = DB::inst()->fetchFirstField($result)) {
             $member = new User();
             $member->fetch($member_id);
-            $member->sendSuggestionDeletionNotification($this, $canceler);
+            $member->sendSuggestionDeletionNotification($this, $canceler, $restaurant);
         }
     }
 

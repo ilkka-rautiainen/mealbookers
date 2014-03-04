@@ -52,204 +52,143 @@ class User
     public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
-        global $config;
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = $config['mail']['smtp_port'];
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = $config['mail']['smtp_secure'];
-        $mail->Host = $config['mail']['smtp_host'];
-        $mail->Username = $config['mail']['smtp_username'];
-        $mail->Password = $config['mail']['smtp_password'];
-        $mail->Mailer = 'smtp';
-        $body = "Hei,<br /><br />" . $creator->getName() . " on menossa " . $suggestion->getDate()
-            . " syömään ravintolaan " . $restaurant->name . "."
-            . " Hän ehdottaa sinulle aikaa " . $suggestion->getTime() . "."
-            . " <br /><br />Hyväksy ehdotus klikkaamalla"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/suggestion/accept?hash={$hash}\">tästä</a>."
-            . " <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu\">tästä</a>."
-            . "<br /><br />- Mealbookers<br /><br />"
-            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace(
+        $subject = str_replace(
             '{suggester}',
             $creator->getName(),
             Lang::inst()->get('mailer_subject_suggestion', $this)
         );
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending invitation message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        $body = str_replace(
+            array(
+                '{suggester}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{hash}',
+            ),
+            array(
+                $creator->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $hash,
+            ),
+            Lang::inst()->get('mailer_body_suggestion', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
     
     public function notifyAcceptedSuggestion(Suggestion $suggestion, User $accepter, $is_creator)
     {
-        global $config;
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion"
+        Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
             . " {$suggestion->id} accepted");
 
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = $config['mail']['smtp_port'];
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = $config['mail']['smtp_secure'];
-        $mail->Host = $config['mail']['smtp_host'];
-        $mail->Username = $config['mail']['smtp_username'];
-        $mail->Password = $config['mail']['smtp_password'];
-        $mail->Mailer = 'smtp';
+        $version_postfix = ($is_creator) ? 'creator' : 'other';
 
-        if ($is_creator) {
-            $body = "Hei,<br /><br />" . $accepter->getName() . " on hyväksynyt ehdotuksesi mennä "
-                . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name
-                . " aikaan " . $suggestion->getTime() . "."
-                . " <br /><br />Voit siirtyä palveluun"
-                . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
-                . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
-                . "<br /><br />- Mealbookers<br /><br />"
-                . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-            $mail->Subject = str_replace(
+        $subject = str_replace(
+            '{accepter}',
+            $accepter->getName(),
+            Lang::inst()->get('mailer_subject_suggestion_accepted_' . $version_postfix, $this)
+        );
+        $body = str_replace(
+            array(
                 '{accepter}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
                 $accepter->getName(),
-                Lang::inst()->get('mailer_subject_suggestion_accepted_creator', $this)
-            );
-        }
-        else {
-            $body = "Hei,<br /><br />" . $accepter->getName() . " on tulossa kanssasi "
-                . $suggestion->getDate() . " syömään ravintolaan " . $restaurant->name
-                . " aikaan " . $suggestion->getTime() . "."
-                . " <br /><br />Voit siirtyä palveluun"
-                . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
-                . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
-                . "<br /><br />- Mealbookers<br /><br />"
-                . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-            $mail->Subject = str_replace(
-                '{accepter}',
-                $accepter->getName(),
-                Lang::inst()->get('mailer_subject_suggestion_accepted_other', $this)
-            );
-        }
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_accepted_' . $version_postfix, $this)
+        );
 
-        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending suggestion acceptance message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        return Mailer::inst()->send($subject, $body, $this);
     }
     
     public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
     {
-        global $config;
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for having"
+        Logger::info(__METHOD__ . " notifying user {$this->id} for having"
             . " been left alone for suggestion {$suggestion->id}");
 
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = $config['mail']['smtp_port'];
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = $config['mail']['smtp_secure'];
-        $mail->Host = $config['mail']['smtp_host'];
-        $mail->Username = $config['mail']['smtp_username'];
-        $mail->Password = $config['mail']['smtp_password'];
-        $mail->Mailer = 'smtp';
-        $body = "Hei,<br /><br />  "
-            . $canceler->getName() . " ei pääsekään kanssasi " . $suggestion->getDate()
-            . " syömään ravintolaan " . $restaurant->name . " aikaan " . $suggestion->getTime() . "."
-            . " <br /><br />Voit siirtyä palveluun"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
-            . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
-            . "<br /><br />- Mealbookers<br /><br />"
-            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace(
+        $subject = str_replace(
             '{canceler}',
             $canceler->getName(),
             Lang::inst()->get('mailer_subject_suggestion_left_alone', $this)
         );
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending suggestion left alone message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        $body = str_replace(
+            array(
+                '{canceler}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
+                $canceler->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_left_alone', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
     
-    public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler)
+    public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
     {
-        global $config;
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for deletion of"
+        Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
             . " suggestion {$suggestion->id}");
 
-        $restaurant = new Restaurant();
-        $restaurant->fetch($suggestion->restaurant_id);
-
-        require_once __DIR__ . '/../lib/PHPMailer/PHPMailer.php';
-        $mail = new PHPMailer();
-        $mail->CharSet = 'utf-8';
-        // $mail->SMTPDebug = true;
-        $mail->Port = $config['mail']['smtp_port'];
-        $mail->SMTPAuth = true;
-        $mail->IsSMTP();
-        $mail->SMTPSecure = $config['mail']['smtp_secure'];
-        $mail->Host = $config['mail']['smtp_host'];
-        $mail->Username = $config['mail']['smtp_username'];
-        $mail->Password = $config['mail']['smtp_password'];
-        $mail->Mailer = 'smtp';
-        $body = "Hei,<br /><br />  "
-            . $canceler->getName() . " peruikin ehdotuksensa mennä " . $suggestion->getDate()
-            . " syömään ravintolaan " . $restaurant->name . " aikaan " . $suggestion->getTime() . "."
-            . " <br /><br />Voit siirtyä palveluun"
-            . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu?day="
-            . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
-            . "<br /><br />- Mealbookers<br /><br />"
-            . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
-        $mail->AddAddress($this->email_address, $this->getName());
-        $mail->Subject = str_replace(
+        $subject = str_replace(
             '{canceler}',
             $canceler->getName(),
             Lang::inst()->get('mailer_subject_suggestion_deleted', $this)
         );
-        $mail->MsgHTML($body);
-        Logger::debug(__METHOD__ . " sending suggestion deletion message to {$this->email_address}");
-        $result = $mail->Send();
-        if (!$result)
-            Logger::error(__METHOD__ . " sending failed");
-        else
-            Logger::debug(__METHOD__ . " sending succeeded");
-        return $result;
+        $body = str_replace(
+            array(
+                '{canceler}',
+                '{suggestion_date}',
+                '{restaurant}',
+                '{suggestion_time}',
+                '{server_hostname}',
+                '{day}',
+            ),
+            array(
+                $canceler->getName(),
+                $suggestion->getDate(),
+                $restaurant->name,
+                $suggestion->getTime(),
+                $_SERVER['HTTP_HOST'],
+                $suggestion->getWeekDay() + 1,
+            ),
+            Lang::inst()->get('mailer_body_suggestion_deleted', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
 }

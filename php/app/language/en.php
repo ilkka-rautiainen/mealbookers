@@ -47,10 +47,41 @@ $GLOBALS['language']['en'] = array(
     'action_failed' => 'Action failed',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
-        'mailer_subject_suggestion' => '{suggester} want\'s to eat with you',
+        'mailer_subject_suggestion' => '{suggester} wants to eat with you',
+        'mailer_body_suggestion' => 
+            'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
+            . ' He suggests you to go there at {suggestion_time}.<br /><br />Accept the suggestion by clicking'
+            . ' <a href="http://{server_hostname}/#/app/suggestion/accept?hash={hash}">here</a>.'
+            . ' <br /><br />Go to Mealbookers without accepting the suggestion'
+            . ' <a href="http://{server_hostname}/#/app/menu">here</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
+        'mailer_body_suggestion_accepted_creator' => 
+            'Hello!<br /><br />{accepter} has accepted your suggestion to go to eat at {restaurant}'
+            . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
+            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
+        'mailer_body_suggestion_accepted_other' => 
+            'Hello!<br /><br />{accepter} is coming to eat with you at {restaurant} on'
+            . ' {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
+            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
+        'mailer_body_suggestion_left_alone' => 
+            'Hello!<br /><br />{canceler} can\'t come to eat with you at {restaurant}'
+            . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
+            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} canceled the suggestion',
+        'mailer_body_suggestion_deleted' => 
+            'Hello!<br /><br />{canceler} canceled his/her suggestion to go to eat at {restaurant}'
+            . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
+            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
     ),
 );
