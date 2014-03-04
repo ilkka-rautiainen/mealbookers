@@ -89,7 +89,6 @@ angular.module('Mealbookers', [
         };
         $(".main-alert").finish();
         $(".main-alert").show();
-        $window.scrollTo(0, 0);
         if (alertTimeout) {
             clearTimeout(alertTimeout);
         }

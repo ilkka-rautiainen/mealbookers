@@ -55,6 +55,7 @@ class AmicaImport extends Import
     public function run()
     {
         Logger::note(__METHOD__ . " start");
+        require_once __DIR__ . '/lib/phpQuery.php';
 
         if (!$this->isImportNeeded) {
             Logger::info(__METHOD__ . " import not needed, skipping");

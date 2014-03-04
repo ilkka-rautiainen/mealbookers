@@ -11,7 +11,6 @@ class AppAPI
      */
     function getLog($passphrase, $rows = 1000)
     {
-        global $config;
         Logger::debug(__METHOD__ . " GET /app/log called");
         $rows = (int)$rows;
 
@@ -19,7 +18,7 @@ class AppAPI
             sendHttpError(404);
         
 
-        $filename = "../../app/" . $config['log']['file'];
+        $filename = "../../app/" . Conf::inst()->get('log.file');
 
         print json_encode(array_reverse(array_slice(array_reverse(file($filename)), 0, $rows)));
     }

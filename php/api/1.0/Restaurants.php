@@ -1,6 +1,6 @@
 <?php
 
-Flight::route('GET /restaurants', array('RestaurantsAPI', 'get'));
+Flight::route('GET /restaurants', array('RestaurantsAPI', 'getRestaurants'));
 Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'createSuggestion'));
 Flight::route('POST /restaurants/@restaurantId/suggestions/@suggestionId', array('RestaurantsAPI', 'acceptSuggestionFromSite'));
 Flight::route('POST /suggestion', array('RestaurantsAPI', 'acceptSuggestionFromEmail'));
@@ -11,7 +11,7 @@ class RestaurantsAPI
 	 * Get list of restaurants to the main menu UI
      * @todo  implement for real user and auth
 	 */
-	function get()
+	function getRestaurants()
 	{
         $lang = substr($_GET['lang'], 0, 2);
         Logger::debug(__METHOD__ . " GET /restaurants?lang=$lang called");

@@ -32,8 +32,6 @@ class Restaurant
      */
     public function fetchMealList($lang)
     {
-        global $config;
-
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $mealList = new MealList();
         for ($i=0; $i<7; $i++) {
@@ -64,8 +62,6 @@ class Restaurant
      */
     public function fetchSuggestionListForUser(User $user)
     {
-        global $config;
-
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $suggestionList = new SuggestionList();
         for ($i=0; $i<7; $i++) {

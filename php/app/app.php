@@ -2,8 +2,6 @@
 /**
  * Main include file
  */
-require __DIR__ . '/config.php';
-require_once __DIR__ . '/lib/phpQuery.php';
 function classLoader($name)
 {
     if (file_exists(__DIR__ . "/$name.php"))

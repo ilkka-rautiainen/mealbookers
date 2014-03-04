@@ -14,17 +14,16 @@ class Logger
      */
     private function __construct()
     {
-        global $config;
-        $levels = $config["log"]["levels"];
+        $levels = Conf::inst()->get('log.levels');
         $this->levels = $this->levelNames = array();
         foreach ($levels as $key => $name) {
             $this->levels[$name] = $key;
             $this->levelNames[] = $name;
         }
         
-        $loggingLevel = $config["log"]["level"];
+        $loggingLevel = Conf::inst()->get('log.level');
         $this->loggingLevel = $this->levels[$loggingLevel];
-        $this->file = fopen(__DIR__ . "/" . $config["log"]["file"], "a");
+        $this->file = fopen(__DIR__ . "/" . Conf::inst()->get('log.file'), "a");
     }
 
     /**

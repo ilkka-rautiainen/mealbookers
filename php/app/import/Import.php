@@ -104,13 +104,11 @@ abstract class Import
 
     protected function fetchURL($url)
     {
-        global $config;
-
         $c = curl_init();
         curl_setopt_array($c, array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => $config['useragent'],
+            CURLOPT_USERAGENT => Conf::inst()->get('import.useragent'),
         ));
         $result = curl_exec($c);
 

@@ -52,7 +52,7 @@ class User
     public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
-        global $language, $config;
+        global $config;
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
         $restaurant = new Restaurant();
@@ -79,12 +79,12 @@ class User
             . " <a href=\"http://" . $_SERVER['HTTP_HOST'] . "/#/app/menu\">tästä</a>."
             . "<br /><br />- Mealbookers<br /><br />"
             . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
         $mail->AddAddress($this->email_address, $this->getName());
         $mail->Subject = str_replace(
             '{suggester}',
             $creator->getName(),
-            $language[$this->language]['mailer_subject_suggestion']
+            Lang::inst()->get('mailer_subject_suggestion', $this)
         );
         $mail->MsgHTML($body);
         Logger::debug(__METHOD__ . " sending invitation message to {$this->email_address}");
@@ -98,7 +98,7 @@ class User
     
     public function notifyAcceptedSuggestion(Suggestion $suggestion, User $accepter, $is_creator)
     {
-        global $language, $config;
+        global $config;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for having a suggestion"
             . " {$suggestion->id} accepted");
 
@@ -130,7 +130,7 @@ class User
             $mail->Subject = str_replace(
                 '{accepter}',
                 $accepter->getName(),
-                $language[$this->language]['mailer_subject_suggestion_accepted_creator']
+                Lang::inst()->get('mailer_subject_suggestion_accepted_creator', $this)
             );
         }
         else {
@@ -145,11 +145,11 @@ class User
             $mail->Subject = str_replace(
                 '{accepter}',
                 $accepter->getName(),
-                $language[$this->language]['mailer_subject_suggestion_accepted_other']
+                Lang::inst()->get('mailer_subject_suggestion_accepted_other', $this)
             );
         }
 
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
         $mail->AddAddress($this->email_address, $this->getName());
         $mail->MsgHTML($body);
         Logger::debug(__METHOD__ . " sending suggestion acceptance message to {$this->email_address}");
@@ -163,7 +163,7 @@ class User
     
     public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
     {
-        global $language, $config;
+        global $config;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for having"
             . " been left alone for suggestion {$suggestion->id}");
 
@@ -190,12 +190,12 @@ class User
             . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
             . "<br /><br />- Mealbookers<br /><br />"
             . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
         $mail->AddAddress($this->email_address, $this->getName());
         $mail->Subject = str_replace(
             '{canceler}',
             $canceler->getName(),
-            $language[$this->language]['mailer_subject_suggestion_left_alone']
+            Lang::inst()->get('mailer_subject_suggestion_left_alone', $this)
         );
         $mail->MsgHTML($body);
         Logger::debug(__METHOD__ . " sending suggestion left alone message to {$this->email_address}");
@@ -209,7 +209,7 @@ class User
     
     public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler)
     {
-        global $language, $config;
+        global $config;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for deletion of"
             . " suggestion {$suggestion->id}");
 
@@ -236,12 +236,12 @@ class User
             . ($suggestion->getWeekDay() + 1) . "\">tästä</a>."
             . "<br /><br />- Mealbookers<br /><br />"
             . "<small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>";
-        $mail->SetFrom('mailer@mealbookers.net', $language[$this->language]['mailer_sender_name']);
+        $mail->SetFrom($config['mail']['from_address'], Lang::inst()->get('mailer_sender_name', $this));
         $mail->AddAddress($this->email_address, $this->getName());
         $mail->Subject = str_replace(
             '{canceler}',
             $canceler->getName(),
-            $language[$this->language]['mailer_subject_suggestion_deleted']
+            Lang::inst()->get('mailer_subject_suggestion_deleted', $this)
         );
         $mail->MsgHTML($body);
         Logger::debug(__METHOD__ . " sending suggestion deletion message to {$this->email_address}");
