@@ -37,7 +37,7 @@ class Logger
     /**
      * Singleton pattern: Instance
      */
-    private static function Instance()
+    private static function inst()
     {
         if (is_null(self::$instance))
             self::$instance = new Logger();
@@ -69,13 +69,13 @@ class Logger
      */
     public static function __callStatic($name, $arguments)
     {
-        if (!in_array($name, self::Instance()->levelNames))
+        if (!in_array($name, self::inst()->levelNames))
             throw new Exception("No such logging level: $name");
-        else if (self::Instance()->levels[$name] > self::Instance()->loggingLevel)
+        else if (self::inst()->levels[$name] > self::inst()->loggingLevel)
             return;
         else if (count($arguments) != 1)
             throw new Exception("Invalid number of arguments");
             
-        return self::Instance()->log($name, $arguments[0]);
+        return self::inst()->log($name, $arguments[0]);
     }
 }
