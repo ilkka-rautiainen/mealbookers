@@ -1,6 +1,7 @@
 <?php
 require_once '../app.php';
 header("Content-type: text/html; charset=utf-8");
+set_time_limit(3600);
 
 $importers = array(
     new AlvariImport(),
