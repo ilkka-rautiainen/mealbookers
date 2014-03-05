@@ -205,6 +205,8 @@ body {
     min-width: 40px;
     min-height: 40px;
     position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #suggestionModal .member .member-small-name {
