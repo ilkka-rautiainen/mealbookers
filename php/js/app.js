@@ -62,7 +62,7 @@ angular.module('Mealbookers', [
             'alert-info': 4000,
             'alert-success': 3000
         }
-    }
+    };
 
     var alertTimeout = null;
     var alertFadeTimeout = null;

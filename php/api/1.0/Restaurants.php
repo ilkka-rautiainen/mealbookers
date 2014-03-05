@@ -56,7 +56,8 @@ class RestaurantsAPI
         // Insert the suggestion
         $dayStamp = strtotime("last monday", strtotime("tomorrow")) + $day * 86400;
         $datetime = date("Y-m-d", $dayStamp) . " $time:00";
-        if (strtotime($datetime) + 310 < time())
+        if (strtotime($datetime) + Conf::inst()->get('limits.suggestion_create_in_past_time')
+            + Conf::inst()->get('limits.backend_threshold') < time())
             sendHttpError(401, "Suggestion field 'time' was more than 5 min in the past.");
 
         DB::inst()->startTransaction();
