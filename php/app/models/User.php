@@ -47,7 +47,7 @@ class User
 
     public function getInitials()
     {
-        return substr($this->first_name, 0, 1) . substr($this->last_name, 0, 1);
+        return $this->first_name;
     }
 
     public function getGroups()
