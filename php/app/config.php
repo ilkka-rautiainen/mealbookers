@@ -28,6 +28,7 @@ $GLOBALS['config'] = array(
         'useragent' => 'Mealbookers data crawler',
     ),
     'mealDefaultLang' => 'fi',
+    'restaurantsDefaultLang' => 'fi',
     'mail' => array(
         'smtp_port' => 465,
         'smtp_secure' => 'ssl',

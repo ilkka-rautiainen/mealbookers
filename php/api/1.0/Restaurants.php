@@ -21,7 +21,7 @@ class RestaurantsAPI
         $current_user->fetch(1);
 
         if (!in_array($lang, array('fi', 'en')))
-            $lang = 'en';
+            $lang = Conf::inst()->get('restaurantsDefaultLang');
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
