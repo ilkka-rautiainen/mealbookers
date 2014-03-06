@@ -77,6 +77,7 @@ class Restaurant
         $suggestionList = new SuggestionList();
         for ($i=0; $i<7; $i++) {
             $time = strtotime("+$i days", $startTime);
+            // Fetch all suggestions that are suggested to the given user
             $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
                 INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
                 WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
