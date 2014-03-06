@@ -9,6 +9,7 @@ class User
     public $last_name;
     public $language;
     public $active;
+    private $initials = "";
 
     public function fetch($id)
     {
@@ -41,13 +42,30 @@ class User
         return array(
             'id' => $this->id,
             'name' => $this->getName(),
-            'initials' => $this->getInitials(),
+            'initials' => $this->first_name,
         );
     }
 
-    public function getInitials()
+    /**
+     * Creates unique initials for the suggestion from the given user's point of view.
+     * 
+     * This function gets all users in viewer's groups plus those in the suggestion,
+     * that are not in the viewer's groups and makes unique initials in that context.
+     * 
+     * @param  User   $viewer           The user of whichs point of view initials are made
+     * @param  array  $outside_members  Array of members who are not in viewer's groups
+     */
+    public function createInitialsForSuggestion(User $viewer, $outside_members)
     {
-        return $this->first_name;
+
+    }
+
+    /**
+     * Creates initials for the suggestion from the given viewer's point of view
+     */
+    public function createInitialsForGroupView(User $viewer)
+    {
+
     }
 
     public function getGroups()
@@ -64,6 +82,7 @@ class User
             while ($user_id = DB::inst()->fetchFirstField($group_users_result)) {
                 $user = new User();
                 $user->fetch($user_id);
+                $user->createInitialsForGroupView($this);
                 $members[] = $user->getAsArray();
             }
 

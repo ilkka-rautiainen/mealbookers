@@ -27,7 +27,7 @@ class RestaurantsAPI
         $result = array();
         foreach ($restaurants as $restaurant) {
             $restaurant->fetchMealList($lang);
-            $restaurant->fetchSuggestionListForUser($current_user);
+            $restaurant->fetchSuggestionList($current_user);
             $result[] = $restaurant->getAsArray();
         }
         print json_encode($result);

@@ -6,6 +6,7 @@ class Suggestion {
     public $datetime;
     public $creator_id;
     public $restaurant_id;
+    private $members;
 
     public function fetch($id)
     {
@@ -19,9 +20,9 @@ class Suggestion {
     }
 
     /**
-     * Delete suggestion and notify all members
+     * Delete suggestion and notify all members about it
      */
-    private function delete(User $canceler)
+    private function deleteAndNotify(User $canceler)
     {
         $this->notifyDeletionToAll($canceler);
         DB::inst()->query("DELETE FROM suggestions WHERE id = {$this->id}");
@@ -33,6 +34,7 @@ class Suggestion {
         $this->datetime = $row['datetime'];
         $this->creator_id = $row['creator_id'];
         $this->restaurant_id = $row['restaurant_id'];
+        $this->members = array();
     }
 
     public function getDate()
@@ -53,9 +55,34 @@ class Suggestion {
         return ((int)date("N", strtotime($this->datetime))) - 1;
     }
 
-    private function getMembers()
+    public function getOutsideMembers(User $viewer)
+    {
+        $outside_members = array();
+        $result = DB::inst()->query("SELECT users.* FROM users
+            INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
+            INNER JOIN group_memberships ON group_memberships.user_id = users.id
+            WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1 AND
+            group_memberships.group_id NOT IN (
+                SELECT group_id FROM group_memberships WHERE user_id = {$viewer->id}
+            )
+            ORDER BY suggestions_users.accepted_timestamp ASC");
+
+        while ($outside_member = DB::inst()->fetchAssoc($result)) {
+            if (!isset($outside_members[$outside_member['first_name']])) {
+                $outside_members[$outside_member['first_name']] = array();
+            }
+            $outside_members[$outside_member['first_name']][] = $outside_member['last_name'];
+        }
+
+        return $outside_members;
+    }
+
+    public function fetchMembers(User $viewer)
     {
         $members = array();
+        // Get the user's that are invited to the suggestion outside of the viewer's groups
+        $outside_members = $this->getOutsideMembers($viewer);
+
         $result = DB::inst()->query("SELECT users.* FROM users
             INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
             WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1
@@ -63,9 +90,10 @@ class Suggestion {
         while ($row = DB::inst()->fetchAssoc($result)) {
             $member = new User();
             $member->populateFromRow($row);
+            $member->createInitialsForSuggestion($viewer, $outside_members);
             $members[] = $member->getAsArray();
         }
-        return $members;
+        $this->members = $members;
     }
 
     /**
@@ -83,7 +111,7 @@ class Suggestion {
             'id' => $this->id,
             'time' => $this->getTime(),
             'creator' => $creator->getAsArray(),
-            'members' => $this->getMembers(),
+            'members' => $this->members,
             'accepted' => $this->hasUserAccepted($current_user),
             'manageable' => $this->isManageable(),
         );
@@ -205,7 +233,7 @@ class Suggestion {
         if ($accepted_suggestions_after == 0) {
             $canceler = new User();
             $canceler->fetch($suggestion_user->user_id);
-            $this->delete($canceler);
+            $this->deleteAndNotify($canceler);
             return true;
         }
 

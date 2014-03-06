@@ -71,7 +71,7 @@ class Restaurant
      * Fetches the given user's suggestions in the restaurant
      * @todo optimize to only one query
      */
-    public function fetchSuggestionListForUser(User $user)
+    public function fetchSuggestionList(User $viewer)
     {
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $suggestionList = new SuggestionList();
@@ -82,13 +82,14 @@ class Restaurant
                 INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
                 WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
                     suggestions.restaurant_id = {$this->id} AND
-                    suggestions_users.user_id = {$user->id}
+                    suggestions_users.user_id = {$viewer->id}
                 GROUP BY suggestions.id
                 ORDER BY suggestions.datetime ASC");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();
                 $suggestion->populateFromRow($row);
+                $suggestion->fetchMembers($viewer);
                 $suggestionList->addSuggestion($i, $suggestion);
             }
         }
