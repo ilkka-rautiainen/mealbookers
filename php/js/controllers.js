@@ -90,22 +90,10 @@ angular.module('Mealbookers.controllers', [])
     });
 }])
 
-.controller('LoginController', ['$scope', '$rootScope', function($scope, $rootScope, $http) {
+.controller('LoginController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
     $scope.login = {"email":"", "password":"", "remember":false};
     $scope.processForm = function() {
-        $http.post('api/1.0/login.php', $scope.login)
-        .success(function(data) {
-            console.log(data);
-
-            if (!data.success) {
-                // if not successful, bind errors to error variables
-                $scope.errorName = data.errors.name;
-                $scope.errorSuperhero = data.errors.superheroAlias;
-            } else {
-                // if successful, bind success message to message
-                $scope.message = data.message;
-            }
-        });
+        $http.post('api/1.0/login.php', $scope.login);
     };
 
 }])
