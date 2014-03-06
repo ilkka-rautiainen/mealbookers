@@ -50,7 +50,8 @@ $GLOBALS['language']['en'] = array(
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
         'mailer_body_suggestion' => 
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
-            . ' He suggests you to go there at {suggestion_time}.<br /><br />Accept the suggestion by clicking'
+            . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
+            . ' {menu}<br /><br />Accept the suggestion by clicking'
             . ' <a href="http://{server_hostname}/#/app/suggestion/accept?hash={hash}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
             . ' <a href="http://{server_hostname}/#/app/menu">here</a>.<br /><br />- Mealbookers<br /><br />'

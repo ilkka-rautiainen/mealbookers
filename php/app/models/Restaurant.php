@@ -94,4 +94,21 @@ class Restaurant
         }
         $this->suggestionList = $suggestionList;
     }
+
+    public function getMenuForEmail(Suggestion $suggestion, User $user)
+    {
+        $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+            restaurant_id = {$this->id} AND language = '{$user->language}'");
+        if (!DB::inst()->getRowCount()) {
+            $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLang') . "'");
+        }
+
+        $meals = array();
+        while ($meal = DB::inst()->fetchAssoc($result)) {
+            $meals[] = $meal['name'];
+        }
+
+        return implode("<br />", $meals);
+    }
 }
