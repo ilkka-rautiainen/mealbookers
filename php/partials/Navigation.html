@@ -24,8 +24,9 @@
 			</ul>
 		</div><!--/.nav-collapse -->
 		<div id="main-alert-container">
-		    <div class="alert main-alert" ng-click="dismissAlert()" ng-class="alertMessage.type" ng-if="alertMessage.message.length">
+		    <div class="alert main-alert {{ alertMessage.type }}" ng-click="dismissAlert()" ng-class="{xs: widthClass == 'xs'}" ng-if="alertMessage.message.length">
 		        <i class="glyphicon" ng-class="{'glyphicon-ok': alertMessage.type == 'alert-success', 'glyphicon-exclamation-sign': alertMessage.type == 'alert-warning', 'glyphicon-warning-sign': alertMessage.type == 'alert-danger', 'glyphicon-bell': alertMessage.type == 'alert-info'}"></i>&nbsp;&nbsp;{{ alertMessage.message }}
+		        <div class="close">&times;</div>
 		    </div>
 		</div>
 	</div>
