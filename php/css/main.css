@@ -245,10 +245,18 @@ body {
     top: 10px;
     right: 0px;
     margin-right: 17px;
+    padding-right: 25px;
+    cursor: pointer;
 }
 
 .main-alert.xs {
     margin-right: 0px;
+}
+
+.main-alert .close {
+    top: 3px;
+    right: 6px;
+    position: absolute;
 }
 
 .restaurant-thumbnail .meal-divider {
