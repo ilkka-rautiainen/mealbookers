@@ -13,6 +13,9 @@ class RestaurantsAPI
 	 */
 	function getRestaurants()
 	{
+        if (!isset($_GET['lang'])) {
+            sendHttpError(401, "lang is missing");
+        }
         $lang = substr($_GET['lang'], 0, 2);
         Logger::info(__METHOD__ . " GET /restaurants?lang=$lang called");
 

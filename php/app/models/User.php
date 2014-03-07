@@ -9,6 +9,7 @@ class User
     public $last_name;
     public $language;
     public $active;
+    public $joined;
     private $initials;
     private $groups;
     private $groupmates;
@@ -32,6 +33,7 @@ class User
         $this->last_name = $row['last_name'];
         $this->language = $row['language'];
         $this->active = $row['active'];
+        $this->joined = $row['joined'];
         $this->initials = '';
         $this->groups = array();
         $this->groupmates = array();
@@ -47,30 +49,129 @@ class User
         return array(
             'id' => $this->id,
             'name' => $this->getName(),
-            'initials' => $this->first_name,
+            'initials' => $this->initials,
         );
     }
 
     /**
-     * Creates unique initials for the suggestion from the given user's point of view.
+     * This function makes a context for the user's groupmates and suggestion outside members
+     * initials.
      * 
-     * This function gets all users in viewer's groups plus those in the suggestion,
-     * that are not in the viewer's groups and makes unique initials in that context.
-     * 
-     * @param  User   $viewer           The user of whichs point of view initials are made
-     * @param  array  $outside_members  Array of User objects who are not in viewer's groups
+     * @param  array  $outside_members  Members who are NOT in the user's groups but who are to be considered as well in the context
      */
-    public function createInitialsForSuggestion(User $viewer, $outside_members)
+    public function getInitialsContext($outside_members = array())
     {
+        Logger::debug(__METHOD__ . " user {$this->id} and outside_members amount " . count($outside_members));
+        $groupmates = $this->getGroupmates();
+        $all_members = array_merge($groupmates, $outside_members);
 
+        $names = array();
+        foreach ($all_members as $member) {
+            if (!isset($names[$member->first_name])) {
+                $names[$member->first_name] = array();
+            }
+            $names[$member->first_name][] = array(
+                'id' => $member->id,
+                'last_name' => $member->last_name,
+                'joined' => $member->joined
+            );
+        }
+
+        Logger::debug(__METHOD__ . " context: " . print_r($names, true));
+        return $names;
     }
 
     /**
-     * Creates initials for the suggestion from the given viewer's point of view
+     * Creates initials in a context returned by User::getInitialsContext
      */
-    public function createInitialsForGroupView(User $viewer)
+    public function createInitialsInContext($intials_context)
     {
+        Logger::debug(__METHOD__ . " user {$this->id}");
+        if (!isset($intials_context[$this->first_name])) {
+            Logger::error(__METHOD__ . " intials context didn't contain user's {$this->id}"
+                . " first name {$this->first_name}, using first name as initials."
+                . " Context: " . print_r($intials_context, true));
+            $this->initials = $this->first_name;
+            return;
+        }
 
+        // Get context for only guys with the same first name
+        $members_with_same_first_name = $intials_context[$this->first_name];
+
+        if (count($members_with_same_first_name) == 1) {
+            $this->initials = $this->first_name;
+            return;
+        }
+
+        $max_letters = Conf::inst()->get('initialsMaxLettersFromLastName');
+
+        // These are used if the names are found similar in the $max_letters scope
+        $similar_last_name_member_timestamps = array();
+        $similar_last_name_members = array();
+        // Get the first different letter in the last name
+        $first_different_letter = 0;
+        for ($i = 1; $i <= $max_letters; $i++) {
+            $similar_last_name_beginning_found = false;
+            foreach ($members_with_same_first_name as $member) {
+                if ($this->id == $member['id']) {
+                    // These are put there for possible later use to resolve numbers
+                    if ($i == $max_letters) {
+                        $similar_last_name_member_timestamps[] = $member['joined'];
+                        $similar_last_name_members[] = $member;
+                    }
+                    continue;
+                }
+                if (mb_substr($this->last_name, 0, $i) == mb_substr($member['last_name'], 0, $i)) {
+                    Logger::debug(__METHOD__ . " similar names found {$this->last_name} and " . $member['last_name'] . " at level $i");
+                    $similar_last_name_beginning_found = true;
+                    if ($i < $max_letters) {
+                        break;
+                    }
+                    else {
+                        $similar_last_name_member_timestamps[] = $member['joined'];
+                        $similar_last_name_members[] = $member;
+                    }
+                }
+            }
+            if (!$similar_last_name_beginning_found) {
+                Logger::debug(__METHOD__ . " no similar name found at level $i");
+                $first_different_letter = $i;
+                break;
+            }
+        }
+
+        // The first letter was already different
+        if ($first_different_letter == 1) {
+            $this->initials = $this->first_name;
+        }
+        // One of 2..n letters was different (where n is initialsMaxLettersFromLastName in config)
+        else if ($first_different_letter > 1) {
+            $this->initials = $this->first_name . " "
+                . mb_substr($this->last_name, 0, $first_different_letter)
+                . ((mb_strlen($this->last_name) == $first_different_letter) ? "" : ".");
+        }
+        // n+ letter was different, use only a number
+        else {
+            // Calculate the number here, the oldest user has the lowest number
+            array_multisort($similar_last_name_member_timestamps, SORT_ASC, $similar_last_name_members);
+            Logger::debug(__METHOD__ . " similar: " . print_r($similar_last_name_members, true));
+            $number = -1;
+            for ($i = 0; $i < count($similar_last_name_members); $i++) {
+                if ($similar_last_name_members[$i]['id'] == $this->id)
+                {
+                    $number = $i;
+                    break;
+                }
+            }
+            if ($number == -1) {
+                Logger::error(__METHOD__ . " no number found for user {$this->id}"
+                    . " as the similar_last_name_members didn't contain him."
+                    . " similar_last_name_members: " . print_r($similar_last_name_members, true));
+                $this->initials = $this->first_name;
+                return;
+            }
+            $this->initials = $this->first_name . " " . ($number + 1);
+        }
     }
 
     /**
@@ -97,9 +198,9 @@ class User
     }
 
     /**
-     * Fetches user's all groupmates in all his groups
+     * Fetches user's all groupmates in all his groups as User objects
      */
-    private function fetchGroupMates()
+    private function fetchGroupmates()
     {
         Logger::debug(__METHOD__ . " user {$this->id}");
 
@@ -109,14 +210,25 @@ class User
 
         $this->fetchGroups();
 
-        $groupmates = array();
+        $groupmates = $groupmate_ids = array();
         foreach ($this->groups as $group) {
             foreach ($group->getMembers($this) as $member) {
+                if (in_array($member->id, $groupmate_ids)) {
+                    continue;
+                }
                 $groupmates[] = $member;
+                $groupmate_ids[] = $member->id;
             }
         }
 
         $this->groupmates = $groupmates;
+    }
+
+    public function getGroupmates()
+    {
+        Logger::debug(__METHOD__ . " user {$this->id}");
+        $this->fetchGroupmates();
+        return $this->groupmates;
     }
 
     /**
@@ -130,9 +242,12 @@ class User
 
         $this->fetchGroups();
 
+        // Get current user's initials context
+        $intials_context = $this->getInitialsContext();
+
         $groups = array();
         foreach ($this->groups as $group) {
-            $groups[] = $group->getAsArray($this);
+            $groups[] = $group->getAsArray($this, $intials_context);
         }
 
         return $groups;

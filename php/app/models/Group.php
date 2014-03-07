@@ -56,14 +56,14 @@ class Group {
     }
 
     /**
-     * Creates intials for the viewer user's point of view and returns the member array
+     * Returns array of members with initials created in the given context
      */
-    public function getMembersAsArray(User $viewer)
+    public function getMembersAsArray(User $viewer, $initials_context)
     {
         $this->fetchMembers($viewer);
         $members = array();
         foreach ($this->members as $member) {
-            $member->createInitialsForGroupView($viewer);
+            $member->createInitialsInContext($initials_context);
             $members[] = $member->getAsArray();
         }
         return $members;
@@ -76,9 +76,9 @@ class Group {
     }
 
     /**
-     * Returns the group with its members adjusted for the viewer user's point of view
+     * Returns the group with its members initials in the given context
      */
-    public function getAsArray(User $viewer)
+    public function getAsArray(User $viewer, $initials_context)
     {
         Logger::debug(__METHOD__ . " for viewer {$viewer->id}");
         $creator = new User();
@@ -88,7 +88,7 @@ class Group {
             'id' => $this->id,
             'name' => $this->name,
             'creator' => $creator->getAsArray(),
-            'members' => $this->getMembersAsArray($viewer),
+            'members' => $this->getMembersAsArray($viewer, $initials_context),
         );
     }
 }

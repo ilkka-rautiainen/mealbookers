@@ -87,19 +87,24 @@ class Suggestion {
     /**
      * Fetches all members that have been invited to the suggestion and accepted it.
      * Members that are invited to the suggestion but who are not members in any common group
-     * with the $viewer, are separated to outside_members.
+     * with the $viewer, are separated to outside_members. Both objects are fetched as associative arrays.
      * 
      * @param  User  $viewer  User, whose point of view is used
      */
     public function fetchAcceptedMembers(User $viewer)
     {
         Logger::debug(__METHOD__ . " fetching members of suggestion {$this->id}");
-        $members = $outside_members = array();
+        $members_as_arrays = $outside_members_as_arrays = array();
 
         // Get the user's that are invited to the suggestion outside of the viewer's groups
-        $outside_members_temp = $this->getOutsideMembers($viewer);
+        $outside_members_as_objects = $this->getOutsideMembers($viewer);
+
+        // Get initials array that is passed to every member when creating initials
+        $initials_context = $viewer->getInitialsContext($outside_members_as_objects);
+
+        // Get outside member ids for later use
         $outside_member_ids = array();
-        foreach ($outside_members_temp as $outside_member) {
+        foreach ($outside_members_as_objects as $outside_member) {
             $outside_member_ids[] = $outside_member->id;
         }
 
@@ -110,17 +115,17 @@ class Suggestion {
         while ($row = DB::inst()->fetchAssoc($result)) {
             $member = new User();
             $member->populateFromRow($row);
-            $member->createInitialsForSuggestion($viewer, $outside_members_temp);
+            $member->createInitialsInContext($initials_context);
 
             if (!in_array($member->id, $outside_member_ids)) {
-                $members[] = $member->getAsArray();
+                $members_as_arrays[] = $member->getAsArray();
             }
             else {
-                $outside_members[] = $member->getAsArray();
+                $outside_members_as_arrays[] = $member->getAsArray();
             }
         }
-        $this->members = $members;
-        $this->outside_members = $outside_members;
+        $this->members = $members_as_arrays;
+        $this->outside_members = $outside_members_as_arrays;
     }
 
     /**
