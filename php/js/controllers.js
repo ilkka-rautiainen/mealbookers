@@ -253,6 +253,11 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', 'Suggestions', function($scope, $rootScope, $state, $filter, Suggestions) {
 
+    // No direct requests to this controller
+    if (!$scope.suggestRestaurant) {
+        return $state.go(".^");
+    }
+
     $scope.suggestTime = "";
     $scope.suggestionMessage.type = '';
     $scope.suggestionMessage.message = '';
@@ -298,7 +303,8 @@ angular.module('Mealbookers.controllers', [])
             var suggestionDate = new Date();
             suggestionDate.setHours(timeParts[0]);
             suggestionDate.setMinutes(timeParts[1]);
-            if (suggestionDate.getTime() + 600000 < new Date()) {
+            if (suggestionDate.getTime() + $rootScope.currentUser.config.limits.suggestion_create_in_past_time * 1000
+                < new Date().getTime()) {
                 $scope.suggestionMessage.type = 'alert-warning';
                 $scope.suggestionMessage.message = $filter('i18n')('suggestion_too_early');
                 return false;

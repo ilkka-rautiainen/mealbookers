@@ -13,6 +13,9 @@ class RestaurantsAPI
 	 */
 	function getRestaurants()
 	{
+        if (!isset($_GET['lang'])) {
+            sendHttpError(401, "lang is missing");
+        }
         $lang = substr($_GET['lang'], 0, 2);
         Logger::info(__METHOD__ . " GET /restaurants?lang=$lang called");
 
@@ -21,13 +24,13 @@ class RestaurantsAPI
         $current_user->fetch(1);
 
         if (!in_array($lang, array('fi', 'en')))
-            $lang = 'en';
+            $lang = Conf::inst()->get('restaurantsDefaultLang');
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
         foreach ($restaurants as $restaurant) {
             $restaurant->fetchMealList($lang);
-            $restaurant->fetchSuggestionListForUser($current_user);
+            $restaurant->fetchSuggestionList($current_user);
             $result[] = $restaurant->getAsArray();
         }
         print json_encode($result);
@@ -57,7 +60,8 @@ class RestaurantsAPI
         // Insert the suggestion
         $dayStamp = strtotime("last monday", strtotime("tomorrow")) + $day * 86400;
         $datetime = date("Y-m-d", $dayStamp) . " $time:00";
-        if (strtotime($datetime) + 310 < time())
+        if (strtotime($datetime) + Conf::inst()->get('limits.suggestion_create_in_past_time')
+            + Conf::inst()->get('limits.backend_threshold') < time())
             sendHttpError(401, "Suggestion field 'time' was more than 5 min in the past.");
 
         DB::inst()->startTransaction();
@@ -228,6 +232,7 @@ class RestaurantsAPI
         }
         else {
             $suggestion->fetch($suggestionId);
+            $suggestion->fetchAcceptedMembers($current_user);
 
             print(json_encode(array(
                 'status' => 'ok',

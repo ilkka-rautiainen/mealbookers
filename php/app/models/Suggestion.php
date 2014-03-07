@@ -6,6 +6,8 @@ class Suggestion {
     public $datetime;
     public $creator_id;
     public $restaurant_id;
+    private $members;
+    private $outside_members;
 
     public function fetch($id)
     {
@@ -19,9 +21,9 @@ class Suggestion {
     }
 
     /**
-     * Delete suggestion and notify all members
+     * Delete suggestion and notify all members about it
      */
-    private function delete(User $canceler)
+    private function deleteAndNotify(User $canceler)
     {
         $this->notifyDeletionToAll($canceler);
         DB::inst()->query("DELETE FROM suggestions WHERE id = {$this->id}");
@@ -33,6 +35,8 @@ class Suggestion {
         $this->datetime = $row['datetime'];
         $this->creator_id = $row['creator_id'];
         $this->restaurant_id = $row['restaurant_id'];
+        $this->members = array();
+        $this->outside_members = array();
     }
 
     public function getDate()
@@ -53,9 +57,57 @@ class Suggestion {
         return ((int)date("N", strtotime($this->datetime))) - 1;
     }
 
-    private function getMembers()
+    /**
+     * Returns those members of the suggestion who are not members in the current user's groups.
+     * 
+     * @param  User   $viewer User, whose point of view is used
+     * @return array of User-objects
+     */
+    public function getOutsideMembers(User $viewer)
     {
-        $members = array();
+        $outside_members = array();
+        $result = DB::inst()->query("SELECT users.* FROM users
+            INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
+            INNER JOIN group_memberships ON group_memberships.user_id = users.id
+            WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1 AND
+            group_memberships.group_id NOT IN (
+                SELECT group_id FROM group_memberships WHERE user_id = {$viewer->id}
+            )
+            ORDER BY suggestions_users.accepted_timestamp ASC");
+
+        while ($outside_member_row = DB::inst()->fetchAssoc($result)) {
+            $outside_member = new User();
+            $outside_member->populateFromRow($outside_member_row);
+            $outside_members[] = $outside_member;
+        }
+
+        return $outside_members;
+    }
+
+    /**
+     * Fetches all members that have been invited to the suggestion and accepted it.
+     * Members that are invited to the suggestion but who are not members in any common group
+     * with the $viewer, are separated to outside_members. Both objects are fetched as associative arrays.
+     * 
+     * @param  User  $viewer  User, whose point of view is used
+     */
+    public function fetchAcceptedMembers(User $viewer)
+    {
+        Logger::debug(__METHOD__ . " fetching members of suggestion {$this->id}");
+        $members_as_arrays = $outside_members_as_arrays = array();
+
+        // Get the user's that are invited to the suggestion outside of the viewer's groups
+        $outside_members_as_objects = $this->getOutsideMembers($viewer);
+
+        // Get initials array that is passed to every member when creating initials
+        $initials_context = $viewer->getInitialsContext($outside_members_as_objects);
+
+        // Get outside member ids for later use
+        $outside_member_ids = array();
+        foreach ($outside_members_as_objects as $outside_member) {
+            $outside_member_ids[] = $outside_member->id;
+        }
+
         $result = DB::inst()->query("SELECT users.* FROM users
             INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
             WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1
@@ -63,14 +115,19 @@ class Suggestion {
         while ($row = DB::inst()->fetchAssoc($result)) {
             $member = new User();
             $member->populateFromRow($row);
-            $members[] = $member->getAsArray();
+            $member->createInitialsInContext($initials_context);
+
+            if (!in_array($member->id, $outside_member_ids)) {
+                $members_as_arrays[] = $member->getAsArray();
+            }
+            else {
+                $outside_members_as_arrays[] = $member->getAsArray();
+            }
         }
-        return $members;
+        $this->members = $members_as_arrays;
+        $this->outside_members = $outside_members_as_arrays;
     }
 
-    /**
-     * @todo call has user joined with current user
-     */
     public function getAsArray()
     {
         // Mockup current user
@@ -83,7 +140,8 @@ class Suggestion {
             'id' => $this->id,
             'time' => $this->getTime(),
             'creator' => $creator->getAsArray(),
-            'members' => $this->getMembers(),
+            'members' => $this->members,
+            'outside_members' => $this->outside_members,
             'accepted' => $this->hasUserAccepted($current_user),
             'manageable' => $this->isManageable(),
         );
@@ -205,7 +263,7 @@ class Suggestion {
         if ($accepted_suggestions_after == 0) {
             $canceler = new User();
             $canceler->fetch($suggestion_user->user_id);
-            $this->delete($canceler);
+            $this->deleteAndNotify($canceler);
             return true;
         }
 

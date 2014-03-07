@@ -21,13 +21,21 @@ $GLOBALS['config'] = array(
 	        'debug',
 	        'trace',
 		),
-		'level' => 'trace',
+		'level' => 'debug',
 		'file' => 'mealbookers.log',
 	),
+    /**
+     * initialsMaxLettersFromLastName - maximum number of letters taken from last name
+     * Example names: John Doe, John Davis
+     * Value 2: John Do., John Da.
+     * Value 1: John 1, John 2
+     */
+    'initialsMaxLettersFromLastName' => 3,
     'import' => array(
         'useragent' => 'Mealbookers data crawler',
     ),
     'mealDefaultLang' => 'fi',
+    'restaurantsDefaultLang' => 'fi',
     'mail' => array(
         'smtp_port' => 465,
         'smtp_secure' => 'ssl',

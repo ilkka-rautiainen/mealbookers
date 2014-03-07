@@ -14,6 +14,7 @@ function classLoader($name)
 		require_once __DIR__ . "/exceptions/$name.php";
 }
 spl_autoload_register('classLoader');
+mb_internal_encoding("UTF-8");
 Logger::info(__METHOD__ . " ## Start execution");
 Application::inst()->initAuthentication();
 DB::inst();

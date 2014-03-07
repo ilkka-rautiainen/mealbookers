@@ -20,7 +20,8 @@ $GLOBALS['language']['en'] = array(
     'email' => 'Email',
     'password' => 'Password',
     'log_in_remember_me' => 'Remember me',
-    'close' => 'close',
+    'and' => 'and',
+    'close' => 'Close',
     'cancel' => 'Cancel',
     'register' => 'Register',
     'register_full_name' => 'Full name',
@@ -40,6 +41,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_accept_succeeded' => 'Suggestion accepted',
     'suggestion_accept' => 'Accept',
     'suggestion_cancel' => 'Cancel',
+    'suggestion_outside_members' => '+ from other groups',
     'suggestion_accept_failed' => 'Handling the suggestion failed.',
     'suggestion_accept_gone' => 'Time of the suggestion has already past.',
     'suggestion_accepting' => 'Accepting the suggestion...',
@@ -52,7 +54,8 @@ $GLOBALS['language']['en'] = array(
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
         'mailer_body_suggestion' => 
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
-            . ' He suggests you to go there at {suggestion_time}.<br /><br />Accept the suggestion by clicking'
+            . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
+            . ' {menu}<br /><br />Accept the suggestion by clicking'
             . ' <a href="http://{server_hostname}/#/app/suggestion/accept?hash={hash}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
             . ' <a href="http://{server_hostname}/#/app/menu">here</a>.<br /><br />- Mealbookers<br /><br />'

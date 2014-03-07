@@ -26,7 +26,7 @@ class RestaurantFactory
         $result = DB::inst()->query("SELECT * FROM restaurants ORDER BY name ASC");
         while ($row = DB::inst()->fetchAssoc($result)) {
             $restaurant = new Restaurant();
-            $restaurant->populate($row);
+            $restaurant->populateFromRow($row);
             $restaurants[] = $restaurant;
         }
         return $restaurants;

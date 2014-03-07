@@ -13,14 +13,12 @@ class Restaurant
         if (!DB::inst()->getRowCount())
             throw new Exception("Unable to find restaurant with id $id");
         $row = DB::inst()->fetchAssoc($result);
-        $this->id = $row['id'];
-        $this->name = $row['name'];
-        $this->link = $row['link'];
+        $this->populateFromRow($row);
         if (!$this->id)
             throw new Exception("Error fetching restaurant: id is null");
     }
 
-    public function populate($row)
+    public function populateFromRow($row)
     {
         $this->id = $row['id'];
         $this->name = $row['name'];
@@ -59,7 +57,7 @@ class Restaurant
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $meal = new Meal();
-                $meal->populate($row);
+                $meal->populateFromRow($row);
                 $mealList->addMeal($i, $meal);
             }
         }
@@ -71,26 +69,45 @@ class Restaurant
      * Fetches the given user's suggestions in the restaurant
      * @todo optimize to only one query
      */
-    public function fetchSuggestionListForUser(User $user)
+    public function fetchSuggestionList(User $viewer)
     {
         $startTime = strtotime("last monday", strtotime("tomorrow"));
         $suggestionList = new SuggestionList();
         for ($i=0; $i<7; $i++) {
             $time = strtotime("+$i days", $startTime);
+            // Fetch all suggestions that are suggested to the given user
             $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
                 INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
                 WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
                     suggestions.restaurant_id = {$this->id} AND
-                    suggestions_users.user_id = {$user->id}
+                    suggestions_users.user_id = {$viewer->id}
                 GROUP BY suggestions.id
                 ORDER BY suggestions.datetime ASC");
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();
                 $suggestion->populateFromRow($row);
+                $suggestion->fetchAcceptedMembers($viewer);
                 $suggestionList->addSuggestion($i, $suggestion);
             }
         }
         $this->suggestionList = $suggestionList;
+    }
+
+    public function getMenuForEmail(Suggestion $suggestion, User $user)
+    {
+        $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+            restaurant_id = {$this->id} AND language = '{$user->language}'");
+        if (!DB::inst()->getRowCount()) {
+            $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLang') . "'");
+        }
+
+        $meals = array();
+        while ($meal = DB::inst()->fetchAssoc($result)) {
+            $meals[] = $meal['name'];
+        }
+
+        return implode("<br />", $meals);
     }
 }

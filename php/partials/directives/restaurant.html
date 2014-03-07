@@ -8,7 +8,11 @@
         <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length">
             <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
                 <span class="suggestion-time">{{ suggestion.time }}</span>
-                <span ng-repeat="member in suggestion.members" ng-class="{'suggestion-creator': suggestion.creator.id == member.id}" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }} </span>
+                <span ng-repeat="member in suggestion.members" ng-class="{'suggestion-creator': suggestion.creator.id == member.id}" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }}<span ng-if="$index < suggestion.members.length - 2">,</span><span ng-if="$index == suggestion.members.length - 2"> {{ 'and' | i18n }}</span></span>
+                <span ng-if="suggestion.outside_members.length">
+                    {{ 'suggestion_outside_members' | i18n }}
+                    <span ng-repeat="outside_member in suggestion.outside_members" class="suggestion-member" title="{{ outside_member.name }}"> {{ outside_member.initials }}<span ng-if="$index < suggestion.outside_members.length - 2">,</span><span ng-if="$index == suggestion.outside_members.length - 2"> {{ 'and' | i18n }}</span></span>
+                </span>
                 <span ng-if="!suggestion.accepted && suggestion.manageable" class="suggestion-join" ng-class="{'suggestion-processing': suggestion.processing}" ng-click="manageSuggestion(restaurant, suggestion, weekDay, true)">
                     {{ 'suggestion_accept' | i18n }}
                 </span>
@@ -18,9 +22,9 @@
             </div>
             <hr class="featurette-divider meal-divider">
         </div>
-        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]">
+        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group">
             <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
-            <span ng-bind-html="meal.name | mealRow"></span>
+            <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
             <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
         </div>
     </div>

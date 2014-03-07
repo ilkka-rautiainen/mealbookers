@@ -50,11 +50,11 @@ class Logger
      */
     private function log($level, $message)
     {
-        global $currentUser;
-        if (!isset($currentUser->id))
+        global $current_user;
+        if (!isset($current_user->id))
             $id = "-none-";
         else
-            $id = $currentUser->id;
+            $id = $current_user->id;
         
         if (fwrite($this->file, gmdate("d/m/y H:i:s"). substr((string)microtime(), 1, 4) . " [$id][" . strtoupper($level) . "] $message\n") === false)
             throw new Exception("Couldn't put error message");

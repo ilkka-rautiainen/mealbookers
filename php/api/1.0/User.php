@@ -17,7 +17,7 @@ class UserAPI
         $current_user->fetch(1);
         $user = $current_user->getAsArray();
 
-        $user['groups'] = $current_user->getGroups();
+        $user['groups'] = $current_user->getGroupsAsArray();
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
 
