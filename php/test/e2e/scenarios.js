@@ -16,7 +16,7 @@ describe('Mealbookers', function() {
 
 
   it('should automatically redirect to /app/menu when location hash/fragment is empty', function() {
-    expect(browser().location().url()).toBe('/app/menu');
+    expect(browser().location().url()).toContain('/app/menu');
   });
 
 
@@ -26,12 +26,12 @@ describe('Mealbookers', function() {
     });
 
     it('should render restaurant list', function() {
-      expect(element('#menuContainer .menu').count()).toBeGreaterThan(0);
+      expect(element('#menuContainer .restaurant').count()).toBeGreaterThan(0);
     });
 
     it('should put meals to Alvari', function() {
       if (!(new Date().getDay() == 0 || new Date().getDay() == 6)) {
-        expect(element('#menuContainer .restaurant_1 p.meal').count()).toBeGreaterThan(0);
+        expect(element('#menuContainer .restaurant .meal-group .meal-row').count()).toBeGreaterThan(0);
       }
     });
 
