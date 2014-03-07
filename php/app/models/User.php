@@ -63,17 +63,28 @@ class User
     {
         Logger::debug(__METHOD__ . " user {$this->id} and outside_members amount " . count($outside_members));
         $groupmates = $this->getGroupmates();
-        $all_members = array_merge($groupmates, $outside_members);
 
         $names = array();
-        foreach ($all_members as $member) {
+        foreach ($groupmates as $member) {
             if (!isset($names[$member->first_name])) {
                 $names[$member->first_name] = array();
             }
             $names[$member->first_name][] = array(
                 'id' => $member->id,
                 'last_name' => $member->last_name,
-                'joined' => $member->joined
+                'joined' => $member->joined,
+                'outside_member' => false,
+            );
+        }
+        foreach ($outside_members as $member) {
+            if (!isset($names[$member->first_name])) {
+                $names[$member->first_name] = array();
+            }
+            $names[$member->first_name][] = array(
+                'id' => $member->id,
+                'last_name' => $member->last_name,
+                'joined' => $member->joined,
+                'outside_member' => true,
             );
         }
 
@@ -104,36 +115,28 @@ class User
 
         $max_letters = Conf::inst()->get('initialsMaxLettersFromLastName');
 
-        // These are used if the names are found similar in the $max_letters scope
-        $similar_last_name_member_timestamps = array();
-        $similar_last_name_members = array();
-        // Get the first different letter in the last name
+        // Array walk callback, takes $n first letters of the last_name
+        $getFirstLetters = function(&$item, $key, $n)
+        {
+            $item['last_name'] = mb_substr($item['last_name'], 0, $n);
+        };
+        
+        // Helper function: returns only names as array from last_name_contexts array
+        $getLastNames = function($job_array)
+        {
+            $last_names = array();
+            foreach ($job_array as $partial_context) {
+                $last_names[] = $partial_context['last_name'];
+            }
+            return $last_names;
+        };
+
         $first_different_letter = 0;
         for ($i = 1; $i <= $max_letters; $i++) {
-            $similar_last_name_beginning_found = false;
-            foreach ($members_with_same_first_name as $member) {
-                if ($this->id == $member['id']) {
-                    // These are put there for possible later use to resolve numbers
-                    if ($i == $max_letters) {
-                        $similar_last_name_member_timestamps[] = $member['joined'];
-                        $similar_last_name_members[] = $member;
-                    }
-                    continue;
-                }
-                if (mb_substr($this->last_name, 0, $i) == mb_substr($member['last_name'], 0, $i)) {
-                    Logger::debug(__METHOD__ . " similar names found {$this->last_name} and " . $member['last_name'] . " at level $i");
-                    $similar_last_name_beginning_found = true;
-                    if ($i < $max_letters) {
-                        break;
-                    }
-                    else {
-                        $similar_last_name_member_timestamps[] = $member['joined'];
-                        $similar_last_name_members[] = $member;
-                    }
-                }
-            }
-            if (!$similar_last_name_beginning_found) {
-                Logger::debug(__METHOD__ . " no similar name found at level $i");
+            // if (mb_substr($this->last_name, 0, )
+            $job_array = $members_with_same_first_name;
+            array_walk($job_array, $getFirstLetters, $i);
+            if (count(array_unique($getLastNames($job_array))) == count($getLastNames($job_array))) {
                 $first_different_letter = $i;
                 break;
             }
@@ -148,10 +151,19 @@ class User
         // n+ letter was different, use only a number
         else {
             // Calculate the number here, the oldest user has the lowest number
-            array_multisort($similar_last_name_member_timestamps, SORT_ASC, $similar_last_name_members);
+            $joined_values = $outside_member_values = array();
+            foreach ($members_with_same_first_name as $member) {
+                $joined_values[] = $member['joined'];
+                $outside_member_values[] = $member['outside_member'];
+            }
+            array_multisort(
+                $outside_member_values, SORT_ASC, // First group members
+                $joined_values, SORT_ASC, // Secondary: First those who joined first
+                $members_with_same_first_name // Sort this array
+            );
             $number = -1;
-            for ($i = 0; $i < count($similar_last_name_members); $i++) {
-                if ($similar_last_name_members[$i]['id'] == $this->id)
+            for ($i = 0; $i < count($members_with_same_first_name); $i++) {
+                if ($members_with_same_first_name[$i]['id'] == $this->id)
                 {
                     $number = $i;
                     break;
@@ -159,8 +171,8 @@ class User
             }
             if ($number == -1) {
                 Logger::error(__METHOD__ . " no number found for user {$this->id}"
-                    . " as the similar_last_name_members didn't contain him."
-                    . " similar_last_name_members: " . print_r($similar_last_name_members, true));
+                    . " as the members_with_same_first_name didn't contain him."
+                    . " members_with_same_first_name: " . print_r($members_with_same_first_name, true));
                 $this->initials = $this->first_name;
                 return;
             }
