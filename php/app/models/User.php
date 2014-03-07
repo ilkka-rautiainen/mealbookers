@@ -77,7 +77,6 @@ class User
             );
         }
 
-        Logger::debug(__METHOD__ . " context: " . print_r($names, true));
         return $names;
     }
 
@@ -140,12 +139,8 @@ class User
             }
         }
 
-        // The first letter was already different
-        if ($first_different_letter == 1) {
-            $this->initials = $this->first_name;
-        }
-        // One of 2..n letters was different (where n is initialsMaxLettersFromLastName in config)
-        else if ($first_different_letter > 1) {
+        // One of 1..n letters was different (where n is initialsMaxLettersFromLastName in config)
+        if ($first_different_letter >= 1) {
             $this->initials = $this->first_name . " "
                 . mb_substr($this->last_name, 0, $first_different_letter)
                 . ((mb_strlen($this->last_name) == $first_different_letter) ? "" : ".");
@@ -154,7 +149,6 @@ class User
         else {
             // Calculate the number here, the oldest user has the lowest number
             array_multisort($similar_last_name_member_timestamps, SORT_ASC, $similar_last_name_members);
-            Logger::debug(__METHOD__ . " similar: " . print_r($similar_last_name_members, true));
             $number = -1;
             for ($i = 0; $i < count($similar_last_name_members); $i++) {
                 if ($similar_last_name_members[$i]['id'] == $this->id)
