@@ -128,9 +128,6 @@ class Suggestion {
         $this->outside_members = $outside_members_as_arrays;
     }
 
-    /**
-     * @todo call has user joined with current user
-     */
     public function getAsArray()
     {
         // Mockup current user
