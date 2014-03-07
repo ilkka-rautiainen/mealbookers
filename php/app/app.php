@@ -15,4 +15,5 @@ function classLoader($name)
 }
 spl_autoload_register('classLoader');
 Logger::info(__METHOD__ . " ## Start execution");
+Application::inst()->initAuthentication();
 DB::inst();

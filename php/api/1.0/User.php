@@ -1,6 +1,7 @@
 <?php
 
 Flight::route('GET /user', array('UserAPI', 'getUser'));
+Flight::route('POST /user/login', array('UserAPI', 'login'));
 
 class UserAPI
 {
@@ -21,5 +22,20 @@ class UserAPI
         $user['language'] = $current_user->language;
 
         print json_encode($user);
+    }
+
+    function login()
+    {
+        Logger::debug(__METHOD__ . " GET /user/login called");
+
+        $data = getPostData();
+
+        // 1: haetaan tietokannasta emaililla + hashatyllä salasanalla käyttäjän id
+        // 2: jos ok
+        //   -> asetetaan cookiet (id + 2*hashattu salasana saltilla)
+        //   -> ilmoitetaan fronttiin ok
+        // 2: jos ei -> palautetaan sanoma fronttiin
+        
+        // setcookie("name", "value", time() + 86400*365*30);
     }
 }

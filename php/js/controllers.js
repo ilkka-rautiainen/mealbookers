@@ -91,9 +91,20 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 .controller('LoginController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
-    $scope.login = {"email":"", "password":"", "remember":false};
+    $scope.login = {
+        email: "",
+        password: "",
+        remember: false
+    };
     $scope.processForm = function() {
-        $http.post('api/1.0/login.php', $scope.login);
+        $http.post('api/1.0/user/login', $scope.login)
+            .success(function(response) {
+                /*
+                if (response.status == 'ok') {
+                    $rootScope.refreshCurrentUser();
+                }
+                 */
+            });
     };
 
 }])

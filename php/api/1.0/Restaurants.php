@@ -40,6 +40,7 @@ class RestaurantsAPI
     function createSuggestion($restaurantId)
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions called");
+        Application::inst()->checkAuthentication();
         $post_suggestion = getPostData();
 
         $restaurantId = (int)$restaurantId;
