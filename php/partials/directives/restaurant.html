@@ -18,9 +18,9 @@
             </div>
             <hr class="featurette-divider meal-divider">
         </div>
-        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]">
+        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group">
             <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
-            <span ng-bind-html="meal.name | mealRow"></span>
+            <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
             <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
         </div>
     </div>
