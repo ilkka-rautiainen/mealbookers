@@ -13,14 +13,12 @@ class Restaurant
         if (!DB::inst()->getRowCount())
             throw new Exception("Unable to find restaurant with id $id");
         $row = DB::inst()->fetchAssoc($result);
-        $this->id = $row['id'];
-        $this->name = $row['name'];
-        $this->link = $row['link'];
+        $this->populateFromRow($row);
         if (!$this->id)
             throw new Exception("Error fetching restaurant: id is null");
     }
 
-    public function populate($row)
+    public function populateFromRow($row)
     {
         $this->id = $row['id'];
         $this->name = $row['name'];
@@ -59,7 +57,7 @@ class Restaurant
 
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $meal = new Meal();
-                $meal->populate($row);
+                $meal->populateFromRow($row);
                 $mealList->addMeal($i, $meal);
             }
         }
@@ -89,7 +87,7 @@ class Restaurant
             while ($row = DB::inst()->fetchAssoc($result)) {
                 $suggestion = new Suggestion();
                 $suggestion->populateFromRow($row);
-                $suggestion->fetchMembers($viewer);
+                $suggestion->fetchAcceptedMembers($viewer);
                 $suggestionList->addSuggestion($i, $suggestion);
             }
         }

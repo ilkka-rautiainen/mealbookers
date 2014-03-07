@@ -21,7 +21,7 @@ $GLOBALS['config'] = array(
 	        'debug',
 	        'trace',
 		),
-		'level' => 'trace',
+		'level' => 'debug',
 		'file' => 'mealbookers.log',
 	),
     'import' => array(

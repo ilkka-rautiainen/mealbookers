@@ -9,7 +9,9 @@ class User
     public $last_name;
     public $language;
     public $active;
-    private $initials = "";
+    private $initials;
+    private $groups;
+    private $groupmates;
 
     public function fetch($id)
     {
@@ -30,6 +32,9 @@ class User
         $this->last_name = $row['last_name'];
         $this->language = $row['language'];
         $this->active = $row['active'];
+        $this->initials = '';
+        $this->groups = array();
+        $this->groupmates = array();
     }
 
     public function getName()
@@ -53,7 +58,7 @@ class User
      * that are not in the viewer's groups and makes unique initials in that context.
      * 
      * @param  User   $viewer           The user of whichs point of view initials are made
-     * @param  array  $outside_members  Array of members who are not in viewer's groups
+     * @param  array  $outside_members  Array of User objects who are not in viewer's groups
      */
     public function createInitialsForSuggestion(User $viewer, $outside_members)
     {
@@ -68,29 +73,66 @@ class User
 
     }
 
-    public function getGroups()
+    /**
+     * Fetches the user's groups and group members.
+     * @return array Groups as an array, members as User objects
+     */
+    private function fetchGroups()
     {
-        $groups = array();
+        Logger::debug(__METHOD__ . " user {$this->id}");
+        if (count($this->groups)) {
+            Logger::debug(__METHOD__ . " already fetched");
+            return;
+        }
 
+        $groups = array();
         $groups_result = DB::inst()->query("SELECT group_id FROM group_memberships WHERE user_id = {$this->id}");
         while ($group_id = DB::inst()->fetchFirstField($groups_result)) {
-            $group_row = DB::inst()->getRowAssoc("SELECT id, name FROM groups WHERE id = $group_id");
-            $members = array();
+            $group = new Group();
+            $group->fetch($group_id);
+            $groups[] = $group;
+        }
 
-            $group_users_result = DB::inst()->query("SELECT user_id FROM group_memberships WHERE
-                group_id = $group_id AND user_id != {$this->id}");
-            while ($user_id = DB::inst()->fetchFirstField($group_users_result)) {
-                $user = new User();
-                $user->fetch($user_id);
-                $user->createInitialsForGroupView($this);
-                $members[] = $user->getAsArray();
+        $this->groups = $groups;
+    }
+
+    /**
+     * Fetches user's all groupmates in all his groups
+     */
+    private function fetchGroupMates()
+    {
+        Logger::debug(__METHOD__ . " user {$this->id}");
+
+        if (count($this->groupmates)) {
+            Logger::debug(__METHOD__ . " already fetched");
+        }
+
+        $this->fetchGroups();
+
+        $groupmates = array();
+        foreach ($this->groups as $group) {
+            foreach ($group->getMembers($this) as $member) {
+                $groupmates[] = $member;
             }
+        }
 
-            $groups[] = array(
-                'id' => $group_row['id'],
-                'name' => $group_row['name'],
-                'members' => $members,
-            );
+        $this->groupmates = $groupmates;
+    }
+
+    /**
+     * Returns user's groups as array (for being passed as JSON to frontend)
+     * @return array of groups
+     * @todo implement the intials for groupview here
+     */
+    public function getGroupsAsArray()
+    {
+        Logger::debug(__METHOD__ . " user {$this->id}");
+
+        $this->fetchGroups();
+
+        $groups = array();
+        foreach ($this->groups as $group) {
+            $groups[] = $group->getAsArray($this);
         }
 
         return $groups;

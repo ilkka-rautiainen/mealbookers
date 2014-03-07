@@ -7,6 +7,7 @@ class Suggestion {
     public $creator_id;
     public $restaurant_id;
     private $members;
+    private $outside_members;
 
     public function fetch($id)
     {
@@ -35,6 +36,7 @@ class Suggestion {
         $this->creator_id = $row['creator_id'];
         $this->restaurant_id = $row['restaurant_id'];
         $this->members = array();
+        $this->outside_members = array();
     }
 
     public function getDate()
@@ -55,6 +57,12 @@ class Suggestion {
         return ((int)date("N", strtotime($this->datetime))) - 1;
     }
 
+    /**
+     * Returns those members of the suggestion who are not members in the current user's groups.
+     * 
+     * @param  User   $viewer User, whose point of view is used
+     * @return array of User-objects
+     */
     public function getOutsideMembers(User $viewer)
     {
         $outside_members = array();
@@ -67,21 +75,33 @@ class Suggestion {
             )
             ORDER BY suggestions_users.accepted_timestamp ASC");
 
-        while ($outside_member = DB::inst()->fetchAssoc($result)) {
-            if (!isset($outside_members[$outside_member['first_name']])) {
-                $outside_members[$outside_member['first_name']] = array();
-            }
-            $outside_members[$outside_member['first_name']][] = $outside_member['last_name'];
+        while ($outside_member_row = DB::inst()->fetchAssoc($result)) {
+            $outside_member = new User();
+            $outside_member->populateFromRow($outside_member_row);
+            $outside_members[] = $outside_member;
         }
 
         return $outside_members;
     }
 
-    public function fetchMembers(User $viewer)
+    /**
+     * Fetches all members that have been invited to the suggestion and accepted it.
+     * Members that are invited to the suggestion but who are not members in any common group
+     * with the $viewer, are separated to outside_members.
+     * 
+     * @param  User  $viewer  User, whose point of view is used
+     */
+    public function fetchAcceptedMembers(User $viewer)
     {
-        $members = array();
+        Logger::debug(__METHOD__ . " fetching members of suggestion {$this->id}");
+        $members = $outside_members = array();
+
         // Get the user's that are invited to the suggestion outside of the viewer's groups
-        $outside_members = $this->getOutsideMembers($viewer);
+        $outside_members_temp = $this->getOutsideMembers($viewer);
+        $outside_member_ids = array();
+        foreach ($outside_members_temp as $outside_member) {
+            $outside_member_ids[] = $outside_member->id;
+        }
 
         $result = DB::inst()->query("SELECT users.* FROM users
             INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
@@ -90,10 +110,17 @@ class Suggestion {
         while ($row = DB::inst()->fetchAssoc($result)) {
             $member = new User();
             $member->populateFromRow($row);
-            $member->createInitialsForSuggestion($viewer, $outside_members);
-            $members[] = $member->getAsArray();
+            $member->createInitialsForSuggestion($viewer, $outside_members_temp);
+
+            if (!in_array($member->id, $outside_member_ids)) {
+                $members[] = $member->getAsArray();
+            }
+            else {
+                $outside_members[] = $member->getAsArray();
+            }
         }
         $this->members = $members;
+        $this->outside_members = $outside_members;
     }
 
     /**
@@ -112,6 +139,7 @@ class Suggestion {
             'time' => $this->getTime(),
             'creator' => $creator->getAsArray(),
             'members' => $this->members,
+            'outside_members' => $this->outside_members,
             'accepted' => $this->hasUserAccepted($current_user),
             'manageable' => $this->isManageable(),
         );
