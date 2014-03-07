@@ -231,6 +231,7 @@ class RestaurantsAPI
         }
         else {
             $suggestion->fetch($suggestionId);
+            $suggestion->fetchAcceptedMembers($current_user);
 
             print(json_encode(array(
                 'status' => 'ok',
