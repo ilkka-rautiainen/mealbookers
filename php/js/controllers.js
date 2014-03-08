@@ -99,6 +99,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.processForm = function() {
         $http.post('api/1.0/user/login', $scope.login)
             .success(function(response) {
+                $scope.response = response;
                 /*
                 if (response.status == 'ok') {
                     $rootScope.refreshCurrentUser();

@@ -3,6 +3,8 @@
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 
+Flight::register('db', 'Database', array('localhost', 'database', 'username', 'password'));
+
 class UserAPI
 {
     /**
@@ -28,7 +30,16 @@ class UserAPI
     {
         Logger::debug(__METHOD__ . " GET /user/login called");
 
-        $data = getPostData();
+        //$data = getPostData();
+
+        $data = file_get_contents("php://input");
+ 
+        $objData = json_decode($data);
+
+        $result = DB::inst()->query("SELECT id FROM users");
+        $row = DB::inst()->fetchAssoc($result);
+
+        echo json_decode($row['id']);
 
         // 1: haetaan tietokannasta emaililla + hashatyllä salasanalla käyttäjän id
         // 2: jos ok

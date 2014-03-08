@@ -20,6 +20,7 @@ $GLOBALS['language']['en'] = array(
     'email' => 'Email',
     'password' => 'Password',
     'log_in_remember_me' => 'Remember me',
+    'forgot' => 'Forgot your password?',
     'and' => 'and',
     'close' => 'Close',
     'cancel' => 'Cancel',

@@ -42,21 +42,22 @@
 					<h4 class="modal-title" id="myModalLabel">{{ 'log_in' | i18n }}</h4>
 				</div>
 				<div class="modal-body">
-					<h3>Data:{{login}}</h3>
+					<h3>Data: {{ login }}</h3>
+					<h3>Response: {{ response }}</h3>
 						<div class="form-group">
 							<label for="email_log_in">{{ 'email' | i18n }}</label>
-							<input class="form-control" id="email_log_in" ng-model="login.email" type="email" required>
+							<input type="email" class="form-control" id="email_log_in" ng-model="login.email" required>
 						</div>
 						<div class="form-group">
 							<label for="password_log_in">{{ 'password' | i18n }}</label>
-							<input type="password" class="form-control" id="password_log_in" ng-model="login.password">
+							<input type="password" class="form-control" id="password_log_in" ng-model="login.password" required>
 						</div>
 						<div class="checkbox">
 							<label>
 								<input type="checkbox" ng-model="login.remember"> {{ 'log_in_remember_me' | i18n }}
 							</label>
 						</div>
-						<a href="#">Did you foget password</a>
+						<a href="#">{{ 'forgot' | i18n }}</a>
 				</div>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-default">{{ 'log_in' | i18n }}</button>
@@ -79,19 +80,19 @@
 				<form role="form">
 					<div class="form-group">
 						<label for="email_register">{{ 'email' | i18n }}</label>
-						<input type="email" class="form-control" id="email_register">
+						<input type="email" class="form-control" id="email_register" required>
 					</div>
 					<div class="form-group">
 						<label for="password_register">{{ 'password' | i18n }}</label>
-						<input type="email" class="form-control" id="password_register">
+						<input type="password" class="form-control" id="password_register" required>
 					</div>
 					<div class="form-group">
 						<label for="first_name_register">{{ 'register_first_name' | i18n }}</label>
-						<input type="text" class="form-control" id="first_name_register">
+						<input type="text" class="form-control" id="first_name_register" required>
 					</div>
 					<div class="form-group">
 						<label for="last_name_register">{{ 'register_last_name' | i18n }}</label>
-						<input type="text" class="form-control" id="last_name_register">
+						<input type="text" class="form-control" id="last_name_register" required>
 					</div>
 				</form>
 			</div>

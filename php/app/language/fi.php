@@ -20,6 +20,7 @@ $GLOBALS['language']['fi'] = array(
     'email' => 'Sähköposti',
     'password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
+    'forgot' => 'Unohditko salasanasi?',
     'and' => 'ja',
     'close' => 'Sulje',
     'cancel' => 'Peruuta',
