@@ -100,16 +100,34 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user/login', $scope.login)
             .success(function(response) {
                 $scope.response = response;
-                /*
+                
                 if (response.status == 'ok') {
-                    $rootScope.refreshCurrentUser();
+                    //$rootScope.refreshCurrentUser();
+                    console.log("OK");
                 }
-                 */
+                
             });
     };
 
 }])
 
+.controller('registerController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+    $scope.register = {
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+    };
+    $scope.processRegister = function() {
+        $http.post('api/1.0/user/registerUser', $scope.register)
+            .success(function(response) {
+                $scope.response = response;
+                if (response.response == 'ok')
+                    console.log("OK");
+            });
+    };
+
+}])
 
 .controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants) {
 

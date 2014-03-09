@@ -2,6 +2,7 @@
 
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
+Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
 Flight::register('db', 'Database', array('localhost', 'database', 'username', 'password'));
 
@@ -51,11 +52,35 @@ class UserAPI
 
             setcookie("check", $passhash2, $remember, '/');
 
-            echo json_encode("ok");
+            echo json_encode(array('status' => "ok" ));
         
         }
         else {
-            echo json_encode("Wrong email or password!");
+            echo json_encode(array('status' => "fail" ));
+        }
+    }
+
+    function registerUser()
+    {
+        Logger::debug(__METHOD__ . " GET /user/registerUser called");
+
+        $data = getPostData();
+
+        $result = DB::inst()->query("SELECT id FROM users WHERE email_address='".$data["email"]."'");
+        $row = DB::inst()->fetchAssoc($result);
+
+        
+        if (count($row) == 0){
+            /*
+            INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('simo.hsv@suomi24.fi', 'sakjdölsaköldsa', 'Simo', 'Haakana', 'fi', '234');
+            */
+            $result = DB::inst()->query("INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('".$data["email"]."', '".sha1($data["password"])."', '".$data["firstName"]."', '".$data["lastName"]."', 'fi', '".time()."')");
+
+            echo json_encode(array('response' => "ok" ));
+        
+        }
+        else {
+            echo json_encode(array('response' => "fail" ));
         }
     }
 }
