@@ -30,23 +30,32 @@ class UserAPI
     {
         Logger::debug(__METHOD__ . " GET /user/login called");
 
-        //$data = getPostData();
+        $data = getPostData();
 
-        $data = file_get_contents("php://input");
- 
-        $objData = json_decode($data);
+        $passhash = sha1($data["password"]);
 
-        $result = DB::inst()->query("SELECT id FROM users");
+        $result = DB::inst()->query("SELECT id FROM users WHERE email_address='".$data["email"]."' AND passhash='".mysql_real_escape_string("$passhash")."'");
         $row = DB::inst()->fetchAssoc($result);
 
-        echo json_decode($row['id']);
+        if ($data["remember"] === true) {
+            $remember = time() + 3600*24*365;
+        }
+        else {
+            $remember = 0;
+        }
 
-        // 1: haetaan tietokannasta emaililla + hashatyllä salasanalla käyttäjän id
-        // 2: jos ok
-        //   -> asetetaan cookiet (id + 2*hashattu salasana saltilla)
-        //   -> ilmoitetaan fronttiin ok
-        // 2: jos ei -> palautetaan sanoma fronttiin
+        if (count($row)!= 0){
+            $passhash2 = sha1("4k89".$passhash."sa");
+
+            setcookie("id", $row["id"], $remember, '/');
+
+            setcookie("check", $passhash2, $remember, '/');
+
+            echo json_encode("ok");
         
-        // setcookie("name", "value", time() + 86400*365*30);
+        }
+        else {
+            echo json_encode("Wrong email or password!");
+        }
     }
 }
