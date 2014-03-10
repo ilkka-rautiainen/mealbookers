@@ -10,7 +10,7 @@ Flight::start();
 function getPostData() {
     $data = json_decode(file_get_contents('php://input'), true);
     if ($data === null) {
-        sendHttpError(401, "Invalid JSON sent");
+        sendHttpError(400, "Invalid JSON sent");
         return;
     }
     return $data;
