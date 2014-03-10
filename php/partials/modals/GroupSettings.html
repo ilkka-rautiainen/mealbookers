@@ -1,0 +1,55 @@
+<!-- Suggestion Modal -->
+<div class="modal fade" id="groupSettingsModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <a name="modal" />
+            <div class="modal-header">
+                <button type="button" id="closeSuggestion" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ currentUser.name }} - {{ 'group_settings' | i18n }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert" ng-class="groupSettingsMessage.type" ng-if="groupSettingsMessage.message.length">{{ groupSettingsMessage.message }}</div>
+
+                <div ng-repeat="group in currentUser.groups" class="group well">
+                    <h3 class="name" ng-show="!group.editNameProcess">{{ group.name }}
+                        <i class="glyphicon glyphicon-edit button" ng-click="group.editNameProcess = true"></i>
+                    </h3>
+                    <form ng-submit="saveGroupName(group)">
+                        <div class="input-group" ng-show="group.editNameProcess">
+                            <input type="text" class="form-control" ng-model="group.name" ng-disabled="group.editNameSaveProcess" maxlength="15" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default" ng-disabled="group.editNameSaveProcess">
+                                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.editNameSaveProcess"></i>
+                                    {{ 'save' | i18n }}
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="group.editNameProcess = false; group.editNameSaveProcess = false;">{{ 'cancel' | i18n }}</button>
+                            </span>
+                        </div>
+                    </form>
+                    <div ng-repeat="member in group.members" class="member">
+                        {{ member.name }}
+                        <i class="glyphicon glyphicon-remove button"></i>
+                    </div>
+                    <div ng-if="group.addMemberProcess">
+                        <form ng-submit="addMemberToGroup(group)">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" required />
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.addMemberSaveProcess"></i>
+                                        {{ 'group_invite_member' | i18n }}
+                                    </button>
+                                    <button type="button" class="btn btn-default" ng-click="group.addMemberProcess = 0; group.newMemberEmail = '';">{{ 'cancel' | i18n }}</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <button type="button" class="btn btn-default" ng-show="!group.addMemberProcess" ng-click="group.addMemberProcess = 1"><i class="glyphicon glyphicon-plus button"></i> {{ 'group_invite_member' | i18n }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'close' | i18n }}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

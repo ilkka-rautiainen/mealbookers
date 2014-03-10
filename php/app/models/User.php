@@ -248,7 +248,6 @@ class User
     /**
      * Returns user's groups as array (for being passed as JSON to frontend)
      * @return array of groups
-     * @todo implement the intials for groupview here
      */
     public function getGroupsAsArray()
     {

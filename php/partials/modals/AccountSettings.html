@@ -9,49 +9,27 @@
                     <h4 class="modal-title">{{ currentUser.name }} - {{ 'account_settings' | i18n }}</h4>
                 </div>
                 <div class="modal-body">
-
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs">
-                        <li class="general_settings active" ng-click="changeTab('general_settings')"><a>{{ 'account_general_settings' | i18n }}</a></li>
-                        <li class="group_settings" ng-click="changeTab('group_settings')"><a>{{ 'account_group_management' | i18n }}</a></li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <!-- General settings -->
-                        <div class="tab-pane general_settings active">
-                            <div class="alert" ng-class="generalSettingsMessage.type" ng-if="generalSettingsMessage.message.length">{{ generalSettingsMessage.message }}</div>
-                            <div class="form-group">
-                                <label>{{ 'email' | i18n }}</label><br />
-                                {{ currentUser.email_address }}
-                            </div>
-                            <div class="form-group">
-                                <label for="old_password">{{ 'account_old_password' | i18n }}</label>
-                                <input class="form-control" type="password" name="old_password" ng-model="password.old" />
-                            </div>
-                            <div class="form-group">
-                                <label for="new_password">{{ 'account_new_password' | i18n }}</label>
-                                <input class="form-control" type="password" name="new_password" title="{{ 'account_password_criteria' | i18n }}" pattern=".{5,}" ng-model="password.new" />
-                            </div>
-                            <div class="form-group">
-                                <label for="new_password_repeat">{{ 'account_new_password_repeat' | i18n }}</label>
-                                <input class="form-control" type="password" name="new_password_repeat" ng-model="password.repeat" />
-                            </div>
-                        </div>
-                        <!-- Group settings -->
-                        <div class="tab-pane group_settings">
-                            <div class="alert" ng-class="groupSettingsMessage.type" ng-if="groupSettingsMessage.message.length">{{ groupSettingsMessage.message }}</div>
-                        </div>
+                    <div class="alert" ng-class="generalSettingsMessage.type" ng-if="generalSettingsMessage.message.length">{{ generalSettingsMessage.message }}</div>
+                    <div class="form-group">
+                        <strong>{{ currentUser.email_address }}</strong>
+                    </div>
+                    <div class="form-group">
+                        <label for="old_password">{{ 'account_old_password' | i18n }}</label>
+                        <input class="form-control" type="password" name="old_password" ng-model="password.old" />
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">{{ 'account_new_password' | i18n }}</label>
+                        <input class="form-control" type="password" name="new_password" title="{{ 'account_password_criteria' | i18n }}" pattern=".{5,}" ng-model="password.new" />
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password_repeat">{{ 'account_new_password_repeat' | i18n }}</label>
+                        <input class="form-control" type="password" name="new_password_repeat" ng-model="password.repeat" />
                     </div>
                 </div>
-                <div class="modal-footer" ng-show="activeTab == 'general_settings'">
-                    <button type="button" class="btn btn-danger remove-account" ng-class="{visible: !removing}" ng-click="removing = true">{{ 'account_remove' | i18n }}</button>
-                    <button type="button" class="btn btn-success remove-account" ng-class="{visible: removing}" ng-click="removing = false">{{ 'account_remove_cancel' | i18n }}</button>
-                    <button type="button" class="btn btn-danger remove-account" ng-class="{visible: removing}" ng-click="removeAccount()">{{ 'account_remove_ok' | i18n }}</button>
-                    <input type="submit" class="btn btn-default" ng-disabled="submitButtonDisabled" ng-value="submitButtonText" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
-                </div>
-                <div class="modal-footer" ng-show="activeTab == 'group_settings'">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger remove-account" ng-class="{visible: !removingAccount}" ng-click="removingAccount = true">{{ 'account_remove' | i18n }}</button>
+                    <button type="button" class="btn btn-success remove-account" ng-class="{visible: removingAccount}" ng-click="removingAccount = false">{{ 'account_remove_cancel' | i18n }}</button>
+                    <button type="button" class="btn btn-danger remove-account" ng-class="{visible: removingAccount}" ng-click="removeAccount()">{{ 'account_remove_ok' | i18n }}</button>
                     <input type="submit" class="btn btn-default" ng-disabled="submitButtonDisabled" ng-value="submitButtonText" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
                 </div>

@@ -3,6 +3,7 @@
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
+Flight::route('POST /user/groups/@groupId', array('UserAPI', 'editGroup'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
@@ -71,17 +72,17 @@ class UserAPI
 
             if ($data['password']['new'] || $data['password']['repeat']) {
                 if (!$data['password']['old']) {
-                    throw new UpdateAccountException('no_old_password');
+                    throw new ApiException('no_old_password');
                 }
                 else if ($data['password']['new'] != $data['password']['repeat']) {
-                    throw new UpdateAccountException('passwords_dont_match');
+                    throw new ApiException('passwords_dont_match');
                 }
                 $old_hash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$current_user->id}");
                 if ($old_hash != Application::inst()->hash($data['password']['old'])) {
-                    throw new UpdateAccountException('wrong_password');
+                    throw new ApiException('wrong_password');
                 }
                 else if (!Application::inst()->isStrongPassword($data['password']['new'], $current_user)) {
-                    throw new UpdateAccountException('weak_password');
+                    throw new ApiException('weak_password');
                 }
                 else {
                     DB::inst()->query("UPDATE users
@@ -90,7 +91,7 @@ class UserAPI
                 }
             }
             else if ($data['password']['old']) {
-                throw new UpdateAccountException('no_new_password');
+                throw new ApiException('no_new_password');
             }
 
 
@@ -99,7 +100,42 @@ class UserAPI
                 'status' => 'ok'
             ));
         }
-        catch (UpdateAccountException $e) {
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage()
+            ));
+        }
+    }
+
+    function editGroup($groupId)
+    {
+        Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
+
+        $groupId = (int)$groupId;
+        $data = Application::inst()->getPostData();
+
+        DB::inst()->query("SELECT id FROM groups WHERE id = $groupId");
+        if (!DB::inst()->getRowCount()) {
+            Application::inst()->exitWithHttpCode(404, "No group with id $groupId found");
+        }
+
+        try {
+            // Edit group
+            if (isset($data['name'])) {
+                $name = $data['name'];
+                if (!strlen($name)){
+                    throw new ApiException('invalid_name');
+                }
+
+                DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
+                    WHERE id = $groupId");
+            }
+
+            print json_encode(array(
+                'status' => 'ok',
+            ));
+        }
+        catch (ApiException $e) {
             print json_encode(array(
                 'status' => $e->getMessage()
             ));

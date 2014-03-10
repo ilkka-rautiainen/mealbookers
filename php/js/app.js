@@ -39,9 +39,15 @@ angular.module('Mealbookers', [
     })
     
     .state('Navigation.Menu.AccountSettings', {
-        url: "/account",
+        url: "/settings/general",
         templateUrl: "partials/modals/AccountSettings.html",
         controller: 'AccountSettingsController'
+    })
+    
+    .state('Navigation.Menu.GroupSettings', {
+        url: "/settings/groups",
+        templateUrl: "partials/modals/GroupSettings.html",
+        controller: 'GroupSettingsController'
     })
     
     .state('Navigation.AcceptSuggestion', {

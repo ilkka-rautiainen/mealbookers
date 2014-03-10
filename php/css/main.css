@@ -322,3 +322,41 @@ span.line-break {
 #accountSettingsModal .remove-account.visible {
     display: block;
 }
+
+#groupSettingsModal .member {
+    height: 30px;
+    line-height: 30px;
+}
+
+#groupSettingsModal .button {
+    cursor: pointer;
+}
+
+#groupSettingsModal .group .name {
+    margin-top: -4px;
+}
+
+.saving-icon {
+    -webkit-animation-name: rotateThis;
+    -webkit-animation-duration: .7s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    animation-name: rotateThis;
+    animation-duration: .7s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotateThis {
+    from { -webkit-transform: scale( 1 ) rotate( 0deg );   }
+    to   { -webkit-transform: scale( 1 ) rotate( 360deg ); }
+}
+ {
+    from { transform: scale( 1 ) rotate( 0deg );   }
+    to   { transform: scale( 1 ) rotate( 360deg ); }
+}
+
+strong, b {
+    font-weight: normal;
+    font-family: OpenSansBold;
+}
