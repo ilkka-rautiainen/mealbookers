@@ -430,12 +430,17 @@ angular.module('Mealbookers.controllers', [])
         }
     };
 
+    $scope.startAddMemberProcess = function(group) {
+        group.addMemberProcess = 1;
+        $scope.modalAlert('', '');
+    };
+
     $scope.addMemberToGroup = function(group) {
         group.addMemberSaveProcess = true;
         $http.post('/api/1.0/user/groups/' + group.id + '/members', {
             email_address: group.newMemberEmail
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == 'undefined') {
+            if (typeof result != 'object' || result.status == 'undefined' || result.status == 'failed') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
             }
@@ -443,14 +448,19 @@ angular.module('Mealbookers.controllers', [])
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_failed_invalid_email'));
             }
+            else if (result.status == 'already_member') {
+                group.addMemberSaveProcess = false;
+                $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
+            }
             else if (result.status == 'ok') {
                 group.addMemberProcess = false;
                 group.addMemberSaveProcess = false;
-                $scope.modalAlert('', '');
+                group.newMemberEmail = '';
+                $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success'));
             }
             else {
                 console.error("Unknown response");
-                console.error(response);
+                console.error(result);
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'))
             }
@@ -480,7 +490,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else {
                 console.error("Unknown response");
-                console.error(response);
+                console.error(result);
                 group.editNameSaveProcess = false;
                 $scope.groupSettingsAlert('alert-danger', $filter('i18n')('group_edit_failed'))
             }

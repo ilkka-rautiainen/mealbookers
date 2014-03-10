@@ -11,8 +11,8 @@
                 <div class="alert" ng-class="groupSettingsMessage.type" ng-if="groupSettingsMessage.message.length">{{ groupSettingsMessage.message }}</div>
 
                 <div ng-repeat="group in currentUser.groups" class="group well">
-                    <h3 class="name" ng-show="!group.editNameProcess">{{ group.name }}
-                        <i class="glyphicon glyphicon-edit button" ng-click="group.editNameProcess = true"></i>
+                    <h3 class="name" ng-show="!group.editNameProcess" ng-click="group.editNameProcess = true">{{ group.name }}
+                        <i class="glyphicon glyphicon-edit button"></i>
                     </h3>
                     <form ng-submit="saveGroupName(group)">
                         <div class="input-group" ng-show="group.editNameProcess">
@@ -33,9 +33,9 @@
                     <div ng-if="group.addMemberProcess">
                         <form ng-submit="addMemberToGroup(group)">
                             <div class="input-group">
-                                <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" required />
+                                <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" ng-disabled="group.addMemberSaveProcess" required />
                                 <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default">
+                                    <button type="submit" class="btn btn-default" ng-disabled="group.addMemberSaveProcess">
                                         <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.addMemberSaveProcess"></i>
                                         {{ 'group_invite_member' | i18n }}
                                     </button>
@@ -44,7 +44,7 @@
                             </div>
                         </form>
                     </div>
-                    <button type="button" class="btn btn-default" ng-show="!group.addMemberProcess" ng-click="group.addMemberProcess = 1"><i class="glyphicon glyphicon-plus button"></i> {{ 'group_invite_member' | i18n }}
+                    <button type="button" class="btn btn-default" ng-show="!group.addMemberProcess" ng-click="startAddMemberProcess(group)"><i class="glyphicon glyphicon-plus button"></i> {{ 'group_invite_member' | i18n }}
                 </div>
             </div>
             <div class="modal-footer">

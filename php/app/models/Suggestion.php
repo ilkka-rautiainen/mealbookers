@@ -174,7 +174,7 @@ class Suggestion {
     public function insertMember(User $member, $accepted)
     {
         Logger::info(__METHOD__ . " inserting member {$member->id} to suggestion {$this->id}");
-        $hash = md5(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
+        $hash = Application::inst()->getUniqueHash();
         DB::inst()->query("INSERT INTO suggestions_users (
                 suggestion_id,
                 user_id,

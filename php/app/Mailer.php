@@ -57,4 +57,24 @@ class Mailer
             return false;
         }
     }
+
+    public function sendToAddress($subject, $body, $email_address, User $language_user)
+    {
+        $this->phpMailer->SetFrom(
+            Conf::inst()->get('mail.from_address'),
+            Lang::inst()->get('mailer_sender_name', $language_user)
+        );
+        $this->phpMailer->AddAddress($email_address);
+        $this->phpMailer->Subject = $subject;
+        $this->phpMailer->MsgHTML($body);
+        
+        if ($this->phpMailer->send()) {
+            Logger::info(__METHOD__ . " sending message to {$email_address} succeeded");
+            return true;
+        }
+        else {
+            Logger::error(__METHOD__ . " sending message to {$email_address} failed");
+            return false;
+        }
+    }
 }

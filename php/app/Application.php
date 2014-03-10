@@ -57,7 +57,7 @@ class Application
     public function exitWithHttpCode($number, $text = false)
     {
         Logger::info(__METHOD__ . " exiting with http $number: $text");
-        
+
         if ($text === false) {
             if ($number == 404)
                 $text = "Not Found";
@@ -110,5 +110,10 @@ class Application
             return false;
         else
             return true;
+    }
+
+    public function getUniqueHash()
+    {
+        return md5(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
     }
 }

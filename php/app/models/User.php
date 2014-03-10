@@ -266,6 +266,22 @@ class User
         return $groups;
     }
 
+    public function isMemberOfGroup(Group $group)
+    {
+        DB::inst()->query("SELECT user_id FROM group_memberships WHERE
+            user_id = {$this->id} AND group_id = {$group->id} LIMIT 1");
+
+        return (DB::inst()->getRowCount() > 0);
+    }
+
+    public function joinGroup(Group $group)
+    {
+        Logger::info(__METHOD__ . " user {$this->id} to group {$group->id}");
+
+        DB::inst()->query("INSERT INTO group_memberships (user_id, group_id)
+            VALUES ({$this->id}, {$group->id})");
+    }
+
     public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
@@ -409,5 +425,61 @@ class User
         );
 
         return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function invite($email_address, Group $group)
+    {
+        Logger::debug(__METHOD__ . " inviting $email_address to group {$group->id}");
+
+        $hash = Application::inst()->getUniqueHash();
+
+        DB::inst()->startTransaction();
+        DB::inst()->query("INSERT INTO invites (
+                email_address,
+                group_id,
+                hash
+            ) VALUES (
+                '" . DB::inst()->quote($email_address) . "',
+                {$group->id},
+                '$hash'
+            )");
+        
+        $subject = str_replace(
+            '{inviter}',
+            $this->getName(),
+            Lang::inst()->get('mailer_subject_invite', $this)
+        );
+        $body = str_replace(
+            array(
+                '{inviter}',
+                '{group_name}',
+                '{server_hostname}',
+                '{hash}',
+            ),
+            array(
+                $this->getName(),
+                $group->name,
+                $_SERVER['HTTP_HOST'],
+                $hash,
+            ),
+            Lang::inst()->get('mailer_body_invite', $this)
+        );
+
+        $success = Mailer::inst()->sendToAddress($subject, $body, $email_address, $this);
+        if (!$success) {
+            DB::inst()->rollbackTransaction();
+            return false;
+        }
+        else {
+            DB::inst()->commitTransaction();
+            return true;
+        }
+    }
+
+    public function sendGroupInviteNotification(Group $group)
+    {
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for being invited as member to group {$group->id}");
+        Logger::error(__METHOD__ . " unimplemented");
+        return false;
     }
 }
