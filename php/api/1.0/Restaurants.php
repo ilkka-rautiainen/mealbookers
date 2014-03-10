@@ -48,21 +48,21 @@ class RestaurantsAPI
 
         $restaurantId = (int)$restaurantId;
         if (!DB::inst()->getOne("SELECT id FROM restaurants WHERE id = $restaurantId LIMIT 1"))
-            sendHttpError(404, "Restaurant with id $restaurantId not found");
+            Application::inst()->exitWithHttpCode(404, "Restaurant with id $restaurantId not found");
 
         $day = (int)$post_suggestion['day'];
 
         // Validate time
         $time = $post_suggestion['time'];
         if (!preg_match("/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/", $time))
-            sendHttpError(400, "Suggestion field 'time' was not in format hh:mm");
+            Application::inst()->exitWithHttpCode(400, "Suggestion field 'time' was not in format hh:mm");
 
         // Insert the suggestion
         $dayStamp = strtotime("last monday", strtotime("tomorrow")) + $day * 86400;
         $datetime = date("Y-m-d", $dayStamp) . " $time:00";
         if (strtotime($datetime) + Conf::inst()->get('limits.suggestion_create_in_past_time')
             + Conf::inst()->get('limits.backend_threshold') < time())
-            sendHttpError(400, "Suggestion field 'time' was more than 5 min in the past.");
+            Application::inst()->exitWithHttpCode(400, "Suggestion field 'time' was more than 5 min in the past.");
 
         DB::inst()->startTransaction();
         DB::inst()->query("INSERT INTO suggestions (
@@ -91,13 +91,13 @@ class RestaurantsAPI
             foreach ($members as $member_id) {
                 $member_id = (int)$member_id;
                 if (!$member_id) {
-                    sendHttpError(400, "Suggestion field 'members' contained invalid member ids");
+                    Application::inst()->exitWithHttpCode(400, "Suggestion field 'members' contained invalid member ids");
                 }
                 else if (!DB::inst()->getOne("SELECT COUNT(user_id) FROM group_memberships WHERE group_id IN (
                         SELECT group_id FROM group_memberships WHERE user_id = {$current_user->id}
                     ) AND user_id = $member_id LIMIT 1"))
                 {
-                    sendHttpError(400, "Can't add user $member_id to suggestion: he's not member in your groups");
+                    Application::inst()->exitWithHttpCode(400, "Can't add user $member_id to suggestion: he's not member in your groups");
                 }
                 $member = new User();
                 $member->fetch($member_id);
@@ -137,7 +137,7 @@ class RestaurantsAPI
         Logger::info(__METHOD__ . " POST /suggestion called");
         $hash = $_GET['hash'];
         if (strlen($hash) != 32)
-            sendHttpError(400, "Invalid hash");
+            Application::inst()->exitWithHttpCode(400, "Invalid hash");
 
         if (!$suggestion_user_id = DB::inst()->getOne("SELECT id FROM suggestions_users WHERE hash = '"
             . DB::inst()->quote($hash) . "' LIMIT 1"))
@@ -189,7 +189,7 @@ class RestaurantsAPI
             'accept',
             'cancel',
         ))) {
-            sendHttpError(400, "Invalid action: '$action'");
+            Application::inst()->exitWithHttpCode(400, "Invalid action: '$action'");
         }
 
 
@@ -198,7 +198,7 @@ class RestaurantsAPI
             || (!$suggestions_users_id = DB::inst()->getOne("SELECT id FROM suggestions_users
                 WHERE user_id = {$current_user->id} AND suggestion_id = $suggestionId")))
         {
-            sendHttpError(404, "Suggestion with id $suggestionId not found or you're not invited to it");
+            Application::inst()->exitWithHttpCode(404, "Suggestion with id $suggestionId not found or you're not invited to it");
         }
 
         $suggestion = new Suggestion();

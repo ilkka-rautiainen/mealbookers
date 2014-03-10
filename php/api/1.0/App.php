@@ -15,7 +15,7 @@ class AppAPI
         $rows = (int)$rows;
 
         if ($passphrase != "mealilogi")
-            sendHttpError(404);
+            Application::inst()->exitWithHttpCode(404);
         
 
         $filename = "../../app/" . Conf::inst()->get('log.file');
