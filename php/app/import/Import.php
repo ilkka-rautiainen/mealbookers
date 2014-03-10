@@ -4,14 +4,14 @@ abstract class Import
 {
     
     protected $restaurant;
-    protected $currentDay;
-    protected $dayMeals;
-    protected $isImportNeeded;
+    private $current_day;
+    private $day_meals;
+    protected $is_import_needed;
 
     /**
      * @var Section in a day's menu, like 'A la carte:'
      */
-    protected $activeSection = null;
+    private $activeSection = null;
 
     public function init()
     {
@@ -23,7 +23,7 @@ abstract class Import
         Logger::info(__METHOD__ . " initializing menu import for restaurant {$restaurant->name} id {$restaurant->id}");
 
 
-        $this->isImportNeeded = (DB::inst()->getOne("SELECT COUNT(id) FROM meals
+        $this->is_import_needed = (DB::inst()->getOne("SELECT COUNT(id) FROM meals
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND
                 day <= '" . $this->getWeekEndDay() . "'") == 0);
@@ -41,7 +41,7 @@ abstract class Import
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND
                 day <= '" . $this->getWeekEndDay() . "'");
-        $this->isImportNeeded = true;
+        $this->is_import_needed = true;
     }
 
     public function run()
@@ -52,18 +52,18 @@ abstract class Import
     protected function startDay($weekDayNumber)
     {
         DB::inst()->startTransaction();
-        $this->currentDay = $weekDayNumber;
-        $this->dayMeals = array();
+        $this->current_day = $weekDayNumber;
+        $this->day_meals = array();
     }
 
     protected function addMeal(Meal $meal)
     {
-        if (is_null($this->currentDay))
+        if (is_null($this->current_day))
             throw new Exception("Unable to add meal, day not started");
             
         $meal->restaurant = $this->restaurant;
         $meal->section = $this->activeSection;
-        $meal->day = strtotime("+" . $this->currentDay . " days", strtotime($this->getWeekStartDay()));
+        $meal->day = strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay()));
         $meal->save();
 
         Logger::debug(__METHOD__ . " meal added: {$meal->name}");
@@ -71,12 +71,17 @@ abstract class Import
 
     protected function endDayAndSave()
     {
-        if (!is_array($this->dayMeals))
+        if (!is_array($this->day_meals))
             return;
 
         $this->endSection();
-        $this->currentDay = null;
+        $this->current_day = null;
         DB::inst()->commitTransaction();
+    }
+
+    protected function isDayActive()
+    {
+        return (!is_null($this->current_day));
     }
 
     protected function startSection($name)

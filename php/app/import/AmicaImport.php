@@ -57,7 +57,7 @@ class AmicaImport extends Import
         Logger::note(__METHOD__ . " start");
         require_once __DIR__ . '/../lib/phpQuery.php';
 
-        if (!$this->isImportNeeded) {
+        if (!$this->is_import_needed) {
             Logger::info(__METHOD__ . " import not needed, skipping");
             return;
         }
@@ -149,6 +149,8 @@ class AmicaImport extends Import
         $line_html = str_replace(chr(194) . chr(160), ' ', $line_html); // replace &nbsp; in utf-8
         $line_html = trim($line_html);
 
+        Logger::debug(__METHOD__ . " line after replacements: $line_html");
+
         if (!$line_html) {
             Logger::debug(__METHOD__ . " empty line");
             return;
@@ -168,6 +170,11 @@ class AmicaImport extends Import
         else if (($section_name = $this->getSectionName($line_html, $lang)) !== false) {
             $this->startSection($section_name);
             Logger::debug(__METHOD__ . " section found $section_name");
+        }
+
+        if (!$this->isDayActive()) {
+            Logger::debug(__METHOD__ . " no day active, ignoring line");
+            return;
         }
 
         // Add the meal
