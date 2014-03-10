@@ -56,6 +56,8 @@ class Application
 
     public function exitWithHttpCode($number, $text = false)
     {
+        Logger::info(__METHOD__ . " exiting with http $number: $text");
+        
         if ($text === false) {
             if ($number == 404)
                 $text = "Not Found";
@@ -88,6 +90,7 @@ class Application
     {
         $data = json_decode(file_get_contents('php://input'), true);
         if ($data === null) {
+            Logger::error(__METHOD__ . " " . json_last_error_msg());
             Application::inst()->exitWithHttpCode(400, "Invalid JSON sent");
             return;
         }

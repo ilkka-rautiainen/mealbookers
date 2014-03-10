@@ -3,7 +3,8 @@
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
-Flight::route('POST /user/groups/@groupId', array('UserAPI', 'editGroup'));
+Flight::route('POST /user/groups/@groupId', array('UserAPI', 'editGroupName'));
+Flight::route('POST /user/groups/@groupId/members', array('UserAPI', 'inviteGroupMember'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
@@ -107,7 +108,7 @@ class UserAPI
         }
     }
 
-    function editGroup($groupId)
+    function editGroupName($groupId)
     {
         Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
 
@@ -121,19 +122,53 @@ class UserAPI
 
         try {
             // Edit group
-            if (isset($data['name'])) {
-                $name = $data['name'];
-                if (!strlen($name)){
-                    throw new ApiException('invalid_name');
-                }
-
-                DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
-                    WHERE id = $groupId");
+            if (!isset($data['name'])) {
+                Application::inst()->exitWithHttpCode(400, "name not present in request");
             }
+                
+            $name = $data['name'];
+            if (!strlen($name)) {
+                throw new ApiException('invalid_name');
+            }
+
+            DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
+                WHERE id = $groupId");
 
             print json_encode(array(
                 'status' => 'ok',
             ));
+        }
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage()
+            ));
+        }
+    }
+
+    function inviteGroupMember($groupId)
+    {
+        Logger::debug(__METHOD__ . " POST /user/groups/@groupId/members called");
+
+        $groupId = (int)$groupId;
+        $data = Application::inst()->getPostData();
+
+        DB::inst()->query("SELECT id FROM groups WHERE id = $groupId");
+        if (!DB::inst()->getRowCount()) {
+            Application::inst()->exitWithHttpCode(404, "No group with id $groupId found");
+        }
+
+        try {
+            // Edit group
+            if (!isset($data['email_address'])) {
+                Application::inst()->exitWithHttpCode(400, "email_address not present in request");
+            }
+                
+            $email_address = $data['email_address'];
+            if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address))) {
+                throw new ApiException('invalid_email');
+            }
+
+            Application::inst()->exitWithHttpCode(501);
         }
         catch (ApiException $e) {
             print json_encode(array(

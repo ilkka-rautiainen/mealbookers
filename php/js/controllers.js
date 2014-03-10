@@ -432,14 +432,14 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.addMemberToGroup = function(group) {
         group.addMemberSaveProcess = true;
-        $http.put('/api/1.0/user/groups/' + group.id + '/members', {
+        $http.post('/api/1.0/user/groups/' + group.id + '/members', {
             email_address: group.newMemberEmail
         }).success(function(result) {
             if (typeof result != 'object' || result.status == 'undefined') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
             }
-            else if (result.status == 'invalid_name') {
+            else if (result.status == 'invalid_email') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_failed_invalid_email'));
             }
