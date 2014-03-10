@@ -44,7 +44,7 @@ class RestaurantsAPI
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions called");
         Application::inst()->checkAuthentication();
-        $post_suggestion = getPostData();
+        $post_suggestion = Application::inst()->getPostData();
 
         $restaurantId = (int)$restaurantId;
         if (!DB::inst()->getOne("SELECT id FROM restaurants WHERE id = $restaurantId LIMIT 1"))
@@ -176,7 +176,7 @@ class RestaurantsAPI
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
         
-        $postData = getPostData();
+        $postData = Application::inst()->getPostData();
         $suggestionId = (int) $suggestionId;
         $restaurantId = (int) $restaurantId;
 

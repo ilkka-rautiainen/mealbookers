@@ -83,4 +83,29 @@ class Application
         
         die;
     }
+
+    public function getPostData()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if ($data === null) {
+            Application::inst()->exitWithHttpCode(400, "Invalid JSON sent");
+            return;
+        }
+        return $data;
+    }
+
+    public function hash($s)
+    {
+        return sha1("gw89h#%HPHG392h23t)#(¤T" . $s);
+    }
+
+    public function isStrongPassword($password, User $user)
+    {
+        if (mb_strlen($password) < 5)
+            return false;
+        else if (mb_stripos($password, $user->first_name) || mb_stripos($password, $user->last_name))
+            return false;
+        else
+            return true;
+    }
 }

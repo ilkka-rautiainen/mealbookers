@@ -50,7 +50,11 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('NavigationController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
+.controller('NavigationController', ['$scope', '$rootScope', '$location', '$state', function($scope, $rootScope, $location, $state) {
+
+    $scope.openAccountSettings = function() {
+        $state.go("Navigation.Menu.AccountSettings");
+    }
 
     // Changes day
     $scope.changeDay = function(day) {
@@ -266,6 +270,108 @@ angular.module('Mealbookers.controllers', [])
             console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
         });
     };
+}])
+
+
+
+.controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
+
+    $("#accountSettingsModal").modal();
+    $('#accountSettingsModal').on('show.bs.modal', function () {
+        $(".container").addClass("modal-open");
+    });
+    $('#accountSettingsModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
+    $scope.resetForm = function(resetData) {
+        if (resetData) {
+            $scope.password = {
+                old: '',
+                new: '',
+                repeat: ''
+            };
+        }
+        $scope.accountSettingsMessage = {
+            type: '',
+            message: ''
+        };
+        $scope.saveInProcess = false;
+        $scope.submitButtonText = $filter('i18n')('save');
+    };
+
+    $scope.resetForm(true);
+
+    $scope.submitButtonText = $filter('i18n')('save');
+
+    /**
+     * Save account settings
+     */
+    $scope.save = function() {
+        if (!$scope.validateForm()) {
+            return;
+        }
+        $scope.accountSettingsAlert('alert-info', $filter('i18n')('account_saving'));
+        $scope.submitButtonText = $filter('i18n')('saving');
+        $scope.saveInProcess = true;
+        $http.post('api/1.0/user', {
+            password: $scope.password
+        }).success(function(result) {
+            // Fail
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.resetForm(false);
+                $scope.accountSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
+                return;
+            }
+            else if (result.status == 'no_old_password') {
+                $scope.resetForm(false);
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+            }
+            else if (result.status == 'passwords_dont_match') {
+                $scope.resetForm(false);
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
+            }
+            else if (result.status == 'wrong_password') {
+                $scope.resetForm(false);
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_wrong_password'));
+            }
+            else if (result.status == 'weak_password') {
+                $scope.resetForm(false);
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_weak_password'));
+            }
+            // Success
+            else {
+                $scope.resetForm(true);
+                $scope.accountSettingsAlert('alert-success', $filter('i18n')('account_save_succeeded'));
+            }
+        }).error(function(response, code) {
+            $scope.resetForm(false);
+            $scope.accountSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
+        });
+    }
+
+    $scope.validateForm = function() {
+        if ($scope.password.new || $scope.password.repeat) {
+            if (!$scope.password.old) {
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+                return false;
+            }
+            else if ($scope.password.new != $scope.password.repeat) {
+                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    $scope.accountSettingsAlert = function(type, message) {
+        $scope.accountSettingsMessage.type = type;
+        $scope.accountSettingsMessage.message = message;
+        $location.hash('modal');
+        $anchorScroll();
+    };
+
 }])
 
 

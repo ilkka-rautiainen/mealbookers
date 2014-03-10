@@ -28,14 +28,20 @@ angular.module('Mealbookers', [
     
     .state('Navigation.Menu', {
         url: "/menu",
-        templateUrl: "partials/menu/Menu.html",
+        templateUrl: "partials/Menu.html",
         controller: 'MenuController'
     })
     
     .state('Navigation.Menu.Suggestion', {
         url: "/suggestion",
-        templateUrl: "partials/menu/Suggestion.html",
+        templateUrl: "partials/modals/Suggestion.html",
         controller: 'SuggestionController'
+    })
+    
+    .state('Navigation.Menu.AccountSettings', {
+        url: "/account",
+        templateUrl: "partials/modals/AccountSettings.html",
+        controller: 'AccountSettingsController'
     })
     
     .state('Navigation.AcceptSuggestion', {
