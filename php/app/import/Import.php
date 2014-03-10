@@ -63,7 +63,7 @@ abstract class Import
             
         $meal->restaurant = $this->restaurant;
         $meal->section = $this->activeSection;
-        $meal->day = strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay()));
+        $meal->day = date("Y-m-d", strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay())));
         $meal->save();
 
         Logger::debug(__METHOD__ . " meal added: {$meal->name}");

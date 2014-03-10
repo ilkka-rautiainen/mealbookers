@@ -305,3 +305,20 @@ span.line-break {
 .modal-open .modal,.btn:focus{
     outline: none !important;
 }
+
+.modal-body .nav-tabs li {
+    cursor: pointer;
+}
+
+.modal-body .tab-pane {
+    margin-top: 20px;
+}
+
+#accountSettingsModal .remove-account {
+    float: left;
+    display: none;
+}
+
+#accountSettingsModal .remove-account.visible {
+    display: block;
+}

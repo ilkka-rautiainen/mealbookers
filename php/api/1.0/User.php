@@ -2,6 +2,7 @@
 
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user', array('UserAPI', 'updateUser'));
+Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
@@ -26,6 +27,23 @@ class UserAPI
         $user['language'] = $current_user->language;
 
         print json_encode($user);
+    }
+
+    /**
+     * @todo implement with real user
+     */
+    function deleteUser()
+    {
+        Logger::debug(__METHOD__ . " DELETE /user called");
+
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        $current_user->delete();
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     /**
@@ -70,6 +88,9 @@ class UserAPI
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
                         WHERE id = {$current_user->id}");
                 }
+            }
+            else if ($data['password']['old']) {
+                throw new UpdateAccountException('no_new_password');
             }
 
 

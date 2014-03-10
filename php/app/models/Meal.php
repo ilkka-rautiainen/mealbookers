@@ -30,7 +30,7 @@ class Meal {
                 '" . DB::inst()->quote($this->name) . "',
                 '{$this->language}',
                 " . (($this->section) ? "'{$this->section}'" : "NULL" ) . ",
-                '" . date("Y-m-d", strtotime($this->day)) . "',
+                '" . DB::inst()->quote($this->day) . "',
                 {$this->restaurant->id}
             )");
     }

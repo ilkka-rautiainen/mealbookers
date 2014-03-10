@@ -277,14 +277,41 @@ angular.module('Mealbookers.controllers', [])
 .controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
 
     $("#accountSettingsModal").modal();
-    $('#accountSettingsModal').on('show.bs.modal', function () {
-        $(".container").addClass("modal-open");
-    });
     $('#accountSettingsModal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
 
-    $scope.resetForm = function(resetData) {
+    $scope.activeTab = 'general_settings';
+
+    $scope.changeTab = function(tab) {
+        $scope.activeTab = tab;
+        $(".tab-pane, .nav-tabs li").removeClass('active');
+        $("." + tab).addClass('active');
+    };
+
+    // BOTH TABS
+    $scope.setSaveButtonState = function(state) {
+        if (state == 'normal') {
+            $scope.submitButtonText = $filter('i18n')('save');
+            $scope.submitButtonDisabled = false;
+        }
+        else {
+            $scope.submitButtonText = $filter('i18n')('saving');
+            $scope.submitButtonDisabled = true;
+        }
+    }
+
+    $scope.save = function() {
+        if ($scope.activeTab == 'general_settings') {
+            $scope.saveGeneralSettings();
+        }
+        else {
+            $scope.saveGroupSettings();
+        }
+    }
+
+    // GENERAL SETTINGS
+    $scope.resetGeneralSettingsForm = function(resetData) {
         if (resetData) {
             $scope.password = {
                 old: '',
@@ -292,82 +319,118 @@ angular.module('Mealbookers.controllers', [])
                 repeat: ''
             };
         }
-        $scope.accountSettingsMessage = {
+        $scope.generalSettingsMessage = {
             type: '',
             message: ''
         };
-        $scope.saveInProcess = false;
-        $scope.submitButtonText = $filter('i18n')('save');
+        $scope.setSaveButtonState('normal');
     };
 
-    $scope.resetForm(true);
+    $scope.removing = false;
 
-    $scope.submitButtonText = $filter('i18n')('save');
+    $scope.resetGeneralSettingsForm(true);
 
-    /**
-     * Save account settings
-     */
-    $scope.save = function() {
-        if (!$scope.validateForm()) {
+    $scope.saveGeneralSettings = function() {
+        if (!$scope.validateGeneralSettingsForm()) {
             return;
         }
-        $scope.accountSettingsAlert('alert-info', $filter('i18n')('account_saving'));
-        $scope.submitButtonText = $filter('i18n')('saving');
-        $scope.saveInProcess = true;
+        $scope.generalSettingsAlert('alert-info', $filter('i18n')('account_saving'));
+        $scope.setSaveButtonState('busy');
+
         $http.post('api/1.0/user', {
             password: $scope.password
         }).success(function(result) {
             // Fail
             if (typeof result != 'object' || result.status == undefined) {
-                $scope.resetForm(false);
-                $scope.accountSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
-                return;
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
             }
             else if (result.status == 'no_old_password') {
-                $scope.resetForm(false);
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+            }
+            else if (result.status == 'no_new_password') {
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_give_new_password'));
             }
             else if (result.status == 'passwords_dont_match') {
-                $scope.resetForm(false);
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
             }
             else if (result.status == 'wrong_password') {
-                $scope.resetForm(false);
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_wrong_password'));
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_wrong_password'));
             }
             else if (result.status == 'weak_password') {
-                $scope.resetForm(false);
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_weak_password'));
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_weak_password'));
             }
             // Success
             else {
-                $scope.resetForm(true);
-                $scope.accountSettingsAlert('alert-success', $filter('i18n')('account_save_succeeded'));
+                $scope.resetGeneralSettingsForm(true);
+                $scope.generalSettingsAlert('alert-success', $filter('i18n')('account_save_succeeded'));
             }
         }).error(function(response, code) {
-            $scope.resetForm(false);
-            $scope.accountSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
+            $scope.resetGeneralSettingsForm(false);
+            $scope.generalSettingsAlert('alert-danger', $filter('i18n')('account_save_failed'));
         });
-    }
+    };
 
-    $scope.validateForm = function() {
+    $scope.validateGeneralSettingsForm = function() {
         if ($scope.password.new || $scope.password.repeat) {
             if (!$scope.password.old) {
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_give_old_password'));
                 return false;
             }
             else if ($scope.password.new != $scope.password.repeat) {
-                $scope.accountSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
+                $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
                 return false;
             }
+        }
+        else if ($scope.password.old) {
+            $scope.generalSettingsAlert('alert-warning', $filter('i18n')('account_give_new_password'));
+            return false;
         }
 
         return true;
     };
 
-    $scope.accountSettingsAlert = function(type, message) {
-        $scope.accountSettingsMessage.type = type;
-        $scope.accountSettingsMessage.message = message;
+    /**
+     * @todo implement logout after successful removal
+     */
+    $scope.removeAccount = function() {
+        $http.delete('/api/1.0/user').success(function(result) {
+            // Fail
+            if (typeof result != 'object' || result.status != 'ok') {
+                $scope.resetGeneralSettingsForm(false);
+                $scope.generalSettingsAlert('alert-danger', $filter('i18n')('account_remove_failed'));
+            }
+            else {
+                $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
+                $("#accountSettingsModal").modal('hide');
+            }
+        }).error(function(response, code) {
+            $scope.resetGeneralSettingsForm(false);
+            $scope.generalSettingsAlert('alert-danger', $filter('i18n')('account_remove_failed'));
+        });
+    };
+
+    $scope.generalSettingsAlert = function(type, message) {
+        $scope.generalSettingsMessage.type = type;
+        $scope.generalSettingsMessage.message = message;
+        $location.hash('modal');
+        $anchorScroll();
+    };
+
+    // GROUP SETTINGS
+
+    $scope.groupSettingsMessage = {
+        type: '',
+        message: ''
+    };
+    $scope.groupSettingsAlert = function(type, message) {
+        $scope.groupSettingsMessage.type = type;
+        $scope.groupSettingsMessage.message = message;
         $location.hash('modal');
         $anchorScroll();
     };

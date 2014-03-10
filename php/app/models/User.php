@@ -39,6 +39,14 @@ class User
         $this->groupmates = array();
     }
 
+    /**
+     * @todo check here if this is current user and if it is -> remove login
+     */
+    public function delete()
+    {
+        DB::inst()->query("DELETE FROM users WHERE id = {$this->id}");
+    }
+
     public function getName()
     {
         return $this->first_name . ' ' . $this->last_name;
