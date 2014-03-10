@@ -14,7 +14,7 @@ class Meal {
         $this->id = $row['id'];
         $this->name = $row['name'];
         $this->language = $row['language'];
-        $this->day = strtotime($row['day']);
+        $this->day = $row['day'];
         $this->section = $row['section'];
     }
 
@@ -30,7 +30,7 @@ class Meal {
                 '" . DB::inst()->quote($this->name) . "',
                 '{$this->language}',
                 " . (($this->section) ? "'{$this->section}'" : "NULL" ) . ",
-                '" . date("Y-m-d", $this->day) . "',
+                '" . date("Y-m-d", strtotime($this->day)) . "',
                 {$this->restaurant->id}
             )");
     }

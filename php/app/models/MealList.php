@@ -9,8 +9,9 @@ class MealList {
         $this->meals = array();
     }
 
-    public function addMeal($day, Meal $meal)
+    public function addMeal(Meal $meal)
     {
+        $day = ((int)date("N", strtotime($meal->day))) - 1;
         if (!isset($this->meals[$day]))
             $this->meals[$day] = array();
         $this->meals[$day][] = $meal;

@@ -41,25 +41,32 @@ class Restaurant
      */
     public function fetchMealList($lang)
     {
-        $startTime = strtotime("last monday", strtotime("tomorrow"));
         $mealList = new MealList();
-        for ($i=0; $i<7; $i++) {
-            $time = strtotime("+$i days", $startTime);
+        
+        $start_time = strtotime("today");
+        $end_time = strtotime("+7 days", strtotime("last monday", strtotime("tomorrow")));
+        $result = DB::inst()->query("SELECT * FROM meals
+            WHERE day >= '" . date("Y-m-d", $start_time) . "' AND
+                day <= '" . date("Y-m-d", $end_time) . "' AND
+                restaurant_id = {$this->id} AND 
+                language = '" . DB::inst()->quote($lang) . "'
+            ORDER BY day ASC
+            ");
+
+        // Fetch in the another language if not present in current
+        if (!DB::inst()->getRowCount())
             $result = DB::inst()->query("SELECT * FROM meals
-                WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
-                language = '" . DB::inst()->quote($lang) . "'");
+                WHERE day >= '" . date("Y-m-d", $start_time) . "' AND
+                    day <= '" . date("Y-m-d", $end_time) . "' AND
+                    restaurant_id = {$this->id} AND 
+                    language = '" . (($lang == 'en') ? 'fi' : 'en') . "'
+                ORDER BY day ASC
+                ");
 
-            // Fetch in the another language if not present in current
-            if (!DB::inst()->getRowCount())
-                $result = DB::inst()->query("SELECT * FROM meals
-                    WHERE day = '" . date("Y-m-d", $time) . "' AND restaurant_id = {$this->id} AND
-                    language = '" . (($lang == 'en') ? 'fi' : 'en') . "'");
-
-            while ($row = DB::inst()->fetchAssoc($result)) {
-                $meal = new Meal();
-                $meal->populateFromRow($row);
-                $mealList->addMeal($i, $meal);
-            }
+        while ($row = DB::inst()->fetchAssoc($result)) {
+            $meal = new Meal();
+            $meal->populateFromRow($row);
+            $mealList->addMeal($meal);
         }
         $this->mealList = $mealList;
     }
