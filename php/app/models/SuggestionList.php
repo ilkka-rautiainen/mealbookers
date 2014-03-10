@@ -9,8 +9,9 @@ class SuggestionList {
         $this->suggestions = array();
     }
 
-    public function addSuggestion($day, Suggestion $suggestion)
+    public function addSuggestion(Suggestion $suggestion)
     {
+        $day = ((int)date("N", strtotime($suggestion->datetime))) - 1;
         if (!isset($this->suggestions[$day]))
             $this->suggestions[$day] = array();
         $this->suggestions[$day][] = $suggestion;

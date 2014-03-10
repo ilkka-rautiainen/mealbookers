@@ -78,25 +78,26 @@ class Restaurant
      */
     public function fetchSuggestionList(User $viewer)
     {
-        $startTime = strtotime("last monday", strtotime("tomorrow"));
         $suggestionList = new SuggestionList();
-        for ($i=0; $i<7; $i++) {
-            $time = strtotime("+$i days", $startTime);
-            // Fetch all suggestions that are suggested to the given user
-            $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
-                INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
-                WHERE DATE(suggestions.datetime) = '" . date("Y-m-d", $time) . "' AND
-                    suggestions.restaurant_id = {$this->id} AND
-                    suggestions_users.user_id = {$viewer->id}
-                GROUP BY suggestions.id
-                ORDER BY suggestions.datetime ASC");
 
-            while ($row = DB::inst()->fetchAssoc($result)) {
-                $suggestion = new Suggestion();
-                $suggestion->populateFromRow($row);
-                $suggestion->fetchAcceptedMembers($viewer);
-                $suggestionList->addSuggestion($i, $suggestion);
-            }
+        $start_time = strtotime("today");
+        $end_time = strtotime("+7 days", strtotime("last monday", strtotime("tomorrow")));
+
+        // Fetch all suggestions that are suggested to the given user
+        $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
+            INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
+            WHERE DATE(suggestions.datetime) >= '" . date("Y-m-d", $start_time) . "' AND
+                DATE(suggestions.datetime) <= '" . date("Y-m-d", $end_time) . "' AND
+                suggestions.restaurant_id = {$this->id} AND
+                suggestions_users.user_id = {$viewer->id}
+            GROUP BY suggestions.id
+            ORDER BY suggestions.datetime ASC");
+
+        while ($row = DB::inst()->fetchAssoc($result)) {
+            $suggestion = new Suggestion();
+            $suggestion->populateFromRow($row);
+            $suggestion->fetchAcceptedMembers($viewer);
+            $suggestionList->addSuggestion($suggestion);
         }
         $this->suggestionList = $suggestionList;
     }
