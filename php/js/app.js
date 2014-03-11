@@ -32,6 +32,14 @@ angular.module('Mealbookers', [
         controller: 'MenuController'
     })
     
+    // add state Navigation.Menu.Registration
+    
+    .state('Navigation.Menu.Login', {
+        url: "/login",
+        templateUrl: "partials/modals/Login.html",
+        controller: 'LoginController'
+    })
+    
     .state('Navigation.Menu.Suggestion', {
         url: "/suggestion",
         templateUrl: "partials/modals/Suggestion.html",
