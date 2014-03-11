@@ -68,7 +68,7 @@
                 <div ng-if="newGroup.open">
                     <form ng-submit="addGroup()">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="{{ 'group_name' | i18n }}" ng-model="newGroup.name" ng-disabled="newGroup.saving" maxlength="30" />
+                            <input type="text" class="form-control" placeholder="{{ 'group_name' | i18n }}" ng-model="newGroup.name" ng-disabled="newGroup.saving" maxlength="30" required />
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default" ng-disabled="newGroup.saving">
                                     <i class="glyphicon glyphicon-refresh saving-icon" ng-show="newGroup.saving"></i>
