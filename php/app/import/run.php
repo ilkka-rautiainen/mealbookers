@@ -9,6 +9,7 @@ $importers = array(
     new TUASImport(),
     new Puu2Import(),
     new SilinteriImport(),
+    new LaureaImport(),
 );
 
 try {
@@ -21,7 +22,8 @@ try {
     print "import ok";
 }
 catch (ImportException $e) {
-    $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: " . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
+    $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: "
+        . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
     Logger::error($errorMessage);
     print $errorMessage;
 }

@@ -97,23 +97,19 @@ class AmicaImport extends Import
             try {
                 $source = $this->fetchURL("http://www.amica.fi/Templates/RestaurantPage/RestaurantMenuPrintPage.aspx?id=$id&page=$id&bn=$lang&a=$menu_type&s=$menu_number");
 
-                // Get the meals
-                phpQuery::newDocument($source);
-
-                $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
-                if (!$p_list->length)
-                    throw new ParseException("No <p> elements found in the menu");
-
-                // Go through the menu
-                foreach ($p_list as $p) {
-                    $html = pq($p)->html();
-                    $this->processLine(trim($html), $lang);
+                // Get lines and process them
+                $lines = $this->getLines($source);
+                foreach ($lines as $line) {
+                    $this->processLine($line, $lang);
                 }
+
                 $this->endDayAndSave(); // Save the last day which is open
             }
             catch (ImportException $e) {
                 DB::inst()->rollbackTransaction();
-                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine());
+                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
+                    . ", from:" . $e->getFile() . ":" . $e->getLine()
+                    . ", in restaurant: {$this->restaurant->name}");
                 $exception = $e;
             }
         }
@@ -122,6 +118,26 @@ class AmicaImport extends Import
             throw $exception;
 
         Logger::note(__METHOD__ . " succeeded");
+    }
+
+    /**
+     * Retrieves meal lines from source code
+     */
+    protected function getLines(&$source)
+    {
+        phpQuery::newDocument($source);
+
+        $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
+        if (!$p_list->length)
+            throw new ParseException("No <p> elements found in the menu");
+
+        $lines = array();
+        // Go through the menu
+        foreach ($p_list as $p) {
+            $html = pq($p)->html();
+            $lines[] = trim($html);
+        }
+        return $lines;
     }
 
     /**
@@ -248,7 +264,7 @@ class AmicaImport extends Import
     /**
      * Formats the line breaks in a row
      */
-    private function formatLineBreaks($line_html)
+    protected function formatLineBreaks($line_html)
     {
         return str_replace(array("\r\n", "\n"), array('<span class="line-break"></span>', '<span class="line-break"></span>'), $line_html);
     }
