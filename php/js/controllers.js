@@ -493,9 +493,11 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_edit_failed_invalid_name'));
             }
             else if (result.status == 'ok') {
-                group.editNameProcess = false;
-                group.editNameSaveProcess = false;
-                $scope.modalAlert('', '');
+                $rootScope.refreshCurrentUser(function() {
+                    group.editNameProcess = false;
+                    group.editNameSaveProcess = false;
+                    $scope.modalAlert('', '');
+                });
             }
             else {
                 console.error("Unknown response");
