@@ -59,6 +59,7 @@ $GLOBALS['language']['fi'] = array(
     'group_add_member_already_member' => 'Antamasi sähköpostiosoite kuuluu jo tähän ryhmään',
     'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
     'group_member_deleted_yourself' => 'Sinut poistettiin ryhmästä',
+    'group_member_deleted_yourself_group_removed' => 'Sinut poistettiin ryhmästä, koko ryhmä poistettiin viimeisen jäsenen poistuessa',
     'group_create_new' => 'Luo ryhmä',
     'group_name' => 'Ryhmän nimi',
     'group_add_group_failed' => 'Ryhmän lisääminen epäonnistui',

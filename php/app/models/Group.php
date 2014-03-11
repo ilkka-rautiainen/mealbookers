@@ -26,6 +26,18 @@ class Group {
         $this->members = array();
     }
 
+    public function hasMembers()
+    {
+        DB::inst()->query("SELECT group_id FROM group_memberships WHERE group_id = {$this->id} LIMIT 1");
+
+        return (DB::inst()->getRowCount() > 0);
+    }
+
+    public function delete()
+    {
+        DB::inst()->query("DELETE FROM groups WHERE id = {$this->id}");
+    }
+
     /**
      * Fetches members in the group except the viewer if it's given.
      * NOTE: You can't fetch member's for a different viewer later on.

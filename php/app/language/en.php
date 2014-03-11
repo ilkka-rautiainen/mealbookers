@@ -59,6 +59,7 @@ $GLOBALS['language']['en'] = array(
     'group_add_member_already_member' => 'The given email address is already in the group',
     'group_member_delete_failed' => 'Deleting the group member failed',
     'group_member_deleted_yourself' => 'You were removed from the group',
+    'group_member_deleted_yourself_group_removed' => 'You were removed from the group, the whole group was removed as the last member quited',
     'group_create_new' => 'New group',
     'group_name' => 'Group name',
     'group_add_group_failed' => 'Failed to add group',

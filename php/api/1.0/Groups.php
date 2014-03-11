@@ -204,14 +204,25 @@ class GroupAPI
         }
 
         $deleted_member->leaveGroup($group);
-        $deleted_member->sendGroupLeaveNotification($group, $current_user);
 
+        // Current user deletes himself
         if ($deleted_member->id == $current_user->id) {
+
+            $last_member = false;
+            // He was the last member in the group
+            if (!$group->hasMembers()) {
+                $group->delete();
+                $last_member = true;
+            }
+
             print json_encode(array(
                 'status' => 'removed_yourself',
+                'last_member' => $last_member,
             ));
         }
+        // He deletes someone other
         else {
+            $deleted_member->sendGroupLeaveNotification($group, $current_user);
             print json_encode(array(
                 'status' => 'ok',
             ));

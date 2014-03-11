@@ -445,8 +445,6 @@ angular.module('Mealbookers.controllers', [])
         $http.post('/api/1.0/user/groups/' + group.id + '/members', {
             email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
         }).success(function(result) {
-            console.log("member added at backend:");
-            console.log(result);
             if (typeof result != 'object' || result.status == 'undefined' || result.status == 'failed') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
@@ -517,6 +515,7 @@ angular.module('Mealbookers.controllers', [])
             if (typeof result != 'object' || result.status == undefined) {
                 member.deleteSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
+                return;
             }
             else if (result.status == 'ok') {
                 for (var i = 0; i < group.members.length; i++) {
@@ -534,7 +533,12 @@ angular.module('Mealbookers.controllers', [])
                         break;
                     }
                 }
-                $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
+                if (result.last_member) {
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed'));
+                }
+                else {
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
+                }
                 $rootScope.refreshSuggestions();
             }
             else {
