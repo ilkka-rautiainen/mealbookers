@@ -51,6 +51,7 @@ class Application
         // 1: tsekkaa että isAuthenticated == true
         // 2: jos ei -> feilaa
         /*if ($faile_ehto_täyttyy) {
+            $this->exitWithHttpCode(403)
         }*/
     }
 

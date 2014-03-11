@@ -1,0 +1,1 @@
+ALTER TABLE  `invites` ADD  `inviter_id` INT( 10 ) UNSIGNED NOT NULL ;

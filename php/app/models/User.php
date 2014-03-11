@@ -445,11 +445,13 @@ class User
         DB::inst()->query("INSERT INTO invites (
                 email_address,
                 group_id,
-                hash
+                hash,
+                inviter_id
             ) VALUES (
                 '" . DB::inst()->quote($email_address) . "',
                 {$group->id},
-                '$hash'
+                '$hash',
+                {$this->id}
             )");
         
         $subject = str_replace(
@@ -511,6 +513,38 @@ class User
                 $_SERVER['HTTP_HOST'],
             ),
             Lang::inst()->get('mailer_body_invite_notification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function sendGroupLeaveNotification(Group $group, User $deleter)
+    {
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for being deleted from group {$group->id}");
+
+        $subject = str_replace(
+            array(
+                '{deleter}',
+                '{group_name}',
+            ),
+            array(
+                $deleter->getName(),
+                $group->name,
+            ),
+            Lang::inst()->get('mailer_subject_group_leave_notification', $this)
+        );
+        $body = str_replace(
+            array(
+                '{deleter}',
+                '{group_name}',
+                '{server_hostname}',
+            ),
+            array(
+                $deleter->getName(),
+                $group->name,
+                $_SERVER['HTTP_HOST'],
+            ),
+            Lang::inst()->get('mailer_body_group_leave_notification', $this)
         );
 
         return Mailer::inst()->send($subject, $body, $this);

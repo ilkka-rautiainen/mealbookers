@@ -136,6 +136,7 @@ class RestaurantsAPI
     function acceptSuggestionFromEmail()
     {
         Logger::info(__METHOD__ . " POST /suggestion called");
+        Application::inst()->checkAuthentication();
         $hash = $_GET['hash'];
         if (strlen($hash) != 32)
             Application::inst()->exitWithHttpCode(400, "Invalid hash");
@@ -176,6 +177,7 @@ class RestaurantsAPI
     function manageSuggestionFromSite($restaurantId, $suggestionId)
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
+        Application::inst()->checkAuthentication();
         
         $postData = Application::inst()->getPostData();
         $suggestionId = (int) $suggestionId;

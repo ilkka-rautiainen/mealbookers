@@ -5,13 +5,10 @@ Flight::route('GET /app/language(/@lang)', array('AppAPI', 'getLanguage'));
 
 class AppAPI
 {
-    /**
-     * @url GET log/{passphrase}
-     * @url GET log/{passphrase}/{rows}
-     */
     function getLog($passphrase, $rows = 1000)
     {
         Logger::info(__METHOD__ . " GET /app/log called");
+        Application::inst()->checkAuthentication();
         $rows = (int)$rows;
 
         if ($passphrase != "mealilogi")
@@ -23,9 +20,6 @@ class AppAPI
         print implode("<br />", (array_reverse(array_slice(array_reverse(file($filename)), 0, $rows))));
     }
 
-	/**
-     * @url GET language/{lang}
-	 */
 	function getLanguage($lang = 'en')
 	{
         require __DIR__ . '/../../app/language/include.php';

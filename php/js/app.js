@@ -59,7 +59,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/app/menu");
 }])
 
-.run(['$rootScope', '$window', function($rootScope, $window) {
+.run(['$rootScope', '$window', '$http', function($rootScope, $window, $http) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -130,25 +130,33 @@ angular.module('Mealbookers', [
         }, 1500);
     };
 
-    $rootScope.$watch('currentUser.groups', function(newGroups) {
+    var updateGroupsWithMe = function(newGroups) {
         if ($rootScope.currentUser.role == 'guest') {
             return;
         }
+
         var groups = angular.copy(newGroups);
         $rootScope.currentUser.groupsWithMe = [];
         for (var i in groups) {
             groups[i].members.unshift(jQuery.extend({}, $rootScope.currentUser.me));
             $rootScope.currentUser.groupsWithMe.push(groups[i]);
         }
-    }, true);
+    };
 
-    $rootScope.replaceCurrentUserGroup = function(group) {
-        for (var i in $rootScope.currentUser.groups) {
-            if ($rootScope.currentUser.groups[i].id == group.id) {
-                $rootScope.currentUser.groups[i] = group;
-                break;
+    $rootScope.$watch('currentUser.groups', updateGroupsWithMe, true);
+
+    $rootScope.refreshCurrentUser = function() {
+        $http.get('api/1.0/user').success(function(data) {
+            console.log("current user refreshed");
+            for (var i in data) {
+                $rootScope.currentUser[i] = data[i];    
             }
-        }
+            updateGroupsWithMe($rootScope.currentUser.groups);
+        })
+    };
+
+    $rootScope.refreshSuggestions = function() {
+        console.log("refreshSuggestions unimplemented...");
     };
 
     $rootScope.getWeekDayText = function(day) {

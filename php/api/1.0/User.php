@@ -17,6 +17,7 @@ class UserAPI
     function getUser()
     {
         Logger::debug(__METHOD__ . " GET /user called");
+        Application::inst()->checkAuthentication();
 
         $current_user = new User();
         $current_user->fetch(1);
@@ -39,6 +40,7 @@ class UserAPI
     function deleteUser()
     {
         Logger::debug(__METHOD__ . " DELETE /user called");
+        Application::inst()->checkAuthentication();
 
         $current_user = new User();
         $current_user->fetch(1);
@@ -56,6 +58,7 @@ class UserAPI
     function updateUser()
     {
         Logger::debug(__METHOD__ . " POST /user called");
+        Application::inst()->checkAuthentication();
 
         try {
             DB::inst()->startTransaction();
@@ -111,18 +114,29 @@ class UserAPI
     }
 
     /**
-     * @todo check if user is member of group
+     * @todo implement with real current user
      */
     function editGroupName($groupId)
     {
         Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
+        Application::inst()->checkAuthentication();
+
+        $current_user = new User();
+        $current_user->fetch(1);
 
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
 
-        DB::inst()->query("SELECT id FROM groups WHERE id = $groupId");
-        if (!DB::inst()->getRowCount()) {
-            Application::inst()->exitWithHttpCode(404, "No group with id $groupId found");
+        try {
+            $group = new Group();
+            $group->fetch($groupId);
+        }
+        catch (NotFoundException $e) {
+            Application::inst()->exitWithHttpCode(404, "No group found with the given id");
+        }
+
+        if (!$current_user->isMemberOfGroup($group)) {
+            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
         try {
@@ -152,11 +166,11 @@ class UserAPI
 
     /**
      * @todo implement with real current user
-     * @todo check if user is member of group
      */
     function inviteGroupMember($groupId)
     {
         Logger::debug(__METHOD__ . " POST /user/groups/@groupId/members called");
+        Application::inst()->checkAuthentication();
 
         $current_user = new User();
         $current_user->fetch(1);
@@ -164,13 +178,17 @@ class UserAPI
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
 
-        DB::inst()->query("SELECT id FROM groups WHERE id = $groupId");
-        if (!DB::inst()->getRowCount()) {
-            Application::inst()->exitWithHttpCode(404, "No group with id $groupId found");
+        try {
+            $group = new Group();
+            $group->fetch($groupId);
+        }
+        catch (NotFoundException $e) {
+            Application::inst()->exitWithHttpCode(404, "No group found with the given id");
         }
 
-        $group = new Group();
-        $group->fetch($groupId);
+        if (!$current_user->isMemberOfGroup($group)) {
+            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+        }
 
         try {
             DB::inst()->startTransaction();
@@ -229,11 +247,12 @@ class UserAPI
      */
     function deleteGroupMember($groupId, $memberId)
     {
+        Application::inst()->checkAuthentication();
         $current_user = new User();
         $current_user->fetch(1);
 
         Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/members/$memberId called by user {$current_user->id}");
-
+        
         $groupId = (int)$groupId;
         $memberId = (int)$memberId;
 
@@ -256,6 +275,7 @@ class UserAPI
         }
 
         $deleted_member->leaveGroup($group);
+        $deleted_member->sendGroupLeaveNotification($group, $current_user);
 
         if ($deleted_member->id == $current_user->id) {
             print json_encode(array(

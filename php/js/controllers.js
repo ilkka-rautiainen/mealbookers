@@ -438,8 +438,10 @@ angular.module('Mealbookers.controllers', [])
     $scope.addMemberToGroup = function(group) {
         group.addMemberSaveProcess = true;
         $http.post('/api/1.0/user/groups/' + group.id + '/members', {
-            email_address: group.newMemberEmail
+            email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
         }).success(function(result) {
+            console.log("member added at backend:");
+            console.log(result);
             if (typeof result != 'object' || result.status == 'undefined' || result.status == 'failed') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
@@ -453,10 +455,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
             }
             else if (result.status == 'joined_existing') {
-                result.group.addMemberOpened = false;
-                result.group.addMemberSaveProcess = false;
-                result.group.newMemberEmail = '';
-                $rootScope.replaceCurrentUserGroup(result.group);
+                $rootScope.refreshCurrentUser();
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
             }
             else if (result.status == 'invited_new') {
@@ -524,27 +523,24 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('', '');
             }
             else if (result.status == 'removed_yourself') {
-                console.log($rootScope.currentUser.groups);
-                console.log($rootScope.currentUser.groupsWithMe);
                 for (var i = 0; i < $rootScope.currentUser.groups.length; i++) {
                     if ($rootScope.currentUser.groups[i].id == group.id) {
                         $rootScope.currentUser.groups.splice(i, 1);
                         break;
                     }
                 }
-                console.log($rootScope.currentUser.groups);
-                console.log($rootScope.currentUser.groupsWithMe);
-                $scope.modalAlert('', '');
+                $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
+                $rootScope.refreshSuggestions();
             }
             else {
                 console.error("Unknown response");
                 console.error(result);
                 member.deleteSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'))
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
             }
         }).error(function(response) {
             member.deleteSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'))
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
         });
     }
 

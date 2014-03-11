@@ -58,6 +58,7 @@ $GLOBALS['language']['fi'] = array(
     'group_add_member_success_joined_existing' => 'Jäsen liitetty ryhmään',
     'group_add_member_already_member' => 'Antamasi sähköpostiosoite kuuluu jo tähän ryhmään',
     'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
+    'group_member_deleted_yourself' => 'Sinut poistettiin ryhmästä',
     'suggest_eating_time' => 'Ehdota aikaa',
     'suggest' => 'Ehdota',
     'suggest_time' => 'Aika',
@@ -128,7 +129,13 @@ $GLOBALS['language']['fi'] = array(
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',
         'mailer_body_invite_notification' => 
-            'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookerssissa.<br /><br />'
+            'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookersissa.<br /><br />'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_group_leave_notification' => '{deleter} poisti sinut ryhmästä {group_name}',
+        'mailer_body_group_leave_notification' => 
+            'Hei!<br /><br />{deleter} poisti sinut käyttäjäryhmästä {group_name} Mealbookersissa.<br /><br />'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
