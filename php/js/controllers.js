@@ -430,9 +430,14 @@ angular.module('Mealbookers.controllers', [])
         }
     };
 
-    $scope.startAddMemberProcess = function(group) {
+    $scope.openAddMember = function(group) {
         group.addMemberOpened = true;
         $scope.modalAlert('', '');
+    };
+
+    $scope.closeAddMember = function(group) {
+        group.addMemberOpened = false;
+        group.newMemberEmail = '';
     };
 
     $scope.addMemberToGroup = function(group) {
@@ -543,6 +548,55 @@ angular.module('Mealbookers.controllers', [])
             $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
         });
     }
+
+    $scope.newGroup = {
+        open: false,
+        name: '',
+        saving: false
+    };
+
+    $scope.openAddGroup = function() {
+        $scope.newGroup.open = true;
+        $scope.modalAlert('', '');
+    };
+
+    $scope.closeAddGroup = function() {
+        $scope.newGroup.open = false;
+        $scope.newGroup.name = '';
+    };
+
+    $scope.addGroup = function() {
+        $scope.newGroup.saving = true;
+        $http.post('/api/1.0/user/groups', {
+            name: $scope.newGroup.name
+        }).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.newGroup.saving = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+            }
+            else if (result.status == 'ok') {
+                $rootScope.refreshCurrentUser(function () {
+                    $scope.newGroup.open = false;
+                    $scope.newGroup.saving = false;
+                    $scope.newGroup.name = '';
+                });
+                $scope.modalAlert('', '');
+            }
+            else if (result.status == 'invalid_name') {
+                $scope.newGroup.saving = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed_invalid_name'));
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.newGroup.saving = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+            }
+        }).error(function(response) {
+            $scope.newGroup.saving = false;
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+        });
+    };
 
 }])
 

@@ -145,13 +145,13 @@ angular.module('Mealbookers', [
 
     $rootScope.$watch('currentUser.groups', updateGroupsWithMe, true);
 
-    $rootScope.refreshCurrentUser = function() {
+    $rootScope.refreshCurrentUser = function(done) {
         $http.get('api/1.0/user').success(function(data) {
-            console.log("current user refreshed");
             for (var i in data) {
                 $rootScope.currentUser[i] = data[i];    
             }
             updateGroupsWithMe($rootScope.currentUser.groups);
+            done();
         })
     };
 
