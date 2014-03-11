@@ -8,8 +8,6 @@ Flight::route('POST /user/groups/@groupId/members', array('UserAPI', 'inviteGrou
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
-Flight::register('db', 'Database', array('localhost', 'database', 'username', 'password'));
-
 class UserAPI
 {
     /**
@@ -223,30 +221,33 @@ class UserAPI
 
         $data = Application::inst()->getPostData();
 
-        $passhash = sha1($data["password"]);
+        $passhash = Application::inst()->hash($data["password"]);
 
-        $result = DB::inst()->query("SELECT id FROM users WHERE email_address='".$data["email"]."' AND passhash='".mysql_real_escape_string("$passhash")."' AND active=1");
-        $row = DB::inst()->fetchAssoc($result);
 
-        if ($data["remember"] === true) {
-            $remember = time() + 3600*24*365;
-        }
-        else {
-            $remember = 0;
-        }
+        $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+            email_address = '" . DB::inst()->quote($data["email"]) . "' AND
+            passhash = '$passhash' AND active = 1");
 
-        if (count($row)!= 0){
-            $passhash2 = sha1("4k89".$passhash."sa");
+        if ($user_id) {
 
-            setcookie("id", $row["id"], $remember, '/');
+            if ($data["remember"]) {
+                $expiry_time = PHP_INT_MAX;
+            }
+            else {
+                $expiry_time = 0;
+            }
+            setcookie("id", $user_id, $expiry_time, '/');
+            setcookie("check", Application::inst()->hash($passhash), $expiry_time, '/');
 
-            setcookie("check", $passhash2, $remember, '/');
-
-            echo json_encode(array('status' => "ok" ));
+            print json_encode(array(
+                'status' => 'ok',
+            ));
         
         }
         else {
-            echo json_encode(array('status' => "fail" ));
+            print json_encode(array(
+                'status' => 'fail',
+            ));
         }
     }
 
