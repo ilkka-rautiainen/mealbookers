@@ -18,7 +18,7 @@
                     </h3>
                     <form ng-submit="saveGroupName(group)">
                         <div class="input-group" ng-show="group.editNameProcess">
-                            <input type="text" class="form-control" ng-model="group.name" ng-disabled="group.editNameSaveProcess" maxlength="30" />
+                            <input type="text" class="form-control" ng-model="group.name" ng-disabled="group.editNameSaveProcess" maxlength="30" autofocus />
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default" ng-disabled="group.editNameSaveProcess">
                                     <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.editNameSaveProcess"></i>
@@ -45,7 +45,7 @@
                     <div ng-if="group.addMemberOpened">
                         <form ng-submit="addMemberToGroup(group)">
                             <div class="input-group">
-                                <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" ng-disabled="group.addMemberSaveProcess" required />
+                                <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" ng-disabled="group.addMemberSaveProcess" required autofocus />
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn-default" ng-disabled="group.addMemberSaveProcess">
                                         <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.addMemberSaveProcess"></i>
@@ -68,7 +68,7 @@
                 <div ng-if="newGroup.open">
                     <form ng-submit="addGroup()">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="{{ 'group_name' | i18n }}" ng-model="newGroup.name" ng-disabled="newGroup.saving" maxlength="30" required />
+                            <input type="text" class="form-control" placeholder="{{ 'group_name' | i18n }}" ng-model="newGroup.name" ng-disabled="newGroup.saving" maxlength="30" required autofocus />
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default" ng-disabled="newGroup.saving">
                                     <i class="glyphicon glyphicon-refresh saving-icon" ng-show="newGroup.saving"></i>

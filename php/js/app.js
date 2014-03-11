@@ -137,7 +137,9 @@ angular.module('Mealbookers', [
 
         var groups = angular.copy(newGroups);
         $rootScope.currentUser.groupsWithMe = [];
+        $rootScope.currentUser.friends = 0;
         for (var i in groups) {
+            $rootScope.currentUser.friends += groups[i].members.length;
             groups[i].members.unshift(jQuery.extend({}, $rootScope.currentUser.me));
             $rootScope.currentUser.groupsWithMe.push(groups[i]);
         }

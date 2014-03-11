@@ -4,6 +4,10 @@ body {
     background-color: whitesmoke;
 }
 
+.well h3.name {
+    margin-top: -4px;
+}
+
 .starter-template {
     padding: 40px 15px;
     text-align: center;
@@ -167,6 +171,12 @@ body {
     width: 95px;
 }
 
+#suggestionModal fieldset.well legend {
+    border-bottom: none;
+    width: auto;
+    margin-bottom: -15px;
+}
+
 #suggestionModal .group-container {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -190,6 +200,7 @@ body {
     margin: 5px;
     border: 1px solid #e7e7e7;
     border-radius: 3px;
+    min-width: 40px;
     cursor: pointer;
 }
 
@@ -330,10 +341,6 @@ span.line-break {
 
 #groupSettingsModal .button {
     cursor: pointer;
-}
-
-#groupSettingsModal .group .name {
-    margin-top: -4px;
 }
 
 #groupSettingsModal .member .delete-confirm-button {
