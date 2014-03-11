@@ -125,7 +125,14 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('RegisterController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+.controller('RegisterController', ['$scope', '$rootScope', '$http', '$state', function($scope, $rootScope, $http, $state) {
+
+    $("#registerModal").modal();
+
+    $('#registerModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
     $scope.register = {
         email: "",
         password: "",

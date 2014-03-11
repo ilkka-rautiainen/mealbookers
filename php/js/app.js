@@ -32,12 +32,16 @@ angular.module('Mealbookers', [
         controller: 'MenuController'
     })
     
-    // add state Navigation.Menu.Registration
-    
     .state('Navigation.Menu.Login', {
         url: "/login",
         templateUrl: "partials/modals/Login.html",
         controller: 'LoginController'
+    })
+
+    .state('Navigation.Menu.Register', {
+        url: "/register",
+        templateUrl: "partials/modals/Register.html",
+        controller: 'RegisterController'
     })
     
     .state('Navigation.Menu.Suggestion', {
