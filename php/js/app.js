@@ -61,6 +61,11 @@ angular.module('Mealbookers', [
 
 .run(['$rootScope', '$window', function($rootScope, $window) {
 
+    $rootScope.currentUser = {
+        role: 'guest',
+        groups: [],
+    };
+
     var emptyMessage = {
         message: '',
         type: ''
@@ -123,6 +128,27 @@ angular.module('Mealbookers', [
         alertFadeTimeout = setTimeout(function() {
             $rootScope.alertMessage = emptyMessage;
         }, 1500);
+    };
+
+    $rootScope.$watch('currentUser.groups', function(newGroups) {
+        if ($rootScope.currentUser.role == 'guest') {
+            return;
+        }
+        var groups = angular.copy(newGroups);
+        $rootScope.currentUser.groupsWithMe = [];
+        for (var i in groups) {
+            groups[i].members.unshift(jQuery.extend({}, $rootScope.currentUser.me));
+            $rootScope.currentUser.groupsWithMe.push(groups[i]);
+        }
+    }, true);
+
+    $rootScope.replaceCurrentUserGroup = function(group) {
+        for (var i in $rootScope.currentUser.groups) {
+            if ($rootScope.currentUser.groups[i].id == group.id) {
+                $rootScope.currentUser.groups[i] = group;
+                break;
+            }
+        }
     };
 
     $rootScope.getWeekDayText = function(day) {

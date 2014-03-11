@@ -13,11 +13,11 @@ class SuggestionUser {
     {
         $result = DB::inst()->query("SELECT * FROM suggestions_users WHERE id = '" . ((int)$id) . "' LIMIT 1");
         if (!DB::inst()->getRowCount())
-            throw new Exception("Unable to find suggestion_user with id $id");
+            throw new NotFoundException("Unable to find suggestion_user with id $id");
         $row = DB::inst()->fetchAssoc($result);
         $this->populateFromRow($row);
         if (!$this->id)
-            throw new Exception("Error fetching suggestion_user: id is null");
+            throw new NotFoundException("Error fetching suggestion_user: id is null");
     }
 
     public function populateFromRow($row)

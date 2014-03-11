@@ -18,11 +18,11 @@ class User
     {
         $result = DB::inst()->query("SELECT * FROM users WHERE id = '" . ((int)$id) . "' LIMIT 1");
         if (!DB::inst()->getRowCount())
-            throw new Exception("Unable to find user with id $id");
+            throw new NotFoundException("Unable to find user with id $id");
         $row = DB::inst()->fetchAssoc($result);
         $this->populateFromRow($row);
         if (!$this->id)
-            throw new Exception("Error fetching user: id is null");
+            throw new NotFoundException("Error fetching user: id is null");
     }
 
     public function populateFromRow($row)
@@ -282,6 +282,14 @@ class User
             VALUES ({$this->id}, {$group->id})");
     }
 
+    public function leaveGroup(Group $group)
+    {
+        Logger::info(__METHOD__ . " user {$this->id} from group {$group->id}");
+
+        DB::inst()->query("DELETE FROM group_memberships
+            WHERE user_id = {$this->id} AND group_id = {$group->id}");
+    }
+
     public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
@@ -498,7 +506,7 @@ class User
                 '{server_hostname}',
             ),
             array(
-                $this->getName(),
+                $inviter->getName(),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
             ),

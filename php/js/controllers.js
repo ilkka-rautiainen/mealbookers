@@ -410,7 +410,7 @@ angular.module('Mealbookers.controllers', [])
 
 
 
-.controller('GroupSettingsController', ['$scope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $state, $filter, $http, $location, $anchorScroll) {
+.controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
 
     $("#groupSettingsModal").modal();
     $('#groupSettingsModal').on('hidden.bs.modal', function () {
@@ -431,7 +431,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.startAddMemberProcess = function(group) {
-        group.addMemberProcess = 1;
+        group.addMemberOpened = true;
         $scope.modalAlert('', '');
     };
 
@@ -453,16 +453,14 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
             }
             else if (result.status == 'joined_existing') {
-                for (var i in result.group) {
-                    group[i] = result.group[i];
-                }
-                group.addMemberProcess = false;
-                group.addMemberSaveProcess = false;
-                group.newMemberEmail = '';
+                result.group.addMemberOpened = false;
+                result.group.addMemberSaveProcess = false;
+                result.group.newMemberEmail = '';
+                $rootScope.replaceCurrentUserGroup(result.group);
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
             }
             else if (result.status == 'invited_new') {
-                group.addMemberProcess = false;
+                group.addMemberOpened = false;
                 group.addMemberSaveProcess = false;
                 group.newMemberEmail = '';
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
@@ -484,7 +482,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post('/api/1.0/user/groups/' + group.id, {
             name: group.name
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == 'undefined') {
+            if (typeof result != 'object' || result.status == undefined) {
                 group.editNameSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'));
             }
@@ -501,11 +499,52 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 group.editNameSaveProcess = false;
-                $scope.groupSettingsAlert('alert-danger', $filter('i18n')('group_edit_failed'))
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
             }
         }).error(function(response) {
             group.editNameSaveProcess = false;
-            $scope.groupSettingsAlert('alert-danger', $filter('i18n')('group_edit_failed'))
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
+        });
+    }
+
+    $scope.deleteGroupMember = function(group, member) {
+        member.deleteSaveProcess = true;
+        $http.delete('/api/1.0/user/groups/' + group.id + '/members/' + member.id).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                member.deleteSaveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
+            }
+            else if (result.status == 'ok') {
+                for (var i = 0; i < group.members.length; i++) {
+                    if (group.members[i].id == member.id) {
+                        group.members.splice(i, 1);
+                        break;
+                    }
+                }
+                $scope.modalAlert('', '');
+            }
+            else if (result.status == 'removed_yourself') {
+                console.log($rootScope.currentUser.groups);
+                console.log($rootScope.currentUser.groupsWithMe);
+                for (var i = 0; i < $rootScope.currentUser.groups.length; i++) {
+                    if ($rootScope.currentUser.groups[i].id == group.id) {
+                        $rootScope.currentUser.groups.splice(i, 1);
+                        break;
+                    }
+                }
+                console.log($rootScope.currentUser.groups);
+                console.log($rootScope.currentUser.groupsWithMe);
+                $scope.modalAlert('', '');
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                member.deleteSaveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'))
+            }
+        }).error(function(response) {
+            member.deleteSaveProcess = false;
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'))
         });
     }
 

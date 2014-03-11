@@ -11,11 +11,11 @@ class Restaurant
     {
         $result = DB::inst()->query("SELECT * FROM restaurants WHERE id = '" . ((int)$id) . "' LIMIT 1");
         if (!DB::inst()->getRowCount())
-            throw new Exception("Unable to find restaurant with id $id");
+            throw new NotFoundException("Unable to find restaurant with id $id");
         $row = DB::inst()->fetchAssoc($result);
         $this->populateFromRow($row);
         if (!$this->id)
-            throw new Exception("Error fetching restaurant: id is null");
+            throw new NotFoundException("Error fetching restaurant: id is null");
     }
 
     public function populateFromRow($row)

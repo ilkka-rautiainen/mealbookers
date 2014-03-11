@@ -5,6 +5,7 @@ Flight::route('POST /user', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
 Flight::route('POST /user/groups/@groupId', array('UserAPI', 'editGroupName'));
 Flight::route('POST /user/groups/@groupId/members', array('UserAPI', 'inviteGroupMember'));
+Flight::route('DELETE /user/groups/@groupId/members/@memberId', array('UserAPI', 'deleteGroupMember'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
 
@@ -22,8 +23,11 @@ class UserAPI
         $current_user = new User();
         $current_user->fetch(1);
         $user = $current_user->getAsArray();
+        $current_user_array = $user;
 
-        $user['groups'] = $current_user->getGroupsAsArray();
+        $groups = $current_user->getGroupsAsArray();
+        $user['groups'] = $groups;
+        $user['me'] = $current_user_array;
         $user['email_address'] = $current_user->email_address;
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
@@ -108,6 +112,9 @@ class UserAPI
         }
     }
 
+    /**
+     * @todo check if user is member of group
+     */
     function editGroupName($groupId)
     {
         Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
@@ -147,6 +154,7 @@ class UserAPI
 
     /**
      * @todo implement with real current user
+     * @todo check if user is member of group
      */
     function inviteGroupMember($groupId)
     {
@@ -213,6 +221,52 @@ class UserAPI
             DB::inst()->rollbackTransaction();
             print json_encode(array(
                 'status' => $e->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * @todo implement with real current user
+     * @todo implement current user case
+     */
+    function deleteGroupMember($groupId, $memberId)
+    {
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/members/$memberId called by user {$current_user->id}");
+
+        $groupId = (int)$groupId;
+        $memberId = (int)$memberId;
+
+        try {
+            $group = new Group();
+            $group->fetch($groupId);
+            $deleted_member = new User();
+            $deleted_member->fetch($memberId);
+        }
+        catch (NotFoundException $e) {
+            Application::inst()->exitWithHttpCode(404, "No group/member found with the given id");
+        }
+
+        if (!$deleted_member->isMemberOfGroup($group)) {
+            Application::inst()->exitWithHttpCode(400, "Member you are deleting is not a member in the group");
+        }
+
+        if (!$current_user->isMemberOfGroup($group)) {
+            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+        }
+
+        $deleted_member->leaveGroup($group);
+
+        if ($deleted_member->id == $current_user->id) {
+            print json_encode(array(
+                'status' => 'removed_yourself',
+            ));
+        }
+        else {
+            print json_encode(array(
+                'status' => 'ok',
             ));
         }
     }

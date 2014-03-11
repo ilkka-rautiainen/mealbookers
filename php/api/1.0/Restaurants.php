@@ -131,6 +131,7 @@ class RestaurantsAPI
     /**
      * Accept a suggestion
      * @todo  Implement with real user id + auth
+     * @todo  Do age check instead of waiting for a TooOldException that isn't thrown
      */
     function acceptSuggestionFromEmail()
     {

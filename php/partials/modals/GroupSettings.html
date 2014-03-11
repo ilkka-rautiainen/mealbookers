@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <div class="alert" ng-class="groupSettingsMessage.type" ng-if="groupSettingsMessage.message.length">{{ groupSettingsMessage.message }}</div>
 
-                <div ng-repeat="group in currentUser.groups" class="group well">
+                <div ng-repeat="group in currentUser.groupsWithMe" class="group well">
                     <h3 class="name" ng-show="!group.editNameProcess" ng-click="group.editNameProcess = true">{{ group.name }}
                         <i class="glyphicon glyphicon-edit button"></i>
                     </h3>
@@ -28,9 +28,14 @@
                     </form>
                     <div ng-repeat="member in group.members" class="member">
                         {{ member.name }}
-                        <i class="glyphicon glyphicon-remove button"></i>
+                        <i class="glyphicon glyphicon-remove button" ng-click="member.deleteOpened = true;" ng-show="!member.deleteOpened"></i>
+                        <button class="btn btn-success delete-confirm-button" ng-show="member.deleteOpened" ng-click="member.deleteOpened = false;" >{{ 'cancel' | i18n }}</button>
+                        <button class="btn btn-danger delete-confirm-button" ng-show="member.deleteOpened" ng-disabled="member.deleteSaveProcess" ng-click="deleteGroupMember(group, member)">
+                            <i class="glyphicon glyphicon-refresh saving-icon" ng-show="member.deleteSaveProcess"></i>
+                            {{ 'delete' | i18n }}
+                        </button>
                     </div>
-                    <div ng-if="group.addMemberProcess">
+                    <div ng-if="group.addMemberOpened">
                         <form ng-submit="addMemberToGroup(group)">
                             <div class="input-group">
                                 <input type="email" class="form-control" placeholder="{{ 'email' | i18n }}" ng-model="group.newMemberEmail" ng-disabled="group.addMemberSaveProcess" required />
@@ -39,12 +44,12 @@
                                         <i class="glyphicon glyphicon-refresh saving-icon" ng-show="group.addMemberSaveProcess"></i>
                                         {{ 'group_invite_member' | i18n }}
                                     </button>
-                                    <button type="button" class="btn btn-default" ng-click="group.addMemberProcess = 0; group.newMemberEmail = '';">{{ 'cancel' | i18n }}</button>
+                                    <button type="button" class="btn btn-default" ng-click="group.addMemberOpened = false; group.newMemberEmail = '';">{{ 'cancel' | i18n }}</button>
                                 </span>
                             </div>
                         </form>
                     </div>
-                    <button type="button" class="btn btn-default" ng-show="!group.addMemberProcess" ng-click="startAddMemberProcess(group)"><i class="glyphicon glyphicon-plus button"></i> {{ 'group_invite_member' | i18n }}
+                    <button type="button" class="btn btn-default" ng-show="!group.addMemberOpened" ng-click="startAddMemberProcess(group)"><i class="glyphicon glyphicon-plus button"></i> {{ 'group_invite_member' | i18n }}
                 </div>
             </div>
             <div class="modal-footer">

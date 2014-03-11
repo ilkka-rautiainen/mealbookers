@@ -10,7 +10,6 @@ services.value('version', '0.1');
  * Load current user and localization
  */
 services.factory('Initialization', ['$http', '$rootScope', function($http, $rootScope) {
-    $rootScope.currentUser = {};
     var currentUserPromise = $http.get('api/1.0/user');
 
     // Get localization promise from the then function
