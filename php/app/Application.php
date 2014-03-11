@@ -56,7 +56,7 @@ class Application
 
     public function exitWithHttpCode($number, $text = false)
     {
-        Logger::info(__METHOD__ . " exiting with http $number: $text");
+        Logger::note(__METHOD__ . " exiting with http $number: $text");
 
         if ($text === false) {
             if ($number == 404)

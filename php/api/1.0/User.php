@@ -152,6 +152,9 @@ class UserAPI
     {
         Logger::debug(__METHOD__ . " POST /user/groups/@groupId/members called");
 
+        $current_user = new User();
+        $current_user->fetch(1);
+
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
 
@@ -185,21 +188,25 @@ class UserAPI
                     throw new ApiException('already_member');
                 }
                 $invitee->joinGroup($group);
-                if (!$invitee->sendGroupInviteNotification($group)) {
+                if (!$invitee->sendGroupInviteNotification($group, $current_user)) {
                     throw new ApiException('failed');
                 }
+
+                print json_encode(array(
+                    'status' => 'joined_existing',
+                    'group' => $group->getAsArray($current_user, $current_user->getInitialsContext()),
+                ));
             }
+            // Invite new member
             else {
-                $current_user = new User();
-                $current_user->fetch(1);
                 if (!$current_user->invite($email_address, $group)) {
                     throw new ApiException('failed');
                 }
+                print json_encode(array(
+                    'status' => 'invited_new',
+                ));
             }
 
-            print json_encode(array(
-                'status' => 'ok',
-            ));
             DB::inst()->commitTransaction();
         }
         catch (ApiException $e) {

@@ -53,7 +53,8 @@ $GLOBALS['language']['en'] = array(
     'group_edit_failed_invalid_name' => 'Invalid group name given',
     'group_add_member_failed' => 'Inviting member failed',
     'group_add_member_failed_invalid_email' => 'Invalid email address given',
-    'group_add_member_success' => 'Invitation sent',
+    'group_add_member_success_invited_new' => 'Invitation sent',
+    'group_add_member_success_joined_existing' => 'Member joined to the group',
     'group_add_member_already_member' => 'The given email address is already in the group',
     'suggest_eating_time' => 'Suggest eating time',
     'suggest' => 'Suggest',
@@ -121,6 +122,12 @@ $GLOBALS['language']['en'] = array(
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
             . ' Become member in the group <a href="http://{server_hostname}/#/app/menu/register?invite={hash}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
+        'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
+        'mailer_body_invite_notification' => 
+            'Hello!<br /><br />{inviter} joined you to group {group_name} at Mealbookers.<br /><br />'
+            . ' You can go to Mealbookers <a href="http://{server_hostname}/#/app/menu">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
     ),

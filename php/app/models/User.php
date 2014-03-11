@@ -476,10 +476,35 @@ class User
         }
     }
 
-    public function sendGroupInviteNotification(Group $group)
+    public function sendGroupInviteNotification(Group $group, User $inviter)
     {
         Logger::debug(__METHOD__ . " notifying user {$this->id} for being invited as member to group {$group->id}");
-        Logger::error(__METHOD__ . " unimplemented");
-        return false;
+
+        $subject = str_replace(
+            array(
+                '{inviter}',
+                '{group_name}',
+            ),
+            array(
+                $inviter->getName(),
+                $group->name,
+            ),
+            Lang::inst()->get('mailer_subject_invite_notification', $this)
+        );
+        $body = str_replace(
+            array(
+                '{inviter}',
+                '{group_name}',
+                '{server_hostname}',
+            ),
+            array(
+                $this->getName(),
+                $group->name,
+                $_SERVER['HTTP_HOST'],
+            ),
+            Lang::inst()->get('mailer_body_invite_notification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
     }
 }

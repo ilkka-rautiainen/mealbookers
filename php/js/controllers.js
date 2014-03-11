@@ -452,11 +452,20 @@ angular.module('Mealbookers.controllers', [])
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
             }
-            else if (result.status == 'ok') {
+            else if (result.status == 'joined_existing') {
+                for (var i in result.group) {
+                    group[i] = result.group[i];
+                }
                 group.addMemberProcess = false;
                 group.addMemberSaveProcess = false;
                 group.newMemberEmail = '';
-                $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success'));
+                $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
+            }
+            else if (result.status == 'invited_new') {
+                group.addMemberProcess = false;
+                group.addMemberSaveProcess = false;
+                group.newMemberEmail = '';
+                $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
             }
             else {
                 console.error("Unknown response");

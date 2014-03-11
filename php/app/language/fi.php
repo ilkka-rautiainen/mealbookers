@@ -53,7 +53,8 @@ $GLOBALS['language']['fi'] = array(
     'group_edit_failed_invalid_name' => 'Ryhmän nimi ei ole kelvollinen',
     'group_add_member_failed' => 'Jäsenen kutsuminen epäonnistui',
     'group_add_member_failed_invalid_email' => 'Sähköpostiosoite ei ole kelvollinen',
-    'group_add_member_success' => 'Kutsu lähetetty',
+    'group_add_member_success_invited_new' => 'Kutsu lähetetty',
+    'group_add_member_success_joined_existing' => 'Jäsen liitetty ryhmään',
     'group_add_member_already_member' => 'Antamasi sähköpostiosoite kuuluu jo tähän ryhmään',
     'suggest_eating_time' => 'Ehdota aikaa',
     'suggest' => 'Ehdota',
@@ -121,6 +122,12 @@ $GLOBALS['language']['fi'] = array(
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
             . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/app/menu/register?invite={hash}">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',
+        'mailer_body_invite_notification' => 
+            'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookerssissa.<br /><br />'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
     ),
