@@ -40,6 +40,7 @@ $GLOBALS['config'] = array(
         'smtp_port' => 465,
         'smtp_secure' => 'ssl',
         'smtp_host' => 'smtp.gmail.com',
+        'smtp_auth' => true,
         'smtp_username' => 'mealbookers@gmail.com',
         'smtp_password' => 'booker123',
         'from_address' => 'mealbookers@gmail.com',

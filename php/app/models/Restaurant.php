@@ -119,17 +119,31 @@ class Restaurant
 
         $openingHours = array();
         for ($i = $today; $i <= 6; $i++) {
-            $openingHours[$i + 1] = array();
+            $openingHours[$i + 1] = array(
+                'all' => array(),
+                'closed' => false,
+            );
         }
 
         while ($row = DB::inst()->fetchAssoc($result)) {
             for ($i = max($today, $row['start_weekday']); $i <= $row['end_weekday']; $i++) {
-                $openingHours[$i + 1][$row['type']] = array(
-                    'type' => $row['type'],
-                    'start' => substr($row['start_time'], 0, 5),
-                    'end' => substr($row['end_time'], 0, 5),
-                );
+                $openingHours[$i + 1]['all'][] = 
+                    Lang::inst()->get('opening_hour_type_' . $row['type'])
+                    . ' ' . substr($row['start_time'], 0, 5)
+                    . ' - ' . substr($row['end_time'], 0, 5);
+                if ($row['type'] == 'normal' && $row['start_time'] == '00:00:00'
+                    && $row['end_time'] == '00:00:00') {
+                    $openingHours[$i + 1]['closed'] = true;
+                }
+                if ($row['type'] == 'lunch') {
+                    $openingHours[$i + 1]['lunch'] = end($openingHours[$i + 1]['all']);
+                }
             }
+        }
+
+        for ($i = $today; $i <= 6; $i++) {
+            $openingHours[$i + 1]['tooltip'] = implode("\r\n", $openingHours[$i + 1]['all']);
+            unset($openingHours[$i + 1]['all']);
         }
 
         return $openingHours;

@@ -1,13 +1,13 @@
-<div class="col-md-3 col-sm-6 restaurant">
+<div class="col-md-3 col-sm-6 restaurant" ng-hide="weekDay >= 6 && restaurant.openingHours[weekDay].closed">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
         <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}">
             <i class="glyphicon glyphicon-plus"></i>
         </div>
-        <div ng-show="!(restaurant.openingHours[weekDay].normal.start == '00:00' && restaurant.openingHours[weekDay].normal.end == '00:00')">
-            <div ng-repeat="openingHour in restaurant.openingHours[weekDay]">{{ 'opening_hour_type_' + openingHour.type | i18n }} {{ openingHour.start }} - {{ openingHour.end }}</div>
+        <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
+            <span class="opening-hour-tooltip" title="{{ restaurant.openingHours[weekDay].tooltip }}">{{ restaurant.openingHours[weekDay].lunch }}</span>
         </div>
-        <div ng-show="restaurant.openingHours[weekDay].normal.start == '00:00' && restaurant.openingHours[weekDay].normal.end == '00:00'">
+        <div ng-show="restaurant.openingHours[weekDay].closed">
             Kiinni
         </div>
         <span class="chrome-fix-line">&nbsp;</span>

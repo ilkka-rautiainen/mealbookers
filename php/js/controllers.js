@@ -275,18 +275,6 @@ angular.module('Mealbookers.controllers', [])
             console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
         });
     };
-
-    $scope.openingHoursOrder = function(openingHour) {
-        console.log(openingHour);
-        if (openingHour.type == 'normal')
-            return 0;
-        else if (openingHour.type == 'lunch')
-            return 1;
-        else if (openingHour.type == 'breakfast')
-            return 2;
-        else
-            return 3;
-    };
 }])
 
 
