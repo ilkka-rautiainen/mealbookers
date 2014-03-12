@@ -33,21 +33,17 @@ class Restaurant
             'link' => $this->link,
             'mealList' => $this->mealList->getAsArray(),
             'suggestionList' => $this->suggestionList->getAsArray(),
+            'openingHours' => $this->getOpeningHoursAsArray(),
         );
     }
 
-    /**
-     * @todo optimize to only one query
-     */
     public function fetchMealList($lang)
     {
         $mealList = new MealList();
         
-        $start_time = strtotime("today");
-        $end_time = strtotime("+7 days", strtotime("last monday", strtotime("tomorrow")));
         $result = DB::inst()->query("SELECT * FROM meals
-            WHERE day >= '" . date("Y-m-d", $start_time) . "' AND
-                day <= '" . date("Y-m-d", $end_time) . "' AND
+            WHERE day >= '" . Application::inst()->getDateForDay('today') . "' AND
+                day <= '" . Application::inst()->getDateForDay('this_week_sunday') . "' AND
                 restaurant_id = {$this->id} AND 
                 language = '" . DB::inst()->quote($lang) . "'
             ORDER BY day ASC
@@ -56,8 +52,8 @@ class Restaurant
         // Fetch in the another language if not present in current
         if (!DB::inst()->getRowCount())
             $result = DB::inst()->query("SELECT * FROM meals
-                WHERE day >= '" . date("Y-m-d", $start_time) . "' AND
-                    day <= '" . date("Y-m-d", $end_time) . "' AND
+                WHERE day >= '" . Application::inst()->getDateForDay('today') . "' AND
+                    day <= '" . Application::inst()->getDateForDay('this_week_sunday') . "' AND
                     restaurant_id = {$this->id} AND 
                     language = '" . (($lang == 'en') ? 'fi' : 'en') . "'
                 ORDER BY day ASC
@@ -74,20 +70,16 @@ class Restaurant
 
     /**
      * Fetches the given user's suggestions in the restaurant
-     * @todo optimize to only one query
      */
     public function fetchSuggestionList(User $viewer)
     {
         $suggestionList = new SuggestionList();
 
-        $start_time = strtotime("today");
-        $end_time = strtotime("+7 days", strtotime("last monday", strtotime("tomorrow")));
-
         // Fetch all suggestions that are suggested to the given user
         $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
             INNER JOIN suggestions_users ON suggestions_users.suggestion_id = suggestions.id
-            WHERE DATE(suggestions.datetime) >= '" . date("Y-m-d", $start_time) . "' AND
-                DATE(suggestions.datetime) <= '" . date("Y-m-d", $end_time) . "' AND
+            WHERE DATE(suggestions.datetime) >= '" . Application::inst()->getDateForDay('today') . "' AND
+                DATE(suggestions.datetime) <= '" . Application::inst()->getDateForDay('this_week_sunday') . "' AND
                 suggestions.restaurant_id = {$this->id} AND
                 suggestions_users.user_id = {$viewer->id}
             GROUP BY suggestions.id
@@ -117,5 +109,29 @@ class Restaurant
         }
 
         return implode("<br />", $meals);
+    }
+
+    private function getOpeningHoursAsArray()
+    {
+        $today = Application::inst()->getWeekdayNumber();
+        $result = DB::inst()->query("SELECT * FROM restaurant_opening_hours
+            WHERE restaurant_id = {$this->id} AND end_weekday >= $today");
+
+        $openingHours = array();
+        for ($i = $today; $i <= 6; $i++) {
+            $openingHours[$i + 1] = array();
+        }
+
+        while ($row = DB::inst()->fetchAssoc($result)) {
+            for ($i = max($today, $row['start_weekday']); $i <= $row['end_weekday']; $i++) {
+                $openingHours[$i + 1][$row['type']] = array(
+                    'type' => $row['type'],
+                    'start' => substr($row['start_time'], 0, 5),
+                    'end' => substr($row['end_time'], 0, 5),
+                );
+            }
+        }
+
+        return $openingHours;
     }
 }

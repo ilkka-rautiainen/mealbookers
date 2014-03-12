@@ -4,6 +4,12 @@
         <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}">
             <i class="glyphicon glyphicon-plus"></i>
         </div>
+        <div ng-show="!(restaurant.openingHours[weekDay].normal.start == '00:00' && restaurant.openingHours[weekDay].normal.end == '00:00')">
+            <div ng-repeat="openingHour in restaurant.openingHours[weekDay]">{{ 'opening_hour_type_' + openingHour.type | i18n }} {{ openingHour.start }} - {{ openingHour.end }}</div>
+        </div>
+        <div ng-show="restaurant.openingHours[weekDay].normal.start == '00:00' && restaurant.openingHours[weekDay].normal.end == '00:00'">
+            Kiinni
+        </div>
         <span class="chrome-fix-line">&nbsp;</span>
         <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length">
             <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">

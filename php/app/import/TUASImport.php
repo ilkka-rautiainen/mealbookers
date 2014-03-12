@@ -97,12 +97,12 @@ class TUASImport extends AmicaImport
             DB::inst()->query("INSERT INTO restaurant_opening_hours (
                     restaurant_id, start_weekday, end_weekday, start_time, end_time, type
                 ) VALUES (
-                    {$this->restaurant_id}, 0, 5, '$mon_fri_alacarte_start:00', '$mon_fri_alacarte_end:00', 'alacarte'
+                    {$this->restaurant_id}, 0, 4, '$mon_fri_alacarte_start:00', '$mon_fri_alacarte_end:00', 'alacarte'
                 )");
             DB::inst()->query("INSERT INTO restaurant_opening_hours (
                     restaurant_id, start_weekday, end_weekday, start_time, end_time, type
                 ) VALUES (
-                    {$this->restaurant_id}, 0, 5, '$mon_fri_breakfast_start:00', '$mon_fri_breakfast_end:00', 'breakfast'
+                    {$this->restaurant_id}, 0, 4, '$mon_fri_breakfast_start:00', '$mon_fri_breakfast_end:00', 'breakfast'
                 )");
             DB::inst()->query("INSERT INTO restaurant_opening_hours (
                     restaurant_id, start_weekday, end_weekday, start_time, end_time, type
