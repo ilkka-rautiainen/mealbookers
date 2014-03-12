@@ -17,7 +17,7 @@ try {
         $importer->init();
         if (isset($_GET['reset']) && !empty($_GET['reset']))
             $importer->reset();
-        $importer->run();
+        $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
     }
     print "import ok";
 }

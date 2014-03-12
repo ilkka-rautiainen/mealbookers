@@ -52,7 +52,7 @@ class AmicaImport extends Import
     /**
      * Runs the import
      */
-    public function run()
+    public function run($save_opening_hours = false)
     {
         Logger::note(__METHOD__ . " start");
         require_once __DIR__ . '/../lib/phpQuery.php';
@@ -76,7 +76,8 @@ class AmicaImport extends Import
         if (!$this->isValidDaterange($daterange))
             throw new ImportException("Wrong menu, date range was: $daterange");
 
-        $this->saveOpeningHours();
+        if ($save_opening_hours)
+            $this->saveOpeningHours();
 
         $id = $matches[1];
 
