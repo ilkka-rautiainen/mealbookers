@@ -17,7 +17,7 @@ abstract class Import
     {
         // Init the restaurant object
         $restaurant = new Restaurant();
-        $restaurant->fetch($this->restaurantId); // restaurantId comes from sub class
+        $restaurant->fetch($this->restaurant_id); // restaurant_id comes from sub class
         $this->restaurant = $restaurant;
         
         Logger::info(__METHOD__ . " initializing menu import for restaurant {$restaurant->name} id {$restaurant->id}");
@@ -49,6 +49,11 @@ abstract class Import
         throw new ImportException("Not implemented");
     }
 
+    protected function saveOpeningHours()
+    {
+        // throw new ImportException("Not implemented");
+    }
+
     protected function startDay($weekDayNumber)
     {
         DB::inst()->startTransaction();
@@ -66,7 +71,7 @@ abstract class Import
         $meal->day = date("Y-m-d", strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay())));
         $meal->save();
 
-        Logger::debug(__METHOD__ . " meal added: {$meal->name}");
+        Logger::trace(__METHOD__ . " meal added: {$meal->name}");
     }
 
     protected function endDayAndSave()

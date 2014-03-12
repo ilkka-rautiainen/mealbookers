@@ -75,7 +75,8 @@ class AmicaImport extends Import
         $daterange = trim(pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_MainContentMenu_ctl00_HeadingMenu")->html());
         if (!$this->isValidDaterange($daterange))
             throw new ImportException("Wrong menu, date range was: $daterange");
-        
+
+        $this->saveOpeningHours();
 
         $id = $matches[1];
 
@@ -95,10 +96,13 @@ class AmicaImport extends Import
 
         foreach ($this->langs as $lang => $lang_config) {
             try {
+                Logger::debug(__METHOD__ . " start lang $lang");
                 $source = $this->fetchURL("http://www.amica.fi/Templates/RestaurantPage/RestaurantMenuPrintPage.aspx?id=$id&page=$id&bn=$lang&a=$menu_type&s=$menu_number");
 
+                phpQuery::newDocument($source);
+                
                 // Get lines and process them
-                $lines = $this->getLines($source);
+                $lines = $this->getLines();
                 foreach ($lines as $line) {
                     $this->processLine($line, $lang);
                 }
@@ -123,10 +127,8 @@ class AmicaImport extends Import
     /**
      * Retrieves meal lines from source code
      */
-    protected function getLines(&$source)
+    protected function getLines()
     {
-        phpQuery::newDocument($source);
-
         $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
         if (!$p_list->length)
             throw new ParseException("No <p> elements found in the menu");
@@ -145,7 +147,7 @@ class AmicaImport extends Import
      */
     private function processLine($line_html, $lang)
     {
-        Logger::debug(__METHOD__ . " processing line: $line_html");
+        Logger::trace(__METHOD__ . " processing line: $line_html");
 
         // Check for <br><strong> within the line
         $pos = mb_stripos($line_html, "<br><strong>");
@@ -165,7 +167,7 @@ class AmicaImport extends Import
         $line_html = str_replace(chr(194) . chr(160), ' ', $line_html); // replace &nbsp; in utf-8
         $line_html = trim($line_html);
 
-        Logger::debug(__METHOD__ . " line after replacements: $line_html");
+        Logger::trace(__METHOD__ . " line after replacements: $line_html");
 
         if (!$line_html) {
             Logger::debug(__METHOD__ . " empty line");

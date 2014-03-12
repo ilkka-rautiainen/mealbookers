@@ -2,7 +2,7 @@
 
 class Puu2Import extends AmicaImport
 {
-    protected $restaurantId = 4;
+    protected $restaurant_id = 4;
     protected $url = "http://www.amica.fi/puu2";
 
     public function __construct()

@@ -2,7 +2,7 @@
 
 class LaureaImport extends AmicaImport
 {
-    protected $restaurantId = 6;
+    protected $restaurant_id = 6;
     protected $url = "http://www.amica.fi/laureaotaniemi";
 
     public function __construct()
@@ -15,10 +15,8 @@ class LaureaImport extends AmicaImport
     /**
      * Retrieves meal lines from source code
      */
-    protected function getLines(&$source)
+    protected function getLines()
     {
-        phpQuery::newDocument($source);
-
         $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
         if (!$p_list->length)
             throw new ParseException("No <p> elements found in the menu");

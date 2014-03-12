@@ -2,6 +2,6 @@
 
 class TUASImport extends AmicaImport
 {
-    protected $restaurantId = 3;
+    protected $restaurant_id = 3;
     protected $url = "http://www.amica.fi/tuas";
 }

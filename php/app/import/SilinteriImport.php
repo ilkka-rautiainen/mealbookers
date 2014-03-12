@@ -2,7 +2,7 @@
 
 class SilinteriImport extends AmicaImport
 {
-    protected $restaurantId = 5;
+    protected $restaurant_id = 5;
     protected $url = "http://www.amica.fi/silinteri";
 
     public function __construct()
