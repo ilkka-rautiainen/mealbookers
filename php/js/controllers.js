@@ -513,8 +513,6 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'ok') {
                 $rootScope.refreshCurrentUser(function() {
-                    group.editNameProcess = false;
-                    group.editNameSaveProcess = false;
                     $scope.modalAlert('', '');
                 });
             }
@@ -545,7 +543,9 @@ angular.module('Mealbookers.controllers', [])
                         break;
                     }
                 }
-                $scope.modalAlert('', '');
+                $rootScope.refreshCurrentUser(function() {
+                    $scope.modalAlert('', '');
+                });
             }
             else if (result.status == 'removed_yourself') {
                 for (var i = 0; i < $rootScope.currentUser.groups.length; i++) {
@@ -560,7 +560,7 @@ angular.module('Mealbookers.controllers', [])
                 else {
                     $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
                 }
-                $rootScope.refreshSuggestions();
+                $rootScope.refreshCurrentUser();
             }
             else {
                 console.error("Unknown response");

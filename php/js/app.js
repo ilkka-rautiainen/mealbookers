@@ -149,15 +149,19 @@ angular.module('Mealbookers', [
 
     $rootScope.refreshCurrentUser = function(done) {
         $http.get('api/1.0/user').success(function(data) {
+            console.log("Current user refreshed");
             for (var i in data) {
                 $rootScope.currentUser[i] = data[i];    
             }
             updateGroupsWithMe($rootScope.currentUser.groups);
-            done();
+            refreshSuggestions();
+
+            if (typeof done == 'function')
+                done();
         })
     };
 
-    $rootScope.refreshSuggestions = function() {
+    var refreshSuggestions = function() {
         console.log("refreshSuggestions unimplemented...");
     };
 
