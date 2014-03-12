@@ -93,13 +93,20 @@ class Group {
     public function getAsArray(User $viewer, $initials_context)
     {
         Logger::debug(__METHOD__ . " for viewer {$viewer->id}");
-        $creator = new User();
-        $creator->fetch($this->creator_id);
+
+        if ($this->creator_id) {
+            $creator = new User();
+            $creator->fetch($this->creator_id);
+            $creator_array = $creator->getAsArray();
+        }
+        else {
+            $creator_array = null;
+        }
 
         return array(
             'id' => $this->id,
             'name' => $this->name,
-            'creator' => $creator->getAsArray(),
+            'creator' => $creator_array,
             'members' => $this->getMembersAsArray($viewer, $initials_context),
         );
     }

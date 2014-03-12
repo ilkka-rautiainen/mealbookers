@@ -14,7 +14,7 @@
         <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length" ng-hide="restaurant.openingHours[weekDay].closed">
             <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
                 <span class="suggestion-time">{{ suggestion.time }}</span>
-                <span ng-repeat="member in suggestion.members" ng-class="{'suggestion-creator': suggestion.creator.id == member.id}" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }}<span ng-if="$index < suggestion.members.length - 2">,</span><span ng-if="$index == suggestion.members.length - 2"> {{ 'and' | i18n }}</span></span>
+                <span ng-repeat="member in suggestion.members" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }}<span ng-if="$index < suggestion.members.length - 2">,</span><span ng-if="$index == suggestion.members.length - 2"> {{ 'and' | i18n }}</span></span>
                 <span ng-if="suggestion.outside_members.length">
                     {{ 'suggestion_outside_members' | i18n }}
                     <span ng-repeat="outside_member in suggestion.outside_members" class="suggestion-member" title="{{ outside_member.name }}"> {{ outside_member.initials }}<span ng-if="$index < suggestion.outside_members.length - 2">,</span><span ng-if="$index == suggestion.outside_members.length - 2"> {{ 'and' | i18n }}</span></span>

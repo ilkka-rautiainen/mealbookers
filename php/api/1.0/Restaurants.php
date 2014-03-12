@@ -200,8 +200,8 @@ class RestaurantsAPI
         }
 
 
-        if ((!$creator_id = DB::inst()->getOne("SELECT creator_id FROM suggestions
-                WHERE id = $suggestionId LIMIT 1"))
+        if (!DB::inst()->getOne("SELECT creator_id FROM suggestions
+                WHERE id = $suggestionId LIMIT 1")
             || (!$suggestions_users_id = DB::inst()->getOne("SELECT id FROM suggestions_users
                 WHERE user_id = {$current_user->id} AND suggestion_id = $suggestionId")))
         {
