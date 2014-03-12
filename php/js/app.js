@@ -3,7 +3,7 @@
 
 // Declare app level module which depends on filters, and services
 angular.module('Mealbookers', [
-    'ngRoute',
+    'ngAnimate',
     'Mealbookers.filters',
     'Mealbookers.services',
     'Mealbookers.directives',
@@ -12,8 +12,8 @@ angular.module('Mealbookers', [
     'ui.router'
 ])
 
-.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-    
+.config(['$stateProvider', '$urlRouterProvider', '$uiViewScrollProvider', function($stateProvider, $urlRouterProvider, $uiViewScrollProvider) {
+    $uiViewScrollProvider.useAnchorScroll()
     $stateProvider
 
     .state('Navigation', {
