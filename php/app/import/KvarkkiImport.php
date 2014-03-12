@@ -35,8 +35,8 @@ class KvarkkiImport extends AmicaImport
         }
 
         if (count($processed_lines) != 5) {
-            Logger::warn(__METHOD__ . " Kvarkki opening days got " . count($processed_lines) . " lines"
-                . " instead of 5");
+            Logger::warn(__METHOD__ . " {$this->restaurant_id} opening days got "
+                . count($processed_lines) . " lines instead of 5");
             return;
         }
 

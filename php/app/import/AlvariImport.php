@@ -35,8 +35,8 @@ class AlvariImport extends AmicaImport
         }
 
         if (count($processed_lines) != 4) {
-            Logger::warn(__METHOD__ . " Alvari opening days got " . count($processed_lines) . " lines"
-                . " instead of 4");
+            Logger::warn(__METHOD__ . " {$this->restaurant_id} opening days got "
+                . count($processed_lines) . " lines instead of 4");
             return;
         }
 
