@@ -328,11 +328,6 @@ span.line-break {
     display: block;
 }
 
-/* This repairs blue border in modals */
-.modal-open .modal,.btn:focus{
-    outline: none !important;
-}
-
 .modal-body .nav-tabs li {
     cursor: pointer;
 }

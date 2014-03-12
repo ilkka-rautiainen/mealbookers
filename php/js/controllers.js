@@ -651,9 +651,6 @@ angular.module('Mealbookers.controllers', [])
     $("#suggestionModal .group").removeClass("group-selected");
     $("#suggestionModal .member").removeClass("member-selected");
     $("#suggestionModal").modal();
-    $('#suggestionModal').on('show.bs.modal', function () {
-        $(".container").addClass("modal-open");
-    });
     $('#suggestionModal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
