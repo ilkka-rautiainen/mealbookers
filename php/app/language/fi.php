@@ -15,15 +15,22 @@ $GLOBALS['language']['fi'] = array(
     'weekday_5' => 'Perjantaina',
     'weekday_6' => 'Lauantaina',
     'weekday_7' => 'Sunnuntaina',
+    'opening_hour_type_normal' => 'Avoinna',
+    'opening_hour_type_lunch' => 'Lounas',
+    'opening_hour_type_alacarte' => 'À la carte',
+    'opening_hour_type_breakfast' => 'Aamiainen',
     'in_otaniemi' => 'Otaniemessä',
+    'restaurant_closed_on' => 'Ravintola suljettu',
     'log_in' => 'Kirjaudu sisään',
     'email' => 'Sähköposti',
     'password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
     'forgot' => 'Unohditko salasanasi?',
+    'select_all' => 'Valitse kaikki',
     'and' => 'ja',
     'close' => 'Sulje',
     'cancel' => 'Peruuta',
+    'delete' => 'Poista',
     'save' => 'Tallenna',
     'saving' => 'Tallennetaan...',
     'register' => 'Rekisteröidy',
@@ -56,11 +63,18 @@ $GLOBALS['language']['fi'] = array(
     'group_add_member_success_invited_new' => 'Kutsu lähetetty',
     'group_add_member_success_joined_existing' => 'Jäsen liitetty ryhmään',
     'group_add_member_already_member' => 'Antamasi sähköpostiosoite kuuluu jo tähän ryhmään',
+    'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
+    'group_member_deleted_yourself' => 'Sinut poistettiin ryhmästä',
+    'group_member_deleted_yourself_group_removed' => 'Sinut poistettiin ryhmästä, koko ryhmä poistettiin viimeisen jäsenen poistuessa',
+    'group_create_new' => 'Luo ryhmä',
+    'group_name' => 'Ryhmän nimi',
+    'group_add_group_failed' => 'Ryhmän lisääminen epäonnistui',
+    'group_add_group_failed_invalid_name' => 'Ryhmän nimi ei ole kelvollinen',
     'suggest_eating_time' => 'Ehdota aikaa',
     'suggest' => 'Ehdota',
     'suggest_time' => 'Aika',
     'suggest_time_placeholder' => 'hh:mm',
-    'suggest_friends' => 'Ehdota kavereille',
+    'suggest_friends' => 'Ehdota kavereille:',
     'suggestion_save_error' => 'Virhe tallennettaessa ehdotusta',
     'suggestion_too_early' => 'Et voi luoda ehdotusta 5 min kauemmaksi menneisyyteen',
     'suggest_failed_to_send_invitation_email' => 'Kutsuviestien lähetys epäonnistui:',
@@ -126,7 +140,13 @@ $GLOBALS['language']['fi'] = array(
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',
         'mailer_body_invite_notification' => 
-            'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookerssissa.<br /><br />'
+            'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookersissa.<br /><br />'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_group_leave_notification' => '{deleter} poisti sinut ryhmästä {group_name}',
+        'mailer_body_group_leave_notification' => 
+            'Hei!<br /><br />{deleter} poisti sinut käyttäjäryhmästä {group_name} Mealbookersissa.<br /><br />'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

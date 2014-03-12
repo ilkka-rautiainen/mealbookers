@@ -18,7 +18,7 @@ class Mailer
         $this->phpMailer->Mailer = 'smtp';
         $this->phpMailer->SMTPSecure = Conf::inst()->get('mail.smtp_secure');
         $this->phpMailer->Host = Conf::inst()->get('mail.smtp_host');
-        $this->phpMailer->SMTPAuth = true;
+        $this->phpMailer->SMTPAuth = Conf::inst()->get('mail.smtp_auth');
         $this->phpMailer->Username = Conf::inst()->get('mail.smtp_username');
         $this->phpMailer->Password = Conf::inst()->get('mail.smtp_password');
     }

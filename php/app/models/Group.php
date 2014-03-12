@@ -11,11 +11,11 @@ class Group {
     {
         $result = DB::inst()->query("SELECT * FROM groups WHERE id = '" . ((int)$id) . "' LIMIT 1");
         if (!DB::inst()->getRowCount())
-            throw new Exception("Unable to find group with id $id");
+            throw new NotFoundException("Unable to find group with id $id");
         $row = DB::inst()->fetchAssoc($result);
         $this->populateFromRow($row);
         if (!$this->id)
-            throw new Exception("Error fetching group: id is null");
+            throw new NotFoundException("Error fetching group: id is null");
     }
 
     public function populateFromRow($row)
@@ -24,6 +24,18 @@ class Group {
         $this->name = $row['name'];
         $this->creator_id = $row['creator_id'];
         $this->members = array();
+    }
+
+    public function hasMembers()
+    {
+        DB::inst()->query("SELECT group_id FROM group_memberships WHERE group_id = {$this->id} LIMIT 1");
+
+        return (DB::inst()->getRowCount() > 0);
+    }
+
+    public function delete()
+    {
+        DB::inst()->query("DELETE FROM groups WHERE id = {$this->id}");
     }
 
     /**

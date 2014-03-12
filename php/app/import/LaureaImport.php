@@ -1,22 +1,63 @@
 <?php
 
-class AlvariImport extends AmicaImport
+class LaureaImport extends AmicaImport
 {
-	protected $restaurant_id = 1;
-	protected $url = "http://www.amica.fi/alvari";
+    protected $restaurant_id = 6;
+    protected $url = "http://www.amica.fi/laureaotaniemi";
+
+    public function __construct()
+    {
+        // Only finnish
+        $langs = array('fi' => $this->langs['fi']);
+        $this->langs = $langs;
+    }
+
+    /**
+     * Retrieves meal lines from source code
+     */
+    protected function getLines()
+    {
+        $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
+        if (!$p_list->length)
+            throw new ParseException("No <p> elements found in the menu");
+
+        $p_lines = array();
+        foreach ($p_list as $p) {
+            $html = pq($p)->html();
+            $p_lines[] = trim($html);
+        }
+
+        $lines = array();
+        foreach ($p_lines as $p_line) {
+            $lines_row = explode("<br>", $p_line);
+            $lines = array_merge($lines, $lines_row);
+        }
+        return $lines;
+    }
+
+    /**
+     * Formats the line breaks in a row
+     */
+    protected function formatLineBreaks($line_html)
+    {
+        return str_replace(array(","), array('<span class="line-break"></span>'), $line_html);
+    }
 
     protected function saveOpeningHours()
     {
         Logger::debug(__METHOD__ . " called");
         $p_list = pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_RegionMainContentInnerMiddle_RegionMainContentText_MainContentBottomTextArea_MainContentToolBox_OpeningHours p");
         
-        if (is_array($p_list))
-            $p = array_shift($p_list);
-        else
-            $p = $p_list;
+        $lines = array();
+        if (!$p_list instanceof Traversable) {
+            Logger::warn(__METHOD__ . " {$this->restaurant_id} opening hours no p list found");
+            return;
+        }
+        foreach ($p_list as $p) {
+            $html = trim(pq($p)->html());
+            $lines = array_merge($lines, explode("<br>", $html));
+        }
 
-        $html = trim($p->html());
-        $lines = explode("<br>", $html);
         $processed_lines = array();
         foreach ($lines as $line) {
             $line = trim(str_replace(array(
@@ -34,18 +75,19 @@ class AlvariImport extends AmicaImport
             Logger::debug(__METHOD__ . " got line: $line");
         }
 
-        if (count($processed_lines) != 4) {
+        if (count($processed_lines) != 5) {
             Logger::warn(__METHOD__ . " {$this->restaurant_id} opening days got "
-                . count($processed_lines) . " lines instead of 4");
+                . count($processed_lines) . " lines instead of 5");
             return;
         }
 
         $imploded = implode("|", $processed_lines);
 
         if (!preg_match("/ma[\s]*\\-[\s]*to[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
-            . "lounas[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
             . "pe[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
-            . "lounas[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])/i",
+            . "lounas\\|"
+            . "ma[\s]*\\-[\s]*to[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
+            . "pe[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])/i",
             $imploded,
             $matches))
         {
@@ -55,10 +97,10 @@ class AlvariImport extends AmicaImport
             Logger::debug(__METHOD__ . " lines matched");
             $mon_thu_start = str_replace(".", ":", $matches[1]);
             $mon_thu_end = str_replace(".", ":", $matches[3]);
-            $mon_thu_lunch_start = str_replace(".", ":", $matches[5]);
-            $mon_thu_lunch_end = str_replace(".", ":", $matches[7]);
-            $fri_start = str_replace(".", ":", $matches[9]);
-            $fri_end = str_replace(".", ":", $matches[11]);
+            $fri_start = str_replace(".", ":", $matches[5]);
+            $fri_end = str_replace(".", ":", $matches[7]);
+            $mon_thu_lunch_start = str_replace(".", ":", $matches[9]);
+            $mon_thu_lunch_end = str_replace(".", ":", $matches[11]);
             $fri_lunch_start = str_replace(".", ":", $matches[13]);
             $fri_lunch_end = str_replace(".", ":", $matches[15]);
 

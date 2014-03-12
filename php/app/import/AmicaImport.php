@@ -75,7 +75,8 @@ class AmicaImport extends Import
         $daterange = trim(pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_MainContentMenu_ctl00_HeadingMenu")->html());
         if (!$this->isValidDaterange($daterange))
             throw new ImportException("Wrong menu, date range was: $daterange");
-        
+
+        $this->saveOpeningHours();
 
         $id = $matches[1];
 
@@ -95,25 +96,24 @@ class AmicaImport extends Import
 
         foreach ($this->langs as $lang => $lang_config) {
             try {
+                Logger::debug(__METHOD__ . " start lang $lang");
                 $source = $this->fetchURL("http://www.amica.fi/Templates/RestaurantPage/RestaurantMenuPrintPage.aspx?id=$id&page=$id&bn=$lang&a=$menu_type&s=$menu_number");
 
-                // Get the meals
                 phpQuery::newDocument($source);
-
-                $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
-                if (!$p_list->length)
-                    throw new ParseException("No <p> elements found in the menu");
-
-                // Go through the menu
-                foreach ($p_list as $p) {
-                    $html = pq($p)->html();
-                    $this->processLine(trim($html), $lang);
+                
+                // Get lines and process them
+                $lines = $this->getLines();
+                foreach ($lines as $line) {
+                    $this->processLine($line, $lang);
                 }
+
                 $this->endDayAndSave(); // Save the last day which is open
             }
             catch (ImportException $e) {
                 DB::inst()->rollbackTransaction();
-                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine());
+                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
+                    . ", from:" . $e->getFile() . ":" . $e->getLine()
+                    . ", in restaurant: {$this->restaurant->name}");
                 $exception = $e;
             }
         }
@@ -125,11 +125,29 @@ class AmicaImport extends Import
     }
 
     /**
+     * Retrieves meal lines from source code
+     */
+    protected function getLines()
+    {
+        $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
+        if (!$p_list->length)
+            throw new ParseException("No <p> elements found in the menu");
+
+        $lines = array();
+        // Go through the menu
+        foreach ($p_list as $p) {
+            $html = pq($p)->html();
+            $lines[] = trim($html);
+        }
+        return $lines;
+    }
+
+    /**
      * Computes one line in the menu <p> list
      */
     private function processLine($line_html, $lang)
     {
-        Logger::debug(__METHOD__ . " processing line: $line_html");
+        Logger::trace(__METHOD__ . " processing line: $line_html");
 
         // Check for <br><strong> within the line
         $pos = mb_stripos($line_html, "<br><strong>");
@@ -149,7 +167,7 @@ class AmicaImport extends Import
         $line_html = str_replace(chr(194) . chr(160), ' ', $line_html); // replace &nbsp; in utf-8
         $line_html = trim($line_html);
 
-        Logger::debug(__METHOD__ . " line after replacements: $line_html");
+        Logger::trace(__METHOD__ . " line after replacements: $line_html");
 
         if (!$line_html) {
             Logger::debug(__METHOD__ . " empty line");
@@ -248,7 +266,7 @@ class AmicaImport extends Import
     /**
      * Formats the line breaks in a row
      */
-    private function formatLineBreaks($line_html)
+    protected function formatLineBreaks($line_html)
     {
         return str_replace(array("\r\n", "\n"), array('<span class="line-break"></span>', '<span class="line-break"></span>'), $line_html);
     }

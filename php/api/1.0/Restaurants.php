@@ -28,10 +28,14 @@ class RestaurantsAPI
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
+        $order = 0;
         foreach ($restaurants as $restaurant) {
             $restaurant->fetchMealList($lang);
             $restaurant->fetchSuggestionList($current_user);
-            $result[] = $restaurant->getAsArray();
+            $array = $restaurant->getAsArray();
+            $array['order'] = $order;
+            $result[] = $array;
+            $order++;
         }
         print json_encode($result);
 	}
@@ -131,10 +135,12 @@ class RestaurantsAPI
     /**
      * Accept a suggestion
      * @todo  Implement with real user id + auth
+     * @todo  Do age check instead of waiting for a TooOldException that isn't thrown
      */
     function acceptSuggestionFromEmail()
     {
         Logger::info(__METHOD__ . " POST /suggestion called");
+        Application::inst()->checkAuthentication();
         $hash = $_GET['hash'];
         if (strlen($hash) != 32)
             Application::inst()->exitWithHttpCode(400, "Invalid hash");
@@ -175,6 +181,7 @@ class RestaurantsAPI
     function manageSuggestionFromSite($restaurantId, $suggestionId)
     {
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
+        Application::inst()->checkAuthentication();
         
         $postData = Application::inst()->getPostData();
         $suggestionId = (int) $suggestionId;

@@ -15,15 +15,22 @@ $GLOBALS['language']['en'] = array(
     'weekday_5' => 'Friday',
     'weekday_6' => 'Saturday',
     'weekday_7' => 'Sunday',
+    'opening_hour_type_normal' => 'Open',
+    'opening_hour_type_lunch' => 'Lunch',
+    'opening_hour_type_alacarte' => 'À la carte',
+    'opening_hour_type_breakfast' => 'Breakfast',
     'in_otaniemi' => 'Otaniemi menu\'s on',
+    'restaurant_closed_on' => 'Restaurant closed on',
     'log_in' => 'Log in',
     'email' => 'Email',
     'password' => 'Password',
     'log_in_remember_me' => 'Remember me',
     'forgot' => 'Forgot your password?',
+    'select_all' => 'Select all',
     'and' => 'and',
     'close' => 'Close',
     'cancel' => 'Cancel',
+    'delete' => 'Delete',
     'save' => 'Save',
     'saving' => 'Saving...',
     'register' => 'Register',
@@ -56,11 +63,18 @@ $GLOBALS['language']['en'] = array(
     'group_add_member_success_invited_new' => 'Invitation sent',
     'group_add_member_success_joined_existing' => 'Member joined to the group',
     'group_add_member_already_member' => 'The given email address is already in the group',
+    'group_member_delete_failed' => 'Deleting the group member failed',
+    'group_member_deleted_yourself' => 'You were removed from the group',
+    'group_member_deleted_yourself_group_removed' => 'You were removed from the group, the whole group was removed as the last member quited',
+    'group_create_new' => 'New group',
+    'group_name' => 'Group name',
+    'group_add_group_failed' => 'Failed to add group',
+    'group_add_group_failed_invalid_name' => 'Invalid group name given',
     'suggest_eating_time' => 'Suggest eating time',
     'suggest' => 'Suggest',
     'suggest_time' => 'Time',
     'suggest_time_placeholder' => 'tt:mm',
-    'suggest_friends' => 'Suggest to friends',
+    'suggest_friends' => 'Suggest to friends:',
     'suggestion_save_error' => 'Error while saving the suggestion',
     'suggestion_too_early' => 'You cannot make a suggestion with a time more than 5 min ago',
     'suggest_failed_to_send_invitation_email' => 'Failed to send invitation email:',
@@ -127,6 +141,12 @@ $GLOBALS['language']['en'] = array(
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
         'mailer_body_invite_notification' => 
             'Hello!<br /><br />{inviter} joined you to group {group_name} at Mealbookers.<br /><br />'
+            . ' You can go to Mealbookers <a href="http://{server_hostname}/#/app/menu">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
+        'mailer_subject_group_leave_notification' => '{deleter} removed you from group {group_name}',
+        'mailer_body_group_leave_notification' => 
+            'Hello!<br /><br />{deleter} removed you from group {group_name} at Mealbookers.<br /><br />'
             . ' You can go to Mealbookers <a href="http://{server_hostname}/#/app/menu">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',

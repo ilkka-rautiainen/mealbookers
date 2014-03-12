@@ -51,6 +51,7 @@ class Application
         // 1: tsekkaa että isAuthenticated == true
         // 2: jos ei -> feilaa
         /*if ($faile_ehto_täyttyy) {
+            $this->exitWithHttpCode(403)
         }*/
     }
 
@@ -115,5 +116,26 @@ class Application
     public function getUniqueHash()
     {
         return md5(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
+    }
+
+    public function getWeekdayNumber()
+    {
+        return ((int)date("N")) - 1;
+    }
+
+    public function getDateForDay($which)
+    {
+        if ($which == 'today') {
+            return date("Y-m-d");
+        }
+        else if ($which == 'this_week_sunday') {
+            return date("Y-m-d", strtotime("next sunday", strtotime("yesterday")));
+        }
+        else if ($which == 'this_week_monday') {
+            return date("Y-m-d", strtotime("last monday", strtotime("tomorrow")));
+        }
+        else {
+            throw new Exception("Unimplemented for $which");
+        }
     }
 }

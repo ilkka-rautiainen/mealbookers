@@ -4,6 +4,10 @@ body {
     background-color: whitesmoke;
 }
 
+.well h3.name {
+    margin-top: -4px;
+}
+
 .starter-template {
     padding: 40px 15px;
     text-align: center;
@@ -23,10 +27,41 @@ body {
 
 .navbar {
     background-color: #D6E2FF;
+    border-width: 0 1px 3px 1px;
 }
 
 .navbar-nav {
     cursor: pointer;
+}
+
+.navbar-inverse {
+    border-color: #e6e6e6;
+}
+
+.navbar-toggle {
+    border-color: #eee !important;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: #999 !important;
+}
+
+.navbar-toggle:focus, .navbar-toggle:hover {
+    background-color: #eee !important;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+    color: #333;
+    background-color: transparent;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+    color: #333;
+    background-color: transparent;
+}
+
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color: #ededed;
 }
 
 @font-face
@@ -60,6 +95,7 @@ body {
     table-layout: fixed;
     border-spacing: 20px;
     margin: 0 -20px -20px 0;
+    min-height: 20px;
     width: 100%;
 }
 
@@ -148,6 +184,21 @@ body {
     font-family: OpenSansBold;
 }
 
+.restaurant .closed-message {
+    text-align: center;
+}
+
+.restaurant-thumbnail .opening-hours {
+    color: white;
+    font-size: 8pt;
+    text-align: right;
+}
+
+.tooltip-inner {
+    white-space: pre;
+    max-width: none;
+}
+
 .navbar-brand, .page-header {
     font-family: Aclonica;
 }
@@ -165,6 +216,12 @@ body {
 #suggestionModal input.suggest-time {
     /*display: inline-block;*/
     width: 95px;
+}
+
+#suggestionModal fieldset.well legend {
+    border-bottom: none;
+    width: auto;
+    margin-bottom: -15px;
 }
 
 #suggestionModal .group-container {
@@ -190,6 +247,7 @@ body {
     margin: 5px;
     border: 1px solid #e7e7e7;
     border-radius: 3px;
+    min-width: 40px;
     cursor: pointer;
 }
 
@@ -301,11 +359,6 @@ span.line-break {
     display: block;
 }
 
-/* This repairs blue border in modals */
-.modal-open .modal,.btn:focus{
-    outline: none !important;
-}
-
 .modal-body .nav-tabs li {
     cursor: pointer;
 }
@@ -332,8 +385,9 @@ span.line-break {
     cursor: pointer;
 }
 
-#groupSettingsModal .group .name {
-    margin-top: -4px;
+#groupSettingsModal .member .delete-confirm-button {
+    height: 25px;
+    padding-top: 2px;
 }
 
 .saving-icon {
