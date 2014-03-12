@@ -162,14 +162,46 @@ angular.module('Mealbookers.controllers', [])
     $scope.loadRestaurants = function() {
         var restaurants = Restaurants.query(null, function() {
             $scope.restaurants = restaurants;
-            $scope.restaurantRows = new Array(Math.ceil(restaurants.length / $rootScope.columns));
-            for (var i = 0; i < $scope.restaurantRows.length; i++) {
-                $scope.restaurantRows[i] = [];
-            }
-            for (var i = 0; i < restaurants.length; i++) {
-                $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push(restaurants[i]);
-            }
+            $scope.makeRestaurantGrid();
         });
+    };
+    $scope.makeRestaurantGrid = function() {
+        $scope.restaurantGrid = [];
+        for (var day = $scope.today; day <= 7; day++) {
+            $scope.restaurantGrid[day] = $scope.getRestaurantGrid(day);
+        }
+    };
+    $scope.getRestaurantGrid = function(day) {
+        var grid = [];
+
+        // Sort open first
+        $scope.restaurants.sort(function compareOpenFirst(a, b) {
+            if (a.openingHours[day].closed && !b.openingHours[day].closed)
+                return 1;
+            if (!a.openingHours[day].closed && b.openingHours[day].closed)
+                return -1;
+            if (a.order < b.order)
+                return -1;
+            if (a.order > b.order)
+                return 1;
+            return 0;
+        });
+
+        // Make the grid
+        for (var i = 0, row = 0, c = 0; i < $scope.restaurants.length; i++) {
+            if (typeof grid[row] != 'object')
+                grid[row] = [];
+
+            // if (day >= 6 && $scope.restaurants[i].openingHours[day].closed)
+            //     continue;
+
+            grid[row].push($scope.restaurants[i]);
+            c++;
+
+            if (c % $rootScope.columns == 0)
+                row++;
+        }
+        return grid;
     };
     $scope.loadRestaurants();
 
@@ -203,11 +235,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $rootScope.$watch('widthClass', function() {
-        $scope.restaurantRows = new Array(Math.ceil($scope.restaurants.length / $rootScope.columns));
-        for (var i = 0; i < $scope.restaurantRows.length; i++)
-            $scope.restaurantRows[i] = [];
-        for (var i = 0; i < $scope.restaurants.length; i++)
-            $scope.restaurantRows[Math.floor(i / $rootScope.columns)].push($scope.restaurants[i]);
+        $scope.makeRestaurantGrid();
     });
     
     /**

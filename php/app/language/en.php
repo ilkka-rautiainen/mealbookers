@@ -20,6 +20,7 @@ $GLOBALS['language']['en'] = array(
     'opening_hour_type_alacarte' => 'À la carte',
     'opening_hour_type_breakfast' => 'Breakfast',
     'in_otaniemi' => 'Otaniemi menu\'s on',
+    'restaurant_closed_on' => 'Restaurant closed on',
     'log_in' => 'Log in',
     'email' => 'Email',
     'password' => 'Password',

@@ -28,10 +28,14 @@ class RestaurantsAPI
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
+        $order = 0;
         foreach ($restaurants as $restaurant) {
             $restaurant->fetchMealList($lang);
             $restaurant->fetchSuggestionList($current_user);
-            $result[] = $restaurant->getAsArray();
+            $array = $restaurant->getAsArray();
+            $array['order'] = $order;
+            $result[] = $array;
+            $order++;
         }
         print json_encode($result);
 	}

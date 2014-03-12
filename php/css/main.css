@@ -153,6 +153,10 @@ body {
     font-family: OpenSansBold;
 }
 
+.restaurant .closed-message {
+    text-align: center;
+}
+
 .restaurant-thumbnail .opening-hours {
     color: white;
     font-size: 8pt;

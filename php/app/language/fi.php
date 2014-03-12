@@ -20,6 +20,7 @@ $GLOBALS['language']['fi'] = array(
     'opening_hour_type_alacarte' => 'À la carte',
     'opening_hour_type_breakfast' => 'Aamiainen',
     'in_otaniemi' => 'Otaniemessä',
+    'restaurant_closed_on' => 'Ravintola suljettu',
     'log_in' => 'Kirjaudu sisään',
     'email' => 'Sähköposti',
     'password' => 'Salasana',

@@ -1,17 +1,17 @@
-<div class="col-md-3 col-sm-6 restaurant" ng-hide="weekDay >= 6 && restaurant.openingHours[weekDay].closed">
+<div class="col-md-3 col-sm-6 restaurant">
     <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
         <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
-        <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}">
+        <div class="suggestion" ng-click="openSuggestion(restaurant)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="restaurant.openingHours[weekDay].closed">
             <i class="glyphicon glyphicon-plus"></i>
         </div>
         <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
             <span class="opening-hour-tooltip" title="{{ restaurant.openingHours[weekDay].tooltip }}">{{ restaurant.openingHours[weekDay].lunch }}</span>
         </div>
-        <div ng-show="restaurant.openingHours[weekDay].closed">
-            Kiinni
+        <div ng-show="restaurant.openingHours[weekDay].closed" class="closed-message">
+            {{ 'restaurant_closed_on' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
         </div>
         <span class="chrome-fix-line">&nbsp;</span>
-        <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length">
+        <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length" ng-hide="restaurant.openingHours[weekDay].closed">
             <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
                 <span class="suggestion-time">{{ suggestion.time }}</span>
                 <span ng-repeat="member in suggestion.members" ng-class="{'suggestion-creator': suggestion.creator.id == member.id}" class="suggestion-member" title="{{ member.name }}"> {{ member.initials }}<span ng-if="$index < suggestion.members.length - 2">,</span><span ng-if="$index == suggestion.members.length - 2"> {{ 'and' | i18n }}</span></span>
@@ -28,7 +28,7 @@
             </div>
             <hr class="featurette-divider meal-divider">
         </div>
-        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group">
+        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group" ng-hide="restaurant.openingHours[weekDay].closed">
             <span ng-if="meal.section" class="meal-section">{{ meal.section | i18n }}</span>
             <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
             <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
