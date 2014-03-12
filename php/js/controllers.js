@@ -61,34 +61,21 @@ angular.module('Mealbookers.controllers', [])
 
     // Changes day
     $scope.changeDay = function(day) {
-        $scope.weekDay = day;
-        var search = $location.search();
-        search.day = day;
-        $location.search(search);
+        $state.go("Navigation.Menu", {day: day});
     };
 
     $scope.today = ((new Date().getDay() + 6) % 7) + 1;
     $scope.tomorrow = $scope.today + 1;
-    $scope.weekDayChangeProcess = false;
     $scope.restaurantsEmptied = false;
     $scope.maxDay = 7;
     $scope.hasData = true;
-    $scope.weekDay;
+    $rootScope.weekDay;
 
     // Make remaining days array for navbar
     $scope.remainingDays = [];
     for (var i = $scope.today + 2; i <= $scope.maxDay; i++) {
         $scope.remainingDays.push(i);
     }
-
-    // Listens for weekday changes together with changeDay() function
-    $scope.$watch(function() {
-        return $location.search().day;
-    }, function (newValue) {
-        if (newValue == undefined || parseInt(newValue) < $scope.today || parseInt(newValue) > $scope.maxDay)
-            return $scope.changeDay($scope.today);
-        $scope.weekDay = parseInt(newValue);
-    });
 
     // Makes navbar hide when menu link clicked in xs-devices
     $(".navbar").on("click", "a", null, function () {
@@ -136,7 +123,9 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, $stateParams) {
+
+    $rootScope.weekDay = $stateParams.day;
 
     $rootScope.title = "Menu";
     $scope.restaurants = [];
@@ -682,7 +671,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     var validateSuggestForm = function() {
-        if ($scope.weekDay <= $scope.today) {
+        if ($rootScope.weekDay <= $scope.today) {
             var timeParts = $scope.suggestTime.split(":");
             var suggestionDate = new Date();
             suggestionDate.setHours(timeParts[0]);
@@ -711,7 +700,7 @@ angular.module('Mealbookers.controllers', [])
 
         var response = Suggestions.post({
             restaurantId: $scope.suggestRestaurant.id,
-            day: $scope.weekDay - 1,
+            day: $rootScope.weekDay - 1,
             time: $scope.suggestTime,
             members: members
         }, function() {

@@ -15,14 +15,14 @@ describe('Mealbookers', function() {
   });
 
 
-  it('should automatically redirect to /app/menu when location hash/fragment is empty', function() {
-    expect(browser().location().url()).toContain('/app/menu');
+  it('should automatically redirect to /menu when location hash/fragment is empty', function() {
+    expect(browser().location().url()).toContain('/menu');
   });
 
 
   describe('menu', function() {
     beforeEach(function() {
-      browser().navigateTo('#/app/menu');
+      browser().navigateTo('#/menu');
     });
 
     it('should render restaurant list', function() {

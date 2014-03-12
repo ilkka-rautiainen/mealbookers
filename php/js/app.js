@@ -18,7 +18,7 @@ angular.module('Mealbookers', [
 
     .state('Navigation', {
         abstract: true,
-        url: "/app",
+        url: "/menu",
         templateUrl: "partials/Navigation.html",
         controller: 'NavigationController',
         resolve: {
@@ -27,7 +27,7 @@ angular.module('Mealbookers', [
     })
     
     .state('Navigation.Menu', {
-        url: "/menu",
+        url: "/:day",
         templateUrl: "partials/Menu.html",
         controller: 'MenuController'
     })
@@ -56,7 +56,7 @@ angular.module('Mealbookers', [
         controller: 'AcceptSuggestionController'
     })
 
-    $urlRouterProvider.otherwise("/app/menu");
+    $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
 .run(['$rootScope', '$window', '$http', function($rootScope, $window, $http) {

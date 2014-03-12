@@ -101,53 +101,53 @@ $GLOBALS['language']['fi'] = array(
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
             . ' <a href="http://{server_hostname}/#/app/suggestion/accept?hash={hash}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
-            . ' <a href="http://{server_hostname}/#/app/menu">tästä</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <a href="http://{server_hostname}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} on hyväksynyt ehdotuksesi',
         'mailer_body_suggestion_accepted_creator' => 
             'Hei!<br /><br />{accepter} on hyväksynyt ehdotuksesi mennä {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} tulee kanssasi syömään',
         'mailer_body_suggestion_accepted_other' => 
             'Hei!<br /><br />{accepter} on tulossa kanssasi {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} ei pääsekään kanssasi syömään',
         'mailer_body_suggestion_left_alone' => 
             'Hei!<br /><br />{canceler} ei pääsekään kanssasi {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} perui ehdotuksen',
         'mailer_body_suggestion_deleted' => 
             'Hei!<br /><br />{canceler} peruikin ehdotuksensa mennä {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/app/menu?day={day}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite' => '{inviter} kutsuu sinut Mealbookersiin',
         'mailer_body_invite' => 
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/app/menu/register?invite={hash}">tästä</a>.'
+            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/register?invite={hash}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',
         'mailer_body_invite_notification' => 
             'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookersissa.<br /><br />'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_group_leave_notification' => '{deleter} poisti sinut ryhmästä {group_name}',
         'mailer_body_group_leave_notification' => 
             'Hei!<br /><br />{deleter} poisti sinut käyttäjäryhmästä {group_name} Mealbookersissa.<br /><br />'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}/#/app/menu">tästä</a>.'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
     ),
