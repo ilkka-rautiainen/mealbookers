@@ -58,7 +58,7 @@ class Puu2Import extends AmicaImport
             Logger::debug(__METHOD__ . " lines didn't match regex");
         }
         else {
-            Logger::debug(__METHOD__ . " lines matched: " . print_r($matches, true));
+            Logger::debug(__METHOD__ . " lines matched");
             $mon_fri_start = str_replace(".", ":", $matches[1]);
             $mon_fri_end = str_replace(".", ":", $matches[3]);
             $mon_fri_lunch_start = str_replace(".", ":", $matches[5]);
