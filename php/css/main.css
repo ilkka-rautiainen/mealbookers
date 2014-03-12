@@ -314,6 +314,7 @@ body {
     margin-right: 17px;
     padding-right: 25px;
     cursor: pointer;
+    overflow-y: hidden;
 }
 
 .main-alert.xs {
