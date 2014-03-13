@@ -67,14 +67,14 @@ class Suggestion {
     public function getOutsideMembers(User $viewer)
     {
         $outside_members = array();
-        $result = DB::inst()->query("SELECT users.* FROM users
-            INNER JOIN suggestions_users ON users.id = suggestions_users.user_id
-            INNER JOIN group_memberships ON group_memberships.user_id = users.id
-            WHERE suggestions_users.suggestion_id = {$this->id} AND suggestions_users.accepted = 1 AND
-            group_memberships.group_id NOT IN (
-                SELECT group_id FROM group_memberships WHERE user_id = {$viewer->id}
-            )
-            ORDER BY suggestions_users.accepted_timestamp ASC");
+        $result = DB::inst()->query("SELECT users.* FROM suggestions_users
+        INNER JOIN users ON users.id = suggestions_users.user_id
+        WHERE suggestion_id = {$this->id} AND
+            NOT EXISTS(
+                SELECT * FROM group_memberships WHERE group_id IN (
+                    SELECT group_id FROM group_memberships WHERE user_id = {$viewer->id}
+                ) AND user_id = users.id
+            )");
 
         while ($outside_member_row = DB::inst()->fetchAssoc($result)) {
             $outside_member = new User();
