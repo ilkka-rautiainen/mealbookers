@@ -36,6 +36,7 @@ class Group {
     public function delete()
     {
         DB::inst()->query("DELETE FROM groups WHERE id = {$this->id}");
+        EventLog::inst()->add('group', $this->id);
     }
 
     /**

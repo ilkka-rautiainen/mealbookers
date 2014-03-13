@@ -47,6 +47,7 @@ class SuggestionUser {
             DB::inst()->query("UPDATE suggestions_users SET accepted = {$this->accepted}
                 WHERE id = {$this->id}");
         }
+        EventLog::inst()->add('suggestion', $this->suggestion_id);
     }
 
     public function cancel()
@@ -54,5 +55,6 @@ class SuggestionUser {
         $this->accepted = 0;
         DB::inst()->query("UPDATE suggestions_users SET accepted = {$this->accepted}
             WHERE id = {$this->id}");
+        EventLog::inst()->add('suggestion', $this->suggestion_id);
     }
 }

@@ -21,7 +21,7 @@ $GLOBALS['config'] = array(
 	        'debug',
 	        'trace',
 		),
-		'level' => 'debug',
+		'level' => 'trace',
 		'file' => 'mealbookers.log',
 	),
     /**
@@ -50,6 +50,7 @@ $GLOBALS['config'] = array(
         'suggestion_cancelable_time' => 30 * 60, // Time (in past) for suggestion to be cancelable/acceptable
         'suggestion_create_in_past_time' => 5 * 60, // How long in past suggestion can be created
         'backend_threshold' => 60, // How much backend permits over the limit
+        'force_ui_refresh' => 60 * 15, // If ui hasn't updated within this time, refresh is forced
     ),
 );
 

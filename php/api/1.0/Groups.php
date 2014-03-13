@@ -32,9 +32,11 @@ class GroupAPI
 
         DB::inst()->query("INSERT INTO groups (name, creator_id)
             VALUES ('" . DB::inst()->quote($data['name']) . "', {$current_user->id})");
+        $group_id = DB::inst()->getInsertId();
+        EventLog::inst()->add('group', $group_id);
 
         $group = new Group();
-        $group->fetch(DB::inst()->getInsertId());
+        $group->fetch($group_id);
         $current_user->joinGroup($group);
 
         print json_encode(array(
@@ -81,6 +83,7 @@ class GroupAPI
 
             DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
                 WHERE id = $groupId");
+            EventLog::inst()->add('group', $groupId);
 
             print json_encode(array(
                 'status' => 'ok',
@@ -152,6 +155,7 @@ class GroupAPI
             }
             // Invite new member
             else {
+                
                 if (!$current_user->inviteNewMember($email_address, $group)) {
                     throw new ApiException('failed');
                 }

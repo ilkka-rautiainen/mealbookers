@@ -78,8 +78,10 @@ class RestaurantsAPI
             '$datetime',
             $restaurantId
         )");
+        $suggestion_id = DB::inst()->getInsertId();
+        
         $suggestion = new Suggestion();
-        $suggestion->fetch(DB::inst()->getInsertId());
+        $suggestion->fetch($suggestion_id);
 
         // Mockup current user
         $current_user = new User();
@@ -113,6 +115,8 @@ class RestaurantsAPI
                 }
             }
         }
+        
+        EventLog::inst()->add('suggestion', $suggestion_id);
 
         if (count($failed_to_send_invitation_email)) {
             $response = array(

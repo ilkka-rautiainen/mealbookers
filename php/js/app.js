@@ -146,22 +146,53 @@ angular.module('Mealbookers', [
         }
     };
 
-    $rootScope.refreshCurrentUser = function(done, liveView) {
-        $http.get('api/1.0/user').success(function(data) {
-            console.log("Current user refreshed");
-            for (var i in data) {
-                $rootScope.currentUser[i] = data[i];    
-            }
-            $rootScope.updateGroupsWithMe();
-            refreshSuggestions();
+    $rootScope.lastTimestamps = {
+        currentUser: 0,
+        suggestions: 0
+    };
 
-            if (typeof done == 'function') {
-                done();
+    /**
+     * Reloads current user
+     */
+    $rootScope.refreshCurrentUser = function(done, liveView) {
+        if (liveView) {
+            console.log("Fetching live view with timestamp: " + $rootScope.lastTimestamps.currentUser.toString());
+            var params = {
+                after: $rootScope.lastTimestamps.currentUser
+            };
+        }
+        else {
+            var params = {};
+        }
+        $http.get('api/1.0/user', {
+            params: params
+        }).success(function(data) {
+            if (typeof data.status == 'string' && data.status == 'up_to_date') {
+                console.log("Current user up to date");
             }
-        })
+            else {
+                console.log("Current user updated");
+                for (var i in data) {
+                    $rootScope.currentUser[i] = data[i];    
+                }
+                $rootScope.updateGroupsWithMe();
+            }
+            $rootScope.lastTimestamps.currentUser = data.timestamp;
+            $rootScope.refreshSuggestions(done, liveView);
+        });
+    };
+
+    $rootScope.refreshSuggestions = function(done, liveView) {
+        // $http.get('api/1.0/restaurants/suggestions').success(function(data) {
+
+        // });
+        if (typeof done == 'function') {
+            done();
+        }
     };
 
     $rootScope.liveViewUpdate = function() {
+        console.log("Live view update");
         $timeout.cancel($rootScope.liveViewTimeout);
         $rootScope.refreshCurrentUser(function() {
             $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
@@ -179,7 +210,7 @@ angular.module('Mealbookers', [
             if (typeof done == 'function') {
                 done();
             }
-        }, true);
+        });
     };
 
     $rootScope.startLiveView = function() {
@@ -188,10 +219,6 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.startLiveView();
-
-    var refreshSuggestions = function() {
-        // console.log("refreshSuggestions unimplemented...");
-    };
 
     $rootScope.getWeekDayText = function(day) {
         if (day < 1 || day > 7) {

@@ -26,6 +26,7 @@ class Suggestion {
     private function deleteAndNotify(User $canceler)
     {
         $this->notifyDeletionToAll($canceler);
+        EventLog::inst()->add('suggestion', $this->id);
         DB::inst()->query("DELETE FROM suggestions WHERE id = {$this->id}");
     }
 

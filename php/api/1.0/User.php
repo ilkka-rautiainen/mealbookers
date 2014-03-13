@@ -18,6 +18,15 @@ class UserAPI
 
         $current_user = new User();
         $current_user->fetch(1);
+
+        // Live view: up to date
+        if (isset($_GET['after']) && !$current_user->hasUpdatesAfter((int)$_GET['after'])) {
+            return print json_encode(array(
+                'status' => 'up_to_date',
+                'timestamp' => time(),
+            ));
+        }
+
         $user = $current_user->getAsArray();
         $current_user_array = $user;
 
@@ -28,6 +37,7 @@ class UserAPI
         $user['notification_settings'] = $current_user->getNotificationSettingsAsArray();
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
+        $user['timestamp'] = time();
 
         print json_encode($user);
     }
@@ -190,7 +200,7 @@ class UserAPI
             */
             //INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('simo.hsv@suomi24.fi', 'sakjdölsaköldsa', 'Simo', 'Haakana', 'fi', '234');
             $result = DB::inst()->query("INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('".$data["email"]."', '".sha1($data["password"])."', '".$data["firstName"]."', '".$data["lastName"]."', 'fi', '".time()."')");
-
+            EventLog::inst()->add('user', $this->id);
             echo json_encode(array('response' => "ok" ));
         
         }

@@ -130,4 +130,9 @@ abstract class Import
 
         return $result;
     }
+
+    protected function postImport()
+    {
+        EventLog::inst()->add('restaurant', $this->restaurant_id);
+    }
 }

@@ -54,6 +54,7 @@ class User
      */
     public function delete()
     {
+        EventLog::inst()->add('user', $this->id);
         DB::inst()->query("DELETE FROM users WHERE id = {$this->id}");
     }
 
@@ -84,6 +85,33 @@ class User
             'name' => $this->getName(),
             'initials' => $this->initials,
         );
+    }
+
+    /**
+     * This checks if user has something changed since the given timstamp.
+     * Used for minimizing data trafic to frontend live view.
+     */
+    public function hasUpdatesAfter($timestamp)
+    {
+        Logger::debug(__METHOD__ . " user {$this->id} after $timestamp");
+
+        $timestamp = (int)$timestamp;
+
+        // The first call
+        if ($timestamp == 0)
+            return true;
+
+        // Older than a limit
+        if ($timestamp < time() - Conf::inst()->get('limits.force_ui_refresh'))
+            return true;
+
+        // There's some event in the log
+        DB::inst()->query("SELECT time FROM event_log WHERE
+            time >= $timestamp AND (user_id = {$this->id} OR user_id IS NULL) LIMIT 1");
+        if (DB::inst()->getRowCount())
+            return true;
+
+        return false;
     }
 
     /**
@@ -304,14 +332,16 @@ class User
     {
         Logger::info(__METHOD__ . " user {$this->id} to group {$group->id}");
 
-        DB::inst()->query("INSERT INTO group_memberships (user_id, group_id)
-            VALUES ({$this->id}, {$group->id})");
+        DB::inst()->query("INSERT INTO group_memberships (user_id, group_id, joined)
+            VALUES ({$this->id}, {$group->id}, " . time() . ")");
+        EventLog::inst()->add('group', $group->id);
     }
 
     public function leaveGroup(Group $group)
     {
         Logger::info(__METHOD__ . " user {$this->id} from group {$group->id}");
 
+        EventLog::inst()->add('group', $group->id);
         DB::inst()->query("DELETE FROM group_memberships
             WHERE user_id = {$this->id} AND group_id = {$group->id}");
     }

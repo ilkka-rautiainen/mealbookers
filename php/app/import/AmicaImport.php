@@ -123,6 +123,7 @@ class AmicaImport extends Import
             throw $exception;
 
         Logger::note(__METHOD__ . " succeeded");
+        $this->postImport();
     }
 
     /**
