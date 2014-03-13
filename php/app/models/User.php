@@ -319,7 +319,8 @@ class User
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
         if (!$this->notify_suggestion_received) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $creator = new User();
@@ -362,7 +363,8 @@ class User
         Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
             . " {$suggestion->id} accepted");
         if (!$this->notify_suggestion_accepted) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $restaurant = new Restaurant();
@@ -403,7 +405,8 @@ class User
         Logger::info(__METHOD__ . " notifying user {$this->id} for having"
             . " been left alone for suggestion {$suggestion->id}");
         if (!$this->notify_suggestion_left_alone) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $restaurant = new Restaurant();
@@ -442,7 +445,8 @@ class User
         Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
             . " suggestion {$suggestion->id}");
         if (!$this->notify_suggestion_deleted) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $subject = str_replace(
@@ -529,7 +533,8 @@ class User
         Logger::debug(__METHOD__ . " notifying user {$this->id} for being joined"
             . " as member to group {$group->id} by user {$inviter->id}");
         if (!$this->notify_group_memberships) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $subject = str_replace(
@@ -564,7 +569,8 @@ class User
     {
         Logger::debug(__METHOD__ . " notifying user {$this->id} for being removed from group {$group->id}");
         if (!$this->notify_group_memberships) {
-            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+            return true;
         }
 
         $subject = str_replace(

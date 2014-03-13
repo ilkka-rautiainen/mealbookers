@@ -356,7 +356,8 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'ok') {
                 $scope.resetPassword();
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-success', $filter('i18n')('account_save_succeeded'));
+                $rootScope.alert('alert-success', $filter('i18n')('account_save_succeeded'));
+                $("#accountSettingsModal").modal('hide');
             }
             else {
                 console.error("Unknown response");

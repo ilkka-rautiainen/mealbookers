@@ -32,6 +32,7 @@ $GLOBALS['language']['fi'] = array(
     'cancel' => 'Peruuta',
     'delete' => 'Poista',
     'save' => 'Tallenna',
+    'save_and_close' => 'Tallenna ja sulje',
     'register' => 'Rekisteröidy',
     'register_full_name' => 'Koko nimi',
     'register_first_name' => 'Etunimi',

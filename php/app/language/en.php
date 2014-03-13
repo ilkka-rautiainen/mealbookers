@@ -32,6 +32,7 @@ $GLOBALS['language']['en'] = array(
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'save' => 'Save',
+    'save_and_close' => 'Save and close',
     'register' => 'Register',
     'register_full_name' => 'Full name',
     'register_first_name' => 'First name',
