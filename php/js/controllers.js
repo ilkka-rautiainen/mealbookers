@@ -476,11 +476,12 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'))
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
             }
         }).error(function(response) {
             group.addMemberSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'))
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
+            $rootScope.refreshCurrentUser();
         });
     };
 
@@ -511,7 +512,8 @@ angular.module('Mealbookers.controllers', [])
             }
         }).error(function(response) {
             group.editNameSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
+            $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'));
+            $rootScope.refreshCurrentUser();
         });
     }
 
@@ -561,6 +563,7 @@ angular.module('Mealbookers.controllers', [])
         }).error(function(response) {
             member.deleteSaveProcess = false;
             $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
+            $rootScope.refreshCurrentUser();
         });
     }
 
