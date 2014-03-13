@@ -105,7 +105,7 @@ $GLOBALS['language']['en'] = array(
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
-            . ' <a href="http://{server_hostname}/#/app/suggestion/accept?hash={hash}">here</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept?hash={hash}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
             . ' <a href="http://{server_hostname}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',

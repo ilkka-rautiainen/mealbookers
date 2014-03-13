@@ -8,43 +8,28 @@ angular.module('Mealbookers.controllers', [])
 .controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$location', function($http, $filter, $rootScope, $state, $location) {
     if (typeof $location.search().hash != 'undefined') {
         $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
-            if (typeof result == 'object' && result.status == 'deleted') {
-                $rootScope.stateData = {
-                    message: {
-                        message: $rootScope.localization['suggestion_been_deleted'],
-                        type: 'alert-warning'
-                    }
-                };
+            if (typeof result != 'object' || result.status == undefined) {
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
             }
-            else if (typeof result == 'object' && result.status == 'too_old') {
-                $rootScope.stateData = {
-                    day: result.weekDay + 1,
-                    message: {
-                        message: $rootScope.localization['suggestion_accept_gone'],
-                        type: 'alert-info'
-                    }
-                };
+            if (result.status == 'deleted') {
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-warning', $filter('i18n')('suggestion_been_deleted'));
             }
-            else if (typeof result == 'object' && result.status == 'ok') {
-                $rootScope.stateData = {
-                    day: result.weekDay + 1,
-                    message: {
-                        message: $rootScope.localization['suggestion_accept_succeeded']
-                            + ', ' + result.restaurant + ', '
-                            + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay + 1)) + ' ' + result.time,
-                        type: 'alert-success'
-                    }
-                };
+            else if (result.status == 'too_old') {
+                $state.go("Navigation.Menu", {day: result.weekDay});
+                $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
+            }
+            else if (result.status == 'ok') {
+                $state.go("Navigation.Menu", {day: result.weekDay});
+                $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
+                    + ', ' + result.restaurant + ', '
+                    + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay)) + ' ' + result.time);
             }
             else {
-                $rootScope.stateData = {
-                    message: {
-                        message: $rootScope.localization['suggestion_accept_failed'],
-                        type: 'alert-danger'
-                    }
-                };
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
             }
-            $state.go("Navigation.Menu");
         });
     }
 }])
@@ -126,6 +111,9 @@ angular.module('Mealbookers.controllers', [])
 .controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, $stateParams) {
 
     $rootScope.weekDay = $stateParams.day;
+    if (!$rootScope.weekDay || $rootScope.weekDay < $scope.today || $rootScope.weekDay > 7) {
+        $state.go("Navigation.Menu", {day: $scope.today});
+    }
 
     $rootScope.title = "Menu";
     $scope.restaurants = [];
@@ -136,14 +124,6 @@ angular.module('Mealbookers.controllers', [])
         type: '',
         message: ''
     };
-
-    // Show information passed from previous state
-    if ($rootScope.stateData !== undefined && $rootScope.stateData.message !== undefined) {
-        $rootScope.alert($rootScope.stateData.message.type, $rootScope.stateData.message.message);
-    }
-    if ($rootScope.stateData !== undefined && $rootScope.stateData.day !== undefined) {
-        $scope.changeDay($rootScope.stateData.day);
-    }
 
     /**
      * Load restaurants

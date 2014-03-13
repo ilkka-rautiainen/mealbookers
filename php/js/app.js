@@ -75,9 +75,9 @@ angular.module('Mealbookers', [
     $rootScope.config = {
         alertTimeouts: {
             'alert-danger': 30000,
-            'alert-warning': 15000,
+            'alert-warning': 10000,
             'alert-info': 4000,
-            'alert-success': 3000
+            'alert-success': 4000
         }
     };
 
