@@ -93,7 +93,7 @@ class Suggestion {
      */
     public function fetchAcceptedMembers(User $viewer)
     {
-        Logger::debug(__METHOD__ . " fetching members of suggestion {$this->id}");
+        Logger::debug(__METHOD__ . " fetching members of suggestion {$this->id} for viewer {$viewer->id}");
         $members_as_arrays = $outside_members_as_arrays = array();
 
         // Get the user's that are invited to the suggestion outside of the viewer's groups

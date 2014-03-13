@@ -96,6 +96,7 @@ class User
     {
         Logger::debug(__METHOD__ . " user {$this->id} and outside_members amount " . count($outside_members));
         $groupmates = $this->getGroupmates();
+        array_push($groupmates, $this);
 
         $names = array();
         foreach ($groupmates as $member) {
