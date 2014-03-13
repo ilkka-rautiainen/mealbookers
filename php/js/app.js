@@ -79,7 +79,7 @@ angular.module('Mealbookers', [
             'alert-info': 4000,
             'alert-success': 4000
         },
-        liveViewInterval: 3000
+        liveViewInterval: 15000
     };
 
     var alertTimeout = null;
