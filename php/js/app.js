@@ -146,19 +146,13 @@ angular.module('Mealbookers', [
         }
     };
 
-    $rootScope.lastTimestamps = {
-        currentUser: 0,
-        suggestions: 0
-    };
-
     /**
      * Reloads current user
      */
     $rootScope.refreshCurrentUser = function(done, liveView) {
         if (liveView) {
-            console.log("Fetching live view with timestamp: " + $rootScope.lastTimestamps.currentUser.toString());
             var params = {
-                after: $rootScope.lastTimestamps.currentUser
+                after: $rootScope.currentUser.timestamp
             };
         }
         else {
@@ -168,31 +162,59 @@ angular.module('Mealbookers', [
             params: params
         }).success(function(data) {
             if (typeof data.status == 'string' && data.status == 'up_to_date') {
-                console.log("Current user up to date");
+
+                if (typeof done == 'function') {
+                    done();
+                }
             }
             else {
-                console.log("Current user updated");
+                console.log("Current refreshed");
                 for (var i in data) {
                     $rootScope.currentUser[i] = data[i];    
                 }
                 $rootScope.updateGroupsWithMe();
+                $rootScope.refreshSuggestions(done);
             }
-            $rootScope.lastTimestamps.currentUser = data.timestamp;
-            $rootScope.refreshSuggestions(done, liveView);
         });
     };
 
-    $rootScope.refreshSuggestions = function(done, liveView) {
-        // $http.get('api/1.0/restaurants/suggestions').success(function(data) {
+    $rootScope.refreshSuggestions = function(done) {
+        $http.get('api/1.0/restaurants/suggestions').success(function(data) {
 
-        // });
-        if (typeof done == 'function') {
-            done();
-        }
+            if (typeof $rootScope.restaurants != 'object') {
+                return console.log("$rootScope.restaurants not an object. Aborting.");
+            }
+
+            for (var i = 0; i < $rootScope.restaurants.length; i++) {
+                $rootScope.restaurants[i].suggestionList = [];
+            }
+
+            for (var restaurantId in data) {
+                // Find restaurant with that id
+                var restaurantIndex = -1;
+                for (var i = 0; i < $rootScope.restaurants.length; i++) {
+                    if ($rootScope.restaurants[i].id == restaurantId) {
+                        restaurantIndex = i;
+                        break;
+                    }
+                }
+                if (restaurantIndex == -1) {
+                    console.log("restaurant " + restaurantId.toString() + " not found in restaurant array, skipping");
+                    continue;
+                }
+
+                $rootScope.restaurants[restaurantIndex].suggestionList = data[restaurantId];
+            }
+
+            console.log("Suggestions refreshed");
+            if (typeof done == 'function') {
+                done();
+            }
+        });
     };
 
     $rootScope.liveViewUpdate = function() {
-        console.log("Live view update");
+        // console.log("Live view update");
         $timeout.cancel($rootScope.liveViewTimeout);
         $rootScope.refreshCurrentUser(function() {
             $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);

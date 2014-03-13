@@ -1,6 +1,7 @@
 <?php
 
 Flight::route('GET /restaurants', array('RestaurantsAPI', 'getRestaurants'));
+Flight::route('GET /restaurants/suggestions', array('RestaurantsAPI', 'getSuggestions'));
 Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'createSuggestion'));
 Flight::route('POST /restaurants/@restaurantId/suggestions/@suggestionId', array('RestaurantsAPI', 'manageSuggestionFromSite'));
 Flight::route('POST /suggestion', array('RestaurantsAPI', 'acceptSuggestionFromEmail'));
@@ -39,6 +40,20 @@ class RestaurantsAPI
         }
         print json_encode($result);
 	}
+
+    /**
+     * @todo  Implement with real user id + auth
+     */
+    function getSuggestions()
+    {
+        Logger::debug(__METHOD__ . " GET /restaurants/suggestions called");
+
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        $suggestions = RestaurantFactory::inst()->getSuggestions($current_user);
+        print json_encode($suggestions);
+    }
 
     /**
      * Make or update a suggestion
@@ -115,7 +130,7 @@ class RestaurantsAPI
                 }
             }
         }
-        
+
         EventLog::inst()->add('suggestion', $suggestion_id);
 
         if (count($failed_to_send_invitation_email)) {

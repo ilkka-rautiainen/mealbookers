@@ -116,7 +116,7 @@ angular.module('Mealbookers.controllers', [])
     }
 
     $rootScope.title = "Menu";
-    $scope.restaurants = [];
+    $rootScope.restaurants = [];
     $scope.restaurantRows = [];
     $scope.suggestTime = "";
     $scope.suggestRestaurant;
@@ -130,7 +130,7 @@ angular.module('Mealbookers.controllers', [])
      */
     $scope.loadRestaurants = function() {
         var restaurants = Restaurants.query(null, function() {
-            $scope.restaurants = restaurants;
+            $rootScope.restaurants = restaurants;
             $scope.makeRestaurantGrid();
         });
     };
@@ -144,7 +144,7 @@ angular.module('Mealbookers.controllers', [])
         var grid = [];
 
         // Sort open first
-        $scope.restaurants.sort(function compareOpenFirst(a, b) {
+        $rootScope.restaurants.sort(function compareOpenFirst(a, b) {
             if (a.openingHours[day].closed && !b.openingHours[day].closed)
                 return 1;
             if (!a.openingHours[day].closed && b.openingHours[day].closed)
@@ -157,14 +157,14 @@ angular.module('Mealbookers.controllers', [])
         });
 
         // Make the grid
-        for (var i = 0, row = 0, c = 0; i < $scope.restaurants.length; i++) {
+        for (var i = 0, row = 0, c = 0; i < $rootScope.restaurants.length; i++) {
             if (typeof grid[row] != 'object')
                 grid[row] = [];
 
-            // if (day >= 6 && $scope.restaurants[i].openingHours[day].closed)
+            // if (day >= 6 && $rootScope.restaurants[i].openingHours[day].closed)
             //     continue;
 
-            grid[row].push($scope.restaurants[i]);
+            grid[row].push($rootScope.restaurants[i]);
             c++;
 
             if (c % $rootScope.columns == 0)
@@ -176,11 +176,11 @@ angular.module('Mealbookers.controllers', [])
 
 
     var updateSuggestion = function(restaurant, suggestion, day) {
-        for (var i = 0; i < $scope.restaurants.length; i++) {
-            if ($scope.restaurants[i].id == restaurant.id) {
-                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
-                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
-                        $scope.restaurants[i].suggestionList[day - 1][j] = suggestion;
+        for (var i = 0; i < $rootScope.restaurants.length; i++) {
+            if ($rootScope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $rootScope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($rootScope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $rootScope.restaurants[i].suggestionList[day - 1][j] = suggestion;
                         break;
                     }
                 }
@@ -190,11 +190,11 @@ angular.module('Mealbookers.controllers', [])
     };
 
     var deleteSuggestion = function(restaurant, suggestion, day) {
-        for (var i = 0; i < $scope.restaurants.length; i++) {
-            if ($scope.restaurants[i].id == restaurant.id) {
-                for (var j = 0; j < $scope.restaurants[i].suggestionList[day - 1].length; j++) {
-                    if ($scope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
-                        $scope.restaurants[i].suggestionList[day - 1].splice(j, 1);
+        for (var i = 0; i < $rootScope.restaurants.length; i++) {
+            if ($rootScope.restaurants[i].id == restaurant.id) {
+                for (var j = 0; j < $rootScope.restaurants[i].suggestionList[day - 1].length; j++) {
+                    if ($rootScope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
+                        $rootScope.restaurants[i].suggestionList[day - 1].splice(j, 1);
                         break;
                     }
                 }

@@ -28,4 +28,9 @@ class SuggestionList {
         }
         return $result;
     }
+
+    public function length()
+    {
+        return count($this->suggestions);
+    }
 }
