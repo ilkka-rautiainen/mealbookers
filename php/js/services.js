@@ -15,6 +15,7 @@ services.factory('Initialization', ['$http', '$rootScope', function($http, $root
     // Get localization promise from the then function
     var localizationPromise = currentUserPromise.then(function(result) {
         $rootScope.currentUser = result.data;
+        $rootScope.updateGroupsWithMe();
         // Return a new promise 
         return $http.get('api/1.0/app/language/' + $rootScope.currentUser.language)
             .then(function(result) {

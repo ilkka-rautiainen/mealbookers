@@ -59,7 +59,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
-.run(['$rootScope', '$window', '$http', function($rootScope, $window, $http) {
+.run(['$rootScope', '$window', '$http', '$timeout', function($rootScope, $window, $http, $timeout) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -78,7 +78,8 @@ angular.module('Mealbookers', [
             'alert-warning': 10000,
             'alert-info': 4000,
             'alert-success': 4000
-        }
+        },
+        liveViewInterval: 3000
     };
 
     var alertTimeout = null;
@@ -130,12 +131,12 @@ angular.module('Mealbookers', [
         }, 1500);
     };
 
-    var updateGroupsWithMe = function(newGroups) {
+    $rootScope.updateGroupsWithMe = function() {
         if ($rootScope.currentUser.role == 'guest') {
             return;
         }
 
-        var groups = angular.copy(newGroups);
+        var groups = angular.copy($rootScope.currentUser.groups);
         $rootScope.currentUser.groupsWithMe = [];
         $rootScope.currentUser.friends = 0;
         for (var i in groups) {
@@ -145,24 +146,51 @@ angular.module('Mealbookers', [
         }
     };
 
-    $rootScope.$watch('currentUser.groups', updateGroupsWithMe, true);
-
-    $rootScope.refreshCurrentUser = function(done) {
+    $rootScope.refreshCurrentUser = function(done, liveView) {
         $http.get('api/1.0/user').success(function(data) {
             console.log("Current user refreshed");
             for (var i in data) {
                 $rootScope.currentUser[i] = data[i];    
             }
-            updateGroupsWithMe($rootScope.currentUser.groups);
+            $rootScope.updateGroupsWithMe();
             refreshSuggestions();
 
-            if (typeof done == 'function')
+            if (typeof done == 'function') {
                 done();
+            }
         })
     };
 
+    $rootScope.liveViewUpdate = function() {
+        $timeout.cancel($rootScope.liveViewTimeout);
+        $rootScope.refreshCurrentUser(function() {
+            $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
+        }, true);
+    };
+
+    /**
+     * Refreshes current user once and then stops the live view
+     * @param  done callback which is called after the current user refresh
+     */
+    $rootScope.refreshCurrentUserAndStopLiveView = function(done) {
+        $timeout.cancel($rootScope.liveViewTimeout);
+        $rootScope.refreshCurrentUser(function(){
+            console.log("Live View stopped");
+            if (typeof done == 'function') {
+                done();
+            }
+        }, true);
+    };
+
+    $rootScope.startLiveView = function() {
+        $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
+        console.log("Live View started");
+    };
+
+    $rootScope.startLiveView();
+
     var refreshSuggestions = function() {
-        console.log("refreshSuggestions unimplemented...");
+        // console.log("refreshSuggestions unimplemented...");
     };
 
     $rootScope.getWeekDayText = function(day) {

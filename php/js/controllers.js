@@ -278,11 +278,14 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
 
-    $("#accountSettingsModal").modal();
-    $('#accountSettingsModal').on('hidden.bs.modal', function () {
-        $state.go("^");
-    });
+    $rootScope.refreshCurrentUserAndStopLiveView(function() {
+        $("#accountSettingsModal").modal();
 
+        $('#accountSettingsModal').on('hidden.bs.modal', function () {
+            $rootScope.startLiveView();
+            $state.go("^");
+        });
+    });
     $scope.resetPassword = function() {
         $scope.password = {
             old: '',
@@ -338,6 +341,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.saveProcess = false;
                 $rootScope.alert('alert-success', $filter('i18n')('account_save_succeeded'));
                 $("#accountSettingsModal").modal('hide');
+                console.log("Account settings saved");
             }
             else {
                 console.error("Unknown response");
@@ -377,10 +381,12 @@ angular.module('Mealbookers.controllers', [])
                 $scope.resetForm(false);
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_remove_failed'));
             }
+            // Ok
             else {
                 $rootScope.refreshCurrentUser(function() {
                     $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
                     $("#accountSettingsModal").modal('hide');
+                    console.log("Account removed");
                 });
             }
         }).error(function(response, code) {
@@ -404,10 +410,14 @@ angular.module('Mealbookers.controllers', [])
 
 
 .controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
+    
+    $rootScope.refreshCurrentUserAndStopLiveView(function() {
+        $("#groupSettingsModal").modal();
 
-    $("#groupSettingsModal").modal();
-    $('#groupSettingsModal').on('hidden.bs.modal', function () {
-        $state.go("^");
+        $('#groupSettingsModal').on('hidden.bs.modal', function () {
+            $rootScope.startLiveView();
+            $state.go("^");
+        });
     });
 
     $scope.groupSettingsMessage = {
@@ -453,12 +463,14 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'joined_existing') {
                 $rootScope.refreshCurrentUser();
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
+                console.log("Joined existing member to group");
             }
             else if (result.status == 'invited_new') {
                 group.addMemberOpened = false;
                 group.addMemberSaveProcess = false;
                 group.newMemberEmail = '';
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
+                console.log("Invited new member to group");
             }
             else {
                 console.error("Unknown response");
@@ -486,6 +498,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_edit_failed_invalid_name'));
             }
             else if (result.status == 'ok') {
+                console.log("Group name saved");
                 $rootScope.refreshCurrentUser(function() {
                     $scope.modalAlert('', '');
                 });
@@ -517,6 +530,7 @@ angular.module('Mealbookers.controllers', [])
                         break;
                     }
                 }
+                console.log("Removed member from group");
                 $rootScope.refreshCurrentUser(function() {
                     $scope.modalAlert('', '');
                 });
@@ -529,9 +543,11 @@ angular.module('Mealbookers.controllers', [])
                     }
                 }
                 if (result.last_member) {
+                    console.log("Removed yourself from group + whole group removed");
                     $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed'));
                 }
                 else {
+                    console.log("Removed yourself from group");
                     $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
                 }
                 $rootScope.refreshCurrentUser();
@@ -574,6 +590,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
             }
             else if (result.status == 'ok') {
+                console.log("Created new group");
                 $rootScope.refreshCurrentUser(function () {
                     $scope.newGroup.open = false;
                     $scope.newGroup.saving = false;
