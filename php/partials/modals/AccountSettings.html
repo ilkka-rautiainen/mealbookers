@@ -1,4 +1,3 @@
-<!-- Suggestion Modal -->
 <div class="modal fade" id="accountSettingsModal" tabindex="-1" role="dialog" aria-hidden="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -9,10 +8,27 @@
                     <h4 class="modal-title">{{ currentUser.name }} - {{ 'account_settings' | i18n }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="alert" ng-class="generalSettingsMessage.type" ng-if="generalSettingsMessage.message.length">{{ generalSettingsMessage.message }}</div>
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
                     <div class="form-group">
                         <strong>{{ currentUser.email_address }}</strong>
                     </div>
+                    <hr class="featurette-divider">
+
+                    <!-- Notification settings -->
+                    <h4>{{ 'account_notification_settings' | i18n }}</h4>
+                    <strong>{{ 'account_notification_suggestion_header' | i18n }}</strong><br />
+                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.received" /> {{ 'account_notification_suggestion_received' | i18n }}<br />
+                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.accepted" /> {{ 'account_notification_suggestion_accepted' | i18n }}<br />
+                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.left_alone" /> {{ 'account_notification_suggestion_left_alone' | i18n }}<br />
+                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.deleted" /> {{ 'account_notification_suggestion_deleted' | i18n }}<br />
+                    <strong>{{ 'account_notification_group_header' | i18n }}</strong><br />
+                    <input type="checkbox" ng-model="currentUser.notification_settings.group.memberships" /> {{ 'account_notification_group_memberships' | i18n }}
+
+                    <hr class="featurette-divider">
+
+
+                    <!-- Password change -->
+                    <h4>{{ 'account_password_change' | i18n }}</h4>
                     <div class="form-group">
                         <label for="old_password">{{ 'account_old_password' | i18n }}</label>
                         <input class="form-control" type="password" name="old_password" ng-model="password.old" />
@@ -25,15 +41,20 @@
                         <label for="new_password_repeat">{{ 'account_new_password_repeat' | i18n }}</label>
                         <input class="form-control" type="password" name="new_password_repeat" ng-model="password.repeat" />
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger remove-account" ng-class="{visible: !removingAccount}" ng-click="removingAccount = true">{{ 'account_remove' | i18n }}</button>
                     <button type="button" class="btn btn-success remove-account" ng-class="{visible: removingAccount}" ng-click="removingAccount = false">{{ 'account_remove_cancel' | i18n }}</button>
                     <button type="button" class="btn btn-danger remove-account" ng-class="{visible: removingAccount}" ng-click="removeAccount()">{{ 'account_remove_ok' | i18n }}</button>
-                    <input type="submit" class="btn btn-default" ng-disabled="submitButtonDisabled" ng-value="submitButtonText" />
+
+                    <button type="submit" class="btn btn-default" ng-disabled="saveProcess">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="saveProcess"></i>
+                        {{ 'save' | i18n }}
+                    </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div><!-- /.modal

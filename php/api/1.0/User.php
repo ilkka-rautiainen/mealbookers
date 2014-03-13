@@ -25,6 +25,7 @@ class UserAPI
         $user['groups'] = $groups;
         $user['me'] = $current_user_array;
         $user['email_address'] = $current_user->email_address;
+        $user['notification_settings'] = $current_user->getNotificationSettingsAsArray();
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
 
@@ -73,6 +74,32 @@ class UserAPI
                 Application::inst()->exitWithHttpCode(400, "Invalid password object");
             }
 
+            if (!isset($data['suggestion'])
+                || !isset($data['suggestion']['received'])
+                || !isset($data['suggestion']['accepted'])
+                || !isset($data['suggestion']['left_alone'])
+                || !isset($data['suggestion']['deleted'])
+            ) {
+                Application::inst()->exitWithHttpCode(400, "Invalid suggestion object");
+            }
+
+            if (!isset($data['group'])
+                || !isset($data['group']['memberships'])
+            ) {
+                Application::inst()->exitWithHttpCode(400, "Invalid group object");
+            }
+
+            // UPDATE NOTIFICATION SETTINGS
+            DB::inst()->query("UPDATE users SET
+                    notify_suggestion_received = " . ((int)((boolean) $data['suggestion']['received'])) . ",
+                    notify_suggestion_accepted = " . ((int)((boolean) $data['suggestion']['accepted'])) . ",
+                    notify_suggestion_left_alone = " . ((int)((boolean) $data['suggestion']['left_alone'])) . ",
+                    notify_suggestion_deleted = " . ((int)((boolean) $data['suggestion']['deleted'])) . ",
+                    notify_group_memberships = " . ((int)((boolean) $data['group']['memberships'])) . "
+                WHERE id = {$current_user->id}");
+
+            // UPDATE PASSWORD
+            // New password given
             if ($data['password']['new'] || $data['password']['repeat']) {
                 if (!$data['password']['old']) {
                     throw new ApiException('no_old_password');
@@ -93,6 +120,7 @@ class UserAPI
                         WHERE id = {$current_user->id}");
                 }
             }
+            // No new password but the old given
             else if ($data['password']['old']) {
                 throw new ApiException('no_new_password');
             }

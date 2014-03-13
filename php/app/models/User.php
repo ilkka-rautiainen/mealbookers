@@ -10,6 +10,11 @@ class User
     public $language;
     public $active;
     public $joined;
+    private $notify_suggestion_received;
+    private $notify_suggestion_accepted;
+    private $notify_suggestion_left_alone;
+    private $notify_suggestion_deleted;
+    private $notify_group_memberships;
     private $initials;
     private $groups;
     private $groupmates;
@@ -34,6 +39,11 @@ class User
         $this->language = $row['language'];
         $this->active = $row['active'];
         $this->joined = $row['joined'];
+        $this->notify_suggestion_received = $row['notify_suggestion_received'];
+        $this->notify_suggestion_accepted = $row['notify_suggestion_accepted'];
+        $this->notify_suggestion_left_alone = $row['notify_suggestion_left_alone'];
+        $this->notify_suggestion_deleted = $row['notify_suggestion_deleted'];
+        $this->notify_group_memberships = $row['notify_group_memberships'];
         $this->initials = '';
         $this->groups = array();
         $this->groupmates = array();
@@ -50,6 +60,21 @@ class User
     public function getName()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getNotificationSettingsAsArray()
+    {
+        return array(
+            'suggestion' => array(
+                'received' => (boolean)$this->notify_suggestion_received,
+                'accepted' => (boolean)$this->notify_suggestion_accepted,
+                'left_alone' => (boolean)$this->notify_suggestion_left_alone,
+                'deleted' => (boolean)$this->notify_suggestion_deleted,
+            ),
+            'group' => array(
+                'memberships' => (boolean)$this->notify_group_memberships,
+            ),
+        );
     }
 
     public function getAsArray()
@@ -290,9 +315,13 @@ class User
             WHERE user_id = {$this->id} AND group_id = {$group->id}");
     }
 
-    public function sendSuggestionInviteEmail(Suggestion $suggestion, $hash)
+    public function sendSuggestion(Suggestion $suggestion, $hash)
     {
         Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
+        if (!$this->notify_suggestion_received) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
+
         $creator = new User();
         $creator->fetch($suggestion->creator_id);
         $restaurant = new Restaurant();
@@ -328,10 +357,13 @@ class User
         return Mailer::inst()->send($subject, $body, $this);
     }
     
-    public function notifyAcceptedSuggestion(Suggestion $suggestion, User $accepter, $is_creator)
+    public function notifySuggestionAccepted(Suggestion $suggestion, User $accepter, $is_creator)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
             . " {$suggestion->id} accepted");
+        if (!$this->notify_suggestion_accepted) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
 
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
@@ -370,6 +402,9 @@ class User
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having"
             . " been left alone for suggestion {$suggestion->id}");
+        if (!$this->notify_suggestion_left_alone) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
 
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
@@ -402,10 +437,13 @@ class User
         return Mailer::inst()->send($subject, $body, $this);
     }
     
-    public function sendSuggestionDeletionNotification(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
+    public function notifySuggestionDeleted(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
             . " suggestion {$suggestion->id}");
+        if (!$this->notify_suggestion_deleted) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
 
         $subject = str_replace(
             '{canceler}',
@@ -435,7 +473,7 @@ class User
         return Mailer::inst()->send($subject, $body, $this);
     }
 
-    public function invite($email_address, Group $group)
+    public function inviteNewMember($email_address, Group $group)
     {
         Logger::debug(__METHOD__ . " inviting $email_address to group {$group->id}");
 
@@ -486,9 +524,13 @@ class User
         }
     }
 
-    public function sendGroupInviteNotification(Group $group, User $inviter)
+    public function notifyGroupJoin(Group $group, User $inviter)
     {
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for being invited as member to group {$group->id}");
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for being joined"
+            . " as member to group {$group->id} by user {$inviter->id}");
+        if (!$this->notify_group_memberships) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
 
         $subject = str_replace(
             array(
@@ -518,9 +560,12 @@ class User
         return Mailer::inst()->send($subject, $body, $this);
     }
 
-    public function sendGroupLeaveNotification(Group $group, User $deleter)
+    public function notifyRemovedFromGroup(Group $group, User $deleter)
     {
-        Logger::debug(__METHOD__ . " notifying user {$this->id} for being deleted from group {$group->id}");
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for being removed from group {$group->id}");
+        if (!$this->notify_group_memberships) {
+            return Logger::debug(__METHOD__ . " canceled due to user's notification settings");
+        }
 
         $subject = str_replace(
             array(

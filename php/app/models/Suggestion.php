@@ -210,7 +210,7 @@ class Suggestion {
         while ($member_id = DB::inst()->fetchFirstField($result)) {
             $member = new User();
             $member->fetch($member_id);
-            $member->sendSuggestionDeletionNotification($this, $canceler, $restaurant);
+            $member->notifySuggestionDeleted($this, $canceler, $restaurant);
         }
     }
 
@@ -245,7 +245,7 @@ class Suggestion {
 
             $alone_member = new User();
             $alone_member->fetch($alone_member_id);
-            $alone_member->notifyAcceptedSuggestion($this, $accepter, $is_creator);
+            $alone_member->notifySuggestionAccepted($this, $accepter, $is_creator);
         }
     }
 

@@ -141,7 +141,7 @@ class GroupAPI
                     throw new ApiException('already_member');
                 }
                 $invitee->joinGroup($group);
-                if (!$invitee->sendGroupInviteNotification($group, $current_user)) {
+                if (!$invitee->notifyGroupJoin($group, $current_user)) {
                     throw new ApiException('failed');
                 }
 
@@ -152,7 +152,7 @@ class GroupAPI
             }
             // Invite new member
             else {
-                if (!$current_user->invite($email_address, $group)) {
+                if (!$current_user->inviteNewMember($email_address, $group)) {
                     throw new ApiException('failed');
                 }
                 print json_encode(array(
@@ -222,7 +222,7 @@ class GroupAPI
         }
         // He deletes someone other
         else {
-            $deleted_member->sendGroupLeaveNotification($group, $current_user);
+            $deleted_member->notifyRemovedFromGroup($group, $current_user);
             print json_encode(array(
                 'status' => 'ok',
             ));

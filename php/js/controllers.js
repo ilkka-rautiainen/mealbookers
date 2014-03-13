@@ -303,79 +303,69 @@ angular.module('Mealbookers.controllers', [])
         $state.go("^");
     });
 
-    $scope.setSaveButtonState = function(state) {
-        if (state == 'normal') {
-            $scope.submitButtonText = $filter('i18n')('save');
-            $scope.submitButtonDisabled = false;
-        }
-        else if (state == 'busy') {
-            $scope.submitButtonText = $filter('i18n')('saving');
-            $scope.submitButtonDisabled = true;
-        }
-    }
-
-    // GENERAL SETTINGS
-    $scope.resetForm = function(resetData) {
-        if (resetData) {
-            $scope.password = {
-                old: '',
-                new: '',
-                repeat: ''
-            };
-        }
-        $scope.generalSettingsMessage = {
-            type: '',
-            message: ''
+    $scope.resetPassword = function() {
+        $scope.password = {
+            old: '',
+            new: '',
+            repeat: ''
         };
-        $scope.setSaveButtonState('normal');
     };
 
+    $scope.saveProcess = false;
     $scope.removingAccount = false;
-
-    $scope.resetForm(true);
+    $scope.resetPassword();
 
     $scope.save = function() {
         if (!$scope.validateForm()) {
             return;
         }
-        $scope.modalAlert('alert-info', $filter('i18n')('account_saving'));
-        $scope.setSaveButtonState('busy');
+        $scope.saveProcess = true;
+        $scope.modalAlert('', '');
 
         $http.post('api/1.0/user', {
-            password: $scope.password
+            password: $scope.password,
+            suggestion: $rootScope.currentUser.notification_settings.suggestion,
+            group: $rootScope.currentUser.notification_settings.group
         }).success(function(result) {
             // Fail
             if (typeof result != 'object' || result.status == undefined) {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
             }
             else if (result.status == 'no_old_password') {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_give_old_password'));
             }
             else if (result.status == 'no_new_password') {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_give_new_password'));
             }
             else if (result.status == 'passwords_dont_match') {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
             }
             else if (result.status == 'wrong_password') {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_wrong_password'));
             }
             else if (result.status == 'weak_password') {
-                $scope.resetForm(false);
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_weak_password'));
             }
             // Success
-            else {
-                $scope.resetForm(true);
+            else if (result.status == 'ok') {
+                $scope.resetPassword();
+                $scope.saveProcess = false;
                 $scope.modalAlert('alert-success', $filter('i18n')('account_save_succeeded'));
             }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+            }
         }).error(function(response, code) {
-            $scope.resetForm(false);
+            $scope.saveProcess = false;
             $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
         });
     };
@@ -399,9 +389,6 @@ angular.module('Mealbookers.controllers', [])
         return true;
     };
 
-    /**
-     * @todo implement logout after successful removal
-     */
     $scope.removeAccount = function() {
         $http.delete('/api/1.0/user').success(function(result) {
             // Fail
@@ -410,8 +397,10 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_remove_failed'));
             }
             else {
-                $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
-                $("#accountSettingsModal").modal('hide');
+                $rootScope.refreshCurrentUser(function() {
+                    $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
+                    $("#accountSettingsModal").modal('hide');
+                });
             }
         }).error(function(response, code) {
             $scope.resetForm(false);
@@ -420,10 +409,14 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.generalSettingsMessage.type = type;
-        $scope.generalSettingsMessage.message = message;
-        $location.hash('modal');
-        $anchorScroll();
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
+        if (message.length) {
+            $location.hash('modal');
+            $anchorScroll();
+        }
     };
 }])
 

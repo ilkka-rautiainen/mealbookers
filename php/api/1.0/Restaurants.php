@@ -108,7 +108,7 @@ class RestaurantsAPI
                 $hash = $suggestion->insertMember($member, false);
 
                 // Send suggestion email
-                if (!$member->sendSuggestionInviteEmail($suggestion, $hash)) {
+                if (!$member->sendSuggestion($suggestion, $hash)) {
                     $failed_to_send_invitation_email[] = $member->getName();
                 }
             }

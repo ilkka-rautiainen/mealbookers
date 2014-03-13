@@ -86,6 +86,11 @@ body {
     margin: 5px 0 5px 0;
 }
 
+label {
+    font-weight: normal;
+    margin-bottom: 2px;
+}
+
 .restaurant-row:before, .restaurant-row:after {
     content: none;
 }
@@ -375,6 +380,10 @@ span.line-break {
 
 .modal-body .tab-pane {
     margin-top: 20px;
+}
+
+#accountSettingsModal h4 {
+    font-family: OpenSansBold;
 }
 
 #accountSettingsModal .remove-account {
