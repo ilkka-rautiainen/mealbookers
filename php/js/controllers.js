@@ -678,9 +678,13 @@ angular.module('Mealbookers.controllers', [])
             return;
         }
         var members = {};
-        $(".group-container .member-selected").each(function(idx, el) {
-            members[$(el).attr("data-member-id")] = true;
-        });
+        for (var i in $rootScope.currentUser.groups) {
+            for (var j in $rootScope.currentUser.groups[i].members) {
+                if ($rootScope.currentUser.groups[i].members[j].selectedForSuggestion) {
+                    members[$rootScope.currentUser.groups[i].members[j].id] = true;
+                }
+            }
+        }
 
         $scope.saveProcess = true;
         $scope.modalAlert('', '');
