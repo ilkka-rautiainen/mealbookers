@@ -59,7 +59,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
-.run(['$rootScope', '$window', '$http', '$timeout', function($rootScope, $window, $http, $timeout) {
+.run(['$rootScope', '$window', '$http', '$timeout', '$state', '$stateParams', function($rootScope, $window, $http, $timeout, $state, $stateParams) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -168,7 +168,7 @@ angular.module('Mealbookers', [
                 }
             }
             else {
-                console.log("Current refreshed");
+                console.log("Current user refreshed");
                 for (var i in data) {
                     $rootScope.currentUser[i] = data[i];    
                 }
@@ -180,10 +180,6 @@ angular.module('Mealbookers', [
 
     $rootScope.refreshSuggestions = function(done) {
         $http.get('api/1.0/restaurants/suggestions').success(function(data) {
-
-            if (typeof $rootScope.restaurants != 'object') {
-                return console.log("$rootScope.restaurants not an object. Aborting.");
-            }
 
             for (var i = 0; i < $rootScope.restaurants.length; i++) {
                 $rootScope.restaurants[i].suggestionList = [];
@@ -216,6 +212,19 @@ angular.module('Mealbookers', [
     $rootScope.liveViewUpdate = function() {
         // console.log("Live view update");
         $timeout.cancel($rootScope.liveViewTimeout);
+
+        // Check if the page has loaded
+        if (!$rootScope.restaurants || !$rootScope.today) {
+            $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
+            return console.log("Waiting before starting live view.");
+        }
+        // Day has changed
+        if ($rootScope.today != ((new Date().getDay() + 6) % 7) + 1) {
+            $state.transitionTo($state.current, $stateParams, {reload: true, inherit: false, notify: true});
+            $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
+            return console.log("Day has changed, refreshing state");;
+        }
+
         $rootScope.refreshCurrentUser(function() {
             $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
         }, true);

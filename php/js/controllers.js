@@ -49,8 +49,8 @@ angular.module('Mealbookers.controllers', [])
         $state.go("Navigation.Menu", {day: day});
     };
 
-    $scope.today = ((new Date().getDay() + 6) % 7) + 1;
-    $scope.tomorrow = $scope.today + 1;
+    $rootScope.today = ((new Date().getDay() + 6) % 7) + 1;
+    $scope.tomorrow = $rootScope.today + 1;
     $scope.restaurantsEmptied = false;
     $scope.maxDay = 7;
     $scope.hasData = true;
@@ -58,7 +58,7 @@ angular.module('Mealbookers.controllers', [])
 
     // Make remaining days array for navbar
     $scope.remainingDays = [];
-    for (var i = $scope.today + 2; i <= $scope.maxDay; i++) {
+    for (var i = $rootScope.today + 2; i <= $scope.maxDay; i++) {
         $scope.remainingDays.push(i);
     }
 
@@ -111,8 +111,8 @@ angular.module('Mealbookers.controllers', [])
 .controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, $stateParams) {
 
     $rootScope.weekDay = $stateParams.day;
-    if (!$rootScope.weekDay || $rootScope.weekDay < $scope.today || $rootScope.weekDay > 7) {
-        $state.go("Navigation.Menu", {day: $scope.today});
+    if (!$rootScope.weekDay || $rootScope.weekDay < $rootScope.today || $rootScope.weekDay > 7) {
+        $state.go("Navigation.Menu", {day: $rootScope.today});
     }
 
     $rootScope.title = "Menu";
@@ -136,7 +136,7 @@ angular.module('Mealbookers.controllers', [])
     };
     $scope.makeRestaurantGrid = function() {
         $scope.restaurantGrid = [];
-        for (var day = $scope.today; day <= 7; day++) {
+        for (var day = $rootScope.today; day <= 7; day++) {
             $scope.restaurantGrid[day] = $scope.getRestaurantGrid(day);
         }
     };
@@ -665,7 +665,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     var validateSuggestForm = function() {
-        if ($rootScope.weekDay <= $scope.today) {
+        if ($rootScope.weekDay <= $rootScope.today) {
             var timeParts = $scope.suggestTime.split(":");
             var suggestionDate = new Date();
             suggestionDate.setHours(timeParts[0]);
