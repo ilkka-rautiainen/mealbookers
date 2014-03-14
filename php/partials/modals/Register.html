@@ -1,0 +1,38 @@
+<!-- Sign up Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<form role="form" ng-submit="processRegister()">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">{{ 'register' | i18n }}</h4>
+				</div>
+					<div class="modal-body">
+						<h4>{{register}}</h4>
+						
+							<div class="form-group">
+								<label for="email_register">{{ 'email' | i18n }}</label>
+								<input type="email" class="form-control" id="email_register" required ng-model="register.email">
+							</div>
+							<div class="form-group">
+								<label for="password_register">{{ 'password' | i18n }}</label>
+								<input type="password" class="form-control" id="password_register" required ng-model="register.password">
+							</div>
+							<div class="form-group">
+								<label for="first_name_register">{{ 'first_name' | i18n }}</label>
+								<input type="text" class="form-control" id="first_name_register" required ng-model="register.firstName">
+							</div>
+							<div class="form-group">
+								<label for="last_name_register">{{ 'last_name' | i18n }}</label>
+								<input type="text" class="form-control" id="last_name_register" required ng-model="register.lastName">
+							</div>
+						
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-default">{{ 'register' | i18n }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
+					</div>
+				</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

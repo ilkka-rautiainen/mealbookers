@@ -32,6 +32,18 @@ angular.module('Mealbookers', [
         controller: 'MenuController'
     })
     
+    .state('Navigation.Menu.Login', {
+        url: "/login",
+        templateUrl: "partials/modals/Login.html",
+        controller: 'LoginController'
+    })
+
+    .state('Navigation.Menu.Register', {
+        url: "/register",
+        templateUrl: "partials/modals/Register.html",
+        controller: 'RegisterController'
+    })
+    
     .state('Navigation.Menu.Suggestion', {
         url: "/restaurant/:restaurantId/suggestion",
         templateUrl: "partials/modals/Suggestion.html",

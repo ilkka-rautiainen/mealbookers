@@ -69,7 +69,14 @@ angular.module('Mealbookers.controllers', [])
     });
 }])
 
-.controller('LoginController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+.controller('LoginController', ['$scope', '$rootScope', '$http', '$state', function($scope, $rootScope, $http, $state) {
+
+    $("#logInModal").modal();
+
+    $('#logInModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
     $scope.login = {
         email: "",
         password: "",
@@ -90,7 +97,14 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('registerController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http) {
+.controller('RegisterController', ['$scope', '$rootScope', '$http', '$state', function($scope, $rootScope, $http, $state) {
+
+    $("#registerModal").modal();
+
+    $('#registerModal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
     $scope.register = {
         email: "",
         password: "",
