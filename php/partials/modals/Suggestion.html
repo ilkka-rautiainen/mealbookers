@@ -23,9 +23,9 @@ Suggestion Modal -->
                     </div>
                     
                     <!-- Suggestion members -->
-                    <div class="form-group" ng-show="currentUser.friends" ng-show="group.members.length">
+                    <div class="form-group" ng-show="currentUser.friends">
                         <strong>{{ 'suggest_friends' | i18n }}</strong>
-                        <div ng-repeat="group in currentUser.groups" class="group">
+                        <div ng-repeat="group in currentUser.groups" class="group" ng-show="group.members.length">
                             <h4><input type="checkbox" ng-checked="group.selectedForSuggestion" ng-click="toggleGroup(group)" /> <span ng-click="toggleGroup(group)">{{ group.name }}</span></h4>
                             
                             <div>
