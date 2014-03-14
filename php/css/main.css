@@ -178,24 +178,32 @@ label {
     color: black;
 }
 
-.restaurant .suggestion-join {
-    cursor: pointer;
+.suggestion-member .initials:after {
+    content: ",";
 }
 
-.restaurant .suggestion-join:hover {
-    text-decoration: underline;
+.suggestion-member .comma:after {
+    content: ",";
 }
 
-.restaurant .suggestion-processing {
-    color: gray;
+.suggestion-member:last-child .initials:after {
+    content: "";
 }
 
-.restaurant .suggestion-processing:hover {
-    text-decoration: none;
+.suggestion-member:nth-last-child(2) .initials:after {
+    content: "";
 }
 
-.restaurant .suggestion-processing:after {
-    content: "...";
+.suggestion-member .and {
+    display: none;
+}
+
+.suggestion-member:nth-last-child(2) .and {
+    display: inline;
+}
+
+.restaurant .suggestion-manage-button {
+    padding: 1px 6px 1px 6px;
 }
 
 .restaurant .suggestion-time {
