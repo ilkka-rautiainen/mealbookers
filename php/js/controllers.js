@@ -108,7 +108,7 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', 'Restaurants', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, Restaurants, $stateParams) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams) {
 
     $rootScope.weekDay = $stateParams.day;
     if (!$rootScope.weekDay || $rootScope.weekDay < $rootScope.today || $rootScope.weekDay > 7) {
@@ -116,24 +116,13 @@ angular.module('Mealbookers.controllers', [])
     }
 
     $rootScope.title = "Menu";
-    $rootScope.restaurants = [];
     $scope.restaurantRows = [];
     $scope.suggestTime = "";
-    $scope.suggestRestaurant;
     $scope.suggestionMessage = {
         type: '',
         message: ''
     };
 
-    /**
-     * Load restaurants
-     */
-    $scope.loadRestaurants = function() {
-        var restaurants = Restaurants.query(null, function() {
-            $rootScope.restaurants = restaurants;
-            $scope.makeRestaurantGrid();
-        });
-    };
     $scope.makeRestaurantGrid = function() {
         $scope.restaurantGrid = [];
         for (var day = $rootScope.today; day <= 7; day++) {
@@ -172,7 +161,7 @@ angular.module('Mealbookers.controllers', [])
         }
         return grid;
     };
-    $scope.loadRestaurants();
+    $scope.makeRestaurantGrid();
 
     $rootScope.$watch('widthClass', function() {
         $scope.makeRestaurantGrid();
@@ -181,9 +170,8 @@ angular.module('Mealbookers.controllers', [])
     /**
      * Suggest a restaurant and time
      */
-    $scope.openSuggestion = function(restaurant) {
-        $scope.suggestRestaurant = restaurant;
-        $state.go(".Suggestion");
+    $scope.openSuggestion = function(restaurantId) {
+        $state.go(".Suggestion", {restaurantId: restaurantId});
     };
 
     $scope.manageSuggestion = function(restaurant, suggestion, day, accept) {
@@ -600,10 +588,19 @@ angular.module('Mealbookers.controllers', [])
 
 
 
-.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
 
-    // No direct requests to this controller
-    // @todo resolve restaurants when loading menu-state and then do it so that suggestion can be loaded directly
+    if (!$stateParams.restaurantId) {
+        return $state.go("^");
+    }
+
+    for (var i in $rootScope.restaurants) {
+        if ($rootScope.restaurants[i].id == $stateParams.restaurantId) {
+            $scope.suggestRestaurant = $rootScope.restaurants[i];
+            break;
+        }
+    }
+
     if (!$scope.suggestRestaurant) {
         return $state.go("^");
     }

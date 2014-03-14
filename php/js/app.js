@@ -33,7 +33,7 @@ angular.module('Mealbookers', [
     })
     
     .state('Navigation.Menu.Suggestion', {
-        url: "/suggestion",
+        url: "/restaurant/:restaurantId/suggestion",
         templateUrl: "partials/modals/Suggestion.html",
         controller: 'SuggestionController'
     })
