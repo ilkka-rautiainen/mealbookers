@@ -1,4 +1,4 @@
-<!-- Suggestion Modal -->
+Suggestion Modal -->
 <div class="modal fade" id="suggestionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -18,24 +18,21 @@
 
                     <!-- Suggest time -->
                     <div class="form-group">
-                        <label for="time">{{ 'suggest_time' | i18n }}:</label>
-                        <input class="form-control suggest-time hidden-xs" ng-model="suggestTime" maxlength="5" name="time" type="tel" placeholder="{{ 'suggest_time_placeholder' | i18n }}" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required autofocus>
-                        <input class="form-control suggest-time visible-xs" ng-model="suggestTime" placeholder="{{ 'suggest_time_placeholder' | i18n }}" name="time" type="time" required autofocus>
+                        <label for="time"><strong>{{ 'suggest_time' | i18n }}</strong></label>
+                        <input class="form-control suggest-time" ng-model="suggestTime" maxlength="5" name="time" type="tel" placeholder="{{ 'suggest_time_placeholder' | i18n }}" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required autofocus />
                     </div>
                     
                     <!-- Suggestion members -->
-                    <div class="form-group" ng-show="currentUser.friends">
-                        <label for="suggest_friends">{{ 'suggest_friends' | i18n }}</label>
-                        <div ng-repeat="group in currentUser.groups" class="group-container" ng-show="group.members.length">
-                            <fieldset class="well">
-                                <legend>{{ group.name }}</legend>
-                                <div ng-click="toggleGroup(group)" class="group" id="group_{{ group.id }}">{{ 'select_all' | i18n }}</div>
-                                <!-- <div class="clearfix"></div> -->
-                                <div ng-repeat="member in group.members" class="member group_{{ group.id }}_member member_{{ member.id }}" data-member-id="{{ member.id }}" title="{{ member.name }}" ng-click="toggleGroupMember(group, member)">
-                                    {{ member.initials }}
-                                    <!-- <div class="member-small-name">{{ member.firstName }}</div> -->
+                    <div class="form-group" ng-show="currentUser.friends" ng-show="group.members.length">
+                        <strong>{{ 'suggest_friends' | i18n }}</strong>
+                        <div ng-repeat="group in currentUser.groups" class="group">
+                            <h4><input type="checkbox" ng-checked="group.selectedForSuggestion" ng-click="toggleGroup(group)" /> <span ng-click="toggleGroup(group)">{{ group.name }}</span></h4>
+                            
+                            <div>
+                                <div ng-repeat="member in group.members" class="member" ng-click="toggleMember(member)" title="{{ member.name }}">
+                                    <input type="checkbox" ng-checked="member.selectedForSuggestion" /> {{ member.initials }}
                                 </div>
-                            </fieldset>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -50,4 +47,4 @@
             </form>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div><!-- /.modal

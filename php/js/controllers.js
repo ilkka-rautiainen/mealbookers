@@ -627,31 +627,34 @@ angular.module('Mealbookers.controllers', [])
     $('#suggestionModal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
-    $('#suggestionModal').on('shown.bs.modal', function () {
-        if ($rootScope.widthClass != 'xs') {
-            $("#suggestionModal input.suggest-time").focus();
+
+    for (var i in $rootScope.currentUser.groups) {
+        $rootScope.currentUser.groups[i].selectedForSuggestion = false;
+        for (var j in $rootScope.currentUser.groups[i].members) {
+            $rootScope.currentUser.groups[i].members[j].selectedForSuggestion = false;
         }
-    });
+    }
 
     $scope.suggestionSelectedMembers = [];
 
     $scope.toggleGroup = function(group) {
-        $("#group_" + group.id).toggleClass("group-selected");
-
-        if ($("#group_" + group.id).hasClass("group-selected")) {
-            $(".group_" + group.id + "_member").each(function() {
-                $(".member_" + $(this).attr("data-member-id")).addClass("member-selected");
-            });
-        }
-        else {
-            $(".group_" + group.id + "_member").each(function() {
-                $(".member_" + $(this).attr("data-member-id")).removeClass("member-selected");
-            });
+        group.selectedForSuggestion = !group.selectedForSuggestion;
+        for (var j in group.members) {
+            $scope.toggleMember(group.members[j], group.selectedForSuggestion);
         }
     };
 
-    $scope.toggleGroupMember = function(group, member) {
-        $(".member_" + member.id).toggleClass("member-selected");
+    $scope.toggleMember = function(member, value) {
+        if (value == undefined)
+            value = !member.selectedForSuggestion;
+
+        for (var i in $rootScope.currentUser.groups) {
+            for (var j in $rootScope.currentUser.groups[i].members) {
+                if ($rootScope.currentUser.groups[i].members[j].id == member.id) {
+                    $rootScope.currentUser.groups[i].members[j].selectedForSuggestion = value;
+                }
+            }
+        }
     };
 
     var validateSuggestForm = function() {

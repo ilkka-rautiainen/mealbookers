@@ -251,46 +251,51 @@ label {
     -webkit-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
     -moz-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border linear 0.1s, box-shadow linear 0.1s;
-    -moz-transition: border linear 0.1s, box-shadow linear 0.1s;
-    -ms-transition: border linear 0.1s, box-shadow linear 0.1s;
-    -o-transition: border linear 0.1s, box-shadow linear 0.1s;
-    transition: border linear 0.1s, box-shadow linear 0.1s;
-    background-color: whitesmoke;
-    display: inline-block;
-    margin: 5px;
-    border: 1px solid #e7e7e7;
     border-radius: 3px;
     min-width: 40px;
     cursor: pointer;
 }
 
 #suggestionModal .group {
-    padding: 0 10px 0 10px;
+    padding: 0px 8px 4px 12px;
     min-height: 40px;
     line-height: 40px;
+    margin-bottom: 10px;
+    border: 1px solid #f0f0f0;
+    background-color: rgb(252, 252, 252);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#suggestionModal .group:last-child {
+    margin-bottom: 0px;
 }
 
 #suggestionModal .member {
     text-align: center;
-    line-height: 40px;
-    min-width: 40px;
-    min-height: 40px;
+    line-height: 37px;
+    border: 1px solid #e7e7e7;
+    min-width: 37px;
+    min-height: 37px;
     position: relative;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 13px;
+    padding-right: 13px;
+    display: inline-block;
+    background-color: whitesmoke;
+    margin-right: 7px;
+    margin-bottom: 7px;
 }
 
-#suggestionModal .member .member-small-name {
-    position: absolute;
-    width: 100%;
-    bottom: 0px;
-    font-size: 7px;
-    line-height: 7px;
-    height: 7px;
-    overflow: hidden;
-    white-space: pre;
-    padding: 0 1px 0 1px;
+#suggestionModal .member:last-child {
+    margin-right: 0px;
+}
+
+#suggestionModal .member input[type="checkbox"] {
+    cursor: pointer;
 }
 
 #suggestionModal .group-selected, #suggestionModal .member-selected {
@@ -383,12 +388,8 @@ span.line-break {
     display: block;
 }
 
-.modal-body .nav-tabs li {
-    cursor: pointer;
-}
-
-.modal-body .tab-pane {
-    margin-top: 20px;
+.modal-footer {
+    margin-top: 0px;
 }
 
 #accountSettingsModal h4 {
