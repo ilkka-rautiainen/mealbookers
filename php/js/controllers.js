@@ -51,7 +51,6 @@ angular.module('Mealbookers.controllers', [])
 
     $rootScope.today = ((new Date().getDay() + 6) % 7) + 1;
     $scope.tomorrow = $rootScope.today + 1;
-    $scope.restaurantsEmptied = false;
     $scope.maxDay = 7;
     $scope.hasData = true;
     $rootScope.weekDay;
