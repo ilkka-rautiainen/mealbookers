@@ -278,7 +278,7 @@ class AmicaImport extends Import
      */
     private function formatAttributes($line_html)
     {
-        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\, ))*(Veg|VS|G|L|VL|M|\*)\)/i", $line_html, $matches);
+        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)/i", $line_html, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
@@ -286,7 +286,7 @@ class AmicaImport extends Import
             preg_match_all("/(?:Veg)|(?:VS)|G|L|(?:VL)|M|\*/i", $subMatch, $subMatchArray);
             foreach ($subMatchArray[0] as $key => $value)
                 $subMatchArray[0][$key] = $value;
-            $lastMatchStart = mb_stripos($line_html, $subMatch, $lastMatchStart+1);
+            $lastMatchStart = mb_stripos($line_html, $subMatch, $lastMatchStart + 1);
             $matchStarts[] = $lastMatchStart;
             $subMatches[] = array(
                 'start' => $lastMatchStart,
