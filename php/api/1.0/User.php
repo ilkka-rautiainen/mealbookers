@@ -159,7 +159,7 @@ class UserAPI
 
         $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
             email_address = '" . DB::inst()->quote($data["email"]) . "' AND
-            passhash = '$passhash' AND active = 1");
+            passhash = '$passhash'");
 
         if ($user_id) {
 

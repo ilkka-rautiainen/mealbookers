@@ -8,7 +8,6 @@ class User
     public $first_name;
     public $last_name;
     public $language;
-    public $active;
     public $joined;
     private $notify_suggestion_received;
     private $notify_suggestion_accepted;
@@ -37,7 +36,6 @@ class User
         $this->first_name = $row['first_name'];
         $this->last_name = $row['last_name'];
         $this->language = $row['language'];
-        $this->active = $row['active'];
         $this->joined = $row['joined'];
         $this->notify_suggestion_received = $row['notify_suggestion_received'];
         $this->notify_suggestion_accepted = $row['notify_suggestion_accepted'];
