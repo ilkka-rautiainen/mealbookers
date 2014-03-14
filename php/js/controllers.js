@@ -600,16 +600,17 @@ angular.module('Mealbookers.controllers', [])
 
 
 
-.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', 'Suggestions', function($scope, $rootScope, $state, $filter, Suggestions) {
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
 
     // No direct requests to this controller
+    // @todo resolve restaurants when loading menu-state and then do it so that suggestion can be loaded directly
     if (!$scope.suggestRestaurant) {
-        return $state.go(".^");
+        return $state.go("^");
     }
 
     $scope.suggestTime = "";
-    $scope.suggestionMessage.type = '';
-    $scope.suggestionMessage.message = '';
+    $scope.saveProcess = false;
+
     $("#suggestionModal .group").removeClass("group-selected");
     $("#suggestionModal .member").removeClass("member-selected");
     $("#suggestionModal").modal();
@@ -650,9 +651,9 @@ angular.module('Mealbookers.controllers', [])
             suggestionDate.setHours(timeParts[0]);
             suggestionDate.setMinutes(timeParts[1]);
             if (suggestionDate.getTime() + $rootScope.currentUser.config.limits.suggestion_create_in_past_time * 1000
-                < new Date().getTime()) {
-                $scope.suggestionMessage.type = 'alert-warning';
-                $scope.suggestionMessage.message = $filter('i18n')('suggestion_too_early');
+                < new Date().getTime())
+            {
+                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_too_early'));
                 return false;
             }
         }
@@ -668,35 +669,50 @@ angular.module('Mealbookers.controllers', [])
             members[$(el).attr("data-member-id")] = true;
         });
 
-        $scope.suggestionMessage.type = 'alert-info';
-        $scope.suggestionMessage.message = $filter('i18n')('suggest_sending');
+        $scope.saveProcess = true;
+        $scope.modalAlert('', '');
 
-        var response = Suggestions.post({
-            restaurantId: $scope.suggestRestaurant.id,
+        $http.post('api/1.0/restaurants/' + $scope.suggestRestaurant.id + '/suggestions', {
             day: $rootScope.weekDay - 1,
             time: $scope.suggestTime,
             members: members
-        }, function() {
-            if (typeof response.status != 'undefined' && response.status == "ok") {
-                if (typeof response.failed_to_send_invitation_email === 'object') {
-                    $scope.suggestionMessage.type = 'alert-warning';
-                    $scope.suggestionMessage.message = $filter('i18n')('suggest_failed_to_send_invitation_email')
-                        + ' ' + response.failed_to_send_invitation_email.join(", ");
-                }
-                else {
-                    $("#closeSuggestion").trigger('click');
-                    $scope.loadRestaurants();
-                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_created'));
-                }
+        }).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'));
+            }
+            else if (result.status == 'invalid_time') {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_invalid_time'));
+            }
+            else if (result.status == 'too_early') {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_too_early'));
+            }
+            // Success
+            else if (result.status == 'ok') {
+                $rootScope.refreshCurrentUser(function() {
+                    $scope.saveProcess = false;
+                    $("#suggestionModal").modal('hide');
+
+                    if (result.failed_to_send_invitation_email) {
+                        $rootScope.alert('alert-warning', $filter('i18n')('suggest_failed_to_send_invitation_email')
+                            + ' ' + result.failed_to_send_invitation_email.join(", "));
+                    }
+                    else {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_created'));
+                    }
+                });
             }
             else {
-                $scope.suggestionMessage.type = 'alert-danger';
-                $scope.suggestionMessage.message = $filter('i18n')('suggestion_save_error');
+                console.error("Unknown response");
+                console.error(result);
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'))
             }
-        },
-        function() {
-            $scope.suggestionMessage.type = 'alert-danger';
-            $scope.suggestionMessage.message = $filter('i18n')('suggestion_save_error');
+        }).error(function(response, httpCode) {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'))
         });
     };
 
@@ -729,4 +745,15 @@ angular.module('Mealbookers.controllers', [])
             }
         }
     });
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
+        if (message.length) {
+            $location.hash('modal');
+            $anchorScroll();
+        }
+    };
 }])
