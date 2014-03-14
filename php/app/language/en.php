@@ -73,6 +73,7 @@ $GLOBALS['language']['en'] = array(
     'group_add_member_success_invited_new' => 'Invitation sent',
     'group_add_member_success_joined_existing' => 'Member joined to the group',
     'group_add_member_already_member' => 'The given email address is already in the group',
+    'group_member_remove' => 'Remove member from group',
     'group_member_delete_failed' => 'Removing the group member failed',
     'group_member_delete_failed_404' => 'The group member or the group doesn\'t exist anymore',
     'group_member_deleted_yourself' => 'You were removed from the group',

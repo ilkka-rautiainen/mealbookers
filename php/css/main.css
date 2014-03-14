@@ -227,6 +227,10 @@ label {
     margin: -5px -5px 0 0;
 }
 
+.button-group {
+    padding: 5px 0 5px 0;
+}
+
 #suggestionModal input.suggest-time {
     /*display: inline-block;*/
     width: 95px;
@@ -408,6 +412,15 @@ span.line-break {
 #groupSettingsModal .member {
     height: 30px;
     line-height: 30px;
+    padding-left: 5px;
+}
+
+#groupSettingsModal .member .icon {
+    padding-right: 3px;
+}
+
+#groupSettingsModal .member .member-delete-button-group {
+    padding-left: 5px;
 }
 
 #groupSettingsModal .button {

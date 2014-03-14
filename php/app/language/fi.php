@@ -77,6 +77,7 @@ $GLOBALS['language']['fi'] = array(
     'group_add_member_success_invited_new' => 'Kutsu lähetetty',
     'group_add_member_success_joined_existing' => 'Jäsen liitetty ryhmään',
     'group_add_member_already_member' => 'Antamasi sähköpostiosoite kuuluu jo tähän ryhmään',
+    'group_member_remove' => 'Poista jäsen ryhmästä',
     'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
     'group_member_delete_failed_404' => 'Kyseistä ryhmän jäsentä tai ryhmää ei enää ole olemassa',
     'group_member_deleted_yourself' => 'Sinut poistettiin ryhmästä',
