@@ -124,7 +124,7 @@ label {
     background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
 }
 
-@media all and (max-width: 768px) {
+@media all and (max-width: 767px) {
     #menuContainer {
         padding: 0px;
     }
@@ -436,7 +436,7 @@ strong, b {
 
 
 
-@media all and (min-width: 769px) {
+@media all and (min-width: 768px) {
     #content.ng-enter, #content.ng-leave {
         position: absolute;
         left: 0;

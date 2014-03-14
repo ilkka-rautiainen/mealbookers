@@ -278,7 +278,11 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user', {
             password: $scope.password,
             suggestion: $rootScope.currentUser.notification_settings.suggestion,
-            group: $rootScope.currentUser.notification_settings.group
+            group: $rootScope.currentUser.notification_settings.group,
+            name: {
+                first_name: $rootScope.currentUser.first_name,
+                last_name: $rootScope.currentUser.last_name
+            }
         }).success(function(result) {
             // Fail
             if (typeof result != 'object' || result.status == undefined) {
@@ -304,6 +308,14 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'weak_password') {
                 $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_weak_password'));
+            }
+            else if (result.status == 'no_first_name') {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_first_name'));
+            }
+            else if (result.status == 'no_last_name') {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_last_name'));
             }
             // Success
             else if (result.status == 'ok') {

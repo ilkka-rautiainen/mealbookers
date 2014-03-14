@@ -34,6 +34,8 @@ class UserAPI
         $user['groups'] = $groups;
         $user['me'] = $current_user_array;
         $user['email_address'] = $current_user->email_address;
+        $user['first_name'] = $current_user->first_name;
+        $user['last_name'] = $current_user->last_name;
         $user['notification_settings'] = $current_user->getNotificationSettingsAsArray();
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
@@ -98,6 +100,24 @@ class UserAPI
             ) {
                 Application::inst()->exitWithHttpCode(400, "Invalid group object");
             }
+
+            if (!isset($data['name'])
+                || !isset($data['name']['first_name'])
+                || !isset($data['name']['last_name'])
+            ) {
+                Application::inst()->exitWithHttpCode(400, "Invalid name object");
+            }
+
+            // UPDATE NAME
+            if (!strlen($data['name']['first_name']))
+                throw new ApiException('no_first_name');
+            if (!strlen($data['name']['last_name']))
+                throw new ApiException('no_last_name');
+                
+            DB::inst()->query("UPDATE users SET
+                    first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
+                    last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
+                WHERE id = {$current_user->id}");
 
             // UPDATE NOTIFICATION SETTINGS
             DB::inst()->query("UPDATE users SET
