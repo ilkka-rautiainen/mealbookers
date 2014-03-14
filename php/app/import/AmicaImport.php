@@ -198,7 +198,7 @@ class AmicaImport extends Import
         }
 
         // Add the meal
-        $line_html = $this->formatAttributes($line_html);
+        $line_html = trim($this->formatAttributes($line_html));
         $line_html = $this->formatLineBreaks($line_html);
 
         if (!$line_html) {
@@ -274,11 +274,12 @@ class AmicaImport extends Import
     }
 
     /**
-     * Formats the attributes in a row
+     * Formats the attributes in a row.
+     * Adds line break after attribute group if there's not.
      */
     private function formatAttributes($line_html)
     {
-        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)/i", $line_html, $matches);
+        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line_html, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
@@ -299,7 +300,7 @@ class AmicaImport extends Import
             foreach ($subMatch['attributes'] as $key => $attribute)
                 $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
             $line_html = mb_substr($line_html, 0, $subMatch['start'])
-                . "<span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>"
+                . "<span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>\n"
                 . mb_substr($line_html, $subMatch['start'] + $subMatch['length']);
         }
 
