@@ -136,6 +136,15 @@ label {
     .page-header {
         margin-top: 20px !important;
     }
+
+    .modal-body {
+        padding-left: 13px !important;
+        padding-right: 13px !important;
+    }
+
+    .modal-dialog {
+        margin: 7px;
+    }
 }
 
 .restaurant-thumbnail {
@@ -396,6 +405,21 @@ span.line-break {
     margin-top: 0px;
 }
 
+.modal-footer.modal-footer-xs {
+    text-align: center;
+}
+
+.modal-footer.modal-footer-xs button {
+    float: right !important;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.modal-footer.modal-footer-xs .remove-group {
+    padding-top: 10px;
+    clear: both;
+}
+
 #accountSettingsModal h4 {
     font-family: OpenSansBold;
 }
@@ -406,7 +430,7 @@ span.line-break {
 }
 
 #accountSettingsModal .remove-account.visible {
-    display: block;
+    display: inline-block;
 }
 
 #groupSettingsModal .member {
