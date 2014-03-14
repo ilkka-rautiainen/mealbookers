@@ -199,12 +199,12 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(404, "No group/member found with the given id");
         }
 
-        if (!$deleted_member->isMemberOfGroup($group)) {
-            Application::inst()->exitWithHttpCode(400, "Member you are deleting is not a member in the group");
-        }
-
         if (!$current_user->isMemberOfGroup($group)) {
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+        }
+
+        if (!$deleted_member->isMemberOfGroup($group)) {
+            Application::inst()->exitWithHttpCode(400, "Member you are deleting is not a member in the group");
         }
 
         $deleted_member->leaveGroup($group);

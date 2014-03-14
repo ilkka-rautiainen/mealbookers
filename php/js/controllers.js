@@ -174,35 +174,6 @@ angular.module('Mealbookers.controllers', [])
     };
     $scope.loadRestaurants();
 
-
-    var updateSuggestion = function(restaurant, suggestion, day) {
-        for (var i = 0; i < $rootScope.restaurants.length; i++) {
-            if ($rootScope.restaurants[i].id == restaurant.id) {
-                for (var j = 0; j < $rootScope.restaurants[i].suggestionList[day - 1].length; j++) {
-                    if ($rootScope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
-                        $rootScope.restaurants[i].suggestionList[day - 1][j] = suggestion;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    };
-
-    var deleteSuggestion = function(restaurant, suggestion, day) {
-        for (var i = 0; i < $rootScope.restaurants.length; i++) {
-            if ($rootScope.restaurants[i].id == restaurant.id) {
-                for (var j = 0; j < $rootScope.restaurants[i].suggestionList[day - 1].length; j++) {
-                    if ($rootScope.restaurants[i].suggestionList[day - 1][j].id == suggestion.id) {
-                        $rootScope.restaurants[i].suggestionList[day - 1].splice(j, 1);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    };
-
     $rootScope.$watch('widthClass', function() {
         $scope.makeRestaurantGrid();
     });
@@ -249,27 +220,26 @@ angular.module('Mealbookers.controllers', [])
             }
             // OK
             else {
-                // Canceled and deleted (last one out)
-                if (result.suggestionDeleted) {
-                    deleteSuggestion(restaurant, suggestion, day);
-                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
-                }
-                // Accepted or canceled (not last one out)
-                else {
-                    updateSuggestion(restaurant, result.suggestion, day);
-                    if (accept) {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
+                $rootScope.refreshCurrentUser(function() {
+                    // Canceled and deleted (last one out)
+                    if (result.suggestionDeleted) {
+                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
                     }
+                    // Accepted or canceled (not last one out)
                     else {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
+                        if (accept) {
+                            $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
+                        }
+                        else {
+                            $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
+                        }
                     }
-                }
+                });
             }
         })
         .error(function(response, httpCode) {
             suggestion.processing = false;
-            $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
-            console.error("Failed to accept/cancel: " + httpCode.toString() + ", " + response);
+            $rootScope.operationFailed(httpCode, 'suggestion_accept_failed');
         });
     };
 }])
@@ -478,10 +448,9 @@ angular.module('Mealbookers.controllers', [])
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
             }
-        }).error(function(response) {
+        }).error(function(response, httpCode) {
             group.addMemberSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
-            $rootScope.refreshCurrentUser();
+            $rootScope.operationFailed(httpCode, 'group_add_member_failed', $scope.modalAlert);
         });
     };
 
@@ -510,10 +479,9 @@ angular.module('Mealbookers.controllers', [])
                 group.editNameSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
             }
-        }).error(function(response) {
+        }).error(function(response, httpCode) {
             group.editNameSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'));
-            $rootScope.refreshCurrentUser();
+            $rootScope.operationFailed(httpCode, 'group_edit_failed', $scope.modalAlert);
         });
     }
 
@@ -560,10 +528,9 @@ angular.module('Mealbookers.controllers', [])
                 member.deleteSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
             }
-        }).error(function(response) {
+        }).error(function(response, httpCode) {
             member.deleteSaveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
-            $rootScope.refreshCurrentUser();
+            $rootScope.operationFailed(httpCode, 'group_member_delete_failed', $scope.modalAlert);
         });
     }
 

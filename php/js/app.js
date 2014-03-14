@@ -251,6 +251,22 @@ angular.module('Mealbookers', [
 
     $rootScope.startLiveView();
 
+    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction) {
+        var alertFunction;
+        if (typeof customAlertFunction == 'function')
+            alertFunction = customAlertFunction;
+        else
+            alertFunction = $rootScope.alert;
+
+        $rootScope.refreshCurrentUser(function() {
+            if ($rootScope.localization[errorMessage + '_' + httpCode.toString()])
+                alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode.toString()]);
+            else
+                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+
+        });
+    };
+
     $rootScope.getWeekDayText = function(day) {
         if (day < 1 || day > 7) {
             return console.error("Incorrect day passed: " + day);

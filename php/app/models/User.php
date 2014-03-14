@@ -107,7 +107,7 @@ class User
 
         // There's some event in the log
         DB::inst()->query("SELECT time FROM event_log WHERE
-            time >= $timestamp AND (user_id = {$this->id} OR user_id IS NULL) LIMIT 1");
+            time > $timestamp AND (user_id = {$this->id} OR user_id IS NULL) LIMIT 1");
         if (DB::inst()->getRowCount())
             return true;
 
