@@ -10,6 +10,9 @@
                 </div>
                 <div class="modal-body">
 
+                    <!-- Opening times -->
+                    <div class="opening-hours">{{ suggestRestaurant.openingHours[weekDay].all }}</div>
+
                     <!-- Modal alert -->
                     <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
 

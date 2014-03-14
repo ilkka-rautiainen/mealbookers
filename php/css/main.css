@@ -301,6 +301,15 @@ label {
     outline: 0;
 }
 
+#suggestionModal .opening-hours {
+    float: right;
+    font-family: OpenSans;
+    font-weight: normal;
+    white-space: pre;
+    font-size: 8pt;
+    text-align: right;
+}
+
  .page-header {
     text-align: center;
     font-size: 30px;

@@ -142,8 +142,7 @@ class Restaurant
         }
 
         for ($i = $today; $i <= 6; $i++) {
-            $openingHours[$i + 1]['tooltip'] = implode("\r\n", $openingHours[$i + 1]['all']);
-            unset($openingHours[$i + 1]['all']);
+            $openingHours[$i + 1]['all'] = implode("\r\n", $openingHours[$i + 1]['all']);
         }
 
         return $openingHours;
