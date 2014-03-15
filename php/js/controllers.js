@@ -366,9 +366,9 @@ angular.module('Mealbookers.controllers', [])
             }
             // Ok
             else {
+                $("#accountSettingsModal").modal('hide');
                 $rootScope.refreshCurrentUser(function() {
                     $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
-                    $("#accountSettingsModal").modal('hide');
                     console.log("Account removed");
                 });
             }

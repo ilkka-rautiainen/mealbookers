@@ -232,7 +232,12 @@ angular.module('Mealbookers', [
         }
         // Day has changed
         if ($rootScope.today != ((new Date().getDay() + 6) % 7) + 1) {
-            $state.transitionTo($state.current, $stateParams, {reload: true, inherit: false, notify: true});
+            if ($rootScope.today == 7) {
+                $state.transitionTo($state.current, {day: 1}, {reload: true, inherit: false, notify: true});
+            }
+            else {
+                $state.transitionTo($state.current, $stateParams, {reload: true, inherit: false, notify: true});
+            }
             $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
             return console.log("Day has changed, refreshing state");;
         }
