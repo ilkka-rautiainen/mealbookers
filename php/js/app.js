@@ -311,6 +311,16 @@ angular.module('Mealbookers', [
         });
     };
 
+    $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+        if (fromState.name == 'Navigation.Menu.Suggestion'
+            || fromState.name == 'Navigation.Menu.Register'
+            || fromState.name == 'Navigation.Menu.Login'
+            || fromState.name == 'Navigation.Menu.AccountSettings'
+            || fromState.name == 'Navigation.Menu.GroupSettings')
+            $(".modal-backdrop").remove();
+    });
+
+
     $rootScope.getWeekDayText = function(day) {
         if (day < 1 || day > 7) {
             return console.error("Incorrect day passed: " + day);
@@ -326,7 +336,7 @@ angular.module('Mealbookers', [
         else {
             return $rootScope.localization['weekday_' + day];
         }
-    }
+    };
 
     var setWidthClass = function() {
         $rootScope.$apply(function() {
