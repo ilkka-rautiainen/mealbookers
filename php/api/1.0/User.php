@@ -40,6 +40,7 @@ class UserAPI
         $user['notification_settings'] = $current_user->getNotificationSettingsAsArray();
         $user['config'] = Application::inst()->getFrontendConfiguration();
         $user['language'] = $current_user->language;
+        $user['role'] = 'admin';
         $user['timestamp'] = time();
 
         print json_encode($user);

@@ -3,6 +3,10 @@ body {
     background-color: whitesmoke;
 }
 
+body.modal-open {
+    overflow: hidden;
+}
+
 .well h3.name {
     margin-top: -4px;
 }
@@ -499,6 +503,10 @@ span.line-break {
 #groupSettingsModal .member .delete-confirm-button {
     height: 25px;
     padding-top: 2px;
+}
+
+.col-nopadding {
+    padding: 0px;
 }
 
 .saving-icon {

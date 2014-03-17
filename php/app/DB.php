@@ -156,7 +156,17 @@ class DB
      */
     public function quote($string)
     {
-        return $this->connection->escape_string($string);
+        return str_replace(
+            array(
+                '%',
+                '_',
+            ),
+            array(
+                '\%',
+                '\_',
+            ),
+            $this->connection->escape_string($string)
+        );
     }
 
     /**

@@ -1,0 +1,64 @@
+<div class="modal fade" id="user-management-modal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <a name="modal" />
+            <form ng-submit="save()">
+                <div class="modal-header">
+                    <button type="button" id="closeSuggestion" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{ 'user_management' | i18n }}</h4>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Alert -->
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+
+                    <!-- Search -->
+                    <div class="form-group">
+                        <h4>{{ 'user_management_search_users' | i18n }}</h4>
+                        <div class="col-sm-6 col-xs-12 form-group">
+                            <input class="form-control" type="text" placeholder="{{ 'user_management_user_placeholder' | i18n }}" ng-model="search.user" ng-change="initSearch()" focus-on="modalOpened" />
+                        </div>
+                        <div class="col-sm-6 col-xs-12 form-group">
+                            <input class="form-control" type="text" placeholder="{{ 'user_management_group_placeholder' | i18n }}" ng-model="search.group" ng-change="initSearch()" />
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <!-- Results -->
+                    <div class="results">
+                        <div ng-show="!results.length && !searchProcess && (search.user.length || search.group.length)">
+                            {{ 'user_management_no_results' | i18n }}
+                        </div>
+                        <div ng-show="searchProcess">
+                            <i class="glyphicon glyphicon-refresh saving-icon"></i> {{ 'user_management_searching' | i18n }}
+                        </div>
+                        <div ng-show="!searchProcess && results.length">
+                            <div ng-repeat="user in results" class="well result">
+                                <div class="col-xs-12 col-sm-6 col-nopadding">
+                                    <i class="glyphicon glyphicon-user icon"></i>
+                                    {{ user.name }} <i class="glyphicon glyphicon-edit"></i>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-nopadding">
+                                    {{ user.email_address }}
+                                </div>
+                                <div class="clearfix"></div>
+                                <div>
+                                    <strong>{{ 'user_management_groups' | i18n }}</strong> {{ user.groups }}
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-default" ng-click="openAccountSettingsFor(user)">{{ 'user_management_account_settings' | i18n }}</button>
+                                    <button class="btn btn-default" ng-click="openGroupSettingsFor(user)">{{ 'user_management_group_settings' | i18n }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'close' | i18n }}</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div ui-view></div>

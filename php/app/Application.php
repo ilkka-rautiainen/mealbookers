@@ -46,7 +46,11 @@ class Application
         // 5: isAuthenticated = true
     }
 
-    public function checkAuthentication()
+    /**
+     * Checks if there's a valid authenticated session with the given role.
+     * @param  string $role 'normal|admin'
+     */
+    public function checkAuthentication($role = 'normal')
     {
         // 1: tsekkaa että isAuthenticated == true
         // 2: jos ei -> feilaa

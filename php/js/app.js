@@ -47,19 +47,51 @@ angular.module('Mealbookers', [
     .state('Navigation.Menu.Suggestion', {
         url: "/restaurant/:restaurantId/suggestion",
         templateUrl: "partials/modals/Suggestion.html",
+        data: {
+            modal: true,
+            modalId: "suggestionModal"
+        },
         controller: 'SuggestionController'
     })
     
     .state('Navigation.Menu.AccountSettings', {
-        url: "/settings/general",
+        url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",
+        data: {
+            modal: true,
+            modalId: "accountSettingsModal"
+        },
         controller: 'AccountSettingsController'
     })
     
     .state('Navigation.Menu.GroupSettings', {
         url: "/settings/groups",
         templateUrl: "partials/modals/GroupSettings.html",
+        data: {
+            modal: true,
+            modalId: "GroupSettingsModal"
+        },
         controller: 'GroupSettingsController'
+    })
+    
+    .state('Navigation.Menu.UserManagement', {
+        url: "/settings/users",
+        templateUrl: "partials/modals/UserManagement.html",
+        data: {
+            modal: true,
+            modalId: "user-management-modal"
+        },
+        controller: 'UserManagementController'
+    })
+    
+    .state('Navigation.Menu.UserManagement.AccountSettings', {
+        url: "/:userId/account",
+        templateUrl: "partials/modals/AccountSettings.html",
+        data: {
+            modal: true,
+            modalId: "accountSettingsModal"
+        },
+        controller: 'AccountSettingsController'
     })
     
     .state('Navigation.AcceptSuggestion', {
@@ -344,12 +376,13 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
-        if (fromState.name == 'Navigation.Menu.Suggestion'
-            || fromState.name == 'Navigation.Menu.Register'
-            || fromState.name == 'Navigation.Menu.Login'
-            || fromState.name == 'Navigation.Menu.AccountSettings'
-            || fromState.name == 'Navigation.Menu.GroupSettings')
+        if (fromState.data && fromState.data.modal && !(toState.data && toState.data.modal)) {
             $(".modal-backdrop").remove();
+        }
+        else if (fromState.data && fromState.data.modal && toState.data && toState.data.modal) {
+            $("#" + fromState.data.modalId).css("visibility", "hidden");
+            $("#" + toState.data.modalId).css("visibility", "visible");
+        }
     });
 
 

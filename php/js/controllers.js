@@ -244,7 +244,90 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
+.controller('UserManagementController', ['$scope', '$rootScope', '$state', '$timeout', '$filter', '$http', '$location', '$anchorScroll', '$log', function($scope, $rootScope, $state, $timeout, $filter, $http, $location, $anchorScroll, $log) {
+    $("#user-management-modal").modal();
 
+    $('#user-management-modal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
+    $('#user-management-modal').on('shown.bs.modal', function () {
+        $scope.$broadcast('modalOpened');
+    });
+
+    $scope.search = {
+        user: '',
+        group: ''
+    };
+    $scope.searchProcess = false;
+    $scope.results = [];
+
+    $scope.modalAlertMessage = {
+        type: '',
+        message: ''
+    };
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage.type = type;
+        $scope.modalAlertMessage.message = message;
+        if (message.length) {
+            $location.hash('modal');
+            $anchorScroll();
+        }
+    };
+
+    $scope.initSearch = function() {
+        if ($scope.searchTimeout)
+            $timeout.cancel($scope.searchTimeout);
+        if ((!$scope.search.user || !$scope.search.user.length)
+            && (!$scope.search.group || !$scope.search.group.length)) {
+            $scope.results = [];
+            $scope.searchProcess = false;
+            return;
+        }
+        $scope.searchProcess = true;
+        $scope.searchTimeout = $timeout($scope.search, 300);
+    };
+
+    $scope.search = function() {
+        $http.get('api/1.0/users', {
+            params: {
+                user: $scope.search.user,
+                group: $scope.search.group
+            }
+        }).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.searchProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
+            }
+            else if (result.status == 'ok') {
+                $scope.searchProcess = false;
+                $scope.results = result.results;
+            }
+            else if (result.status == 'no_search_term') {
+                $scope.searchProcess = false;
+                $scope.results = [];
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.searchProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'))
+            }
+        }).error(function(response, httpCode) {
+            $scope.searchProcess = false;
+            $rootScope.operationFailed(httpCode, 'user_management_search_failed', $scope.modalAlert);
+        });
+    };
+
+    $scope.openAccountSettingsFor = function(user) {
+        $state.go(".AccountSettings", {userId: user.id});
+    };
+
+    $scope.openGroupSettingsFor = function(user) {
+        console.log(user);
+    };
+}])
 
 .controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
 
@@ -418,8 +501,6 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
-
-
 .controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
     
     $rootScope.refreshCurrentUserAndStopLiveView(function() {
@@ -431,13 +512,13 @@ angular.module('Mealbookers.controllers', [])
         });
     });
 
-    $scope.groupSettingsMessage = {
+    $scope.modalAlertMessage = {
         type: '',
         message: ''
     };
     $scope.modalAlert = function(type, message) {
-        $scope.groupSettingsMessage.type = type;
-        $scope.groupSettingsMessage.message = message;
+        $scope.modalAlertMessage.type = type;
+        $scope.modalAlertMessage.message = message;
         if (message.length) {
             $location.hash('modal');
             $anchorScroll();
