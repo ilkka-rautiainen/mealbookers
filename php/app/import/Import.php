@@ -52,11 +52,12 @@ abstract class Import
 
     protected function saveOpeningHours()
     {
-        // throw new ImportException("Not implemented");
+        throw new ImportException("Not implemented");
     }
 
     protected function startDay($weekDayNumber)
     {
+        Logger::debug(__METHOD__ . " $weekDayNumber");
         DB::inst()->startTransaction();
         $this->current_day = $weekDayNumber;
         $this->day_meals = array();
@@ -79,6 +80,7 @@ abstract class Import
     {
         if (!is_array($this->day_meals))
             return;
+        Logger::debug(__METHOD__);
 
         $this->endSection();
         $this->current_day = null;

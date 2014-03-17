@@ -99,6 +99,7 @@ class AmicaImport extends Import
             try {
                 Logger::debug(__METHOD__ . " start lang $lang");
                 $source = $this->fetchURL("http://www.amica.fi/Templates/RestaurantPage/RestaurantMenuPrintPage.aspx?id=$id&page=$id&bn=$lang&a=$menu_type&s=$menu_number");
+                $source = str_replace("&nbsp;", ' ', $source); // replace &nbsp; in utf-8
 
                 phpQuery::newDocument($source);
                 
@@ -139,7 +140,8 @@ class AmicaImport extends Import
         // Go through the menu
         foreach ($p_list as $p) {
             $html = pq($p)->html();
-            $lines[] = trim($html);
+            $inner_lines = preg_split("/" . preg_quote("<br>") . "[\\s]*" . preg_quote("<br>") . "/", trim($html));
+            $lines = array_merge($lines, $inner_lines);
         }
         return $lines;
     }
@@ -166,7 +168,6 @@ class AmicaImport extends Import
         $line_html = preg_replace('#<br\s*/?>#i', "\n", $line_html);
         $line_html = strip_tags($line_html, '<strong>');
         $line_html = html_entity_decode($line_html, ENT_QUOTES);
-        $line_html = str_replace(chr(194) . chr(160), ' ', $line_html); // replace &nbsp; in utf-8
         $line_html = trim($line_html);
 
         Logger::trace(__METHOD__ . " line after replacements: $line_html");
@@ -279,7 +280,7 @@ class AmicaImport extends Import
      */
     private function formatAttributes($line_html)
     {
-        preg_match_all("/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line_html, $matches);
+        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line_html, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
@@ -300,7 +301,7 @@ class AmicaImport extends Import
             foreach ($subMatch['attributes'] as $key => $attribute)
                 $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
             $line_html = mb_substr($line_html, 0, $subMatch['start'])
-                . "<span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>\n"
+                . " <span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>\n"
                 . mb_substr($line_html, $subMatch['start'] + $subMatch['length']);
         }
 
