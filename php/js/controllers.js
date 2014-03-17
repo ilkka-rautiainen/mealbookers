@@ -174,9 +174,8 @@ angular.module('Mealbookers.controllers', [])
         }
         return grid;
     };
-    $scope.makeRestaurantGrid();
 
-    $rootScope.$watch('widthClass', function() {
+    $rootScope.$watchCollection('[restaurants, widthClass]', function() {
         $scope.makeRestaurantGrid();
     });
     
@@ -266,8 +265,37 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.saveProcess = false;
+    $scope.languageSaveProcess = false;
     $scope.removingAccount = false;
     $scope.resetPassword();
+
+    $scope.updateLanguage = function() {
+        $scope.modalAlert('', '');
+        $scope.languageSaveProcess = true;
+        $http.post('api/1.0/user/language', {
+            language: $rootScope.currentUser.language
+        }).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.languageSaveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
+            }
+            else if (result.status == 'ok') {
+                console.log("Language changed");
+                $rootScope.refreshLocalization(function() {
+                    $scope.languageSaveProcess = false;
+                });
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.languageSaveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+            }
+        }).error(function(response, httpCode) {
+            $scope.languageSaveProcess = false;
+            $rootScope.operationFailed(httpCode, 'account_save_failed', $scope.modalAlert);
+        });
+    };
 
     $scope.save = function() {
         if (!$scope.validateForm()) {

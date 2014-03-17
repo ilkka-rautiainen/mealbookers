@@ -259,6 +259,10 @@ label {
     padding: 5px 0 5px 0;
 }
 
+.button-group .btn+.btn {
+    margin-left: 5px;
+}
+
 #suggestionModal input.suggest-time {
     width: 95px;
 }
@@ -449,13 +453,21 @@ span.line-break {
     font-family: OpenSansBold;
 }
 
-#accountSettingsModal .remove-account {
-    float: left;
+#accountSettingsModal .remove-account button {
     display: none;
 }
 
-#accountSettingsModal .remove-account.visible {
+#accountSettingsModal .modal-footer .remove-account button {
+    float: left;
+}
+
+#accountSettingsModal .remove-account button.visible {
     display: inline-block;
+}
+
+#accountSettingsModal .language-radio-container {
+    display: inline-block;
+    width: 15px;
 }
 
 #groupSettingsModal .member {

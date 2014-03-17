@@ -22,7 +22,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/Navigation.html",
         controller: 'NavigationController',
         resolve: {
-            initialization: "Initialization"
+            InitApp: "InitApp"
         }
     })
     
@@ -71,7 +71,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
-.run(['$rootScope', '$window', '$http', '$timeout', '$state', '$stateParams', function($rootScope, $window, $http, $timeout, $state, $stateParams) {
+.run(['$rootScope', '$window', '$http', '$timeout', '$state', '$stateParams', 'InitApp', function($rootScope, $window, $http, $timeout, $state, $stateParams, InitApp) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -264,6 +264,33 @@ angular.module('Mealbookers', [
     $rootScope.startLiveView = function() {
         $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
         console.log("Live View started");
+    };
+
+    $rootScope.refreshLocalization = function(done) {
+        // Get localization
+        $http.get('api/1.0/app/language/' + $rootScope.currentUser.language).success(function(result)
+        {
+            console.log("Localization refreshed");
+            $rootScope.localization = result;
+        });
+
+        $rootScope.refreshRestaurants(done);
+    };
+
+    $rootScope.refreshRestaurants = function(done) {
+        // Get restaurants
+        $http.get('api/1.0/restaurants', {
+            params: {
+                lang: $rootScope.currentUser.language
+            }
+        }).success(function(result) {
+            console.log("Restaurants refreshed");
+            $rootScope.restaurants = result;
+
+            if (typeof done == 'function') {
+                done();
+            }
+        });
     };
 
     $rootScope.startLiveView();

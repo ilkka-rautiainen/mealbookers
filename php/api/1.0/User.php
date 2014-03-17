@@ -2,6 +2,7 @@
 
 Flight::route('GET /user', array('UserAPI', 'getUser'));
 Flight::route('POST /user', array('UserAPI', 'updateUser'));
+Flight::route('POST /user/language', array('UserAPI', 'updateUserLanguage'));
 Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
@@ -166,6 +167,28 @@ class UserAPI
                 'status' => $e->getMessage()
             ));
         }
+    }
+
+    /**
+     * @todo  implement with real user id from current user + implement auth
+     */
+    function updateUserLanguage()
+    {
+        Logger::debug(__METHOD__ . " POST /user/language called");
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['language']) || !in_array($data['language'], array('fi', 'en')))
+            Application::inst()->exitWithHttpCode(400, "Invalid language");
+
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        DB::inst()->query("UPDATE users SET language = '" . $data['language'] . "' WHERE id = {$current_user->id}");
+
+        print json_encode(array(
+            'status' => 'ok'
+        ));
     }
 
     function login()

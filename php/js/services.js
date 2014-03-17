@@ -9,7 +9,7 @@ services.value('version', '0.1');
 /**
  * Load current user and localization
  */
-services.factory('Initialization', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
+services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
     // Init promises
     var currentUserPromise = $http.get('api/1.0/user'), localizationPromise, restaurantsPromise;
 
@@ -17,6 +17,7 @@ services.factory('Initialization', ['$http', '$rootScope', '$q', function($http,
     var deferred = $q.defer();
 
     currentUserPromise.then(function(result) {
+        console.log("Current user loaded");
         $rootScope.currentUser = result.data;
         $rootScope.updateGroupsWithMe();
 
@@ -24,6 +25,7 @@ services.factory('Initialization', ['$http', '$rootScope', '$q', function($http,
         localizationPromise = $http.get('api/1.0/app/language/'
             + $rootScope.currentUser.language).then(function(result)
         {
+            console.log("Localization loaded");
             $rootScope.localization = result.data;
         }, function() {
             console.error("Error while loading translations");
@@ -35,6 +37,7 @@ services.factory('Initialization', ['$http', '$rootScope', '$q', function($http,
                 lang: $rootScope.currentUser.language
             }
         }).then(function(result) {
+            console.log("Restaurants loaded");
             $rootScope.restaurants = result.data;
         }, function() {
             console.error("Error while loading restaurants");
