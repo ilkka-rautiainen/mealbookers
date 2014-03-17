@@ -621,11 +621,12 @@ angular.module('Mealbookers.controllers', [])
     $scope.suggestTime = "";
     $scope.saveProcess = false;
 
-    $("#suggestionModal .group").removeClass("group-selected");
-    $("#suggestionModal .member").removeClass("member-selected");
     $("#suggestionModal").modal();
     $('#suggestionModal').on('hidden.bs.modal', function () {
         $state.go("^");
+    });
+    $('#suggestionModal').on('shown.bs.modal', function () {
+        $scope.$broadcast('modalOpened');
     });
 
     for (var i in $rootScope.currentUser.groups) {

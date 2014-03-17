@@ -336,9 +336,12 @@ label {
     float: right;
     font-family: OpenSans;
     font-weight: normal;
-    white-space: pre;
     font-size: 8pt;
     text-align: right;
+}
+
+#suggestionModal .opening-hours strong {
+    font-size: 9pt;
 }
 
  .page-header {

@@ -52,6 +52,12 @@ $GLOBALS['config'] = array(
         'backend_threshold' => 60, // How much backend permits over the limit
         'force_ui_refresh' => 60 * 15, // If ui hasn't updated within this time, refresh is forced
     ),
+    'openingHoursDisplayOrder' => array(
+        'normal',
+        'lunch',
+        'breakfast',
+        'alacarte',
+    ),
 );
 
 if (file_exists(__DIR__ . "/config_override.php"))

@@ -119,30 +119,71 @@ class Restaurant
 
         $openingHours = array();
         for ($i = $today; $i <= 6; $i++) {
-            $openingHours[$i + 1] = array(
+            $openingHours[$i] = array(
                 'all' => array(),
+                'others' => array(),
+                'all_in_one' => '',
                 'closed' => false,
             );
         }
 
         while ($row = DB::inst()->fetchAssoc($result)) {
             for ($i = max($today, $row['start_weekday']); $i <= $row['end_weekday']; $i++) {
-                $openingHours[$i + 1]['all'][] = 
-                    Lang::inst()->get('opening_hour_type_' . $row['type'])
-                    . ' ' . substr($row['start_time'], 0, 5)
-                    . ' - ' . substr($row['end_time'], 0, 5);
+                // Closed
                 if ($row['type'] == 'normal' && $row['start_time'] == '00:00:00'
-                    && $row['end_time'] == '00:00:00') {
-                    $openingHours[$i + 1]['closed'] = true;
+                    && $row['end_time'] == '00:00:00')
+                {
+                    $openingHours[$i]['closed'] = true;
+                    continue;
                 }
-                if ($row['type'] == 'lunch') {
-                    $openingHours[$i + 1]['lunch'] = end($openingHours[$i + 1]['all']);
+
+                // Normal
+                $openingHour = array(
+                    'type' => $row['type'],
+                    'type_translated' => Lang::inst()->get('opening_hour_type_' . $row['type']),
+                    'start' => substr($row['start_time'], 0, 5),
+                    'end' => substr($row['end_time'], 0, 5),
+                );
+
+                $openingHours[$i]['all'][] = $openingHour;
+
+                // Open
+                if ($row['type'] == 'normal') {
+                    $openingHours[$i]['normal'] = $openingHour;
+                }
+                // Lunch
+                else if ($row['type'] == 'lunch') {
+                    $openingHours[$i]['lunch'] = $openingHour;
+                }
+                // Other
+                else {
+                    $openingHours[$i]['others'][] = $openingHour;
                 }
             }
         }
 
-        for ($i = $today; $i <= 6; $i++) {
-            $openingHours[$i + 1]['all'] = implode("\r\n", $openingHours[$i + 1]['all']);
+        $order = Conf::inst()->get('openingHoursDisplayOrder');
+        $sort = function($a, $b) use($order) {
+            $a_order = array_search($a['type'], $order);
+            $b_order = array_search($b['type'], $order);
+            if ($a_order > $b_order)
+                return 1;
+            else if ($b_order > $a_order)
+                return -1;
+            else
+                return 0;
+        };
+
+        for ($i = 6; $i >= $today; $i--) {
+            usort($openingHours[$i]['all'], $sort);
+            usort($openingHours[$i]['others'], $sort);
+            $all_in_ones = array();
+            foreach ($openingHours[$i]['all'] as $openingHour) {
+                $all_in_ones[] = $openingHour['type_translated'] . ' ' . $openingHour['start'] . ' - ' . $openingHour['end'];
+            }
+            $openingHours[$i]['all_in_one'] = implode("\r\n", $all_in_ones);
+            $openingHours[$i + 1] = $openingHours[$i];
+            unset($openingHours[$i]);
         }
 
         return $openingHours;

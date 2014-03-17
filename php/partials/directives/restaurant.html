@@ -11,10 +11,10 @@
 
         <!-- Lunch times -->
         <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
-            <span class="opening-hour-tooltip" title="{{ restaurant.openingHours[weekDay].all }}">{{ restaurant.openingHours[weekDay].lunch }}</span>
+            <span class="opening-hour-tooltip" title="{{ restaurant.openingHours[weekDay].all_in_one }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
         </div>
 
-        <!-- Restaurant closed (if) -->
+        <!-- Restaurant closed (if it is) -->
         <div ng-show="restaurant.openingHours[weekDay].closed" class="closed-message">
             {{ 'restaurant_closed_on' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
         </div>

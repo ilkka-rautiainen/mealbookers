@@ -26,3 +26,11 @@ angular.module('Mealbookers.directives', [])
         template: '<div class="col-md-3 col-sm-6 restaurant-placeholder"></div>'
     };
 })
+
+.directive('focusOn', function() {
+   return function(scope, elem, attr) {
+      scope.$on(attr.focusOn, function(e) {
+          elem[0].focus();
+      });
+   };
+})
