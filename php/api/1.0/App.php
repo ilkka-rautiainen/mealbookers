@@ -1,10 +1,19 @@
 <?php
 
+Flight::route('GET /app/status', array('AppAPI', 'getStatus'));
 Flight::route('GET /app/log/@passphrase(/@rows)', array('AppAPI', 'getLog'));
 Flight::route('GET /app/language(/@lang)', array('AppAPI', 'getLanguage'));
 
 class AppAPI
 {
+    function getStatus($passphrase, $rows = 1000)
+    {
+        Logger::info(__METHOD__ . " GET /app/status called");
+        print json_encode(array(
+            'status' => 'ok',
+        ));
+    }
+
     function getLog($passphrase, $rows = 1000)
     {
         Logger::info(__METHOD__ . " GET /app/log called");

@@ -6,6 +6,19 @@ var services = angular.module('Mealbookers.services', ['ngResource']);
 
 services.value('version', '0.1');
 
+services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $injector) {
+    return function (exception, cause) {
+        var rootScope = $injector.get('$rootScope');
+        if (exception.type == 'RefreshDataException' && rootScope.liveViewOn) {
+            $log.warn('Live view interrupted');
+            rootScope.startLiveViewRecovery();
+        }
+        else {
+            $log.error('Uncaught exception: ' + exception.message);
+        }
+    };
+}]);
+
 /**
  * Load current user and localization
  */

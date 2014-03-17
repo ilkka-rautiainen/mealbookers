@@ -71,7 +71,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
-.run(['$rootScope', '$window', '$http', '$timeout', '$state', '$stateParams', 'InitApp', function($rootScope, $window, $http, $timeout, $state, $stateParams, InitApp) {
+.run(['$rootScope', '$window', '$http', '$timeout', '$interval', '$state', '$stateParams', 'InitApp', '$log', function($rootScope, $window, $http, $timeout, $interval, $state, $stateParams, InitApp, $log) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -83,6 +83,7 @@ angular.module('Mealbookers', [
         type: ''
     };
     $rootScope.alertMessage = emptyMessage;
+    $rootScope.liveViewOn = false;
 
     $rootScope.config = {
         alertTimeouts: {
@@ -91,7 +92,8 @@ angular.module('Mealbookers', [
             'alert-info': 4000,
             'alert-success': 4000
         },
-        liveViewInterval: 15000
+        liveViewInterval: 15000,
+        liveViewRecoveryInterval: 5000
     };
 
     var alertTimeout = null;
@@ -187,6 +189,8 @@ angular.module('Mealbookers', [
                 $rootScope.updateGroupsWithMe();
                 $rootScope.refreshSuggestions(done);
             }
+        }).error(function() {
+            throw new RefreshDataException("Error while refreshing current user");
         });
     };
 
@@ -218,6 +222,8 @@ angular.module('Mealbookers', [
             if (typeof done == 'function') {
                 done();
             }
+        }).error(function() {
+            throw new RefreshDataException("Error while refreshing suggestions");
         });
     };
 
@@ -253,7 +259,8 @@ angular.module('Mealbookers', [
      */
     $rootScope.refreshCurrentUserAndStopLiveView = function(done) {
         $timeout.cancel($rootScope.liveViewTimeout);
-        $rootScope.refreshCurrentUser(function(){
+        $rootScope.refreshCurrentUser(function() {
+            $rootScope.liveViewOn = false;
             console.log("Live View stopped");
             if (typeof done == 'function') {
                 done();
@@ -263,7 +270,28 @@ angular.module('Mealbookers', [
 
     $rootScope.startLiveView = function() {
         $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
+        $rootScope.liveViewOn = true;
         console.log("Live View started");
+    };
+
+    /**
+     * This function is called when an error occurs in live view
+     */
+    $rootScope.startLiveViewRecovery = function() {
+        $log.log("Live view recovery started");
+        $rootScope.liveViewRecoveryInterval = $interval($rootScope.liveViewRecovery, $rootScope.config.liveViewRecoveryInterval);
+    };
+
+    $rootScope.liveViewRecovery = function() {
+        $http.get('api/1.0/app/status').success(function(result) {
+            if (result.status == 'ok') {
+                $log.info("Live view recovered");
+                $interval.cancel($rootScope.liveViewRecoveryInterval);
+                $rootScope.refreshCurrentUser(function() {
+                    $rootScope.startLiveView();
+                });
+            }
+        });
     };
 
     $rootScope.refreshLocalization = function(done) {
@@ -272,6 +300,8 @@ angular.module('Mealbookers', [
         {
             console.log("Localization refreshed");
             $rootScope.localization = result;
+        }).error(function() {
+            console.error("Error while refreshing localization");
         });
 
         $rootScope.refreshRestaurants(done);
@@ -290,6 +320,8 @@ angular.module('Mealbookers', [
             if (typeof done == 'function') {
                 done();
             }
+        }).error(function() {
+            console.error("Error while refreshing restaurants");
         });
     };
 
@@ -363,3 +395,8 @@ angular.module('Mealbookers', [
     setWidthClass();
     $($window).bind('resize', setWidthClass);
 }]);
+
+function RefreshDataException(message) {
+    this.message = message;
+    this.type = 'RefreshDataException';
+}
