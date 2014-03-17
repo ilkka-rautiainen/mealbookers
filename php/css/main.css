@@ -1,5 +1,5 @@
 body {
-    padding-top: 50px;
+    /*padding-top: 50px;*/
     font-family: OpenSans;
     background-color: whitesmoke;
 }
@@ -62,6 +62,15 @@ body {
 
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color: #ededed;
+}
+
+@media (max-width: 767px) /* @grid-float-breakpoint -1 NAVBAR */
+{
+    .navbar-fixed-top
+    {
+        position: relative;
+        top: auto;
+    }
 }
 
 @font-face
