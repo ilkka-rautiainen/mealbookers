@@ -601,7 +601,7 @@ angular.module('Mealbookers.controllers', [])
 
 
 
-.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', '$timeout', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll, $timeout) {
 
     if (!$stateParams.restaurantId) {
         return $state.go("^");
@@ -674,7 +674,22 @@ angular.module('Mealbookers.controllers', [])
         return true;
     };
 
-    $scope.suggest = function() {
+    $scope.suggestTimeValidityError = function() {
+        if (!($scope.suggestRestaurant.openingHours[$scope.weekDay].lunch
+            && $scope.suggestTime && $scope.suggestTime.length == 5))
+            return 0;
+
+        if ($scope.suggestRestaurant.openingHours[$scope.weekDay].lunch.start
+            > $scope.suggestTime)
+            return 1;
+        else if ($scope.suggestRestaurant.openingHours[$scope.weekDay].lunch.end
+            < $scope.suggestTime)
+            return 2;
+        else
+            return 0;
+    };
+
+    $scope.send = function() {
         if (!validateSuggestForm()) {
             return;
         }
@@ -762,6 +777,10 @@ angular.module('Mealbookers.controllers', [])
                     $scope.suggestTime = $scope.suggestTime.substring(0, 3) + "0" + $scope.suggestTime.substring(3, 4);
             }
         }
+
+        $timeout(function() {
+            $("#suggest-time").focus().val($("#suggest-time").val());
+        }, 0);
     });
 
     $scope.modalAlert = function(type, message) {

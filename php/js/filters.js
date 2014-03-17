@@ -25,9 +25,17 @@ angular.module('Mealbookers.filters', [])
 })
 
 .filter('formatOpeningHour', function() {
-	return function(openingHour) {
+    return function(openingHour) {
         if (!openingHour)
             return '';
-		return openingHour.type_translated + ' ' + openingHour.start + ' - ' + openingHour.end;
+        return openingHour.type_translated + ' ' + openingHour.start + ' - ' + openingHour.end;
+    }
+})
+
+.filter('replace', function() {
+	return function(haystack, search, replace) {
+        if (typeof haystack != 'string')
+            return '';
+		return haystack.replace(search, replace);
 	}
 });
