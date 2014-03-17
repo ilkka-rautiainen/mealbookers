@@ -260,7 +260,11 @@ label {
 }
 
 .button-group {
-    padding: 5px 0 5px 0;
+    padding: 5px 0 0px 0;
+}
+
+.button-group .btn {
+    margin-bottom: 5px;
 }
 
 .button-group .btn+.btn {

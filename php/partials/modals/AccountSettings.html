@@ -66,7 +66,7 @@
                     
                     <div class="remove-account button-group" ng-if="widthClass == 'xs'">
                         <hr class="featurette-divider">
-                        <h4>{{ 'account_remove' | i18n }}</h4>
+                        <h4>{{ 'account_removal' | i18n }}</h4>
                         <button type="button" class="btn btn-danger" ng-class="{visible: !removingAccount}" ng-click="removingAccount = true">{{ 'account_remove' | i18n }}</button>
                         <button type="button" class="btn btn-success" ng-class="{visible: removingAccount}" ng-click="removingAccount = false">{{ 'account_remove_cancel' | i18n }}</button>
                         <button type="button" class="btn btn-danger" ng-class="{visible: removingAccount}" ng-click="removeAccount()">{{ 'account_remove_ok' | i18n }}</button>
