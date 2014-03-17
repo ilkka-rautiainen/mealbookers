@@ -1,11 +1,11 @@
 <?php
 
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
-Flight::route('POST /user', array('UserAPI', 'updateUser'));
-Flight::route('POST /user/language', array('UserAPI', 'updateUserLanguage'));
-Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
+Flight::route('POST /user(/@userId)/language', array('UserAPI', 'updateUserLanguage'));
+Flight::route('POST /user(/@userId)', array('UserAPI', 'updateUser'));
+Flight::route('DELETE /user(/@userId)', array('UserAPI', 'deleteUser'));
 Flight::route('GET /users', array('UserAPI', 'searchUsers'));
 
 class UserAPI
@@ -131,7 +131,7 @@ class UserAPI
         $result['notification_settings'] = $user->getNotificationSettingsAsArray();
         $result['config'] = Application::inst()->getFrontendConfiguration();
         $result['language'] = $user->language;
-        $result['role'] = 'admin';
+        $result['role'] = $user->role;
         $result['timestamp'] = time();
 
         print json_encode(array(
@@ -143,15 +143,31 @@ class UserAPI
     /**
      * @todo implement with real user
      */
-    function deleteUser()
+    function deleteUser($userId = null)
     {
-        Logger::debug(__METHOD__ . " DELETE /user called");
-        Application::inst()->checkAuthentication();
-
         $current_user = new User();
         $current_user->fetch(1);
 
-        $current_user->delete();
+        if ($userId) {
+            Logger::debug(__METHOD__ . " DELETE /user/$userId called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " DELETE /user called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
+
+        $user->delete();
 
         print json_encode(array(
             'status' => 'ok',
@@ -161,16 +177,32 @@ class UserAPI
     /**
      * @todo  implement with real user id from current user + implement auth
      */
-    function updateUser()
+    function updateUser($userId = null)
     {
-        Logger::debug(__METHOD__ . " POST /user called");
-        Application::inst()->checkAuthentication();
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        if ($userId) {
+            Logger::debug(__METHOD__ . " POST /user/$userId called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " POST /user called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
 
         try {
             DB::inst()->startTransaction();
-
-            $current_user = new User();
-            $current_user->fetch(1);
 
             $data = Application::inst()->getPostData();
 
@@ -213,7 +245,7 @@ class UserAPI
             DB::inst()->query("UPDATE users SET
                     first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
                     last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
-                WHERE id = {$current_user->id}");
+                WHERE id = {$user->id}");
 
             // UPDATE NOTIFICATION SETTINGS
             DB::inst()->query("UPDATE users SET
@@ -222,28 +254,32 @@ class UserAPI
                     notify_suggestion_left_alone = " . ((int)((boolean) $data['suggestion']['left_alone'])) . ",
                     notify_suggestion_deleted = " . ((int)((boolean) $data['suggestion']['deleted'])) . ",
                     notify_group_memberships = " . ((int)((boolean) $data['group']['memberships'])) . "
-                WHERE id = {$current_user->id}");
+                WHERE id = {$user->id}");
 
             // UPDATE PASSWORD
             // New password given
             if ($data['password']['new'] || $data['password']['repeat']) {
-                if (!$data['password']['old']) {
-                    throw new ApiException('no_old_password');
+
+                if ($current_user->role != 'admin') {
+                    if (!$data['password']['old']) {
+                        throw new ApiException('no_old_password');
+                    }
+                    $old_hash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$user->id}");
+                    if ($old_hash != Application::inst()->hash($data['password']['old'])) {
+                        throw new ApiException('wrong_password');
+                    }
                 }
-                else if ($data['password']['new'] != $data['password']['repeat']) {
+
+                if ($data['password']['new'] != $data['password']['repeat']) {
                     throw new ApiException('passwords_dont_match');
                 }
-                $old_hash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$current_user->id}");
-                if ($old_hash != Application::inst()->hash($data['password']['old'])) {
-                    throw new ApiException('wrong_password');
-                }
-                else if (!Application::inst()->isStrongPassword($data['password']['new'], $current_user)) {
+                else if (!Application::inst()->isStrongPassword($data['password']['new'], $user)) {
                     throw new ApiException('weak_password');
                 }
                 else {
                     DB::inst()->query("UPDATE users
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
-                        WHERE id = {$current_user->id}");
+                        WHERE id = {$user->id}");
                 }
             }
             // No new password but the old given
@@ -267,19 +303,36 @@ class UserAPI
     /**
      * @todo  implement with real user id from current user + implement auth
      */
-    function updateUserLanguage()
+    function updateUserLanguage($userId = null)
     {
-        Logger::debug(__METHOD__ . " POST /user/language called");
+        $current_user = new User();
+        $current_user->fetch(1);
+
+        if ($userId) {
+            Logger::debug(__METHOD__ . " POST /user/$userId/language called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " POST /user/language called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
 
         $data = Application::inst()->getPostData();
 
         if (!isset($data['language']) || !in_array($data['language'], array('fi', 'en')))
             Application::inst()->exitWithHttpCode(400, "Invalid language");
 
-        $current_user = new User();
-        $current_user->fetch(1);
-
-        DB::inst()->query("UPDATE users SET language = '" . $data['language'] . "' WHERE id = {$current_user->id}");
+        DB::inst()->query("UPDATE users SET language = '" . $data['language'] . "' WHERE id = {$user->id}");
 
         print json_encode(array(
             'status' => 'ok'

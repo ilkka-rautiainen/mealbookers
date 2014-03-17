@@ -8,6 +8,7 @@ class User
     public $first_name;
     public $last_name;
     public $language;
+    public $role = 'admin';
     public $joined;
     private $notify_suggestion_received;
     private $notify_suggestion_accepted;

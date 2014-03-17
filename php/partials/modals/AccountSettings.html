@@ -51,7 +51,7 @@
 
                     <!-- Password change -->
                     <h4>{{ 'account_password_change' | i18n }}</h4>
-                    <div class="form-group">
+                    <div class="form-group" ng-show="currentUser.role != 'admin'">
                         <label for="old_password">{{ 'account_old_password' | i18n }}</label>
                         <input class="form-control" type="password" name="old_password" ng-model="password.old" />
                     </div>

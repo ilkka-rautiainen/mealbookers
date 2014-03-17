@@ -387,7 +387,14 @@ angular.module('Mealbookers.controllers', [])
     $scope.updateLanguage = function() {
         $scope.modalAlert('', '');
         $scope.languageSaveProcess = true;
-        $http.post('api/1.0/user/language', {
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = 'api/1.0/user/language';
+        else
+            address = 'api/1.0/user/' + $scope.user.id + '/language';
+
+        $http.post(address, {
             language: $scope.user.language
         }).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -396,9 +403,14 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'ok') {
                 console.log("Language changed");
-                $rootScope.refreshLocalization(function() {
+                if ($scope.isCurrentUser) {
+                    $rootScope.refreshLocalization(function() {
+                        $scope.languageSaveProcess = false;
+                    });
+                }
+                else {
                     $scope.languageSaveProcess = false;
-                });
+                }
             }
             else {
                 console.error("Unknown response");
@@ -419,7 +431,13 @@ angular.module('Mealbookers.controllers', [])
         $scope.saveProcess = true;
         $scope.modalAlert('', '');
 
-        $http.post('api/1.0/user', {
+        var address;
+        if ($scope.isCurrentUser)
+            address = 'api/1.0/user';
+        else
+            address = 'api/1.0/user/' + $scope.user.id;
+
+        $http.post(address, {
             password: $scope.password,
             suggestion: $scope.user.notification_settings.suggestion,
             group: $scope.user.notification_settings.group,
@@ -483,11 +501,11 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.validateForm = function() {
         if ($scope.password.new || $scope.password.repeat) {
-            if (!$scope.password.old) {
+            if (!$rootScope.currentUser.role == 'admin' && !$scope.password.old) {
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_give_old_password'));
                 return false;
             }
-            else if ($scope.password.new != $scope.password.repeat) {
+            if ($scope.password.new != $scope.password.repeat) {
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
                 return false;
             }
@@ -501,7 +519,13 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.removeAccount = function() {
-        $http.delete('/api/1.0/user').success(function(result) {
+        var address;
+        if ($scope.isCurrentUser)
+            address = 'api/1.0/user';
+        else
+            address = 'api/1.0/user/' + $scope.user.id;
+
+        $http.delete(address).success(function(result) {
             // Fail
             if (typeof result != 'object' || result.status != 'ok') {
                 $scope.resetForm(false);
@@ -510,10 +534,12 @@ angular.module('Mealbookers.controllers', [])
             // Ok
             else {
                 $("#accountSettingsModal").modal('hide');
-                $rootScope.refreshCurrentUser(function() {
-                    $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
-                    console.log("Account removed");
-                });
+                if ($scope.isCurrentUser) {
+                    $rootScope.refreshCurrentUser(function() {
+                        $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
+                        console.log("Account removed");
+                    });
+                }
             }
         }).error(function(response, code) {
             $scope.resetForm(false);
