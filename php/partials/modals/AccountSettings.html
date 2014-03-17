@@ -5,27 +5,27 @@
             <form ng-submit="save()">
                 <div class="modal-header">
                     <button type="button" id="closeSuggestion" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">{{ currentUser.name }} - {{ 'account_settings' | i18n }}</h4>
+                    <h4 class="modal-title">{{ user.name }} - {{ 'account_settings' | i18n }}</h4>
                 </div>
                 <div class="modal-body">
                     <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
 
                     <!-- Account email -->
                     <div class="form-group">
-                        <strong>{{ currentUser.email_address }}</strong>
+                        <strong>{{ user.email_address }}</strong>
                     </div>
 
                     <!-- Name -->
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
                             <label for="first_name">{{ 'first_name' | i18n }}</label>
-                            <input class="form-control" type="text" name="first_name" ng-model="currentUser.first_name" required />
+                            <input class="form-control" type="text" name="first_name" ng-model="user.first_name" required />
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
                             <label for="first_name">{{ 'last_name' | i18n }}</label>
-                            <input class="form-control" type="text" name="last_name" ng-model="currentUser.last_name" required />
+                            <input class="form-control" type="text" name="last_name" ng-model="user.last_name" required />
                         </div>
                     </div>
                     <div style="clear:both;"></div>
@@ -33,18 +33,18 @@
 
                     <!-- Language -->
                     <h4>{{ 'account_language' | i18n }}</h4>
-                    <span class="language-radio-container"><input type="radio" name="language" value="fi" ng-model="currentUser.language" ng-change="updateLanguage()" ng-show="!languageSaveProcess || currentUser.language == 'en'" /><i class="glyphicon glyphicon-refresh saving-icon" ng-show="currentUser.language == 'fi' && languageSaveProcess"></i></span> {{ 'account_language_fi' | i18n }}<br />
-                    <span class="language-radio-container"><input type="radio" name="language" value="en" ng-model="currentUser.language" ng-change="updateLanguage()" ng-show="!languageSaveProcess || currentUser.language == 'fi'" /><i class="glyphicon glyphicon-refresh saving-icon" ng-show="currentUser.language == 'en' && languageSaveProcess"></i></span> {{ 'account_language_en' | i18n }}
+                    <span class="language-radio-container"><input type="radio" name="language" value="fi" ng-model="user.language" ng-change="updateLanguage()" ng-show="!languageSaveProcess || user.language == 'en'" /><i class="glyphicon glyphicon-refresh saving-icon" ng-show="user.language == 'fi' && languageSaveProcess"></i></span> {{ 'account_language_fi' | i18n }}<br />
+                    <span class="language-radio-container"><input type="radio" name="language" value="en" ng-model="user.language" ng-change="updateLanguage()" ng-show="!languageSaveProcess || user.language == 'fi'" /><i class="glyphicon glyphicon-refresh saving-icon" ng-show="user.language == 'en' && languageSaveProcess"></i></span> {{ 'account_language_en' | i18n }}
 
                     <!-- Notification settings -->
                     <h4>{{ 'account_notification_settings' | i18n }}</h4>
                     <strong>{{ 'account_notification_suggestion_header' | i18n }}</strong><br />
-                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.received" /> {{ 'account_notification_suggestion_received' | i18n }}<br />
-                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.accepted" /> {{ 'account_notification_suggestion_accepted' | i18n }}<br />
-                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.left_alone" /> {{ 'account_notification_suggestion_left_alone' | i18n }}<br />
-                    <input type="checkbox" ng-model="currentUser.notification_settings.suggestion.deleted" /> {{ 'account_notification_suggestion_deleted' | i18n }}<br />
+                    <input type="checkbox" ng-model="user.notification_settings.suggestion.received" /> {{ 'account_notification_suggestion_received' | i18n }}<br />
+                    <input type="checkbox" ng-model="user.notification_settings.suggestion.accepted" /> {{ 'account_notification_suggestion_accepted' | i18n }}<br />
+                    <input type="checkbox" ng-model="user.notification_settings.suggestion.left_alone" /> {{ 'account_notification_suggestion_left_alone' | i18n }}<br />
+                    <input type="checkbox" ng-model="user.notification_settings.suggestion.deleted" /> {{ 'account_notification_suggestion_deleted' | i18n }}<br />
                     <strong>{{ 'account_notification_group_header' | i18n }}</strong><br />
-                    <input type="checkbox" ng-model="currentUser.notification_settings.group.memberships" /> {{ 'account_notification_group_memberships' | i18n }}
+                    <input type="checkbox" ng-model="user.notification_settings.group.memberships" /> {{ 'account_notification_group_memberships' | i18n }}
 
                     <hr class="featurette-divider">
 

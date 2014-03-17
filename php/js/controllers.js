@@ -329,16 +329,48 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
-.controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
+.controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', '$stateParams', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll, $stateParams) {
+    
+    // If opened as someone other's settings
+    if ($stateParams.userId) {
+        // Load user if someone other
+        if ($stateParams.userId != $rootScope.currentUser.id) {
+            $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
+                if (result.status == 'ok') {
+                    $scope.user = result.user;
+                }
+            });
+            $scope.isCurrentUser = false;
+        }
+        else {
+            $scope.user = $rootScope.currentUser;
+            $scope.isCurrentUser = true;
+        }
+    }
+    else {
+        $scope.user = $rootScope.currentUser;
+        $scope.isCurrentUser = true;
+    }
 
-    $rootScope.refreshCurrentUserAndStopLiveView(function() {
+    // Stop live view if current user
+    if ($scope.isCurrentUser) {
+        $rootScope.refreshCurrentUserAndStopLiveView(function() {
+            $("#accountSettingsModal").modal();
+
+            $('#accountSettingsModal').on('hidden.bs.modal', function () {
+                $rootScope.startLiveView();
+                $state.go("^");
+            });
+        });
+    }
+    else {
         $("#accountSettingsModal").modal();
 
         $('#accountSettingsModal').on('hidden.bs.modal', function () {
-            $rootScope.startLiveView();
             $state.go("^");
         });
-    });
+    }
+
     $scope.resetPassword = function() {
         $scope.password = {
             old: '',
@@ -356,7 +388,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.modalAlert('', '');
         $scope.languageSaveProcess = true;
         $http.post('api/1.0/user/language', {
-            language: $rootScope.currentUser.language
+            language: $scope.user.language
         }).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $scope.languageSaveProcess = false;
@@ -389,11 +421,11 @@ angular.module('Mealbookers.controllers', [])
 
         $http.post('api/1.0/user', {
             password: $scope.password,
-            suggestion: $rootScope.currentUser.notification_settings.suggestion,
-            group: $rootScope.currentUser.notification_settings.group,
+            suggestion: $scope.user.notification_settings.suggestion,
+            group: $scope.user.notification_settings.group,
             name: {
-                first_name: $rootScope.currentUser.first_name,
-                last_name: $rootScope.currentUser.last_name
+                first_name: $scope.user.first_name,
+                last_name: $scope.user.last_name
             }
         }).success(function(result) {
             // Fail

@@ -216,17 +216,17 @@ angular.module('Mealbookers', [
         }
         $http.get('api/1.0/user', {
             params: params
-        }).success(function(data) {
-            if (typeof data.status == 'string' && data.status == 'up_to_date') {
-                $rootScope.currentUser.timestamp = data.timestamp;
+        }).success(function(result) {
+            if (typeof result.status == 'string' && result.status == 'up_to_date') {
+                $rootScope.currentUser.timestamp = result.timestamp;
                 if (typeof done == 'function') {
                     done();
                 }
             }
             else {
                 console.log("Current user refreshed");
-                for (var i in data) {
-                    $rootScope.currentUser[i] = data[i];    
+                for (var i in result.user) {
+                    $rootScope.currentUser[i] = result.user[i];    
                 }
                 $rootScope.updateGroupsWithMe();
                 $rootScope.refreshSuggestions(done);

@@ -31,7 +31,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
 
     currentUserPromise.then(function(result) {
         console.log("Current user loaded");
-        $rootScope.currentUser = result.data;
+        $rootScope.currentUser = result.data.user;
         $rootScope.updateGroupsWithMe();
 
         // Get localization

@@ -1,49 +1,143 @@
 <?php
 
-Flight::route('GET /user', array('UserAPI', 'getUser'));
+Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
 Flight::route('POST /user', array('UserAPI', 'updateUser'));
 Flight::route('POST /user/language', array('UserAPI', 'updateUserLanguage'));
 Flight::route('DELETE /user', array('UserAPI', 'deleteUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
+Flight::route('GET /users', array('UserAPI', 'searchUsers'));
 
 class UserAPI
 {
     /**
      * @todo  implement with real user id from current user + implement auth
      */
-    function getUser()
+    function searchUsers()
     {
-        Logger::debug(__METHOD__ . " GET /user called");
-        Application::inst()->checkAuthentication();
+        Logger::debug(__METHOD__ . " GET /users called");
+        Application::inst()->checkAuthentication('admin');
 
+        $user = (isset($_GET['user'])) ? $_GET['user'] : '';
+        $group = (isset($_GET['group'])) ? $_GET['group'] : '';
+
+        if (!$user && !$group) {
+            return print json_encode(array(
+                'status' => 'no_search_term',
+            ));
+        }
+        
+        $user = str_replace("*", "%", DB::inst()->quote($user));
+        $group = str_replace("*", "%", DB::inst()->quote($group));
+
+        if ($user && !$group) {
+            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name SEPARATOR ', ') groups FROM users
+                INNER JOIN group_memberships ON users.id = group_memberships.user_id
+                INNER JOIN groups ON groups.id = group_memberships.group_id
+                WHERE users.email_address LIKE '$user%' OR
+                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
+                users.first_name LIKE '$user%' OR
+                users.last_name LIKE '$user%'
+                GROUP BY users.id
+                LIMIT 30
+            ");
+        }
+        else if ($group && !$user) {
+            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(all_groups.name SEPARATOR ', ') groups FROM users
+                INNER JOIN group_memberships ON users.id = group_memberships.user_id
+                INNER JOIN groups ON groups.id = group_memberships.group_id
+                INNER JOIN groups AS all_groups ON all_groups.id IN (SELECT group_id FROM group_memberships WHERE user_id = users.id)
+                WHERE groups.name LIKE '$group%'
+                GROUP BY users.id
+                LIMIT 30
+            ");
+        }
+        else {
+            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(all_groups.name SEPARATOR ', ') groups FROM users
+                INNER JOIN group_memberships ON users.id = group_memberships.user_id
+                INNER JOIN groups ON groups.id = group_memberships.group_id
+                INNER JOIN groups AS all_groups ON all_groups.id IN (SELECT group_id FROM group_memberships WHERE user_id = users.id)
+                WHERE (users.email_address LIKE '$user%' OR
+                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
+                users.first_name LIKE '$user%' OR
+                users.last_name LIKE '$user%') AND
+                groups.name LIKE '$group%'
+                GROUP BY users.id
+                LIMIT 30
+            ");
+        }
+
+        $results = array();
+        while ($row = DB::inst()->fetchAssoc($result)) {
+            $results[] = array(
+                'id' => $row['id'],
+                'name' => $row['first_name'] . ' ' . $row['last_name'],
+                'email_address' => $row['email_address'],
+                'groups' => $row['groups'],
+            );
+        }
+
+        print json_encode(array(
+            'status' => 'ok',
+            'results' => $results,
+        ));
+    }
+
+    /**
+     * @todo  implement with real user id from current user + implement auth
+     * @todo  implement role
+     */
+    function getUser($userId = null)
+    {
         $current_user = new User();
         $current_user->fetch(1);
 
+        if ($userId) {
+            Logger::debug(__METHOD__ . " GET /user/$userId called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " GET /user called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
+
         // Live view: up to date
-        if (isset($_GET['after']) && !$current_user->hasUpdatesAfter((int)$_GET['after'])) {
+        if (isset($_GET['after']) && !$user->hasUpdatesAfter((int)$_GET['after'])) {
             return print json_encode(array(
                 'status' => 'up_to_date',
                 'timestamp' => time(),
             ));
         }
 
-        $user = $current_user->getAsArray();
-        $current_user_array = $user;
+        $result = $user->getAsArray();
+        $user_array = $result;
 
-        $groups = $current_user->getGroupsAsArray();
-        $user['groups'] = $groups;
-        $user['me'] = $current_user_array;
-        $user['email_address'] = $current_user->email_address;
-        $user['first_name'] = $current_user->first_name;
-        $user['last_name'] = $current_user->last_name;
-        $user['notification_settings'] = $current_user->getNotificationSettingsAsArray();
-        $user['config'] = Application::inst()->getFrontendConfiguration();
-        $user['language'] = $current_user->language;
-        $user['role'] = 'admin';
-        $user['timestamp'] = time();
+        $groups = $user->getGroupsAsArray();
+        $result['groups'] = $groups;
+        $result['me'] = $user_array;
+        $result['email_address'] = $user->email_address;
+        $result['first_name'] = $user->first_name;
+        $result['last_name'] = $user->last_name;
+        $result['notification_settings'] = $user->getNotificationSettingsAsArray();
+        $result['config'] = Application::inst()->getFrontendConfiguration();
+        $result['language'] = $user->language;
+        $result['role'] = 'admin';
+        $result['timestamp'] = time();
 
-        print json_encode($user);
+        print json_encode(array(
+            'status' => 'ok',
+            'user' => $result,
+        ));
     }
 
     /**
