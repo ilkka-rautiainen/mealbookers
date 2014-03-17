@@ -393,6 +393,10 @@ angular.module('Mealbookers', [
             $("#" + fromState.data.modalId).css("visibility", "hidden");
             $("#" + toState.data.modalId).css("visibility", "visible");
         }
+
+        if (fromState.data && fromState.data.modal && toState.name == 'Navigation.Menu.UserManagement') {
+            $rootScope.$broadcast("childModalClosed");
+        }
     });
 
 

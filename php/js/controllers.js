@@ -276,6 +276,10 @@ angular.module('Mealbookers.controllers', [])
         }
     };
 
+    $scope.$on("childModalClosed", function() {
+        $scope.search();
+    });
+
     $scope.initSearch = function() {
         if ($scope.searchTimeout)
             $timeout.cancel($scope.searchTimeout);
