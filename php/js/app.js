@@ -94,6 +94,16 @@ angular.module('Mealbookers', [
         controller: 'AccountSettingsController'
     })
     
+    .state('Navigation.Menu.UserManagement.GroupSettings', {
+        url: "/:userId/group",
+        templateUrl: "partials/modals/GroupSettings.html",
+        data: {
+            modal: true,
+            modalId: "groupSettingsModal"
+        },
+        controller: 'GroupSettingsController'
+    })
+    
     .state('Navigation.AcceptSuggestion', {
         url: "/suggestion/accept",
         templateUrl: "partials/AcceptSuggestion.html",

@@ -325,7 +325,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.openGroupSettingsFor = function(user) {
-        console.log(user);
+        $state.go(".GroupSettings", {userId: user.id});
     };
 }])
 
