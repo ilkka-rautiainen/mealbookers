@@ -174,7 +174,7 @@ angular.module('Mealbookers', [
             params: params
         }).success(function(data) {
             if (typeof data.status == 'string' && data.status == 'up_to_date') {
-
+                $rootScope.currentUser.timestamp = data.timestamp;
                 if (typeof done == 'function') {
                     done();
                 }

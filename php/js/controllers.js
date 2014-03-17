@@ -629,6 +629,8 @@ angular.module('Mealbookers.controllers', [])
         $scope.$broadcast('modalOpened');
     });
 
+    $rootScope.liveViewUpdate();
+
     for (var i in $rootScope.currentUser.groups) {
         $rootScope.currentUser.groups[i].selectedForSuggestion = false;
         for (var j in $rootScope.currentUser.groups[i].members) {
