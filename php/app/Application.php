@@ -3,7 +3,7 @@
 class Application
 {
     private static $instance = null;
-    private $isAuthenticated = false;
+    private $userRole = 'guest';
     
     /**
      * Singleton pattern: private constructor
@@ -46,9 +46,18 @@ class Application
         // 5: isAuthenticated = true
         
         // User is logged in
-        if (validi cookie) {
-            $GLOBALS['current_user'] = new User();
-            $GLOBALS['current_user']->fetch(userin_id);
+
+        $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+            id = '" . $_COOKIE["id"] . "' AND
+            passhash = '" .$_COOKIE["check"]. "'");
+        echo $_COOKIE["check"];
+        echo $user_id;
+
+        if ($user_id) {
+            echo $_COOKIE["check"];
+            //$GLOBALS['current_user'] = new User();
+            //$GLOBALS['current_user']->fetch(userin_id);
+            $this->userRole = 'normal';
         }
     }
 
@@ -58,11 +67,16 @@ class Application
      */
     public function checkAuthentication($role = 'normal')
     {
-        // 1: tsekkaa että isAuthenticated == true
-        // 2: jos ei -> feilaa
-        /*if ($faile_ehto_täyttyy) {
-            $this->exitWithHttpCode(403)
-        }*/
+        $this->initAuthentication();
+        if ($this->userRole == 'normal' && $role == 'admin') {
+            $this->exitWithHttpCode(403);
+        }
+        else if ($this->userRole == 'guest' && $role == 'admin') {
+            $this->exitWithHttpCode(403);
+        }
+        else if ($this->userRole == 'guest' && $role == 'normal') {
+            $this->exitWithHttpCode(403);
+        }
     }
 
     public function exitWithHttpCode($number, $text = false)
