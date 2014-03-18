@@ -714,7 +714,7 @@ angular.module('Mealbookers.controllers', [])
         if ($scope.isCurrentUser)
             address = '/api/1.0/user/groups/' + group.id;
         else
-            '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
+            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
 
         $http.post(address, {
             name: group.name
@@ -729,12 +729,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'ok') {
                 console.log("Group name saved");
-                if ($scope.isCurrentUser) {
-                    $rootScope.refreshCurrentUser();
-                }
-                else {
-                    group.editNameSaveProcess = false;
-                }
+                $scope.refreshUser();
             }
             else {
                 console.error("Unknown response");
@@ -750,7 +745,14 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.deleteGroupMember = function(group, member) {
         member.deleteSaveProcess = true;
-        $http.delete('/api/1.0/user/groups/' + group.id + '/members/' + member.id).success(function(result) {
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = '/api/1.0/user/groups/' + group.id + '/members/' + member.id;
+        else
+            address = '/api/1.0/user' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
+
+        $http.delete(address).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 member.deleteSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));

@@ -1,9 +1,9 @@
 <?php
 
-Flight::route('POST /user/groups', array('GroupAPI', 'addGroup'));
-Flight::route('POST /user/groups/@groupId', array('GroupAPI', 'editGroupName'));
 Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
-Flight::route('DELETE /user/groups/@groupId/members/@memberId', array('GroupAPI', 'deleteGroupMember'));
+Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
+Flight::route('POST /user/groups', array('GroupAPI', 'addGroup'));
+Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'deleteGroupMember'));
 
 class GroupAPI
 {
@@ -47,13 +47,29 @@ class GroupAPI
     /**
      * @todo implement with real current user
      */
-    function editGroupName($groupId)
+    function editGroupName($userId, $groupId)
     {
-        Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
-        Application::inst()->checkAuthentication();
-
         $current_user = new User();
         $current_user->fetch(1);
+
+        if ($userId) {
+            Logger::debug(__METHOD__ . " POST /user/$userId/groups/$groupId called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " POST /user/groups/$groupId called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
 
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
@@ -66,7 +82,7 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(404, "No group found with the given id");
         }
 
-        if (!$current_user->isMemberOfGroup($group)) {
+        if (!$user->isMemberOfGroup($group)) {
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
@@ -194,13 +210,29 @@ class GroupAPI
      * @todo implement with real current user
      * @todo implement current user case
      */
-    function deleteGroupMember($groupId, $memberId)
+    function deleteGroupMember($userId, $groupId, $memberId)
     {
-        Application::inst()->checkAuthentication();
         $current_user = new User();
         $current_user->fetch(1);
 
-        Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/members/$memberId called by user {$current_user->id}");
+        if ($userId) {
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+            Logger::info(__METHOD__ . " DELETE /user/$userId/groups/$groupId/members/$memberId called by user {$user->id}");
+        }
+        else {
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+            Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/members/$memberId called by user {$user->id}");
+        }
         
         $groupId = (int)$groupId;
         $memberId = (int)$memberId;
@@ -215,7 +247,7 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(404, "No group/member found with the given id");
         }
 
-        if (!$current_user->isMemberOfGroup($group)) {
+        if (!$user->isMemberOfGroup($group)) {
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
@@ -226,7 +258,7 @@ class GroupAPI
         $deleted_member->leaveGroup($group);
 
         // Current user deletes himself
-        if ($deleted_member->id == $current_user->id) {
+        if ($deleted_member->id == $user->id) {
 
             $last_member = false;
             // He was the last member in the group
@@ -242,7 +274,7 @@ class GroupAPI
         }
         // He deletes someone other
         else {
-            $deleted_member->notifyRemovedFromGroup($group, $current_user);
+            $deleted_member->notifyRemovedFromGroup($group, $user);
             print json_encode(array(
                 'status' => 'ok',
             ));
