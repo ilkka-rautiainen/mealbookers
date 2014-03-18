@@ -565,16 +565,21 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
     
+    // Function for loading the user for the scope
+    $scope.loadOtherUser = function() {
+        $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
+            if (result.status == 'ok') {
+                $scope.user = result.user;
+                $scope.$broadcast("userReady");
+            }
+        });
+    };
+
     // If opened as someone other's settings
     if ($stateParams.userId) {
         // Load user if someone other
         if ($stateParams.userId != $rootScope.currentUser.id) {
-            $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
-                if (result.status == 'ok') {
-                    $scope.user = result.user;
-                    $scope.$broadcast("userReady");
-                }
-            });
+            $scope.loadOtherUser();
             $scope.isCurrentUser = false;
         }
         else {
@@ -608,9 +613,19 @@ angular.module('Mealbookers.controllers', [])
         });
     }
 
+    // Refresh user
+    $scope.refreshUser = function() {
+        if ($scope.isCurrentUser) {
+            $rootScope.refreshCurrentUser();
+        }
+        else {
+            $scope.loadOtherUser();
+        }
+    };
+
+    // Construct groups with the user in them as member
     angular.forEach(["userReady","currentUserRefresh"], function(value) {
         $scope.$on(value, function() {
-            // Construct groups with the user in them as member
             var groups = angular.copy($scope.user.groups);
             $scope.user.groupsWithMe = [];
             for (var i in groups) {
@@ -668,7 +683,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
             }
             else if (result.status == 'joined_existing') {
-                $rootScope.refreshCurrentUser();
+                $scope.refreshUser();
                 $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
                 console.log("Joined existing member to group");
             }

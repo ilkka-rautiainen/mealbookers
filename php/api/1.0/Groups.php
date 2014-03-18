@@ -2,7 +2,7 @@
 
 Flight::route('POST /user/groups', array('GroupAPI', 'addGroup'));
 Flight::route('POST /user/groups/@groupId', array('GroupAPI', 'editGroupName'));
-Flight::route('POST /user/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
+Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
 Flight::route('DELETE /user/groups/@groupId/members/@memberId', array('GroupAPI', 'deleteGroupMember'));
 
 class GroupAPI
@@ -99,13 +99,29 @@ class GroupAPI
     /**
      * @todo implement with real current user
      */
-    function inviteGroupMember($groupId)
+    function inviteGroupMember($userId, $groupId)
     {
-        Logger::debug(__METHOD__ . " POST /user/groups/@groupId/members called");
-        Application::inst()->checkAuthentication();
-
         $current_user = new User();
         $current_user->fetch(1);
+
+        if ($userId) {
+            Logger::debug(__METHOD__ . " POST /user/$userId/groups/@groupId/members called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " POST /user/groups/@groupId/members called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
 
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
@@ -118,7 +134,7 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(404, "No group found with the given id");
         }
 
-        if (!$current_user->isMemberOfGroup($group)) {
+        if (!$user->isMemberOfGroup($group)) {
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
@@ -144,19 +160,19 @@ class GroupAPI
                     throw new ApiException('already_member');
                 }
                 $invitee->joinGroup($group);
-                if (!$invitee->notifyGroupJoin($group, $current_user)) {
+                if (!$invitee->notifyGroupJoin($group, $user)) {
                     throw new ApiException('failed');
                 }
 
                 print json_encode(array(
                     'status' => 'joined_existing',
-                    'group' => $group->getAsArray($current_user, $current_user->getInitialsContext()),
+                    'group' => $group->getAsArray($user, $user->getInitialsContext()),
                 ));
             }
             // Invite new member
             else {
                 
-                if (!$current_user->inviteNewMember($email_address, $group)) {
+                if (!$user->inviteNewMember($email_address, $group)) {
                     throw new ApiException('failed');
                 }
                 print json_encode(array(
