@@ -108,7 +108,6 @@ class UserAPI
         }
         else {
             Logger::debug(__METHOD__ . " GET /user called");
-
             $user = &$current_user;
         }
 
@@ -127,7 +126,7 @@ class UserAPI
         $result['groups'] = $groups;
 
         /**
-         * Note: friends is amount of friends in all groups (not distinctive)
+         * Note: friends is amount of all friends in all groups (not distinctive)
          */
         $friends = 0;
         foreach ($groups as $group) {
