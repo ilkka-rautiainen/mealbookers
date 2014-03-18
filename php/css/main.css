@@ -537,6 +537,10 @@ strong, b {
 
 
 @media all and (min-width: 768px) {
+    body {
+        padding-top: 50px;
+    }
+    
     #content.ng-enter, #content.ng-leave {
         position: absolute;
         left: 0;
