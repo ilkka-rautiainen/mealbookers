@@ -268,15 +268,6 @@ angular.module('Mealbookers.controllers', [])
         message: ''
     };
 
-    $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage.type = type;
-        $scope.modalAlertMessage.message = message;
-        if (message.length) {
-            $location.hash('modal');
-            $anchorScroll();
-        }
-    };
-
     $scope.$on("childModalClosed", function() {
         $scope.search();
     });
@@ -317,12 +308,21 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 $scope.searchProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'))
+                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
             }
         }).error(function(response, httpCode) {
             $scope.searchProcess = false;
             $rootScope.operationFailed(httpCode, 'user_management_search_failed', $scope.modalAlert);
         });
+    };
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage.type = type;
+        $scope.modalAlertMessage.message = message;
+        if (message.length) {
+            $location.hash('users-modal');
+            $anchorScroll();
+        }
     };
 
     $scope.openAccountSettingsFor = function(user) {
@@ -563,7 +563,7 @@ angular.module('Mealbookers.controllers', [])
             message: message
         };
         if (message.length) {
-            $location.hash('modal');
+            $location.hash('account-modal');
             $anchorScroll();
         }
     };
@@ -651,7 +651,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.modalAlertMessage.type = type;
         $scope.modalAlertMessage.message = message;
         if (message.length) {
-            $location.hash('modal');
+            $location.hash('group-modal');
             $anchorScroll();
         }
     };
