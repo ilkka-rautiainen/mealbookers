@@ -563,14 +563,60 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
-.controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll) {
+.controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
     
-    $rootScope.refreshCurrentUserAndStopLiveView(function() {
+    // If opened as someone other's settings
+    if ($stateParams.userId) {
+        // Load user if someone other
+        if ($stateParams.userId != $rootScope.currentUser.id) {
+            $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
+                if (result.status == 'ok') {
+                    $scope.user = result.user;
+                    $scope.$broadcast("userReady");
+                }
+            });
+            $scope.isCurrentUser = false;
+        }
+        else {
+            $scope.user = $rootScope.currentUser;
+            $scope.isCurrentUser = true;
+        }
+    }
+    else {
+        $scope.user = $rootScope.currentUser;
+        $scope.isCurrentUser = true;
+    }
+
+    // Stop live view if current user
+    if ($scope.isCurrentUser) {
+        $rootScope.refreshCurrentUserAndStopLiveView(function() {
+            $("#groupSettingsModal").modal();
+
+            $("#groupSettingsModal").on('hidden.bs.modal', function () {
+                $rootScope.startLiveView();
+                $state.go("^");
+            });
+
+            $scope.$broadcast("userReady");
+        });
+    }
+    else {
         $("#groupSettingsModal").modal();
 
-        $('#groupSettingsModal').on('hidden.bs.modal', function () {
-            $rootScope.startLiveView();
+        $("#groupSettingsModal").on('hidden.bs.modal', function () {
             $state.go("^");
+        });
+    }
+
+    angular.forEach(["userReady","currentUserRefresh"], function(value) {
+        $scope.$on(value, function() {
+            // Construct groups with the user in them as member
+            var groups = angular.copy($scope.user.groups);
+            $scope.user.groupsWithMe = [];
+            for (var i in groups) {
+                groups[i].members.unshift(jQuery.extend({}, $scope.user.me));
+                $scope.user.groupsWithMe.push(groups[i]);
+            }
         });
     });
 
@@ -599,7 +645,14 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.addMemberToGroup = function(group) {
         group.addMemberSaveProcess = true;
-        $http.post('/api/1.0/user/groups/' + group.id + '/members', {
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = '/api/1.0/user/groups/' + group.id + '/members';
+        else
+            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members';
+
+        $http.post(address, {
             email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
         }).success(function(result) {
             if (typeof result != 'object' || result.status == 'undefined' || result.status == 'failed') {
@@ -640,7 +693,15 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.saveGroupName = function(group) {
         group.editNameSaveProcess = true;
-        $http.post('/api/1.0/user/groups/' + group.id, {
+        $scope.modalAlert('', '');
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = '/api/1.0/user/groups/' + group.id;
+        else
+            '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
+
+        $http.post(address, {
             name: group.name
         }).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -653,9 +714,12 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'ok') {
                 console.log("Group name saved");
-                $rootScope.refreshCurrentUser(function() {
-                    $scope.modalAlert('', '');
-                });
+                if ($scope.isCurrentUser) {
+                    $rootScope.refreshCurrentUser();
+                }
+                else {
+                    group.editNameSaveProcess = false;
+                }
             }
             else {
                 console.error("Unknown response");

@@ -126,6 +126,16 @@ class UserAPI
 
         $groups = $user->getGroupsAsArray();
         $result['groups'] = $groups;
+
+        /**
+         * Note: friends is amount of friends in all groups (not distinctive)
+         */
+        $friends = 0;
+        foreach ($groups as $group) {
+            $friends += count($group['members']);
+        }
+        $result['friends'] = $friends;
+
         $result['me'] = $user_array;
         $result['email_address'] = $user->email_address;
         $result['first_name'] = $user->first_name;

@@ -14,7 +14,7 @@ services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $inj
             rootScope.startLiveViewRecovery();
         }
         else {
-            $log.error('Uncaught exception: ' + exception.message);
+            throw exception;
         }
     };
 }]);
@@ -32,7 +32,6 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
     currentUserPromise.then(function(result) {
         console.log("Current user loaded");
         $rootScope.currentUser = result.data.user;
-        $rootScope.updateGroupsWithMe();
 
         // Get localization
         localizationPromise = $http.get('api/1.0/app/language/'

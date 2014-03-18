@@ -187,21 +187,6 @@ angular.module('Mealbookers', [
         }, 1500);
     };
 
-    $rootScope.updateGroupsWithMe = function() {
-        if ($rootScope.currentUser.role == 'guest') {
-            return;
-        }
-
-        var groups = angular.copy($rootScope.currentUser.groups);
-        $rootScope.currentUser.groupsWithMe = [];
-        $rootScope.currentUser.friends = 0;
-        for (var i in groups) {
-            $rootScope.currentUser.friends += groups[i].members.length;
-            groups[i].members.unshift(jQuery.extend({}, $rootScope.currentUser.me));
-            $rootScope.currentUser.groupsWithMe.push(groups[i]);
-        }
-    };
-
     /**
      * Reloads current user
      */
@@ -228,7 +213,7 @@ angular.module('Mealbookers', [
                 for (var i in result.user) {
                     $rootScope.currentUser[i] = result.user[i];    
                 }
-                $rootScope.updateGroupsWithMe();
+                $rootScope.$broadcast("currentUserRefresh");
                 $rootScope.refreshSuggestions(done);
             }
         }).error(function() {
