@@ -49,17 +49,15 @@ class Application
         
         $user_id = (int)$_COOKIE["id"];
 
-        $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $userin_id");
+        $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
 
-        
-        // echo $_COOKIE["check"];
-        // echo $user_id;
+        $passhash = Application::inst()->hash($passhash);
 
-        if ($user_id) {
-            // echo $_COOKIE["check"];
-            //$GLOBALS['current_user'] = new User();
-            //$GLOBALS['current_user']->fetch(userin_id);
-            $this->userRole = 'normal';
+        if ($passhash == $_COOKIE["check"]) {
+            //echo $_COOKIE["check"];
+            $GLOBALS['current_user'] = new User();
+            $GLOBALS['current_user']->fetch($user_id);
+            $this->userRole = $GLOBALS['current_user']->role;
         }
     }
 
