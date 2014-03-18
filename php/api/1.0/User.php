@@ -108,7 +108,6 @@ class UserAPI
         }
         else {
             Logger::debug(__METHOD__ . " GET /user called");
-            Application::inst()->checkAuthentication();
 
             $user = &$current_user;
         }

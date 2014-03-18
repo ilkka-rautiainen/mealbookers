@@ -46,15 +46,17 @@ class Application
         // 5: isAuthenticated = true
         
         // User is logged in
+        
+        $user_id = (int)$_COOKIE["id"];
 
-        $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-            id = '" . $_COOKIE["id"] . "' AND
-            passhash = '" .$_COOKIE["check"]. "'");
-        echo $_COOKIE["check"];
-        echo $user_id;
+        $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $userin_id");
+
+        
+        // echo $_COOKIE["check"];
+        // echo $user_id;
 
         if ($user_id) {
-            echo $_COOKIE["check"];
+            // echo $_COOKIE["check"];
             //$GLOBALS['current_user'] = new User();
             //$GLOBALS['current_user']->fetch(userin_id);
             $this->userRole = 'normal';
@@ -65,16 +67,13 @@ class Application
      * Checks if there's a valid authenticated session with the given role.
      * @param  string $role 'normal|admin'
      */
-    public function checkAuthentication($role = 'normal')
+    public function checkAuthentication($requiredRole = 'normal')
     {
-        $this->initAuthentication();
-        if ($this->userRole == 'normal' && $role == 'admin') {
+        Logger::debug(__METHOD__ . " required: $requiredRole, user has: {$this->userRole}");
+        if ($this->userRole == 'normal' && $requiredRole == 'admin') {
             $this->exitWithHttpCode(403);
         }
-        else if ($this->userRole == 'guest' && $role == 'admin') {
-            $this->exitWithHttpCode(403);
-        }
-        else if ($this->userRole == 'guest' && $role == 'normal') {
+        else if ($this->userRole == 'guest' && ($requiredRole == 'admin' || $requiredRole == 'normal')) {
             $this->exitWithHttpCode(403);
         }
     }
