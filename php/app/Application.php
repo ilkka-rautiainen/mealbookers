@@ -3,7 +3,6 @@
 class Application
 {
     private static $instance = null;
-    private $isAuthenticated = false;
     
     /**
      * Singleton pattern: private constructor
@@ -39,24 +38,44 @@ class Application
 
     public function initAuthentication()
     {
-        // 1: hakee login-cookiesta id:n
-        // 2: haetaan käyttäjä id:n avulla kannasta
-        // 3: tsekataan passhashin oikeellisuus
-        // 4: luodaan $current_user
-        // 5: isAuthenticated = true
+        if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
+            $user_id = (int)$_COOKIE['id'];
+            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
+            $passhash = Application::inst()->hash($passhash);
+
+            // Valid authentication
+            if ($passhash == $_COOKIE['check']) {
+                $GLOBALS['current_user'] = new User();
+                $GLOBALS['current_user']->fetch($user_id);
+            }
+            // Invalid auth
+            else {
+                $GLOBALS['current_user'] = new User();
+                $GLOBALS['current_user']->role = 'guest';
+            }
+        }
+        // No cookies
+        else {
+            $GLOBALS['current_user'] = new User();
+            $GLOBALS['current_user']->role = 'guest';
+        }
     }
 
     /**
      * Checks if there's a valid authenticated session with the given role.
      * @param  string $role 'normal|admin'
      */
-    public function checkAuthentication($role = 'normal')
+    public function checkAuthentication($requiredRole = 'normal')
     {
-        // 1: tsekkaa että isAuthenticated == true
-        // 2: jos ei -> feilaa
-        /*if ($faile_ehto_täyttyy) {
-            $this->exitWithHttpCode(403)
-        }*/
+        global $current_user;
+        Logger::debug(__METHOD__ . " required: $requiredRole, user has: {$current_user->role}");
+
+        if ($current_user->role == 'normal' && $requiredRole == 'admin') {
+            $this->exitWithHttpCode(403);
+        }
+        else if ($current_user->role == 'guest' && ($requiredRole == 'admin' || $requiredRole == 'normal')) {
+            $this->exitWithHttpCode(403);
+        }
     }
 
     public function exitWithHttpCode($number, $text = false)

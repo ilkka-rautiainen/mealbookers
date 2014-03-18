@@ -91,8 +91,7 @@ class UserAPI
      */
     function getUser($userId = null)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " GET /user/$userId called");
@@ -108,9 +107,17 @@ class UserAPI
         }
         else {
             Logger::debug(__METHOD__ . " GET /user called");
-            Application::inst()->checkAuthentication();
-
             $user = &$current_user;
+        }
+
+        if ($user->role == 'guest') {
+            return print json_encode(array(
+                'status' => 'ok',
+                'user' => array(
+                    'role' => 'guest',
+                    'language' => 'fi',
+                ),
+            ));
         }
 
         // Live view: up to date
@@ -128,7 +135,7 @@ class UserAPI
         $result['groups'] = $groups;
 
         /**
-         * Note: friends is amount of friends in all groups (not distinctive)
+         * Note: friends is amount of all friends in all groups (not distinctive)
          */
         $friends = 0;
         foreach ($groups as $group) {

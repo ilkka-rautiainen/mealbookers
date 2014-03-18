@@ -87,8 +87,9 @@ angular.module('Mealbookers.controllers', [])
                 $scope.response = response;
                 
                 if (response.status == 'ok') {
-                    //$rootScope.refreshCurrentUser();
-                    console.log("OK");
+                    console.log("Logged in");
+                    $rootScope.refreshCurrentUser();
+                    $("#logInModal").modal('hide');
                 }
                 
             });

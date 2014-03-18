@@ -19,8 +19,18 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a ui-sref="Navigation.Menu.Login" ng-click="hideNavbarCollapse()">{{ 'log_in' | i18n}}</a></li>
-				<li><a ui-sref="Navigation.Menu.Register" ng-click="hideNavbarCollapse()">{{ 'register' | i18n}}</a> <span ng-click="openAccountSettings()">{{ 'account_settings' | i18n }}</span> <span ng-click="openGroupSettings()">{{ 'group_settings' | i18n }}</span> <span ng-if="currentUser.role == 'admin'"><a ui-sref="Navigation.Menu.UserManagement">{{ 'user_management' | i18n }}</a></span></li>
+				<li ng-show="currentUser.role == 'guest'"><a ui-sref="Navigation.Menu.Login" ng-click="hideNavbarCollapse()">{{ 'log_in' | i18n}}</a></li>
+				<li ng-show="currentUser.role == 'guest'"><a ui-sref="Navigation.Menu.Register" ng-click="hideNavbarCollapse()">{{ 'register' | i18n}}</a></li> 
+				<li ng-show="currentUser.role != 'guest'"><a ng-click="hideNavbarCollapse()">{{ 'log_out' | i18n}}</a></li>
+
+				<li ng-show ="currentUser.role != 'guest'" class="dropdown">
+			          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ 'settings' | i18n}} <b class="caret"></b></a>
+			          <ul class="dropdown-menu">
+			            <li><a ng-click="openAccountSettings()" ng-click="hideNavbarCollapse()">{{ 'account_settings' | i18n }}</a></li>
+			            <li><a ng-click="openGroupSettings()" ng-click="hideNavbarCollapse()">{{ 'group_settings' | i18n }}</a></li>
+			            <li ng-show ="currentUser.role == 'admin'"><a ui-sref="Navigation.Menu.UserManagement" ng-click="hideNavbarCollapse()">{{ 'user_management' | i18n }}</a></li>
+			          </ul>
+			    </li>
 			</ul>
 		</div><!--/.nav-collapse -->
 		<div id="main-alert-container">
