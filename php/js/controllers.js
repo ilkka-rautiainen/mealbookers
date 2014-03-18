@@ -376,6 +376,11 @@ angular.module('Mealbookers.controllers', [])
         });
     }
 
+    $scope.modalAlertMessage = {
+        type: '',
+        message: ''
+    };
+
     $scope.resetPassword = function() {
         $scope.password = {
             old: '',
