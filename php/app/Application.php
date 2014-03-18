@@ -44,6 +44,12 @@ class Application
         // 3: tsekataan passhashin oikeellisuus
         // 4: luodaan $current_user
         // 5: isAuthenticated = true
+        
+        // User is logged in
+        if (validi cookie) {
+            $GLOBALS['current_user'] = new User();
+            $GLOBALS['current_user']->fetch(userin_id);
+        }
     }
 
     /**
