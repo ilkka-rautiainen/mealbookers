@@ -787,11 +787,11 @@ angular.module('Mealbookers.controllers', [])
                 }
                 if (result.last_member) {
                     console.log("Removed yourself from group + whole group removed");
-                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed'));
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed' + (($scope.isCurrentUser) ? '':'_admin')));
                 }
                 else {
                     console.log("Removed yourself from group");
-                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself' + (($scope.isCurrentUser) ? '':'_admin')));
                 }
                 $scope.refreshUser();
             }

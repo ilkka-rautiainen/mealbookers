@@ -3,6 +3,9 @@
  * Configuration file
  */
 $GLOBALS['config'] = array(
+    'admin' => array(
+        'email_address' => 'mealbookers@gmail.com',
+    ),
 	'db' => array(
 		'user' => 'root',
 		'pass' => '',

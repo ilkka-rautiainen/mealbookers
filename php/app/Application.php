@@ -36,6 +36,11 @@ class Application
         );
     }
 
+    /**
+     * Initializes the application for running.
+     *  - Loads current user
+     *  - Loads admin user
+     */
     public function initAuthentication()
     {
         if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
@@ -59,6 +64,8 @@ class Application
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->role = 'guest';
         }
+
+        $GLOBALS['admin'] = new Admin();
     }
 
     /**

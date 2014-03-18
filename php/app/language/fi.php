@@ -2,6 +2,7 @@
 
 $GLOBALS['language']['fi'] = array(
     'app_name' => 'Mealbookers',
+    'administrator' => 'Järjestelmänvalvoja',
     'cafe' => 'Kahvila',
     'alacarte' => 'À la carte',
     'bistro' => 'Bistro',
@@ -98,7 +99,9 @@ $GLOBALS['language']['fi'] = array(
     'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
     'group_member_delete_failed_404' => 'Kyseistä ryhmän jäsentä tai ryhmää ei enää ole olemassa',
     'group_member_deleted_yourself' => 'Sinut poistettiin ryhmästä',
+    'group_member_deleted_yourself_admin' => 'Käyttäjä poistettiin ryhmästä',
     'group_member_deleted_yourself_group_removed' => 'Koko ryhmä poistettu, koska olit ryhmän ainoa jäsen.',
+    'group_member_deleted_yourself_group_removed_admin' => 'Koko ryhmä poistettu, koska käyttäjä oli ryhmän ainoa jäsen.',
     'group_create_new' => 'Luo ryhmä',
     'group_name' => 'Ryhmän nimi',
     'group_add_group_failed' => 'Ryhmän lisääminen epäonnistui',

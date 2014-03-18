@@ -2,6 +2,7 @@
 
 $GLOBALS['language']['en'] = array(
     'app_name' => 'Mealbookers',
+    'administrator' => 'Administrator',
     'cafe' => 'Café',
     'alacarte' => 'À la carte',
     'bistro' => 'Bistro',
@@ -97,7 +98,9 @@ $GLOBALS['language']['en'] = array(
     'group_member_delete_failed' => 'Removing the group member failed',
     'group_member_delete_failed_404' => 'The group member or the group doesn\'t exist anymore',
     'group_member_deleted_yourself' => 'You were removed from the group',
+    'group_member_deleted_yourself_admin' => 'User was removed from the group',
     'group_member_deleted_yourself_group_removed' => 'The whole group was deleted as you were the only member in it',
+    'group_member_deleted_yourself_group_removed_admin' => 'The whole group was deleted as the user was the only member in it.',
     'group_create_new' => 'New group',
     'group_name' => 'Group name',
     'group_add_group_failed' => 'Failed to add group',

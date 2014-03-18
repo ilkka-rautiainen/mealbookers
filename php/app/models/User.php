@@ -610,7 +610,7 @@ class User
                 '{group_name}',
             ),
             array(
-                $deleter->getName(),
+                $deleter->getName($this),
                 $group->name,
             ),
             Lang::inst()->get('mailer_subject_group_leave_notification', $this)
@@ -622,7 +622,7 @@ class User
                 '{server_hostname}',
             ),
             array(
-                $deleter->getName(),
+                $deleter->getName($this),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
             ),
