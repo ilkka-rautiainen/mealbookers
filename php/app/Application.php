@@ -3,7 +3,6 @@
 class Application
 {
     private static $instance = null;
-    private $userRole = 'guest';
     
     /**
      * Singleton pattern: private constructor
@@ -39,25 +38,19 @@ class Application
 
     public function initAuthentication()
     {
-        // 1: hakee login-cookiesta id:n
-        // 2: haetaan käyttäjä id:n avulla kannasta
-        // 3: tsekataan passhashin oikeellisuus
-        // 4: luodaan $current_user
-        // 5: isAuthenticated = true
-        
-        // User is logged in
-        
         $user_id = (int)$_COOKIE["id"];
-
         $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
-
         $passhash = Application::inst()->hash($passhash);
 
+        // Valid authentication
         if ($passhash == $_COOKIE["check"]) {
-            //echo $_COOKIE["check"];
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->fetch($user_id);
-            $this->userRole = $GLOBALS['current_user']->role;
+        }
+        // Guest
+        else {
+            $GLOBALS['current_user'] = new User();
+            $GLOBALS['current_user']->role = 'guest';
         }
     }
 
@@ -67,11 +60,13 @@ class Application
      */
     public function checkAuthentication($requiredRole = 'normal')
     {
-        Logger::debug(__METHOD__ . " required: $requiredRole, user has: {$this->userRole}");
-        if ($this->userRole == 'normal' && $requiredRole == 'admin') {
+        global $current_user;
+        Logger::debug(__METHOD__ . " required: $requiredRole, user has: {$current_user->role}");
+        
+        if ($current_user->role == 'normal' && $requiredRole == 'admin') {
             $this->exitWithHttpCode(403);
         }
-        else if ($this->userRole == 'guest' && ($requiredRole == 'admin' || $requiredRole == 'normal')) {
+        else if ($current_user->role == 'guest' && ($requiredRole == 'admin' || $requiredRole == 'normal')) {
             $this->exitWithHttpCode(403);
         }
     }
