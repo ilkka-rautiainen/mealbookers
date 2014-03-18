@@ -43,25 +43,27 @@ class UserAPI
             ");
         }
         else if ($group && !$user) {
-            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(all_groups.name SEPARATOR ', ') groups FROM users
-                INNER JOIN group_memberships ON users.id = group_memberships.user_id
+            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups FROM users
+                INNER JOIN group_memberships ON group_memberships.user_id = users.id
                 INNER JOIN groups ON groups.id = group_memberships.group_id
-                INNER JOIN groups AS all_groups ON all_groups.id IN (SELECT group_id FROM group_memberships WHERE user_id = users.id)
-                WHERE groups.name LIKE '$group%'
+                WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
+                INNER JOIN group_memberships gm ON gm.group_id = groups.id
+                WHERE groups.name LIKE '$group%')
                 GROUP BY users.id
                 LIMIT 30
             ");
         }
         else {
-            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(all_groups.name SEPARATOR ', ') groups FROM users
-                INNER JOIN group_memberships ON users.id = group_memberships.user_id
+            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups FROM users
+                INNER JOIN group_memberships ON group_memberships.user_id = users.id
                 INNER JOIN groups ON groups.id = group_memberships.group_id
-                INNER JOIN groups AS all_groups ON all_groups.id IN (SELECT group_id FROM group_memberships WHERE user_id = users.id)
+                WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
+                INNER JOIN group_memberships gm ON gm.group_id = groups.id
                 WHERE (users.email_address LIKE '$user%' OR
                 CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
                 users.first_name LIKE '$user%' OR
                 users.last_name LIKE '$user%') AND
-                groups.name LIKE '$group%'
+                groups.name LIKE '$group%')
                 GROUP BY users.id
                 LIMIT 30
             ");
