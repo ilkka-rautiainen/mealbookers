@@ -566,12 +566,14 @@ angular.module('Mealbookers.controllers', [])
 .controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
     
     // Function for loading the user for the scope
-    $scope.loadOtherUser = function() {
+    $scope.loadOtherUser = function(done) {
         $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
             if (result.status == 'ok') {
                 $scope.user = result.user;
                 $scope.$broadcast("userReady");
             }
+            if (typeof done == 'function')
+                done();
         });
     };
 
@@ -614,12 +616,12 @@ angular.module('Mealbookers.controllers', [])
     }
 
     // Refresh user
-    $scope.refreshUser = function() {
+    $scope.refreshUser = function(done) {
         if ($scope.isCurrentUser) {
-            $rootScope.refreshCurrentUser();
+            $rootScope.refreshCurrentUser(done);
         }
         else {
-            $scope.loadOtherUser();
+            $scope.loadOtherUser(done);
         }
     };
 
@@ -745,12 +747,13 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.deleteGroupMember = function(group, member) {
         member.deleteSaveProcess = true;
+        $scope.modalAlert('', '');
 
         var address;
         if ($scope.isCurrentUser)
             address = '/api/1.0/user/groups/' + group.id + '/members/' + member.id;
         else
-            address = '/api/1.0/user' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
+            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
 
         $http.delete(address).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -759,18 +762,17 @@ angular.module('Mealbookers.controllers', [])
                 return;
             }
             else if (result.status == 'ok') {
-                for (var i = 0; i < group.members.length; i++) {
-                    if (group.members[i].id == member.id) {
-                        group.members.splice(i, 1);
-                        break;
-                    }
-                }
                 console.log("Removed member from group");
-                $rootScope.refreshCurrentUser(function() {
-                    $scope.modalAlert('', '');
+                $scope.refreshUser(function() {
+                    for (var i = 0; i < group.members.length; i++) {
+                        if (group.members[i].id == member.id) {
+                            group.members.splice(i, 1);
+                            break;
+                        }
+                    }
                 });
             }
-            else if (result.status == 'removed_yourself') {
+            else if (result.status == 'removed_himself') {
                 for (var i = 0; i < $rootScope.currentUser.groups.length; i++) {
                     if ($rootScope.currentUser.groups[i].id == group.id) {
                         $rootScope.currentUser.groups.splice(i, 1);
@@ -785,7 +787,7 @@ angular.module('Mealbookers.controllers', [])
                     console.log("Removed yourself from group");
                     $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself'));
                 }
-                $rootScope.refreshCurrentUser();
+                $scope.refreshUser();
             }
             else {
                 console.error("Unknown response");

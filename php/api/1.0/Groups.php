@@ -268,7 +268,7 @@ class GroupAPI
             }
 
             print json_encode(array(
-                'status' => 'removed_yourself',
+                'status' => 'removed_himself',
                 'last_member' => $last_member,
             ));
         }
