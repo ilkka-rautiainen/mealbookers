@@ -19,8 +19,8 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a ui-sref="Navigation.Menu.Login" ng-click="hideNavbarCollapse()">{{ 'log_in' | i18n}}</a></li>
-				<li><a ui-sref="Navigation.Menu.Register" ng-click="hideNavbarCollapse()">{{ 'register' | i18n}}</a> <span ng-click="openAccountSettings()">{{ 'account_settings' | i18n }}</span> <span ng-click="openGroupSettings()">{{ 'group_settings' | i18n }}</span> <span ng-if="currentUser.role == 'admin'"><a ui-sref="Navigation.Menu.UserManagement">{{ 'user_management' | i18n }}</a></span></li>
+				<li ng-show="currentUser.role == 'guest'"><a ui-sref="Navigation.Menu.Login" ng-click="hideNavbarCollapse()">{{ 'log_in' | i18n}}</a></li>
+				<li ng-show="currentUser.role == 'guest'"><a ui-sref="Navigation.Menu.Register" ng-click="hideNavbarCollapse()">{{ 'register' | i18n}}</a> <span ng-click="openAccountSettings()">{{ 'account_settings' | i18n }}</span> <span ng-click="openGroupSettings()">{{ 'group_settings' | i18n }}</span> <span ng-if="currentUser.role == 'admin'"><a ui-sref="Navigation.Menu.UserManagement">{{ 'user_management' | i18n }}</a></span></li>
 			</ul>
 		</div><!--/.nav-collapse -->
 		<div id="main-alert-container">
