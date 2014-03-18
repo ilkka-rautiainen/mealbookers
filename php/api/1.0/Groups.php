@@ -2,7 +2,7 @@
 
 Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
 Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
-Flight::route('POST /user/groups', array('GroupAPI', 'addGroup'));
+Flight::route('POST /user(/@userId)/groups', array('GroupAPI', 'addGroup'));
 Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'deleteGroupMember'));
 
 class GroupAPI
@@ -10,13 +10,28 @@ class GroupAPI
     /**
      * @todo implement with real current user
      */
-    function addGroup()
+    function addGroup($userId = null)
     {
-        Logger::debug(__METHOD__ . " POST /user/groups called");
-        Application::inst()->checkAuthentication();
+        global $current_user;
 
-        $current_user = new User();
-        $current_user->fetch(1);
+        if ($userId) {
+            Logger::debug(__METHOD__ . " POST /user/$userId/groups called");
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+        }
+        else {
+            Logger::debug(__METHOD__ . " POST /user/groups called");
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+        }
 
         $data = Application::inst()->getPostData();
 
@@ -31,13 +46,13 @@ class GroupAPI
         }
 
         DB::inst()->query("INSERT INTO groups (name, creator_id)
-            VALUES ('" . DB::inst()->quote($data['name']) . "', {$current_user->id})");
+            VALUES ('" . DB::inst()->quote($data['name']) . "', {$user->id})");
         $group_id = DB::inst()->getInsertId();
         EventLog::inst()->add('group', $group_id);
 
         $group = new Group();
         $group->fetch($group_id);
-        $current_user->joinGroup($group);
+        $user->joinGroup($group);
 
         print json_encode(array(
             'status' => 'ok',

@@ -820,7 +820,15 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.addGroup = function() {
         $scope.newGroup.saving = true;
-        $http.post('/api/1.0/user/groups', {
+        $scope.modalAlert('', '');
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = '/api/1.0/user/groups';
+        else
+            address = '/api/1.0/user/' + $scope.user.id + '/groups';
+
+        $http.post(address, {
             name: $scope.newGroup.name
         }).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -829,12 +837,11 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'ok') {
                 console.log("Created new group");
-                $rootScope.refreshCurrentUser(function () {
+                $scope.refreshUser(function () {
                     $scope.newGroup.open = false;
                     $scope.newGroup.saving = false;
                     $scope.newGroup.name = '';
                 });
-                $scope.modalAlert('', '');
             }
             else if (result.status == 'invalid_name') {
                 $scope.newGroup.saving = false;
