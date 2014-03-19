@@ -224,6 +224,9 @@ angular.module('Mealbookers', [
                 // Has logged out
                 if ($rootScope.currentUser.role == 'guest' && $rootScope.liveViewOn) {
                     $log.info("No valid login detected");
+                    if (typeof done == 'function') {
+                        done();
+                    }
                     return $rootScope.stopLiveView();
                 }
 

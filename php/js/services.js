@@ -22,7 +22,7 @@ services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $inj
 /**
  * Load current user and localization
  */
-services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
+services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http, $rootScope, $q, $log) {
     // Init promises
     var currentUserPromise = $http.get('api/1.0/user'), localizationPromise, restaurantsPromise;
 
@@ -30,7 +30,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
     var deferred = $q.defer();
 
     currentUserPromise.then(function(result) {
-        console.log("Current user loaded");
+        $log.debug("Current user loaded");
         $rootScope.currentUser = result.data.user;
 
         if ($rootScope.currentUser.role != 'guest') {
@@ -41,10 +41,10 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
         localizationPromise = $http.get('api/1.0/app/language/'
             + $rootScope.currentUser.language).then(function(result)
         {
-            console.log("Localization loaded");
+            $log.debug("Localization loaded");
             $rootScope.localization = result.data;
         }, function() {
-            console.error("Error while loading translations");
+            $log.error("Error while loading translations");
         });
 
         // Get restaurants
@@ -53,10 +53,10 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
                 lang: $rootScope.currentUser.language
             }
         }).then(function(result) {
-            console.log("Restaurants loaded");
+            $log.debug("Restaurants loaded");
             $rootScope.restaurants = result.data;
         }, function() {
-            console.error("Error while loading restaurants");
+            $log.error("Error while loading restaurants");
         });
 
         // Wait for both of them to be ready
@@ -64,7 +64,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
             deferred.resolve(response);
         });
     }, function() {
-        console.error("Error while loading current user");
+        $log.error("Error while loading current user");
     });
          
     return deferred.promise;

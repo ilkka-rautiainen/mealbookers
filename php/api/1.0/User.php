@@ -299,6 +299,7 @@ class UserAPI
                     DB::inst()->query("UPDATE users
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
                         WHERE id = {$user->id}");
+
                 }
             }
             // No new password but the old given
@@ -364,8 +365,12 @@ class UserAPI
 
         $data = Application::inst()->getPostData();
 
-        $passhash = Application::inst()->hash($data["password"]);
+        if (!isset($data['password'])
+            || !isset($data['email'])
+            || !isset($data['remember']))
+            Application::inst()->exitWithHttpCode(400);
 
+        $passhash = Application::inst()->hash($data["password"]);
 
         $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
             email_address = '" . DB::inst()->quote($data["email"]) . "' AND
@@ -373,14 +378,14 @@ class UserAPI
 
         if ($user_id) {
 
-            if ($data["remember"]) {
+            if ($data["remember"])
                 $expiry_time = PHP_INT_MAX;
-            }
-            else {
+            else
                 $expiry_time = 0;
-            }
+
             setcookie("id", $user_id, $expiry_time, '/');
             setcookie("check", Application::inst()->hash($passhash), $expiry_time, '/');
+            setcookie("remember", ($data['remember']) ? "1" : "0", $expiry_time, '/');
 
             print json_encode(array(
                 'status' => 'ok',

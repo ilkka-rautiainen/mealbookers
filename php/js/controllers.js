@@ -68,7 +68,7 @@ angular.module('Mealbookers.controllers', [])
     });
 }])
 
-.controller('LoginController', ['$scope', '$rootScope', '$http', '$state', function($scope, $rootScope, $http, $state) {
+.controller('LoginController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', function($scope, $rootScope, $http, $state, $log, $filter) {
 
     $("#logInModal").modal();
 
@@ -91,9 +91,11 @@ angular.module('Mealbookers.controllers', [])
                 $scope.response = response;
                 
                 if (response.status == 'ok') {
-                    console.log("Logged in");
-                    $rootScope.refreshCurrentUser();
-                    $("#logInModal").modal('hide');
+                    $log.info("Logged in");
+                    $rootScope.refreshCurrentUser(function() {
+                        $("#logInModal").modal('hide');
+                        $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+                    });
                 }
                 
             });
@@ -126,7 +128,7 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', '$log', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams, $log) {
 
     $rootScope.weekDay = $stateParams.day;
     if (!$rootScope.weekDay || $rootScope.weekDay < $rootScope.today || $rootScope.weekDay > 7) {
@@ -139,6 +141,16 @@ angular.module('Mealbookers.controllers', [])
     $scope.suggestionMessage = {
         type: '',
         message: ''
+    };
+
+    $rootScope.logOut = function() {
+        $.removeCookie('id');
+        $.removeCookie('check');
+        $.removeCookie('remember');
+        $rootScope.refreshCurrentUser(function() {
+            $log.info("Logged out");
+            $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
+        });
     };
 
     $scope.makeRestaurantGrid = function() {
