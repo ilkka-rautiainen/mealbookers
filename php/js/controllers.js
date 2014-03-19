@@ -181,7 +181,6 @@ angular.module('Mealbookers.controllers', [])
     });
 
     $scope.getOpeningHoursTooltip = function(restaurant) {
-        console.log(restaurant.openingHours[$scope.weekDay].all);
         var openingHours = [];
         for (var i in restaurant.openingHours[$scope.weekDay].all) {
             openingHours.push(
