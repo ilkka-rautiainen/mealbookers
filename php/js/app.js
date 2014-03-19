@@ -399,6 +399,7 @@ angular.module('Mealbookers', [
         if (toState.data && toState.data.modal) {
             $timeout(function() {
                 $("body").addClass("modal-open");
+                $("#" + toState.data.modalId).focus();
             }, 0);
         }
     });
