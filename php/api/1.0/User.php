@@ -10,9 +10,6 @@ Flight::route('GET /users', array('UserAPI', 'searchUsers'));
 
 class UserAPI
 {
-    /**
-     * @todo  implement with real user id from current user + implement auth
-     */
     function searchUsers()
     {
         Logger::debug(__METHOD__ . " GET /users called");
@@ -85,10 +82,6 @@ class UserAPI
         ));
     }
 
-    /**
-     * @todo  implement with real user id from current user + implement auth
-     * @todo  implement role
-     */
     function getUser($userId = null)
     {
         global $current_user;
@@ -159,13 +152,9 @@ class UserAPI
         ));
     }
 
-    /**
-     * @todo implement with real user
-     */
     function deleteUser($userId = null)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " DELETE /user/$userId called");
@@ -193,13 +182,9 @@ class UserAPI
         ));
     }
 
-    /**
-     * @todo  implement with real user id from current user + implement auth
-     */
     function updateUser($userId = null)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId called");
@@ -320,13 +305,9 @@ class UserAPI
         }
     }
 
-    /**
-     * @todo  implement with real user id from current user + implement auth
-     */
     function updateUserLanguage($userId = null)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId/language called");

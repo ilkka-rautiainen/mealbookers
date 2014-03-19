@@ -46,7 +46,6 @@ class Logger
     
     /**
      * Put a log message to log
-     * @todo  check that this works with the real current user
      */
     private function log($level, $message)
     {

@@ -7,9 +7,6 @@ Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array(
 
 class GroupAPI
 {
-    /**
-     * @todo implement with real current user
-     */
     function addGroup($userId = null)
     {
         global $current_user;
@@ -70,13 +67,9 @@ class GroupAPI
         }
     }
 
-    /**
-     * @todo implement with real current user
-     */
     function editGroupName($userId, $groupId)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId/groups/$groupId called");
@@ -138,13 +131,9 @@ class GroupAPI
         }
     }
 
-    /**
-     * @todo implement with real current user
-     */
     function inviteGroupMember($userId, $groupId)
     {
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId/groups/@groupId/members called");
@@ -231,10 +220,6 @@ class GroupAPI
         }
     }
 
-    /**
-     * @todo implement with real current user
-     * @todo implement current user case
-     */
     function removeGroupMember($userId, $groupId, $memberId)
     {
         global $current_user;

@@ -10,19 +10,16 @@ class RestaurantsAPI
 {
 	/**
 	 * Get list of restaurants to the main menu UI
-     * @todo  implement for real user and auth
 	 */
 	function getRestaurants()
 	{
+        global $current_user;
+
         if (!isset($_GET['lang'])) {
             Application::inst()->exitWithHttpCode(400, "lang is missing");
         }
         $lang = substr($_GET['lang'], 0, 2);
         Logger::info(__METHOD__ . " GET /restaurants?lang=$lang called");
-
-        // Mockup current_user
-        $current_user = new User();
-        $current_user->fetch(1);
 
         if (!in_array($lang, array('fi', 'en')))
             $lang = Conf::inst()->get('restaurantsDefaultLang');
@@ -41,15 +38,11 @@ class RestaurantsAPI
         print json_encode($result);
 	}
 
-    /**
-     * @todo  Implement with real user id + auth
-     */
     function getSuggestions()
     {
+        global $current_user;
         Logger::debug(__METHOD__ . " GET /restaurants/suggestions called");
-
-        $current_user = new User();
-        $current_user->fetch(1);
+        Application::inst()->checkAuthentication();
 
         $suggestions = RestaurantFactory::inst()->getSuggestions($current_user);
         print json_encode($suggestions);
@@ -57,10 +50,10 @@ class RestaurantsAPI
 
     /**
      * Make or update a suggestion
-     * @todo  Implement with real user id + auth
      */
     function createSuggestion($restaurantId)
     {
+        global $current_user;
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions called");
         Application::inst()->checkAuthentication();
 
@@ -101,10 +94,6 @@ class RestaurantsAPI
             
             $suggestion = new Suggestion();
             $suggestion->fetch($suggestion_id);
-
-            // Mockup current user
-            $current_user = new User();
-            $current_user->fetch(1);
 
             // Make the creator a member in the suggestion
             $suggestion->insertMember($current_user, true);
@@ -164,7 +153,6 @@ class RestaurantsAPI
 
     /**
      * Accept a suggestion
-     * @todo  Implement with real user id + auth
      * @todo  Do age check instead of waiting for a TooOldException that isn't thrown
      */
     function acceptSuggestionFromEmail()
@@ -205,21 +193,15 @@ class RestaurantsAPI
         ));
     }
 
-    /**
-     * @todo  implement with real user + auth
-     */
     function manageSuggestionFromSite($restaurantId, $suggestionId)
     {
+        global $current_user;
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
         Application::inst()->checkAuthentication();
         
         $postData = Application::inst()->getPostData();
         $suggestionId = (int) $suggestionId;
         $restaurantId = (int) $restaurantId;
-
-        // Mockup current user
-        $current_user = new User();
-        $current_user->fetch(1);
 
         $action = $postData['action'];
         if (!in_array($action, array(

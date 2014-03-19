@@ -131,9 +131,7 @@ class Suggestion {
 
     public function getAsArray()
     {
-        // Mockup current user
-        $current_user = new User();
-        $current_user->fetch(1);
+        global $current_user;
 
         if ($this->creator_id) {
             $creator = new User();

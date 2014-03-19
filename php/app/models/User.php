@@ -49,9 +49,6 @@ class User
         $this->groupmates = array();
     }
 
-    /**
-     * @todo check here if this is current user and if it is -> remove login
-     */
     public function delete()
     {
         EventLog::inst()->add('user', $this->id);

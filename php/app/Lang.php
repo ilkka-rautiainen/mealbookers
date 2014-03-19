@@ -23,15 +23,11 @@ class Lang
         return self::$instance;
     }
 
-    /**
-     * @todo Implement with real current user
-     */
     public function get($key, $user = null) {
-        global $language;
+        global $language, $current_user;
 
         if (is_null($user)) {
-            $user = new User();
-            $user->fetch(1);
+            $user = &$current_user;
         }
         $lang = $user->language;
 

@@ -573,6 +573,9 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $("#accountSettingsModal").modal('hide');
                 if ($scope.isCurrentUser) {
+                    $.removeCookie('id');
+                    $.removeCookie('check');
+                    $.removeCookie('remember');
                     $rootScope.refreshCurrentUser(function() {
                         $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
                         console.log("Account removed");
