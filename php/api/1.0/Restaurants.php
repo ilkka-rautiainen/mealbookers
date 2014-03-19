@@ -157,7 +157,14 @@ class RestaurantsAPI
      */
     function acceptSuggestionFromEmail()
     {
+        global $current_user;
         Logger::info(__METHOD__ . " POST /suggestion called");
+
+        if ($current_user->role == 'guest') {
+            return print json_encode(array(
+                'status' => 'not_logged_in',
+            ));
+        }
         Application::inst()->checkAuthentication();
         $hash = $_GET['hash'];
         if (strlen($hash) != 32)

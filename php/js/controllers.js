@@ -20,6 +20,9 @@ angular.module('Mealbookers.controllers', [])
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
             }
+            else if (result.status == 'not_logged_in') {
+                $state.go("Navigation.Menu.Login");
+            }
             else if (result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
