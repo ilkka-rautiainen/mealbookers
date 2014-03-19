@@ -33,35 +33,41 @@ class GroupAPI
             $user = &$current_user;
         }
 
-        $data = Application::inst()->getPostData();
+        try {
+            $data = Application::inst()->getPostData();
 
-        if (!isset($data['name'])) {
-            Application::inst()->exitWithHttpCode(400, "name not present in request");
-        }
+            if (!isset($data['name'])) {
+                Application::inst()->exitWithHttpCode(400, "name not present in request");
+            }
 
-        if (!mb_strlen(trim($data['name']))) {
-            return print json_encode(array(
-                'status' => 'invalid_name',
+            if (!mb_strlen(trim($data['name']))) {
+                throw new ApiException('invalid_name');
+            }
+
+            DB::inst()->query("INSERT INTO groups (name, creator_id)
+                VALUES ('" . DB::inst()->quote($data['name']) . "', {$user->id})");
+            $group_id = DB::inst()->getInsertId();
+            EventLog::inst()->add('group', $group_id);
+
+            $group = new Group();
+            $group->fetch($group_id);
+            $user->joinGroup($group);
+
+            // Admin made the group
+            if ($user->id != $current_user->id) {
+                if (!$user->notifyGroupJoin($group, $admin))
+                    throw new ApiException('ok_but_notification_failed');
+            }
+
+            print json_encode(array(
+                'status' => 'ok',
             ));
         }
-
-        DB::inst()->query("INSERT INTO groups (name, creator_id)
-            VALUES ('" . DB::inst()->quote($data['name']) . "', {$user->id})");
-        $group_id = DB::inst()->getInsertId();
-        EventLog::inst()->add('group', $group_id);
-
-        $group = new Group();
-        $group->fetch($group_id);
-        $user->joinGroup($group);
-
-        // Admin made the group
-        if ($user->id != $current_user->id) {
-            $user->notifyGroupJoin($group, $admin);
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage()
+            ));
         }
-
-        print json_encode(array(
-            'status' => 'ok',
-        ));
     }
 
     /**

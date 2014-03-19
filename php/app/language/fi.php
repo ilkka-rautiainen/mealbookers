@@ -106,6 +106,7 @@ $GLOBALS['language']['fi'] = array(
     'group_name' => 'Ryhmän nimi',
     'group_add_group_failed' => 'Ryhmän lisääminen epäonnistui',
     'group_add_group_failed_invalid_name' => 'Ryhmän nimi ei ole kelvollinen',
+    'group_add_group_ok_but_notification_failed' => 'Ryhmä lisätty, mutta ilmoitusviestin lähetys käyttäjälle epäonnistui',
     'suggest_eating_time' => 'Ehdota aikaa',
     'suggest' => 'Ehdota',
     'suggest_time' => 'Aika',

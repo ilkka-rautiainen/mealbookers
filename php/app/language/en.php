@@ -105,6 +105,7 @@ $GLOBALS['language']['en'] = array(
     'group_name' => 'Group name',
     'group_add_group_failed' => 'Failed to add group',
     'group_add_group_failed_invalid_name' => 'Invalid group name given',
+    'group_add_group_ok_but_notification_failed' => 'Group added but sending notification message to the user failed',
     'suggest_eating_time' => 'Suggest eating time',
     'suggest' => 'Suggest',
     'suggest_time' => 'Time',
