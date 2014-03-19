@@ -32,8 +32,8 @@ class UserAPI
 
         if ($user && !$group) {
             $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name SEPARATOR ', ') groups FROM users
-                INNER JOIN group_memberships ON users.id = group_memberships.user_id
-                INNER JOIN groups ON groups.id = group_memberships.group_id
+                LEFT JOIN group_memberships ON users.id = group_memberships.user_id
+                LEFT JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.email_address LIKE '$user%' OR
                 CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
                 users.first_name LIKE '$user%' OR

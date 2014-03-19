@@ -42,8 +42,11 @@
                                     {{ user.email_address }}
                                 </div>
                                 <div class="clearfix"></div>
-                                <div>
+                                <div ng-show="user.groups.length">
                                     <strong>{{ 'user_management_groups' | i18n }}</strong> {{ user.groups }}
+                                </div>
+                                <div ng-show="!user.groups.length">
+                                    {{ 'user_management_user_has_no_groups' | i18n }}
                                 </div>
                                 <div class="button-group">
                                     <button class="btn btn-default" ng-click="openAccountSettingsFor(user)">{{ 'user_management_account_settings' | i18n }}</button>
