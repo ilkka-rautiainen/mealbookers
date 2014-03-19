@@ -180,6 +180,7 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
+        $notification_error = false;
         try {
             DB::inst()->startTransaction();
             if (!isset($data['email_address'])) {
@@ -202,19 +203,18 @@ class GroupAPI
                 }
                 $invitee->joinGroup($group);
                 if (!$invitee->notifyGroupJoin($group, $user)) {
-                    throw new ApiException('failed');
+                    $notification_error = true;
                 }
 
                 print json_encode(array(
                     'status' => 'joined_existing',
-                    'group' => $group->getAsArray($user, $user->getInitialsContext()),
+                    'notification_error' => $notification_error,
                 ));
             }
             // Invite new member
             else {
-                
                 if (!$user->inviteNewMember($email_address, $group)) {
-                    throw new ApiException('failed');
+                    throw new ApiException('failed_to_send_invite');
                 }
                 print json_encode(array(
                     'status' => 'invited_new',
