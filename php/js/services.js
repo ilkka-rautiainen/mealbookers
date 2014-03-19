@@ -33,6 +33,10 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', function($http, $rootS
         console.log("Current user loaded");
         $rootScope.currentUser = result.data.user;
 
+        if ($rootScope.currentUser.role != 'guest') {
+            $rootScope.startLiveView();
+        }
+
         // Get localization
         localizationPromise = $http.get('api/1.0/app/language/'
             + $rootScope.currentUser.language).then(function(result)

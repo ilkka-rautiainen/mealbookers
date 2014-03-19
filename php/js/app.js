@@ -209,11 +209,24 @@ angular.module('Mealbookers', [
                 }
             }
             else {
-                console.log("Current user refreshed");
+                $log.debug("Current user refreshed");
                 for (var i in result.user) {
                     $rootScope.currentUser[i] = result.user[i];    
                 }
+
                 $rootScope.$broadcast("currentUserRefresh");
+
+                // Has logged in
+                if ($rootScope.currentUser.role != 'guest' && !$rootScope.liveViewOn) {
+                    $log.info("Valid login detected");
+                    $rootScope.startLiveView();
+                }
+                // Has logged out
+                if ($rootScope.currentUser.role == 'guest' && $rootScope.liveViewOn) {
+                    $log.info("No valid login detected");
+                    return $rootScope.stopLiveView();
+                }
+
                 $rootScope.refreshSuggestions(done);
             }
         }).error(function() {
@@ -238,14 +251,14 @@ angular.module('Mealbookers', [
                     }
                 }
                 if (restaurantIndex == -1) {
-                    console.log("restaurant " + restaurantId.toString() + " not found in restaurant array, skipping");
+                    $log.warn("restaurant " + restaurantId.toString() + " not found in restaurant array, skipping");
                     continue;
                 }
 
                 $rootScope.restaurants[restaurantIndex].suggestionList = data[restaurantId];
             }
 
-            console.log("Suggestions refreshed");
+            $log.debug("Suggestions refreshed");
             if (typeof done == 'function') {
                 done();
             }
@@ -288,7 +301,7 @@ angular.module('Mealbookers', [
         $timeout.cancel($rootScope.liveViewTimeout);
         $rootScope.refreshCurrentUser(function() {
             $rootScope.liveViewOn = false;
-            console.log("Live View stopped");
+            $log.info("Live View stopped");
             if (typeof done == 'function') {
                 done();
             }
@@ -298,7 +311,13 @@ angular.module('Mealbookers', [
     $rootScope.startLiveView = function() {
         $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
         $rootScope.liveViewOn = true;
-        console.log("Live View started");
+        $log.info("Live View started");
+    };
+
+    $rootScope.stopLiveView = function() {
+        $timeout.cancel($rootScope.liveViewTimeout);
+        $rootScope.liveViewOn = false;
+        $log.info("Live View stopped");
     };
 
     /**
@@ -351,8 +370,6 @@ angular.module('Mealbookers', [
             console.error("Error while refreshing restaurants");
         });
     };
-
-    $rootScope.startLiveView();
 
     $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction) {
         var alertFunction;
