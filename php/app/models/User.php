@@ -561,6 +561,7 @@ class User
 
     public function notifyGroupJoin(Group $group, User $inviter)
     {
+        global $current_user, $admin;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for being joined"
             . " as member to group {$group->id} by user {$inviter->id}");
         if (!$this->notify_group_memberships) {
@@ -568,13 +569,18 @@ class User
             return true;
         }
 
+        if ($inviter->id != $current_user->id && $current_user->role == 'admin')
+            $inviter_name = $admin->getName($this);
+        else
+            $inviter_name = $inviter->getName();
+
         $subject = str_replace(
             array(
                 '{inviter}',
                 '{group_name}',
             ),
             array(
-                $inviter->getName($this),
+                $inviter_name,
                 $group->name,
             ),
             Lang::inst()->get('mailer_subject_invite_notification', $this)
@@ -586,7 +592,7 @@ class User
                 '{server_hostname}',
             ),
             array(
-                $inviter->getName($this),
+                $inviter_name,
                 $group->name,
                 $_SERVER['HTTP_HOST'],
             ),

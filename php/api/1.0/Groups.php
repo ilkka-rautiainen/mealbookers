@@ -12,7 +12,7 @@ class GroupAPI
      */
     function addGroup($userId = null)
     {
-        global $current_user, $admin;
+        global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId/groups called");
@@ -55,7 +55,7 @@ class GroupAPI
 
             // Admin made the group
             if ($user->id != $current_user->id) {
-                if (!$user->notifyGroupJoin($group, $admin))
+                if (!$user->notifyGroupJoin($group, $user))
                     throw new ApiException('ok_but_notification_failed');
             }
 
@@ -275,7 +275,7 @@ class GroupAPI
             Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
         }
 
-        if (!$deleted_member->isMemberOfGroup($group)) {
+        if ($user->id != $deleted_member->id && !$deleted_member->isMemberOfGroup($group)) {
             Application::inst()->exitWithHttpCode(400, "Member you are deleting is not a member in the group");
         }
 
