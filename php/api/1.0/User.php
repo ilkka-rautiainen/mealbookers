@@ -285,6 +285,17 @@ class UserAPI
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
                         WHERE id = {$user->id}");
 
+                    if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
+                        $expiry_time = PHP_INT_MAX;
+                    else
+                        $expiry_time = 0;
+
+                    setcookie(
+                        "check",
+                        Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
+                        $expiry_time,
+                        '/'
+                    );
                 }
             }
             // No new password but the old given
