@@ -394,6 +394,13 @@ angular.module('Mealbookers', [
         if (fromState.data && fromState.data.modal && toState.name == 'Navigation.Menu.UserManagement') {
             $rootScope.$broadcast("childModalClosed");
         }
+
+        // Force modal-open when toState is a modal
+        if (toState.data && toState.data.modal) {
+            $timeout(function() {
+                $("body").addClass("modal-open");
+            }, 0);
+        }
     });
 
 
