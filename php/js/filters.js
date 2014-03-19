@@ -24,13 +24,15 @@ angular.module('Mealbookers.filters', [])
     }
 })
 
-.filter('formatOpeningHour', function() {
+.filter('formatOpeningHour', ['$filter', function($filter) {
     return function(openingHour) {
         if (!openingHour)
             return '';
-        return openingHour.type_translated + ' ' + openingHour.start + ' - ' + openingHour.end;
+        return $filter('i18n')('opening_hour_type_' + openingHour.type)
+            + ' ' + openingHour.start
+            + ' - ' + openingHour.end;
     }
-})
+}])
 
 .filter('replace', function() {
 	return function(haystack, search, replace) {

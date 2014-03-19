@@ -239,9 +239,22 @@ label {
     text-align: right;
 }
 
-.tooltip-inner {
-    white-space: pre;
-    max-width: none;
+.tooltip.in {
+    opacity: 1;
+}
+
+.tooltip.top > .tooltip-arrow {
+    border-top-color: #99b5e5;
+}
+
+.tooltip.top > .tooltip-inner {
+    border: 1px solid #99b5e5;
+    background-color: #ABCAFF;
+}
+
+.tooltip.top > .tooltip-inner .tooltip-row {
+    white-space: nowrap;
+    text-align: right;
 }
 
 .page-header {

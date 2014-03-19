@@ -14,11 +14,7 @@
 
                     <!-- Opening times -->
                     <div class="opening-hours">
-                        {{ suggestRestaurant.openingHours[weekDay].normal | formatOpeningHour }}
-                        <div>
-                            {{ suggestRestaurant.openingHours[weekDay].lunch | formatOpeningHour }}
-                        </div>
-                        <div ng-repeat="openingHour in suggestRestaurant.openingHours[weekDay].others">
+                        <div ng-repeat="openingHour in suggestRestaurant.openingHours[weekDay].all">
                             {{ openingHour | formatOpeningHour }}
                         </div>
                     </div>

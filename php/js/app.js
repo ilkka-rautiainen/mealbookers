@@ -271,11 +271,6 @@ angular.module('Mealbookers', [
         // console.log("Live view update");
         $timeout.cancel($rootScope.liveViewTimeout);
 
-        // Check if the page has loaded
-        if (!$rootScope.restaurants || !$rootScope.today) {
-            $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
-            return console.log("Waiting before starting live view.");
-        }
         // Day has changed
         if ($rootScope.today != ((new Date().getDay() + 6) % 7) + 1) {
             if ($rootScope.today == 7) {
@@ -285,7 +280,7 @@ angular.module('Mealbookers', [
                 $state.transitionTo($state.current, $stateParams, {reload: true, inherit: false, notify: true});
             }
             $rootScope.liveViewTimeout = $timeout($rootScope.liveViewUpdate, $rootScope.config.liveViewInterval);
-            return console.log("Day has changed, refreshing state");;
+            return $log.info("Day has changed, refreshing state");
         }
 
         $rootScope.refreshCurrentUser(function() {
@@ -344,10 +339,10 @@ angular.module('Mealbookers', [
         // Get localization
         $http.get('api/1.0/app/language/' + $rootScope.currentUser.language).success(function(result)
         {
-            console.log("Localization refreshed");
+            $log.debug("Localization refreshed");
             $rootScope.localization = result;
         }).error(function() {
-            console.error("Error while refreshing localization");
+            $log.error("Error while refreshing localization");
         });
 
         $rootScope.refreshRestaurants(done);
@@ -360,14 +355,14 @@ angular.module('Mealbookers', [
                 lang: $rootScope.currentUser.language
             }
         }).success(function(result) {
-            console.log("Restaurants refreshed");
+            $log.debug("Restaurants refreshed");
             $rootScope.restaurants = result;
 
             if (typeof done == 'function') {
                 done();
             }
         }).error(function() {
-            console.error("Error while refreshing restaurants");
+            $log.error("Error while refreshing restaurants");
         });
     };
 

@@ -11,13 +11,24 @@ angular.module('Mealbookers.directives', [])
     };
 }])
 
-.directive('restaurant', function(){
+.directive('restaurant', ['$timeout', function($timeout) {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: 'partials/directives/restaurant.html'
+        templateUrl: 'partials/directives/restaurant.html',
+        controller: function($scope) {
+            $timeout(function() {
+                // Opening hours tooltip
+                $(".opening-hour-tooltip").tooltip({
+                    delay: {
+                        show: 500,
+                        hide: 0
+                    }
+                });
+            }, 0);
+        }
     };
-})
+}])
 
 .directive('restaurantPlaceHolder', function(){
     return {
@@ -28,9 +39,9 @@ angular.module('Mealbookers.directives', [])
 })
 
 .directive('focusOn', function() {
-   return function(scope, elem, attr) {
-      scope.$on(attr.focusOn, function(e) {
-          elem[0].focus();
-      });
-   };
+    return function(scope, elem, attr) {
+        scope.$on(attr.focusOn, function(e) {
+            elem[0].focus();
+        });
+    };
 })

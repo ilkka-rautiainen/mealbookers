@@ -11,7 +11,7 @@
 
         <!-- Lunch times -->
         <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
-            <span class="opening-hour-tooltip" title="{{ restaurant.openingHours[weekDay].all_in_one }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
+            <span class="opening-hour-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" ng-attr-title="{{ getOpeningHoursTooltip(restaurant) }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
         </div>
 
         <!-- Restaurant closed (if it is) -->

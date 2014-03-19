@@ -122,7 +122,6 @@ class Restaurant
             $openingHours[$i] = array(
                 'all' => array(),
                 'others' => array(),
-                'all_in_one' => '',
                 'closed' => false,
             );
         }
@@ -140,19 +139,14 @@ class Restaurant
                 // Normal
                 $openingHour = array(
                     'type' => $row['type'],
-                    'type_translated' => Lang::inst()->get('opening_hour_type_' . $row['type']),
                     'start' => substr($row['start_time'], 0, 5),
                     'end' => substr($row['end_time'], 0, 5),
                 );
 
                 $openingHours[$i]['all'][] = $openingHour;
 
-                // Open
-                if ($row['type'] == 'normal') {
-                    $openingHours[$i]['normal'] = $openingHour;
-                }
                 // Lunch
-                else if ($row['type'] == 'lunch') {
+                if ($row['type'] == 'lunch') {
                     $openingHours[$i]['lunch'] = $openingHour;
                 }
                 // Other
@@ -177,11 +171,6 @@ class Restaurant
         for ($i = 6; $i >= $today; $i--) {
             usort($openingHours[$i]['all'], $sort);
             usort($openingHours[$i]['others'], $sort);
-            $all_in_ones = array();
-            foreach ($openingHours[$i]['all'] as $openingHour) {
-                $all_in_ones[] = $openingHour['type_translated'] . ' ' . $openingHour['start'] . ' - ' . $openingHour['end'];
-            }
-            $openingHours[$i]['all_in_one'] = implode("\r\n", $all_in_ones);
             $openingHours[$i + 1] = $openingHours[$i];
             unset($openingHours[$i]);
         }

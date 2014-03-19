@@ -179,6 +179,19 @@ angular.module('Mealbookers.controllers', [])
     $rootScope.$watchCollection('[restaurants, widthClass]', function() {
         $scope.makeRestaurantGrid();
     });
+
+    $scope.getOpeningHoursTooltip = function(restaurant) {
+        console.log(restaurant.openingHours[$scope.weekDay].all);
+        var openingHours = [];
+        for (var i in restaurant.openingHours[$scope.weekDay].all) {
+            openingHours.push(
+                '<div class="tooltip-row">'
+                + $filter('formatOpeningHour')(restaurant.openingHours[$scope.weekDay].all[i])
+                + '</div>'
+            );
+        }
+        return openingHours.join("");
+    };
     
     /**
      * Suggest a restaurant and time
