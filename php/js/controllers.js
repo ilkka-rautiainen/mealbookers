@@ -75,6 +75,10 @@ angular.module('Mealbookers.controllers', [])
     $('#logInModal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
+    
+    $('#logInModal').on('shown.bs.modal', function () {
+        $scope.$broadcast('modalOpened');
+    });
 
     $scope.login = {
         email: "",
