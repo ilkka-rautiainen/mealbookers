@@ -17,7 +17,7 @@ class AppAPI
     function getLog($passphrase, $rows = 1000)
     {
         Logger::info(__METHOD__ . " GET /app/log called");
-        Application::inst()->checkAuthentication();
+        Application::inst()->checkAuthentication('admin');
         $rows = (int)$rows;
 
         if ($passphrase != "mealilogi")

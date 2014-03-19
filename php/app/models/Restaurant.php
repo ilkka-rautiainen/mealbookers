@@ -73,7 +73,10 @@ class Restaurant
      */
     public function fetchSuggestionList(User $viewer)
     {
-        $suggestionList = new SuggestionList();
+        $this->suggestionList = new SuggestionList();
+
+        if ($viewer->role == 'guest')
+            return;
 
         // Fetch all suggestions that are suggested to the given user
         $result = DB::inst()->query("SELECT suggestions.* FROM suggestions
@@ -89,9 +92,8 @@ class Restaurant
             $suggestion = new Suggestion();
             $suggestion->populateFromRow($row);
             $suggestion->fetchAcceptedMembers($viewer);
-            $suggestionList->addSuggestion($suggestion);
+            $this->suggestionList->addSuggestion($suggestion);
         }
-        $this->suggestionList = $suggestionList;
     }
 
     public function getMenuForEmail(Suggestion $suggestion, User $user)
