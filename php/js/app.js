@@ -224,10 +224,12 @@ angular.module('Mealbookers', [
                 // Has logged out
                 if ($rootScope.currentUser.role == 'guest' && $rootScope.liveViewOn) {
                     $log.info("No valid login detected");
+                    $rootScope.clearSuggestions();
+                    $rootScope.stopLiveView();
                     if (typeof done == 'function') {
                         done();
                     }
-                    return $rootScope.stopLiveView();
+                    return;
                 }
 
                 $rootScope.refreshSuggestions(done);
@@ -268,6 +270,12 @@ angular.module('Mealbookers', [
         }).error(function() {
             throw new RefreshDataException("Error while refreshing suggestions");
         });
+    };
+
+    $rootScope.clearSuggestions = function() {
+        for (var i = 0; i < $rootScope.restaurants.length; i++) {
+            $rootScope.restaurants[i].suggestionList = [];
+        }
     };
 
     $rootScope.liveViewUpdate = function() {
