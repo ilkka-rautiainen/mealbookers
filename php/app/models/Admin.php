@@ -4,6 +4,6 @@ class Admin extends User
 {
     public function getName(User $viewer)
     {
-        return Lang::inst()->get('app_name') . ' ' . strtolower(Lang::inst()->get('administrator'));
+        return Lang::inst()->get('administrator');
     }
 }

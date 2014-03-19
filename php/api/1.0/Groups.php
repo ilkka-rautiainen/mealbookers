@@ -3,7 +3,7 @@
 Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
 Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
 Flight::route('POST /user(/@userId)/groups', array('GroupAPI', 'addGroup'));
-Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'deleteGroupMember'));
+Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'removeGroupMember'));
 
 class GroupAPI
 {
@@ -12,7 +12,7 @@ class GroupAPI
      */
     function addGroup($userId = null)
     {
-        global $current_user;
+        global $current_user, $admin;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " POST /user/$userId/groups called");
@@ -53,6 +53,11 @@ class GroupAPI
         $group = new Group();
         $group->fetch($group_id);
         $user->joinGroup($group);
+
+        // Admin made the group
+        if ($user->id != $current_user->id) {
+            $user->notifyGroupJoin($group, $admin);
+        }
 
         print json_encode(array(
             'status' => 'ok',
@@ -171,7 +176,6 @@ class GroupAPI
 
         try {
             DB::inst()->startTransaction();
-            // Edit group
             if (!isset($data['email_address'])) {
                 Application::inst()->exitWithHttpCode(400, "email_address not present in request");
             }
@@ -225,7 +229,7 @@ class GroupAPI
      * @todo implement with real current user
      * @todo implement current user case
      */
-    function deleteGroupMember($userId, $groupId, $memberId)
+    function removeGroupMember($userId, $groupId, $memberId)
     {
         global $current_user, $admin;
 

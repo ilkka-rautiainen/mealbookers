@@ -574,7 +574,7 @@ class User
                 '{group_name}',
             ),
             array(
-                $inviter->getName(),
+                $inviter->getName($this),
                 $group->name,
             ),
             Lang::inst()->get('mailer_subject_invite_notification', $this)
@@ -586,7 +586,7 @@ class User
                 '{server_hostname}',
             ),
             array(
-                $inviter->getName(),
+                $inviter->getName($this),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
             ),
