@@ -598,11 +598,17 @@ class User
 
     public function notifyRemovedFromGroup(Group $group, User $deleter)
     {
+        global $current_user, $admin;
         Logger::debug(__METHOD__ . " notifying user {$this->id} for being removed from group {$group->id}");
         if (!$this->notify_group_memberships) {
             Logger::debug(__METHOD__ . " canceled due to user's notification settings");
             return true;
         }
+
+        if ($deleter->id != $current_user->id && $current_user->role == 'admin')
+            $deleter_name = $admin->getName($this);
+        else
+            $deleter_name = $deleter->getName();
 
         $subject = str_replace(
             array(
@@ -610,7 +616,7 @@ class User
                 '{group_name}',
             ),
             array(
-                $deleter->getName($this),
+                $deleter_name,
                 $group->name,
             ),
             Lang::inst()->get('mailer_subject_group_leave_notification', $this)
@@ -622,7 +628,7 @@ class User
                 '{server_hostname}',
             ),
             array(
-                $deleter->getName($this),
+                $deleter_name,
                 $group->name,
                 $_SERVER['HTTP_HOST'],
             ),

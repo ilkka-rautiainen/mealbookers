@@ -237,7 +237,7 @@ class GroupAPI
      */
     function removeGroupMember($userId, $groupId, $memberId)
     {
-        global $current_user, $admin;
+        global $current_user;
 
         if ($userId) {
             Application::inst()->checkAuthentication('admin');
@@ -293,7 +293,7 @@ class GroupAPI
 
             // Admin deleted him
             if ($user->id != $current_user->id)
-                $user->notifyRemovedFromGroup($group, $admin);
+                $user->notifyRemovedFromGroup($group, $user);
 
             print json_encode(array(
                 'status' => 'removed_himself',
