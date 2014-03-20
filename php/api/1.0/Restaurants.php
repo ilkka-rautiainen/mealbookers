@@ -4,7 +4,7 @@ Flight::route('GET /restaurants', array('RestaurantsAPI', 'getRestaurants'));
 Flight::route('GET /restaurants/suggestions', array('RestaurantsAPI', 'getSuggestions'));
 Flight::route('POST /restaurants/@restaurantId/suggestions', array('RestaurantsAPI', 'createSuggestion'));
 Flight::route('POST /restaurants/@restaurantId/suggestions/@suggestionId', array('RestaurantsAPI', 'manageSuggestionFromSite'));
-Flight::route('POST /suggestion', array('RestaurantsAPI', 'acceptSuggestionFromEmail'));
+Flight::route('POST /suggestion/@token', array('RestaurantsAPI', 'acceptSuggestionFromEmail'));
 
 class RestaurantsAPI
 {
@@ -155,49 +155,56 @@ class RestaurantsAPI
      * Accept a suggestion
      * @todo  Do age check instead of waiting for a TooOldException that isn't thrown
      */
-    function acceptSuggestionFromEmail()
+    function acceptSuggestionFromEmail($token)
     {
         global $current_user;
-        Logger::info(__METHOD__ . " POST /suggestion called");
+        Logger::info(__METHOD__ . " POST /suggestion/$token called");
 
-        if ($current_user->role == 'guest') {
-            return print json_encode(array(
-                'status' => 'not_logged_in',
-            ));
-        }
-        Application::inst()->checkAuthentication();
-        $hash = $_GET['hash'];
-        if (strlen($hash) != 32)
-            Application::inst()->exitWithHttpCode(400, "Invalid hash");
-
-        if (!$suggestion_user_id = DB::inst()->getOne("SELECT id FROM suggestions_users WHERE hash = '"
-            . DB::inst()->quote($hash) . "' LIMIT 1"))
-        {
-            return print json_encode(array(
-                'status' => 'deleted',
-            ));
-        }
-
-        $suggestion_user = new SuggestionUser();
-        $suggestion_user->fetch($suggestion_user_id);
-
-        $suggestion = new Suggestion();
-        $suggestion->fetch($suggestion_user->suggestion_id);
         try {
-            $suggestion->accept($suggestion_user);
-        }
-        catch (TooOldException $e) {
-            return print json_encode(array(
-                'status' => 'too_old',
-                'weekDay' => $suggestion->getWeekDay(),
+            if ($current_user->role == 'guest') {
+                throw new ApiException('not_logged_in');
+            }
+            Application::inst()->checkAuthentication();
+
+            if (strlen($token) != 32)
+                Application::inst()->exitWithHttpCode(400, "Invalid hash");
+
+            if (!$suggestion_user_id = DB::inst()->getOne("SELECT id FROM suggestions_users WHERE hash = '"
+                . DB::inst()->quote($token) . "' LIMIT 1"))
+            {
+                throw new ApiException('deleted');
+            }
+
+            $suggestion_user = new SuggestionUser();
+            $suggestion_user->fetch($suggestion_user_id);
+            $suggestion = new Suggestion();
+            $suggestion->fetch($suggestion_user->suggestion_id);
+
+            if ($suggestion_user->user_id != $current_user->id) {
+                throw new ApiException('wrong_user');
+            }
+
+            try {
+                $suggestion->accept($suggestion_user);
+            }
+            catch (TooOldException $e) {
+                throw new ApiException('too_old', array(
+                    'weekDay' => $suggestion->getWeekDay() + 1,
+                ));
+            }
+
+            print json_encode(array(
+                'status' => 'ok',
+                'weekDay' => $suggestion->getWeekDay() + 1,
+                'time' => $suggestion->getTime(),
+                'restaurant' => DB::inst()->getOne("SELECT name FROM restaurants WHERE id = {$suggestion->restaurant_id}"),
             ));
         }
-        print json_encode(array(
-            'status' => 'ok',
-            'weekDay' => $suggestion->getWeekDay() + 1,
-            'time' => $suggestion->getTime(),
-            'restaurant' => DB::inst()->getOne("SELECT name FROM restaurants WHERE id = {$suggestion->restaurant_id}"),
-        ));
+        catch (ApiException $e) {
+            return print json_encode(array_merge(array(
+                'status' => $e->getMessage(),
+            ), $e->getData()));
+        }
     }
 
     function manageSuggestionFromSite($restaurantId, $suggestionId)

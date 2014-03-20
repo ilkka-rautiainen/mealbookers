@@ -35,13 +35,21 @@ angular.module('Mealbookers', [
     .state('Navigation.Menu.Login', {
         url: "/login",
         templateUrl: "partials/modals/Login.html",
-        controller: 'LoginController'
+        controller: 'LoginController',
+        data: {
+            modal: true,
+            modalId: "logInModal"
+        },
     })
 
     .state('Navigation.Menu.Register', {
         url: "/register",
         templateUrl: "partials/modals/Register.html",
-        controller: 'RegisterController'
+        controller: 'RegisterController',
+        data: {
+            modal: true,
+            modalId: "registerModal"
+        },
     })
     
     .state('Navigation.Menu.Suggestion', {
@@ -105,7 +113,7 @@ angular.module('Mealbookers', [
     })
     
     .state('Navigation.AcceptSuggestion', {
-        url: "/suggestion/accept",
+        url: "/suggestion/accept/:token",
         templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
     })
@@ -113,7 +121,7 @@ angular.module('Mealbookers', [
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])
 
-.run(['$rootScope', '$window', '$http', '$timeout', '$interval', '$state', '$stateParams', 'InitApp', '$log', function($rootScope, $window, $http, $timeout, $interval, $state, $stateParams, InitApp, $log) {
+.run(['$rootScope', '$window', '$http', '$timeout', '$interval', '$state', '$stateParams', 'InitApp', '$log', '$filter', function($rootScope, $window, $http, $timeout, $interval, $state, $stateParams, InitApp, $log, $filter) {
 
     $rootScope.currentUser = {
         role: 'guest',
@@ -237,6 +245,32 @@ angular.module('Mealbookers', [
         }).error(function() {
             throw new RefreshDataException("Error while refreshing current user");
         });
+    };
+
+    $rootScope.logOut = function(showAlert) {
+        $.removeCookie('id');
+        $.removeCookie('check');
+        $.removeCookie('remember');
+        $rootScope.refreshCurrentUser(function() {
+            $log.info("Logged out");
+            if (showAlert)
+                $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
+        });
+    };
+
+    $rootScope.removeModalAlert = function() {
+        delete $rootScope.modalAlertMessage;
+    };
+
+    $rootScope.modalAlert = function(type, message) {
+        if (!$rootScope.modalAlertMessage) {
+            $rootScope.modalAlertMessage = {
+                type: '',
+                message: ''
+            };
+        }
+        $rootScope.modalAlertMessage.type = type;
+        $rootScope.modalAlertMessage.message = message;
     };
 
     $rootScope.refreshSuggestions = function(done) {
@@ -394,19 +428,24 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
+        // From modal to not modal
         if (fromState.data && fromState.data.modal && !(toState.data && toState.data.modal)) {
             $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open");
+            $rootScope.removeModalAlert();
         }
+        // From modal to another modal
         else if (fromState.data && fromState.data.modal && toState.data && toState.data.modal) {
             $("#" + fromState.data.modalId).css("visibility", "hidden");
             $("#" + toState.data.modalId).css("visibility", "visible");
         }
 
+        // From user management child modal to parent modal
         if (fromState.data && fromState.data.modal && toState.name == 'Navigation.Menu.UserManagement') {
             $rootScope.$broadcast("childModalClosed");
         }
 
-        // Force modal-open when toState is a modal
+        // To modal
         if (toState.data && toState.data.modal) {
             $timeout(function() {
                 $("body").addClass("modal-open");

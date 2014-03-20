@@ -33,6 +33,7 @@ $GLOBALS['language']['en'] = array(
     'email' => 'Email',
     'password' => 'Password',
     'log_in_remember_me' => 'Remember me',
+    'log_in_failed' => 'Wrong email or password',
     'forgot' => 'Forgot your password?',
     'select_all' => 'Select all',
     'and' => 'and',
@@ -121,6 +122,8 @@ $GLOBALS['language']['en'] = array(
     'suggest_failed_to_send_invitation_email' => 'Suggestion created, but failed to send invitation notification:',
     'suggestion_created' => 'Suggestion created!',
     'suggestion_been_deleted' => 'The suggestion you accepted had been deleted...',
+    'suggestion_accept_wrong_user' => 'Log in with the account that you received the suggestion to',
+    'suggestion_accept_not_logged_in' => 'Log in to accept the suggestion',
     'suggestion_accept_succeeded' => 'Suggestion accepted',
     'suggestion_accept' => 'Accept',
     'suggestion_cancel' => 'Cancel',
@@ -142,7 +145,7 @@ $GLOBALS['language']['en'] = array(
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept?hash={hash}">here</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{hash}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
             . ' <a href="http://{server_hostname}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',

@@ -33,6 +33,7 @@ $GLOBALS['language']['fi'] = array(
     'email' => 'Sähköposti',
     'password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
+    'log_in_failed' => 'Väärä sähköpostiosoite tai salasana',
     'forgot' => 'Unohditko salasanasi?',
     'select_all' => 'Valitse kaikki',
     'and' => 'ja',
@@ -123,6 +124,8 @@ $GLOBALS['language']['fi'] = array(
     'suggest_failed_to_send_invitation_email' => 'Ehdotus luotu, mutta kutsuilmoitusta ei saatu lähetettyä:',
     'suggestion_created' => 'Ehdotus tehty!',
     'suggestion_been_deleted' => 'Hyväksymäsi ehdotus oli ehditty poistaa...',
+    'suggestion_accept_wrong_user' => 'Kirjaudu sisään tunnuksella, johon olet saanut ehdotuksen',
+    'suggestion_accept_not_logged_in' => 'Kirjaudu sisään hyväksyäksesi ehdotuksen',
     'suggestion_accept_succeeded' => 'Ehdotus hyväksytty',
     'suggestion_accept' => 'Hyväksy',
     'suggestion_cancel' => 'Peru',
@@ -144,7 +147,7 @@ $GLOBALS['language']['fi'] = array(
             'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
             . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept?hash={hash}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{hash}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
             . ' <a href="http://{server_hostname}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',

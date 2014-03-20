@@ -5,9 +5,9 @@
 angular.module('Mealbookers.controllers', [])
 
 
-.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$location', function($http, $filter, $rootScope, $state, $location) {
-    if (typeof $location.search().hash != 'undefined') {
-        $http.post('api/1.0/suggestion?hash=' + $location.search().hash).success(function(result) {
+.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', '$timeout', function($http, $filter, $rootScope, $state, $stateParams, $timeout) {
+    if ($stateParams.token) {
+        $http.post('api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $state.go("Navigation.Menu");
                 $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
@@ -20,20 +20,44 @@ angular.module('Mealbookers.controllers', [])
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
             }
+            else if (result.status == 'wrong_user') {
+                $rootScope.logOut(false);
+                $state.go("Navigation.Menu.Login", {day: $rootScope.today});
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'));
+                $rootScope.postLoginState = {
+                    name: "Navigation.AcceptSuggestion", 
+                    stateParams: {
+                        token: $stateParams.token
+                    }
+                };
+            }
             else if (result.status == 'not_logged_in') {
-                $state.go("Navigation.Menu.Login");
+                $state.go("Navigation.Menu.Login", {day: $rootScope.today});
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'));
+                $rootScope.postLoginState = {
+                    name: "Navigation.AcceptSuggestion", 
+                    stateParams: {
+                        token: $stateParams.token
+                    }
+                };
             }
             else if (result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
-                $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
-                    + ', ' + result.restaurant + ', '
-                    + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay)) + ' ' + result.time);
+                $rootScope.refreshCurrentUser(function() {
+                    $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
+                        + ', ' + result.restaurant + ', '
+                        + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay)) + ' ' + result.time);
+                });
             }
             else {
                 $state.go("Navigation.Menu");
                 $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
             }
         });
+    }
+    else {
+        $state.go("Navigation.Menu");
+        $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
     }
 }])
 
@@ -71,17 +95,18 @@ angular.module('Mealbookers.controllers', [])
     });
 }])
 
-.controller('LoginController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', function($scope, $rootScope, $http, $state, $log, $filter) {
+.controller('LoginController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll) {
 
     $("#logInModal").modal();
-
     $('#logInModal').on('hidden.bs.modal', function () {
+        delete $rootScope.postLoginState;
         $state.go("^");
     });
     
     $('#logInModal').on('shown.bs.modal', function () {
         $scope.$broadcast('modalOpened');
     });
+
 
     $scope.login = {
         email: "",
@@ -97,11 +122,36 @@ angular.module('Mealbookers.controllers', [])
                     $log.info("Logged in");
                     $rootScope.refreshCurrentUser(function() {
                         $("#logInModal").modal('hide');
-                        $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+
+                        if ($rootScope.postLoginState) {
+                            $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
+                            delete $rootScope.postLoginState;
+                        }
+                        else {
+                            $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+                        }
                     });
+                }
+                else {
+                    $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
                 }
                 
             });
+    };
+
+    $scope.modalAlert = function(type, message) {
+        if (!$scope.modalAlertMessage) {
+            $scope.modalAlertMessage = {
+                type: '',
+                message: ''
+            };
+        }
+        $scope.modalAlertMessage.type = type;
+        $scope.modalAlertMessage.message = message;
+        if (message.length) {
+            $location.hash('login-modal');
+            $anchorScroll();
+        }
     };
 
 }])
@@ -144,16 +194,6 @@ angular.module('Mealbookers.controllers', [])
     $scope.suggestionMessage = {
         type: '',
         message: ''
-    };
-
-    $rootScope.logOut = function() {
-        $.removeCookie('id');
-        $.removeCookie('check');
-        $.removeCookie('remember');
-        $rootScope.refreshCurrentUser(function() {
-            $log.info("Logged out");
-            $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
-        });
     };
 
     $scope.makeRestaurantGrid = function() {
