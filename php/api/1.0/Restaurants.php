@@ -153,7 +153,6 @@ class RestaurantsAPI
 
     /**
      * Accept a suggestion
-     * @todo  Do age check instead of waiting for a TooOldException that isn't thrown
      */
     function acceptSuggestionFromEmail($token)
     {
@@ -184,14 +183,14 @@ class RestaurantsAPI
                 throw new ApiException('wrong_user');
             }
 
-            try {
-                $suggestion->accept($suggestion_user);
-            }
-            catch (TooOldException $e) {
+            // Not manageable anymore
+            if (!$suggestion->isManageable(false)) {
                 throw new ApiException('too_old', array(
                     'weekDay' => $suggestion->getWeekDay() + 1,
                 ));
             }
+
+            $suggestion->accept($suggestion_user);
 
             print json_encode(array(
                 'status' => 'ok',
