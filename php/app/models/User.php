@@ -640,4 +640,29 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
+
+    public function notifyPasswordChanged($new_password)
+    {
+        global $admin;
+        Logger::debug(__METHOD__ . " notifying user {$this->id} for password change");
+
+        $admin_name = $admin->getName($this);
+
+        $subject = Lang::inst()->get('mailer_subject_password_change_notification', $this);
+        $body = str_replace(
+            array(
+                '{admin}',
+                '{new_password}',
+                '{server_hostname}',
+            ),
+            array(
+                $admin_name,
+                $new_password,
+                $_SERVER['HTTP_HOST'],
+            ),
+            Lang::inst()->get('mailer_body_password_change_notification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
 }

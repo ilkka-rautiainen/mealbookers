@@ -81,6 +81,7 @@ $GLOBALS['language']['en'] = array(
     'account_give_old_password' => 'Give the old password',
     'account_give_new_password' => 'Give a new password',
     'account_passwords_dont_match' => 'The new passwords you gave don\'t match',
+    'account_password_change_notify_failed' => 'Password wasn\'t changed as sending of notification message failed.',
     'account_removal' => 'Delete account',
     'account_remove' => 'Delete account',
     'account_remove_cancel' => 'Cancel',
@@ -193,6 +194,13 @@ $GLOBALS['language']['en'] = array(
         'mailer_subject_group_leave_notification' => '{deleter} removed you from group {group_name}',
         'mailer_body_group_leave_notification' => 
             'Hello!<br /><br />{deleter} removed you from group {group_name} at Mealbookers.<br /><br />'
+            . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
+        'mailer_subject_password_change_notification' => 'Your new password at Mealbookers',
+        'mailer_body_password_change_notification' => 
+            'Hei!<br /><br />{admin} changed your password at Mealbookers.'
+            . ' <br /><br />Your new password is <strong>{new_password}</strong><br /><br />'
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',

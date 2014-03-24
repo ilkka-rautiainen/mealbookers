@@ -81,6 +81,7 @@ $GLOBALS['language']['fi'] = array(
     'account_give_old_password' => 'Anna vanha salasana',
     'account_give_new_password' => 'Anna uusi salasana',
     'account_passwords_dont_match' => 'Antamasi uudet salasanat eivät täsmää',
+    'account_password_change_notify_failed' => 'Salasanaa ei vaihdettu, koska ilmoitusviestin lähetys epäonnistui',
     'account_removal' => 'Tilin poisto',
     'account_remove' => 'Poista tili',
     'account_remove_cancel' => 'Peruuta',
@@ -195,6 +196,13 @@ $GLOBALS['language']['fi'] = array(
         'mailer_subject_group_leave_notification' => '{deleter} poisti sinut ryhmästä {group_name}',
         'mailer_body_group_leave_notification' => 
             'Hei!<br /><br />{deleter} poisti sinut käyttäjäryhmästä {group_name} Mealbookersissa.<br /><br />'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_password_change_notification' => 'Uusi salasani Mealbookersiin',
+        'mailer_body_password_change_notification' => 
+            'Hei!<br /><br />{admin} vaihtoi Mealbookers-salasanasi.'
+            . ' <br /><br />Uusi salasanasi on <strong>{new_password}</strong><br /><br />'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

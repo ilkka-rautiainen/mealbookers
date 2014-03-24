@@ -281,21 +281,28 @@ class UserAPI
                     throw new ApiException('weak_password');
                 }
                 else {
+
+                    if ($user->id != $current_user->id
+                        && !$user->notifyPasswordChanged($data['password']['new']))
+                        throw new ApiException('notify_failed');
+                        
                     DB::inst()->query("UPDATE users
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
                         WHERE id = {$user->id}");
 
-                    if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
-                        $expiry_time = PHP_INT_MAX;
-                    else
-                        $expiry_time = 0;
+                    if ($user->id == $current_user->id) {
+                        if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
+                            $expiry_time = PHP_INT_MAX;
+                        else
+                            $expiry_time = 0;
 
-                    setcookie(
-                        "check",
-                        Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
-                        $expiry_time,
-                        '/'
-                    );
+                        setcookie(
+                            "check",
+                            Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
+                            $expiry_time,
+                            '/'
+                        );
+                    }
                 }
             }
             // No new password but the old given

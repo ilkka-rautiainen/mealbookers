@@ -560,6 +560,10 @@ angular.module('Mealbookers.controllers', [])
                 $scope.saveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('account_give_last_name'));
             }
+            else if (result.status == 'notify_failed') {
+                $scope.saveProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('account_password_change_notify_failed'));
+            }
             // Success
             else if (result.status == 'ok') {
                 $scope.resetPassword();
