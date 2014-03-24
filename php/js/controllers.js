@@ -140,14 +140,10 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        if (!$scope.modalAlertMessage) {
-            $scope.modalAlertMessage = {
-                type: '',
-                message: ''
-            };
-        }
-        $scope.modalAlertMessage.type = type;
-        $scope.modalAlertMessage.message = message;
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
         if (message.length) {
             $location.hash('login-modal');
             $anchorScroll();
@@ -334,11 +330,6 @@ angular.module('Mealbookers.controllers', [])
     $scope.searchProcess = false;
     $scope.results = [];
 
-    $scope.modalAlertMessage = {
-        type: '',
-        message: ''
-    };
-
     $scope.$on("childModalClosed", function() {
         $scope.search();
     });
@@ -388,8 +379,10 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage.type = type;
-        $scope.modalAlertMessage.message = message;
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
         if (message.length) {
             $location.hash('users-modal');
             $anchorScroll();
@@ -446,11 +439,6 @@ angular.module('Mealbookers.controllers', [])
             $state.go("^");
         });
     }
-
-    $scope.modalAlertMessage = {
-        type: '',
-        message: ''
-    };
 
     $scope.resetPassword = function() {
         $scope.password = {
@@ -721,13 +709,11 @@ angular.module('Mealbookers.controllers', [])
         });
     });
 
-    $scope.modalAlertMessage = {
-        type: '',
-        message: ''
-    };
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage.type = type;
-        $scope.modalAlertMessage.message = message;
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
         if (message.length) {
             $location.hash('group-modal');
             $anchorScroll();
