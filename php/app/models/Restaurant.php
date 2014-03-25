@@ -158,14 +158,15 @@ class Restaurant
             }
         }
 
-        $order = Conf::inst()->get('openingHoursDisplayOrder');
-        $sort = function($a, $b) use($order) {
-            $a_order = array_search($a['type'], $order);
-            $b_order = array_search($b['type'], $order);
-            if ($a_order > $b_order)
+        $sort = function($a, $b) {
+            if ($a['start'] > $b['start'])
                 return 1;
-            else if ($b_order > $a_order)
+            else if ($b['start'] > $a['start'])
                 return -1;
+            else if ($a['end'] > $b['end'])
+                return -1;
+            else if ($b['end'] > $a['end'])
+                return 1;
             else
                 return 0;
         };
