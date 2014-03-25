@@ -318,7 +318,7 @@ class UserAPI
             if ($current_user->role == 'admin' && in_array($data['role'], array(
                     'normal',
                     'admin',
-                )) && $data['role'] != $user->role)
+                )) && $user->id != $current_user->id && $data['role'] != $user->role)
             {
                 DB::inst()->query("UPDATE users SET role = '" . $data['role'] . "' WHERE id = {$user->id}");
             }
