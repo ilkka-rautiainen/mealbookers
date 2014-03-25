@@ -12,18 +12,18 @@ $importers = array(
     new LaureaImport(),
 );
 
-try {
-    foreach ($importers as $importer) {
+foreach ($importers as $importer) {
+    try {
         $importer->init();
         if (isset($_GET['reset']) && !empty($_GET['reset']))
             $importer->reset();
         $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
     }
-    print "import ok";
+    catch (ImportException $e) {
+        $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: "
+            . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
+        Logger::error($errorMessage);
+        print $errorMessage . "<br />";
+    }
 }
-catch (ImportException $e) {
-    $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: "
-        . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
-    Logger::error($errorMessage);
-    print $errorMessage;
-}
+print "import executed";
