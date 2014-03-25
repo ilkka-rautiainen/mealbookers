@@ -18,10 +18,10 @@ class AmicaImport extends Import
                 'Sunnuntai',
             ),
             'sections' => array(
-                'Kahvila\:?' => 'cafe',
-                'A la carte\:?' => 'alacarte',
-                'Bistro\:?' => 'bistro',
-                'Tuunaa oma hampurilaisesi' => 'tune_own_burger',
+                'Kahvila\:?' => 'import_section_cafe',
+                'A la carte\:?' => 'import_section_alacarte',
+                'Bistro\:?' => 'import_section_bistro',
+                'Tuunaa oma hampurilaisesi' => 'import_section_tune_own_burger',
             ),
             'ignore' => array(
                 'Hyvää ruokahalua!',
@@ -38,10 +38,10 @@ class AmicaImport extends Import
                 'Sunday',
             ),
             'sections' => array(
-                'Cafe\:?' => 'cafe',
-                'A la carte\:?' => 'alacarte',
-                'Bistro\:?' => 'bistro',
-                'Fine-tune your own burger' => 'tune_own_burger',
+                'Cafe\:?' => 'import_section_cafe',
+                'A la carte\:?' => 'import_section_alacarte',
+                'Bistro\:?' => 'import_section_bistro',
+                'Fine-tune your own burger' => 'import_section_tune_own_burger',
             ),
             'ignore' => array(
                 'Enjoy your meal!',
