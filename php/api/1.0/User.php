@@ -240,6 +240,10 @@ class UserAPI
                 Application::inst()->exitWithHttpCode(400, "Invalid name object");
             }
 
+            if (!isset($data['role'])) {
+                Application::inst()->exitWithHttpCode(400, "Role is missing");
+            }
+
             // UPDATE NAME
             if (!strlen($data['name']['first_name']))
                 throw new ApiException('no_first_name');
@@ -310,6 +314,14 @@ class UserAPI
                 throw new ApiException('no_new_password');
             }
 
+            // UPDATE ROLE
+            if ($current_user->role == 'admin' && in_array($data['role'], array(
+                    'normal',
+                    'admin',
+                )) && $data['role'] != $user->role)
+            {
+                DB::inst()->query("UPDATE users SET role = '" . $data['role'] . "' WHERE id = {$user->id}");
+            }
 
             DB::inst()->commitTransaction();
             print json_encode(array(

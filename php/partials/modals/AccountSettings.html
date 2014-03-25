@@ -63,6 +63,14 @@
                         <label for="new_password_repeat">{{ 'account_new_password_repeat' | i18n }}</label>
                         <input class="form-control" type="password" name="new_password_repeat" ng-model="password.repeat" />
                     </div>
+
+                    <!-- Account type -->
+                    <div ng-show="currentUser.role == 'admin'">
+                        <hr class="featurette-divider">
+                        <h4>{{ 'account_type' | i18n }}</h4>
+                        <input type="radio" name="role" value="normal" ng-model="user.role" ng-disabled="user.id == currentUser.id" /> {{ 'account_type_normal' | i18n }}<br />
+                        <input type="radio" name="role" value="admin" ng-model="user.role" ng-disabled="user.id == currentUser.id" /> {{ 'account_type_admin' | i18n }}
+                    </div>
                     
                     <div class="remove-account button-group" ng-if="widthClass == 'xs'">
                         <hr class="featurette-divider">

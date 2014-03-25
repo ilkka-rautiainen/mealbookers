@@ -512,7 +512,8 @@ angular.module('Mealbookers.controllers', [])
             name: {
                 first_name: $scope.user.first_name,
                 last_name: $scope.user.last_name
-            }
+            },
+            role: $scope.user.role
         }).success(function(result) {
             // Fail
             if (typeof result != 'object' || result.status == undefined) {
