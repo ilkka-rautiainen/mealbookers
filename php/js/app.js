@@ -234,13 +234,15 @@ angular.module('Mealbookers', [
                     $log.info("No valid login detected");
                     $rootScope.clearSuggestions();
                     $rootScope.stopLiveView();
+                    $rootScope.resetToMenu();
                     if (typeof done == 'function') {
                         done();
                     }
                     return;
                 }
 
-                $rootScope.refreshSuggestions(done);
+                if ($rootScope.currentUser.role != 'guest')
+                    $rootScope.refreshSuggestions(done);
             }
         }).error(function() {
             throw new RefreshDataException("Error while refreshing current user");
@@ -256,6 +258,11 @@ angular.module('Mealbookers', [
             if (showAlert)
                 $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
         });
+    };
+
+    $rootScope.resetToMenu = function() {
+        $state.go('Navigation.Menu');
+        $rootScope.alert('alert-warning', $filter('i18n')('logged_out_invalid_user_info'));
     };
 
     $rootScope.removeModalAlert = function() {

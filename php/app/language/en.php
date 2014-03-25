@@ -20,6 +20,7 @@ $GLOBALS['language']['en'] = array(
     'save_and_close' => 'Save and close',
     'log_out' => 'Log out',
     'logged_out' => 'Logged out',
+    'logged_out_invalid_user_info' => 'Logged out due to lacking log in information',
     'log_in' => 'Log in',
     'logged_in' => 'Logged in',
     'log_in_remember_me' => 'Remember me',

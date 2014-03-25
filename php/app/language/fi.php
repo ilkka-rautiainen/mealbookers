@@ -20,6 +20,7 @@ $GLOBALS['language']['fi'] = array(
     'save_and_close' => 'Tallenna ja sulje',
     'log_out' => 'Kirjaudu ulos',
     'logged_out' => 'Kirjauduttu ulos',
+    'logged_out_invalid_user_info' => 'Kirjauduttu ulos puuttuvien kirjautumistietojen takia',
     'log_in' => 'Kirjaudu sisään',
     'logged_in' => 'Kirjauduttu sisään',
     'log_in_remember_me' => 'Muista minut',
