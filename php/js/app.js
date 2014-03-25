@@ -452,8 +452,24 @@ angular.module('Mealbookers', [
                 $("#" + toState.data.modalId).focus();
             }, 0);
         }
+        
+        if ($rootScope.initAppDone) {
+            $rootScope.setTitle(toState.name);
+        }
     });
 
+    $rootScope.$watch('initAppDone', function(newValue) {
+        if (newValue) {
+            $rootScope.setTitle('currentState');
+        }
+    });
+
+    $rootScope.setTitle = function(state) {
+        if (state == 'currentState') {
+            state = $state.current.name;
+        }
+        $rootScope.title = $filter('i18n')('title_' + state) + $filter('i18n')('title_postfix');
+    };
 
     $rootScope.getWeekDayText = function(day) {
         if (day < 1 || day > 7) {

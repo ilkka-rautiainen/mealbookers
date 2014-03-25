@@ -184,7 +184,6 @@ angular.module('Mealbookers.controllers', [])
         $state.go("Navigation.Menu", {day: $rootScope.today});
     }
 
-    $rootScope.title = "Menu";
     $scope.restaurantRows = [];
     $scope.suggestTime = "";
     $scope.suggestionMessage = {

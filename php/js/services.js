@@ -61,6 +61,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
 
         // Wait for both of them to be ready
         $q.all([localizationPromise, restaurantsPromise]).then(function(response) {
+            $rootScope.initAppDone = true;
             deferred.resolve(response);
         });
     }, function() {
