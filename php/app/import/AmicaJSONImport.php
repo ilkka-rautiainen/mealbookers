@@ -140,6 +140,7 @@ abstract class AmicaJSONImport extends Import
      */
     private function formatAttributes($line)
     {
+        $line = preg_replace("/[\s]*\([\s]*\)[\s]*/", "", $line);
         preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line, $matches);
 
         $subMatches = $matchStarts = array();
