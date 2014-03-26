@@ -248,7 +248,7 @@ abstract class AmicaImport extends Import
     private function getSectionName(&$line_html, $lang)
     {
         foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
-            if (preg_match("/^" . preg_quote("<strong>", "/") . "[\\s]*" . $name_lang . "[\\s]*" . preg_quote("</strong>", "/") . "/i", $line_html, $matches)) {
+            if (preg_match("/^(" . preg_quote("<strong>", "/") . ")?[\\s]*" . $name_lang . "[\\s]*(" . preg_quote("</strong>", "/") . ")?/i", $line_html, $matches)) {
                 $line_html = trim(mb_substr($line_html, strlen($matches[0])));
                 return $name_en;
             }
