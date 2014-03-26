@@ -1,16 +1,26 @@
-<div class="container">
+<div class="container page-header-container">
     <div class="col-xs-12 page-header">
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
+    </div>
+    <div class="languages" ng-if="widthClass != 'xs'">
+        <div class="language" ng-show="currentUser.language != 'fi'" ng-click="changeLanguage('fi')">
+            <i class="glyphicon glyphicon-refresh saving-icon" ng-show="languageChangeProcess"></i>
+            <span>Suomeksi</span>
+        </div>
+        <div class="language" ng-show="currentUser.language != 'en'" ng-click="changeLanguage('en')">
+            <i class="glyphicon glyphicon-refresh saving-icon" ng-show="languageChangeProcess"></i>
+            <span>In English</span>
+        </div>
     </div>
 </div>
 
 <div id="menuContainer" class="container">
-	<div class="row restaurant-row" ng-repeat="restaurantRow in restaurantGrid[weekDay]">
-		<restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess"></restaurant>
+    <div class="row restaurant-row" ng-repeat="restaurantRow in restaurantGrid[weekDay]">
+        <restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess"></restaurant>
         <restaurant-place-holder ng-if="restaurantRow.length < columns - 2"></restaurant-place-holder>
         <restaurant-place-holder ng-if="restaurantRow.length < columns - 1"></restaurant-place-holder>
         <restaurant-place-holder ng-if="restaurantRow.length < columns"></restaurant-place-holder>
-	</div>
+    </div>
 </div>
 
 <div ui-view autoscroll="false"></div>

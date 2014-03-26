@@ -36,6 +36,9 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
         if ($rootScope.currentUser.role != 'guest') {
             $rootScope.startLiveView();
         }
+        else {
+            $rootScope.fetchGuestLanguage();
+        }
 
         // Get localization
         localizationPromise = $http.get('api/1.0/app/language/'
@@ -43,6 +46,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
         {
             $log.debug("Localization loaded");
             $rootScope.localization = result.data;
+            $rootScope.localizationCurrentLanguage = $rootScope.currentUser.language;
         }, function() {
             $log.error("Error while loading translations");
         });

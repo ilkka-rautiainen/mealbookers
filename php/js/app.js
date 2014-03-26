@@ -143,7 +143,8 @@ angular.module('Mealbookers', [
             'alert-success': 4000
         },
         liveViewInterval: 15000,
-        liveViewRecoveryInterval: 5000
+        liveViewRecoveryInterval: 5000,
+        defaultLanguage: 'fi'
     };
 
     var alertTimeout = null;
@@ -224,32 +225,60 @@ angular.module('Mealbookers', [
 
                 $rootScope.$broadcast("currentUserRefresh");
 
-                // Has logged in
-                if ($rootScope.currentUser.role != 'guest' && !$rootScope.liveViewOn) {
-                    $log.info("Valid login detected");
-                    $rootScope.startLiveView();
-                }
-                // Has logged out
-                if ($rootScope.currentUser.role == 'guest' && $rootScope.liveViewOn) {
-                    $log.info("No valid login detected");
-                    $rootScope.clearSuggestions();
-                    $rootScope.stopLiveView();
-                    $rootScope.resetToMenu();
-                    if (typeof done == 'function') {
-                        done();
+                // Logged in
+                if ($rootScope.currentUser.role != 'guest') {
+                    if (!$rootScope.liveViewOn) {
+                        $log.info("User is logged in, starting live view");
+                        $rootScope.startLiveView();
                     }
-                    return;
-                }
 
-                if ($rootScope.currentUser.role != 'guest')
                     $rootScope.refreshSuggestions(done);
+                }
+                // Not logged in
+                else {
+                    $rootScope.fetchGuestLanguage();
+
+                    if ($rootScope.liveViewOn) {
+                        $log.info("User is logged out, stopping live view");
+                        $rootScope.clearSuggestions();
+                        $rootScope.stopLiveView();
+                        $rootScope.resetToMenu();
+                        if (typeof done == 'function') {
+                            done();
+                        }
+                    }
+                }
             }
         }).error(function() {
             throw new RefreshDataException("Error while refreshing current user");
         });
     };
 
+    $rootScope.fetchGuestLanguage = function() {
+        var lang;
+
+        if (!$.cookie('language')) {
+            lang = (navigator.language || navigator.userLanguage).substring(0, 2);
+            $.cookie('language', lang, {expires: 365, path: '/'});
+        }
+
+        lang = $.cookie('language');
+        if (lang != 'fi' && lang != 'en') {
+            lang = $rootScope.config.defaultLanguage;
+            $.cookie('lang', lang, {expires: 365, path: '/'});
+        }
+
+        $rootScope.currentUser.language = lang;
+        $rootScope.langauge = lang;
+        $log.debug("Guest language: " + lang);
+    };
+
+    $rootScope.$watch('currentUser.language', function(newLang) {
+        $.cookie('language', newLang, {expires: 365, path: '/'});
+    });
+
     $rootScope.logOut = function(showAlert) {
+        // $.cookie('language', $rootScope.currentUser.language, {expires: 365, path: '/'});
         $.removeCookie('id');
         $.removeCookie('check');
         $.removeCookie('remember');
@@ -396,6 +425,8 @@ angular.module('Mealbookers', [
         }).error(function() {
             $log.error("Error while refreshing localization");
         });
+
+        $rootScope.localizationCurrentLanguage = $rootScope.currentUser.language;
 
         $rootScope.refreshRestaurants(done);
     };

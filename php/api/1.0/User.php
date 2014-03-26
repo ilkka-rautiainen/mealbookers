@@ -108,7 +108,6 @@ class UserAPI
                 'status' => 'ok',
                 'user' => array(
                     'role' => 'guest',
-                    'language' => 'fi',
                 ),
             ));
         }

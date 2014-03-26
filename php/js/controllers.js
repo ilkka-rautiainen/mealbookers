@@ -62,7 +62,7 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('NavigationController', ['$scope', '$rootScope', '$location', '$state', function($scope, $rootScope, $location, $state) {
+.controller('NavigationController', ['$scope', '$rootScope', '$location', '$state', '$http', function($scope, $rootScope, $location, $state, $http) {
 
     $scope.openAccountSettings = function() {
         $state.go("Navigation.Menu.AccountSettings");
@@ -93,6 +93,33 @@ angular.module('Mealbookers.controllers', [])
         if ($rootScope.widthClass === 'xs')
             $(".navbar-collapse").collapse('hide');
     });
+
+    $scope.languageChangeProcess = false;
+    $scope.changeLanguage = function(lang) {
+        if ($rootScope.currentUser.language == lang)
+            return;
+
+        if ($rootScope.currentUser.role != 'guest') {
+            $scope.languageChangeProcess = true;
+            $rootScope.currentUser.language = lang;
+            $http.post('api/1.0/user/language', {
+                language: $rootScope.currentUser.language
+            }).success(function() {
+                $rootScope.refreshLocalization(function() {
+                    $scope.languageChangeProcess = false;
+                });
+            }).error(function() {
+                $scope.languageChangeProcess = false;
+            });
+        }
+        else {
+            $scope.languageChangeProcess = true;
+            $rootScope.currentUser.language = lang;
+            $rootScope.refreshLocalization(function() {
+                $scope.languageChangeProcess = false;
+            });
+        }
+    };
 }])
 
 .controller('LoginController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll) {
@@ -123,12 +150,21 @@ angular.module('Mealbookers.controllers', [])
                     $rootScope.refreshCurrentUser(function() {
                         $("#logInModal").modal('hide');
 
-                        if ($rootScope.postLoginState) {
-                            $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
-                            delete $rootScope.postLoginState;
+                        var ready = function() {
+                            if ($rootScope.postLoginState) {
+                                $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
+                                delete $rootScope.postLoginState;
+                            }
+                            else {
+                                $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+                            }
+                        };
+
+                        if ($rootScope.currentUser.language != $rootScope.localizationCurrentLanguage) {
+                            $rootScope.refreshLocalization(ready);
                         }
                         else {
-                            $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+                            ready();
                         }
                     });
                 }
