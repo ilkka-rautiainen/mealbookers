@@ -1,69 +1,71 @@
-<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 restaurant">
-    <div class="restaurant-thumbnail" id="restaurant_{{ restaurant.id }}_thumbnail">
+<div class="restaurant-outer col-lg-3 col-md-4 col-sm-6 col-xs-12" id="restaurant-{{ restaurant.id }}">
+    <div class="restaurant">
+        <div class="restaurant-thumbnail">
 
-        <!-- Restaurant name -->
-        <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
+            <!-- Restaurant name -->
+            <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
 
-        <!-- Add suggestion -->
-        <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
-            <i class="glyphicon glyphicon-plus"></i>
-        </div>
+            <!-- Add suggestion -->
+            <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
+                <i class="glyphicon glyphicon-plus"></i>
+            </div>
 
-        <!-- Lunch times -->
-        <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
-            <span class="opening-hour-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" ng-attr-title="{{ getOpeningHoursTooltip(restaurant) }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
-        </div>
+            <!-- Lunch times -->
+            <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
+                <span class="opening-hour-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" ng-attr-title="{{ getOpeningHoursTooltip(restaurant) }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
+            </div>
 
-        <!-- Restaurant closed (if it is) -->
-        <div ng-show="restaurant.openingHours[weekDay].closed" class="closed-message">
-            {{ 'restaurant_closed_on' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
-        </div>
-        <span class="chrome-fix-line">&nbsp;</span>
+            <!-- Restaurant closed (if it is) -->
+            <div ng-show="restaurant.openingHours[weekDay].closed" class="closed-message">
+                {{ 'restaurant_closed_on' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
+            </div>
+            <span class="chrome-fix-line">&nbsp;</span>
 
-        <!-- Suggestions -->
-        <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length" ng-hide="restaurant.openingHours[weekDay].closed">
-            <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
-                <!-- Suggestion time -->
-                <span class="suggestion-time">{{ suggestion.time }}</span>
+            <!-- Suggestions -->
+            <div class="suggestion-list" ng-if="restaurant.suggestionList[weekDay - 1].length" ng-hide="restaurant.openingHours[weekDay].closed">
+                <div ng-repeat="suggestion in restaurant.suggestionList[weekDay - 1]">
+                    <!-- Suggestion time -->
+                    <span class="suggestion-time">{{ suggestion.time }}</span>
 
-                <!-- Suggestion members -->
-                <span>
-                    <span ng-repeat="member in suggestion.members" class="suggestion-member" title="{{ member.name }}">
-                        <span class="initials">{{ member.initials }}<span class="comma" ng-if="suggestion.outside_members.length"></span></span>
-                        <span class="and">{{ 'and' | i18n }}</span>
-                    </span>
-                </span>
-
-                <!-- Suggestion outside members -->
-                <span ng-if="suggestion.outside_members.length">
-                    <span ng-if="suggestion.members.length">{{ 'suggestion_outside_members' | i18n }}</span>
-                    <span ng-if="!suggestion.members.length">{{ 'suggestion_outside_members' | i18n | capitalize }}</span>
+                    <!-- Suggestion members -->
                     <span>
-                        <span ng-repeat="outside_member in suggestion.outside_members" class="suggestion-member" title="{{ outside_member.name }}">
-                            <span class="initials">{{ outside_member.initials }}</span>
+                        <span ng-repeat="member in suggestion.members" class="suggestion-member" title="{{ member.name }}">
+                            <span class="initials">{{ member.initials }}<span class="comma" ng-if="suggestion.outside_members.length"></span></span>
                             <span class="and">{{ 'and' | i18n }}</span>
                         </span>
                     </span>
-                </span>
 
-                <!-- Suggestion manage -->
-                <button class="btn btn-success suggestion-manage-button" ng-if="!suggestion.accepted && suggestion.manageable" ng-click="manageSuggestion(restaurant, suggestion, weekDay, true)">
-                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="suggestion.processing"></i>
-                    {{ 'suggestion_accept' | i18n }}
-                </button>
-                <button class="btn btn-danger suggestion-manage-button" ng-if="suggestion.accepted && suggestion.manageable" ng-click="manageSuggestion(restaurant, suggestion, weekDay, false)">
-                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="suggestion.processing"></i>
-                    {{ 'suggestion_cancel' | i18n }}
-                </button>
+                    <!-- Suggestion outside members -->
+                    <span ng-if="suggestion.outside_members.length">
+                        <span ng-if="suggestion.members.length">{{ 'suggestion_outside_members' | i18n }}</span>
+                        <span ng-if="!suggestion.members.length">{{ 'suggestion_outside_members' | i18n | capitalize }}</span>
+                        <span>
+                            <span ng-repeat="outside_member in suggestion.outside_members" class="suggestion-member" title="{{ outside_member.name }}">
+                                <span class="initials">{{ outside_member.initials }}</span>
+                                <span class="and">{{ 'and' | i18n }}</span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <!-- Suggestion manage -->
+                    <button class="btn btn-success suggestion-manage-button" ng-if="!suggestion.accepted && suggestion.manageable" ng-click="manageSuggestion(restaurant, suggestion, weekDay, true)">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="suggestion.processing"></i>
+                        {{ 'suggestion_accept' | i18n }}
+                    </button>
+                    <button class="btn btn-danger suggestion-manage-button" ng-if="suggestion.accepted && suggestion.manageable" ng-click="manageSuggestion(restaurant, suggestion, weekDay, false)">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="suggestion.processing"></i>
+                        {{ 'suggestion_cancel' | i18n }}
+                    </button>
+                </div>
+                <hr class="featurette-divider meal-divider">
             </div>
-            <hr class="featurette-divider meal-divider">
-        </div>
 
-        <!-- Meals -->
-        <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group" ng-hide="restaurant.openingHours[weekDay].closed">
-            <span ng-if="meal.section" class="meal-section">{{ 'meal_section_' + meal.section | i18n }}</span>
-            <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
-            <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
+            <!-- Meals -->
+            <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group" ng-hide="restaurant.openingHours[weekDay].closed">
+                <span ng-if="meal.section" class="meal-section">{{ 'meal_section_' + meal.section | i18n }}</span>
+                <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
+                <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
+            </div>
         </div>
     </div>
 </div>

@@ -1,6 +1,7 @@
 body {
     font-family: OpenSans;
     background-color: whitesmoke;
+    padding-bottom: 20px;
 }
 
 body.modal-open {
@@ -111,46 +112,13 @@ label {
     margin-bottom: 2px;
 }
 
-.restaurant-row:before, .restaurant-row:after {
-    content: none;
-}
-
-.restaurant-row {
-    display: table;
-    table-layout: fixed;
-    border-spacing: 20px;
-    margin: 0 -20px -20px 0;
-    min-height: 20px;
-    width: 100%;
-}
-
-.restaurant, .restaurant-placeholder {
-    display: table-cell;
-    float: none;
-}
-
-.restaurant {
-    padding: 10px;
-    background-color: white;
-    border-radius: 7px;
-    -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-    -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-    box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
-    background-image: -ms-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    background-image: -moz-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    background-image: -o-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
-    background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-}
-
 @media all and (max-width: 767px) {
     #menuContainer {
         padding: 0px;
     }
 
-    .restaurant-row {
-        border-spacing: 5px 20px;
+    .restaurant-row .restaurant-outer {
+        padding: 0 5px 0 5px;
     }
 
     .page-header {
@@ -171,6 +139,42 @@ label {
         position: relative;
         top: auto;
     }
+}
+
+.restaurant-row:before, .restaurant-row:after {
+    /*content: none;*/
+}
+
+.restaurant-row {
+    table-layout: fixed;
+    margin: 20px 0 0 0;
+    min-height: 20px;
+    width: 100%;
+}
+
+.restaurant, .restaurant-placeholder {
+    /*float: none;*/
+}
+
+.restaurant {
+    padding: 10px;
+    background-color: white;
+    border-radius: 7px;
+    -webkit-box-shadow: 2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    -moz-box-shadow:    2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    box-shadow:         2px 2px 4px 1px rgba(50, 50, 50, 0.34);
+    background-image: -ms-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -moz-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -o-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
+    background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
+    overflow-y: hidden;
+
+    -webkit-transition: height 0.30s ease-in-out;
+    -moz-transition: height 0.30s ease-in-out;
+    -o-transition: height 0.30s ease-in-out;
+    transition: height 0.30s ease-in-out;
 }
 
 .restaurant-thumbnail {
@@ -615,6 +619,11 @@ strong, b {
 @media all and (min-width: 768px) {
     body {
         padding-top: 50px;
+    }
+
+    .restaurant-row .restaurant-outer {
+        padding: 0 10px 0 10px;
+        visibility: hidden;
     }
     
     #content.ng-enter, #content.ng-leave {
