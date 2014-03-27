@@ -182,14 +182,14 @@ angular.module('Mealbookers', [
 
     var alertFadeout = function() {
         $(".main-alert").animate({
-            height: 'toggle',
-            'margin-top': 'toggle',
-            'margin-bottom': 'toggle',
-            'padding-top': 'toggle',
-            'padding-bottom': 'toggle',
-            'border-top': 'toggle',
-            'border-bottom': 'toggle',
-            opacity: 'toggle'
+            height: 'hide',
+            'margin-top': 'hide',
+            'margin-bottom': 'hide',
+            'padding-top': 'hide',
+            'padding-bottom': 'hide',
+            'border-top': 'hide',
+            'border-bottom': 'hide',
+            opacity: 'hide'
         }, 1500);
         alertFadeTimeout = setTimeout(function() {
             $rootScope.alertMessage = emptyMessage;
