@@ -118,6 +118,12 @@ label {
 }
 
 @media all and (max-width: 767px) {
+
+    .form-col-container .col-xs-12 {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
     #menuContainer {
         padding: 0px;
     }
@@ -628,6 +634,14 @@ strong, b {
 @media all and (min-width: 768px) {
     body {
         padding-top: 50px;
+    }
+
+    .form-col-container .col-sm-6:first-child {
+        padding-left: 0px !important;
+    }
+
+    .form-col-container .col-sm-6:last-child {
+        padding-right: 0px !important;
     }
 
     .restaurant-row .restaurant-outer {
