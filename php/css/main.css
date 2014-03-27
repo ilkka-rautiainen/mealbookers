@@ -79,6 +79,11 @@ body.modal-open {
     max-height: none;
 }
 
+.navbar-inverse .navbar-nav > .open > a {
+    background-color: transparent !important;
+    color: #333 !important;
+}
+
 textarea.danger:focus, input[type="text"].danger:focus, input[type="password"].danger:focus, input[type="datetime"].danger:focus, input[type="datetime-local"].danger:focus, input[type="date"].danger:focus, input[type="month"].danger:focus, input[type="time"].danger:focus, input[type="week"].danger:focus, input[type="number"].danger:focus, input[type="email"].danger:focus, input[type="url"].danger:focus, input[type="search"].danger:focus, input[type="tel"].danger:focus, input[type="color"].danger:focus, .uneditable-input.danger:focus {
     border-color: rgba(169, 68, 68, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(169, 68, 68, 0.6);
@@ -132,6 +137,10 @@ label {
 
     .modal-dialog {
         margin: 7px;
+    }
+
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
+        color: #333 !important;
     }
 
     .navbar-fixed-top

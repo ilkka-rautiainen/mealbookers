@@ -34,12 +34,29 @@
                 <li ng-show="currentUser.role != 'guest'"><a ng-click="logOut(true); hideNavbarCollapse();">{{ 'log_out' | i18n}}</a></li>
 
                 <li ng-show ="currentUser.role != 'guest'" class="dropdown">
-                      <a class="dropdown-toggle" data-toggle="dropdown">{{ 'settings' | i18n }} <b class="caret"></b></a>
-                      <ul class="dropdown-menu">
-                        <li><a ng-click="openAccountSettings()" ng-click="hideNavbarCollapse()">{{ 'account_settings' | i18n }}</a></li>
-                        <li><a ng-click="openGroupSettings()" ng-click="hideNavbarCollapse()">{{ 'group_settings' | i18n }}</a></li>
-                        <li ng-show ="currentUser.role == 'admin'"><a ui-sref="Navigation.Menu.UserManagement" ng-click="hideNavbarCollapse()">{{ 'user_management' | i18n }}</a></li>
-                      </ul>
+                    <a class="dropdown-toggle" data-toggle="dropdown">
+                        {{ 'settings' | i18n }} <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a ng-click="openAccountSettings()" ng-click="hideNavbarCollapse()">
+                                <i class="glyphicon glyphicon-chevron-right" ng-show="widthClass == 'xs'"></i>
+                                {{ 'account_settings' | i18n }}
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="openGroupSettings()" ng-click="hideNavbarCollapse()">
+                                <i class="glyphicon glyphicon-chevron-right" ng-show="widthClass == 'xs'"></i>
+                                {{ 'group_settings' | i18n }}
+                            </a>
+                        </li>
+                        <li ng-show ="currentUser.role == 'admin'">
+                            <a ui-sref="Navigation.Menu.UserManagement" ng-click="hideNavbarCollapse()">
+                                <i class="glyphicon glyphicon-chevron-right" ng-show="widthClass == 'xs'"></i>
+                                {{ 'user_management' | i18n }}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div><!--/.nav-collapse -->

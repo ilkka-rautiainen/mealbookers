@@ -89,7 +89,7 @@ angular.module('Mealbookers.controllers', [])
     }
 
     // Makes navbar hide when menu link clicked in xs-devices
-    $(".navbar").on("click", "a", null, function () {
+    $(".navbar").on("click", "a:not([data-toggle=dropdown])", null, function () {
         if ($rootScope.widthClass === 'xs')
             $(".navbar-collapse").collapse('hide');
     });
