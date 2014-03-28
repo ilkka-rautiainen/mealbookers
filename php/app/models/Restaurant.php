@@ -102,7 +102,7 @@ class Restaurant
             restaurant_id = {$this->id} AND language = '{$user->language}'");
         if (!DB::inst()->getRowCount()) {
             $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
-                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLang') . "'");
+                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLanguage') . "'");
         }
 
         $meals = array();

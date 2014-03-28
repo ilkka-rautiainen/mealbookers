@@ -48,7 +48,7 @@ angular.module('Mealbookers', [
         controller: 'RegisterController',
         data: {
             modal: true,
-            modalId: "registerModal"
+            modalId: "register-modal"
         },
     })
     

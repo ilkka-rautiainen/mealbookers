@@ -188,27 +188,95 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('RegisterController', ['$scope', '$rootScope', '$http', '$state', function($scope, $rootScope, $http, $state) {
+.controller('RegisterController', ['$scope', '$rootScope', '$http', '$state', '$filter', '$location', '$anchorScroll', '$log', function($scope, $rootScope, $http, $state, $filter, $location, $anchorScroll, $log) {
 
-    $("#registerModal").modal();
+    $("#register-modal").modal();
 
-    $('#registerModal').on('hidden.bs.modal', function () {
+    $('#register-modal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
 
     $scope.register = {
         email: "",
         password: "",
-        firstName: "",
-        lastName: "",
+        password_repeat: "",
+        first_name: "",
+        last_name: "",
+        language: $rootScope.currentUser.language
     };
-    $scope.processRegister = function() {
-        $http.post('api/1.0/user/registerUser', $scope.register)
-            .success(function(response) {
-                $scope.response = response;
-                if (response.response == 'ok')
-                    console.log("OK");
+
+    $scope.save = function() {
+        if (!$scope.validateForm())
+            return;
+        $scope.registerSaveProcess = true;
+        $scope.modalAlert('', '');
+
+        $http.post('api/1.0/user/register', $scope.register)
+            .success(function(result) {
+                if (typeof result != 'object' || result.status == undefined) {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
+                }
+                else if (result.status == 'email_exists') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('register_email_exists'));
+                }
+                else if (result.status == 'invalid_email') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_invalid_email'));
+                }
+                else if (result.status == 'no_first_name') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_give_first_name'));
+                }
+                else if (result.status == 'no_last_name') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_give_last_name'));
+                }
+                else if (result.status == 'passwords_dont_match') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('register_passwords_dont_match'));
+                }
+                else if (result.status == 'weak_password') {
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
+                }
+                else if (result.status == 'ok') {
+                    $log.info("Registration done");
+                    $rootScope.refreshCurrentUser(function() {
+                        $("#register-modal").modal('hide');
+                    });
+                }
+                else {
+                    console.error("Unknown response");
+                    console.error(result);
+                    $scope.registerSaveProcess = false;
+                    $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
+                }
+            }).error(function(response, httpCode) {
+                $scope.registerSaveProcess = false;
+                $rootScope.operationFailed(httpCode, 'register_failed', $scope.modalAlert);
             });
+    };
+
+    $scope.validateForm = function() {
+        if ($scope.register.password != $scope.register.password_repeat) {
+            $scope.modalAlert('alert-warning', $filter('i18n')('register_passwords_dont_match'));
+            return false;
+        }
+
+        return true;
+    };
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
+        if (message.length) {
+            $location.hash('register-modal');
+            $anchorScroll();
+        }
     };
 
 }])
@@ -574,7 +642,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'weak_password') {
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_weak_password'));
+                $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
             }
             else if (result.status == 'no_first_name') {
                 $scope.saveProcess = false;

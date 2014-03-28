@@ -2,7 +2,7 @@
 
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
-Flight::route('POST /user/registerUser', array('UserAPI', 'registerUser'));
+Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
 Flight::route('POST /user(/@userId)/language', array('UserAPI', 'updateUserLanguage'));
 Flight::route('POST /user(/@userId)', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user(/@userId)', array('UserAPI', 'deleteUser'));
@@ -411,26 +411,71 @@ class UserAPI
 
     function registerUser()
     {
-        Logger::debug(__METHOD__ . " GET /user/registerUser called");
+        Logger::debug(__METHOD__ . " GET /user/register called");
 
         $data = Application::inst()->getPostData();
 
-        $result = DB::inst()->query("SELECT id FROM users WHERE email_address='".$data["email"]."'");
-        $row = DB::inst()->fetchAssoc($result);
+        try {
+            if (DB::inst()->getOne("SELECT COUNT(id) FROM users WHERE email_address = '" . $data['email'] . "'"))
+                throw new ApiException('email_exists');
+            
+            if (!isset($data['first_name'])
+                || !isset($data['last_name'])
+                || !isset($data['email'])
+                || !isset($data['password'])
+                || !isset($data['password_repeat'])
+                || !isset($data['language'])
+            ) {
+                Application::inst()->exitWithHttpCode(400, "Invalid data sent");
+            }
 
-        
-        if (count($row) == 0){
-            /**
-            * @todo Implement email costruction and sending 
-            */
-            //INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('simo.hsv@suomi24.fi', 'sakjdölsaköldsa', 'Simo', 'Haakana', 'fi', '234');
-            $result = DB::inst()->query("INSERT INTO `app`.`users` (`email_address`, `passhash`, `first_name`, `last_name`, `language`, `joined`) VALUES ('".$data["email"]."', '".sha1($data["password"])."', '".$data["firstName"]."', '".$data["lastName"]."', 'fi', '".time()."')");
-            EventLog::inst()->add('user', $this->id);
-            echo json_encode(array('response' => "ok" ));
-        
+            $email_address = $data['email'];
+            if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address)))
+                throw new ApiException('invalid_email');
+
+            if (!strlen($data['first_name']))
+                throw new ApiException('no_first_name');
+            if (!strlen($data['last_name']))
+                throw new ApiException('no_last_name');
+
+            if ($data['password'] != $data['password_repeat'])
+                throw new ApiException('passwords_dont_match');
+
+            $user = new User();
+            $user->first_name = $data['first_name'];
+            $user->last_name = $data['last_name'];
+            if (!Application::inst()->isStrongPassword($data['password'], $user))
+                throw new ApiException('weak_password');
+
+            if (!in_array($data['language'], array('fi', 'en')))
+                $data['language'] = Config::inst()->get('defaultLanguage');
+
+
+            $result = DB::inst()->query("INSERT INTO users (
+                    email_address,
+                    passhash,
+                    first_name,
+                    last_name,
+                    language,
+                    joined
+                ) VALUES (
+                    '" . DB::inst()->quote($data['email']) . "',
+                    '" . Application::inst()->hash($data['password']) . "',
+                    '" . DB::inst()->quote($data['first_name']) . "',
+                    '" . DB::inst()->quote($data['last_name']) . "',
+                    '" . $data['language'] . "',
+                    '" . time() . "'
+                )");
+
+            EventLog::inst()->add('user', DB::inst()->getInsertId());
+            print json_encode(array(
+                'status' => 'ok',
+            ));
         }
-        else {
-            echo json_encode(array('response' => "fail" ));
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage()
+            ));
         }
     }
 }

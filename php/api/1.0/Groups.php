@@ -175,7 +175,7 @@ class GroupAPI
             if (!isset($data['email_address'])) {
                 Application::inst()->exitWithHttpCode(400, "email_address not present in request");
             }
-                
+
             $email_address = $data['email_address'];
             if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address))) {
                 throw new ApiException('invalid_email');

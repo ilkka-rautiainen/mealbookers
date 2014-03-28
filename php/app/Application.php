@@ -137,7 +137,8 @@ class Application
     {
         if (mb_strlen($password) < 5)
             return false;
-        else if (mb_stripos($password, $user->first_name) || mb_stripos($password, $user->last_name))
+        else if (mb_stripos($password, $user->first_name) !== false
+            || mb_stripos($password, $user->last_name) !== false)
             return false;
         else
             return true;

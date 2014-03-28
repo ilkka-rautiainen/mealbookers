@@ -22,7 +22,7 @@ class RestaurantsAPI
         Logger::info(__METHOD__ . " GET /restaurants?lang=$lang called");
 
         if (!in_array($lang, array('fi', 'en')))
-            $lang = Conf::inst()->get('restaurantsDefaultLang');
+            $lang = Conf::inst()->get('restaurantsDefaultLanguage');
 
         $restaurants = RestaurantFactory::inst()->getAllRestaurants();
         $result = array();
