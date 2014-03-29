@@ -384,7 +384,7 @@ class UserAPI
 
         $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
             email_address = '" . DB::inst()->quote($data["email"]) . "' AND
-            passhash = '$passhash'");
+            passhash = '$passhash' AND joined <> 0");
 
         if ($user_id) {
 
@@ -464,7 +464,7 @@ class UserAPI
                     '" . DB::inst()->quote($data['first_name']) . "',
                     '" . DB::inst()->quote($data['last_name']) . "',
                     '" . $data['language'] . "',
-                    '" . time() . "'
+                    '0'
                 )");
 
             EventLog::inst()->add('user', DB::inst()->getInsertId());
