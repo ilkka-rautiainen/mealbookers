@@ -168,12 +168,12 @@ angular.module('Mealbookers.controllers', [])
         $scope.$broadcast('modalOpened');
     });
 
-
     $scope.login = {
         email: "",
         password: "",
         remember: false
     };
+
     $scope.processForm = function() {
         $scope.loginProcess = true;
         $http.post('api/1.0/user/login', $scope.login)
@@ -216,6 +216,9 @@ angular.module('Mealbookers.controllers', [])
                     console.error(result);
                     $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
                 }
+            }).error(function(response, httpCode) {
+                $scope.loginProcess = false;
+                $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
             });
     };
 

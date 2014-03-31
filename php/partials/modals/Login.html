@@ -26,7 +26,10 @@
 						<a href="#" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</a>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" tabindex="4" class="btn btn-default">{{ 'log_in' | i18n }}</button>
+					<button type="submit" tabindex="4" class="btn btn-default" ng-disabled="loginProcess">
+						<i class="glyphicon glyphicon-refresh saving-icon" ng-show="loginProcess"></i>
+						{{ 'log_in' | i18n }}
+					</button>
 					<button type="button" tabindex="5" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
 				</div>
 			</div><!-- /.modal-content -->
