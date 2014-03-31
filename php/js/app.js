@@ -341,6 +341,7 @@ angular.module('Mealbookers', [
             }
 
             $log.debug("Suggestions refreshed");
+            $rootScope.$broadcast("suggestionRefresh");
             if (typeof done == 'function') {
                 done();
             }
@@ -353,6 +354,7 @@ angular.module('Mealbookers', [
         for (var i = 0; i < $rootScope.restaurants.length; i++) {
             $rootScope.restaurants[i].suggestionList = [];
         }
+        $rootScope.$broadcast("suggestionRefresh");
     };
 
     $rootScope.liveViewUpdate = function() {
@@ -447,6 +449,7 @@ angular.module('Mealbookers', [
         }).success(function(result) {
             $log.debug("Restaurants refreshed");
             $rootScope.restaurants = result;
+            $rootScope.$broadcast("restaurantRefresh");
 
             if (typeof done == 'function') {
                 done();
@@ -507,6 +510,13 @@ angular.module('Mealbookers', [
         if (newValue) {
             $rootScope.setTitle('currentState');
         }
+    });
+
+    angular.forEach(["suggestionRefresh","restaurantRefresh"], function(value) {
+        $rootScope.$on(value, function() {
+            $(".restaurant").css("height", "auto");
+            $rootScope.$broadcast("restaurantsResize");
+        });
     });
 
     $rootScope.setTitle = function(state) {

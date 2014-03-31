@@ -17,20 +17,24 @@ angular.module('Mealbookers.directives', [])
         replace: true,
         templateUrl: 'partials/directives/restaurant.html',
         controller: function($scope) {
-            $timeout(function() {
-                // Opening hours tooltip
-                $(".opening-hour-tooltip").tooltip({
-                    delay: {
-                        show: 500,
-                        hide: 0
-                    }
-                });
+            var resize = function() {
+                $timeout(function() {
+                    // Opening hours tooltip
+                    $(".opening-hour-tooltip").tooltip({
+                        delay: {
+                            show: 500,
+                            hide: 0
+                        }
+                    });
 
-                if ($rootScope.widthClass != 'xs') {
-                    $("#restaurant-" + $scope.restaurant.id + " .restaurant").height($("#restaurant-" + $scope.restaurant.id).parent().height()-20);
-                    $("#restaurant-" + $scope.restaurant.id).css("visibility", "visible");
-                }
-            }, 0);
+                    if ($rootScope.widthClass != 'xs') {
+                        $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("height", ($("#restaurant-" + $scope.restaurant.id).parent().height()).toString() + 'px');
+                        $("#restaurant-" + $scope.restaurant.id).css("visibility", "visible");
+                    }
+                }, 0);
+            };
+            resize();
+            $scope.$on("restaurantsResize", resize);
         }
     };
 }])
