@@ -1,0 +1,2 @@
+INSERT INTO `restaurants` (`id`, `name`, `street_address`, `location`, `link`)
+VALUES (7, 'Täffä', 'Otakaari 22', GeomFromText('POINT(60.185916 24.832188)'), 'https://www.teknologforeningen.fi/menu.html');
