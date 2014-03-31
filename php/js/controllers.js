@@ -16,6 +16,10 @@ angular.module('Mealbookers.controllers', [])
                 $state.go("Navigation.Menu");
                 $rootScope.alert('alert-warning', $filter('i18n')('suggestion_been_deleted'));
             }
+            else if (result.status == 'not_found') {
+                $state.go("Navigation.Menu", {day: $rootScope.today});
+                $rootScope.alert('alert-warning', $filter('i18n')('suggestion_accepting_token_not_found'));
+            }
             else if (result.status == 'too_old') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
@@ -71,7 +75,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'not_found') {
                 $state.go("Navigation.Menu");
-                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_token_not_found'));
+                $rootScope.alert('alert-warning', $filter('i18n')('register_email_verify_token_not_found'));
             }
             else if (result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
@@ -328,7 +332,12 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', '$log', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams, $log) {
 
-    $rootScope.weekDay = $stateParams.day;
+    if ($stateParams.day == 'today') {
+        $rootScope.weekDay = $rootScope.today;
+    }
+    else {
+        $rootScope.weekDay = parseInt($stateParams.day);
+    }
     if (!$rootScope.weekDay || $rootScope.weekDay < $rootScope.today || $rootScope.weekDay > 7) {
         $state.go("Navigation.Menu", {day: $rootScope.today});
     }

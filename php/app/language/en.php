@@ -23,6 +23,8 @@ $GLOBALS['language']['en'] = array(
     'title_Navigation.Menu.UserManagement' => 'User management',
     'title_Navigation.Menu.UserManagement.AccountSettings' => 'Account settings',
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Group settings',
+    'title_Navigation.AcceptSuggestion' => 'Accepting suggestion',
+    'title_Navigation.VerifyEmail' => 'Verifying email address',
     'restaurant_closed_on' => 'Restaurant closed on',
     'password_criteria' => 'The password must be at least 5 characters and must not contain your first or last name',
     'and' => 'and',
@@ -49,7 +51,7 @@ $GLOBALS['language']['en'] = array(
     'register_verifying_email' => 'Verifying your email address...',
     'register_email_verify_failed' => 'Failed to verify the email address',
     'register_email_verify_succeeded' => 'Email address verified successfully, welcome to Mealbookers!',
-    'register_email_verify_token_not_found' => 'Your verification link wasn\'t valid',
+    'register_email_verify_token_not_found' => 'Your verification link has already been used or it wasn\'t valid',
     'log_in' => 'Log in',
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
@@ -162,6 +164,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_accept_failed_404' => 'The suggestion has already been deleted.',
     'suggestion_accept_gone' => 'Time of the suggestion has already past.',
     'suggestion_accepting' => 'Accepting the suggestion...',
+    'suggestion_accepting_token_not_found' => 'Your suggestion accept link has already been used or it wasn\'t valid',
     'suggestion_manage_canceled' => 'Canceled!',
     'suggestion_manage_canceled_and_deleted' => 'Canceled! The whole suggestion was removed as you was its last member.',
     'suggestion_manage_accepted' => 'Accepted!',
@@ -175,7 +178,7 @@ $GLOBALS['language']['en'] = array(
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{hash}">here</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
             . ' <a href="http://{server_hostname}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',
@@ -211,7 +214,7 @@ $GLOBALS['language']['en'] = array(
         'mailer_body_invite' => 
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
-            . ' Become member in the group <a href="http://{server_hostname}/#/menu/register?invite={hash}">here</a>.'
+            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invite={token}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',

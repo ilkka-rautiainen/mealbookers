@@ -180,21 +180,19 @@ class Suggestion {
     public function insertMember(User $member, $accepted)
     {
         Logger::info(__METHOD__ . " inserting member {$member->id} to suggestion {$this->id}");
-        $hash = Application::inst()->getUniqueHash();
         DB::inst()->query("INSERT INTO suggestions_users (
                 suggestion_id,
                 user_id,
-                hash,
                 accepted,
                 accepted_timestamp
             ) VALUES (
                 {$this->id},
                 {$member->id},
-                '$hash',
                 " . ($accepted ? '1' : '0') . ",
                 " . ($accepted ? time() : 'NULL') . "
             )");
-        return $hash;
+        $token = Application::inst()->insertToken(DB::inst()->getInsertId());
+        return $token;
     }
 
     /**

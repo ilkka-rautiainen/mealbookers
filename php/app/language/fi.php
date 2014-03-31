@@ -23,6 +23,8 @@ $GLOBALS['language']['fi'] = array(
     'title_Navigation.Menu.UserManagement' => 'Käyttäjienhallinta',
     'title_Navigation.Menu.UserManagement.AccountSettings' => 'Käyttäjäasetukset',
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Ryhmäasetukset',
+    'title_Navigation.AcceptSuggestion' => 'Hyväksytään ehdotusta',
+    'title_Navigation.VerifyEmail' => 'Vahvistetaan sähköpostiosoitetta',
     'restaurant_closed_on' => 'Ravintola suljettu',
     'password_criteria' => 'Salasanan tulee olla vähintään 5 merkkiä pitkä eikä sen tule sisältää etu- tai sukunimeäsi',
     'and' => 'ja',
@@ -49,7 +51,7 @@ $GLOBALS['language']['fi'] = array(
     'register_verifying_email' => 'Vahvistetaan sähköpostiosoitetta...',
     'register_email_verify_failed' => 'Sähköpostin vahvistus epäonnistui',
     'register_email_verify_succeeded' => 'Sähköpostin vahvistus onnistui, tervetuloa Mealbookersiin!',
-    'register_email_verify_token_not_found' => 'Vahvistuslinkkisi ei ollut kelvollinen',
+    'register_email_verify_token_not_found' => 'Vahvistuslinkkisi on jo käytetty tai se ei ollut kelvollinen',
     'log_in' => 'Kirjaudu sisään',
     'log_in_password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
@@ -162,6 +164,7 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_accept_failed_404' => 'Kyseinen ehdotus on jo poistettu.',
     'suggestion_accept_gone' => 'Ehdotuksen ajankohta on jo mennyt.',
     'suggestion_accepting' => 'Hyväksytään ehdotusta...',
+    'suggestion_accepting_token_not_found' => 'Hyväksymislinkkisi on jo käytetty tai se ei ollut kelvollinen',
     'suggestion_manage_canceled' => 'Peruttu!',
     'suggestion_manage_canceled_and_deleted' => 'Peruttu! Koko ehdotus poistettiin, koska olit sen viimeinen jäsen.',
     'suggestion_manage_accepted' => 'Hyväksytty!',
@@ -175,7 +178,7 @@ $GLOBALS['language']['fi'] = array(
             'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
             . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{hash}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
             . ' <a href="http://{server_hostname}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',
@@ -211,7 +214,7 @@ $GLOBALS['language']['fi'] = array(
         'mailer_body_invite' => 
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/register?invite={hash}">tästä</a>.'
+            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invite={token}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',

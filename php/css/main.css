@@ -249,6 +249,7 @@ label {
 
 .restaurant .suggestion-manage-button {
     padding: 1px 6px 1px 6px;
+    margin-bottom: 1px;
 }
 
 .restaurant .suggestion-time {

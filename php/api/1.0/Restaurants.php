@@ -165,12 +165,17 @@ class RestaurantsAPI
             }
             Application::inst()->checkAuthentication();
 
-            if (strlen($token) != 32)
-                Application::inst()->exitWithHttpCode(400, "Invalid hash");
+            try {
+                $suggestion_user_id = Application::inst()->getTokenId($token, false);
+            }
+            catch (NotFoundException $e) {
+                throw new ApiException('not_found');
+            }
 
-            if (!$suggestion_user_id = DB::inst()->getOne("SELECT id FROM suggestions_users WHERE hash = '"
-                . DB::inst()->quote($token) . "' LIMIT 1"))
+            if (!DB::inst()->getOne("SELECT id FROM suggestions_users
+                WHERE id = $suggestion_user_id LIMIT 1"))
             {
+                Application::inst()->deleteToken();
                 throw new ApiException('deleted');
             }
 
@@ -185,6 +190,7 @@ class RestaurantsAPI
 
             // Not manageable anymore
             if (!$suggestion->isManageable(false)) {
+                Application::inst()->deleteToken();
                 throw new ApiException('too_old', array(
                     'weekDay' => $suggestion->getWeekDay() + 1,
                 ));
@@ -192,6 +198,7 @@ class RestaurantsAPI
 
             $suggestion->accept($suggestion_user);
 
+            Application::inst()->deleteToken($token);
             print json_encode(array(
                 'status' => 'ok',
                 'weekDay' => $suggestion->getWeekDay() + 1,

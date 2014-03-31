@@ -343,9 +343,9 @@ class User
             WHERE user_id = {$this->id} AND group_id = {$group->id}");
     }
 
-    public function sendSuggestion(Suggestion $suggestion, $hash)
+    public function sendSuggestion(Suggestion $suggestion, $token)
     {
-        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
+        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with token $token");
         if (!$this->notify_suggestion_received) {
             Logger::debug(__METHOD__ . " canceled due to user's notification settings");
             return true;
@@ -369,7 +369,7 @@ class User
                 '{menu}',
                 '{suggestion_time}',
                 '{server_hostname}',
-                '{hash}',
+                '{token}',
             ),
             array(
                 $creator->getName(),
@@ -378,7 +378,7 @@ class User
                 $restaurant->getMenuForEmail($suggestion, $this),
                 $suggestion->getTime(),
                 $_SERVER['HTTP_HOST'],
-                $hash,
+                $token,
             ),
             Lang::inst()->get('mailer_body_suggestion', $this)
         );
@@ -509,21 +509,20 @@ class User
     {
         Logger::debug(__METHOD__ . " inviting $email_address to group {$group->id}");
 
-        $hash = Application::inst()->getUniqueHash();
 
         DB::inst()->startTransaction();
         DB::inst()->query("INSERT INTO invites (
                 email_address,
                 group_id,
-                hash,
                 inviter_id
             ) VALUES (
                 '" . DB::inst()->quote($email_address) . "',
                 {$group->id},
-                '$hash',
                 {$this->id}
             )");
         
+        $token = Application::inst()->insertToken(DB::inst()->getInsertId());
+
         $subject = str_replace(
             '{inviter}',
             $this->getName(),
@@ -534,13 +533,13 @@ class User
                 '{inviter}',
                 '{group_name}',
                 '{server_hostname}',
-                '{hash}',
+                '{token}',
             ),
             array(
                 $this->getName(),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
-                $hash,
+                $token,
             ),
             Lang::inst()->get('mailer_body_invite', $this)
         );

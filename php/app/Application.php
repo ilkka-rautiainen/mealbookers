@@ -43,27 +43,30 @@ class Application
      */
     public function initAuthentication()
     {
+        $user = false;
+
         if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
             $user_id = (int)$_COOKIE['id'];
             $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id
                 AND email_verified = 1");
-            $passhash = Application::inst()->hash($passhash);
 
-            // Valid authentication
-            if ($passhash == $_COOKIE['check']) {
-                $GLOBALS['current_user'] = new User();
-                $GLOBALS['current_user']->fetch($user_id);
-            }
-            // Invalid auth
-            else {
-                $GLOBALS['current_user'] = new User();
-                $GLOBALS['current_user']->role = 'guest';
+            if (!is_null($passhash)) {
+                $passhash = Application::inst()->hash($passhash);
+
+                // Valid authentication
+                if ($passhash == $_COOKIE['check']) {
+                    $user = new User();
+                    $user->fetch($user_id);
+                }
             }
         }
-        // No cookies
-        else {
+
+        if (!$user) {
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->role = 'guest';
+        }
+        else {
+            $GLOBALS['current_user'] = $user;
         }
 
         $GLOBALS['admin'] = new Admin();
@@ -181,15 +184,21 @@ class Application
         return $token;
     }
 
-    public function getTokenId($token)
+    public function getTokenId($token, $delete = true)
     {
-        $id = DB::inst()->getOne("SELECT id FROM tokens WHERE token = '$token'");
+        $id = DB::inst()->getOne("SELECT id FROM tokens WHERE token = '" . DB::inst()->quote($token) . "'");
 
         if (is_null($id))
             throw new NotFoundException("No such token found");
 
-        DB::inst()->query("DELETE FROM tokens WHERE token = '$token'");
+        if ($delete)
+            $this->deleteToken($token);
 
         return $id;
+    }
+
+    public function deleteToken($token)
+    {
+        DB::inst()->query("DELETE FROM tokens WHERE token = '" . DB::inst()->quote($token) . "'");
     }
 }

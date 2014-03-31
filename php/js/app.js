@@ -246,11 +246,11 @@ angular.module('Mealbookers', [
 
                     if ($rootScope.liveViewOn) {
                         $log.info("User is logged out, stopping live view");
-                        $rootScope.clearSuggestions();
                         $rootScope.stopLiveView();
                         $rootScope.resetToMenu();
                     }
                     
+                    $rootScope.clearSuggestions();
                     if (typeof done == 'function') {
                         done();
                     }
@@ -285,7 +285,7 @@ angular.module('Mealbookers', [
     });
 
     $rootScope.logOut = function(showAlert) {
-        // $.cookie('language', $rootScope.currentUser.language, {expires: 365, path: '/'});
+        $rootScope.stopLiveView();
         $.removeCookie('id');
         $.removeCookie('check');
         $.removeCookie('remember');
