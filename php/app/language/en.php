@@ -52,6 +52,9 @@ $GLOBALS['language']['en'] = array(
     'register_email_verify_failed' => 'Failed to verify the email address',
     'register_email_verify_succeeded' => 'Email address verified successfully, welcome to Mealbookers!',
     'register_email_verify_token_not_found' => 'Your verification link has already been used or it wasn\'t valid',
+    'register_invitation_fetching_failed' => 'An error occured while fetching your invitation to the group, but you can register to Mealbookers anyway',
+    'register_invitation_fetching_failed_404' => 'Your invitation to the group wasn\'t found, but you can register to Mealbookers anyway',
+    'register_membership_to_group' => 'Membership in group',
     'log_in' => 'Log in',
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
@@ -221,7 +224,7 @@ $GLOBALS['language']['en'] = array(
         'mailer_body_invite' => 
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
-            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invite={code}">here</a>'
+            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invitation={code}">here</a>'
             . ' or if you have already registered, join using this invitation code <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',

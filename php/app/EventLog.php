@@ -23,6 +23,13 @@ class EventLog
         return self::$instance;
     }
 
+    /**
+     * Adds update events for all users related to an event
+     * Suggestion: To all users that have been suggested to
+     * Group: To all group members
+     * User: To members in all user's groups
+     * Restaurant: To everybody
+     */
     public function add($object, $object_id)
     {
         Logger::debug(__METHOD__ . " $object $object_id");

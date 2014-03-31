@@ -511,7 +511,7 @@ class User
 
         $code = Application::inst()->generateInvitationCode();
         DB::inst()->startTransaction();
-        DB::inst()->query("INSERT INTO invites (
+        DB::inst()->query("INSERT INTO invitations (
                 email_address,
                 group_id,
                 inviter_id,

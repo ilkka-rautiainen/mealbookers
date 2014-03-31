@@ -234,7 +234,34 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('RegisterController', ['$scope', '$rootScope', '$http', '$state', '$filter', '$location', '$anchorScroll', '$log', function($scope, $rootScope, $http, $state, $filter, $location, $anchorScroll, $log) {
 
-    $("#register-modal").modal();
+    // Load eventual invitation
+    var invitation = $location.search().invitation;
+    if (invitation) {
+        $("#register-modal").modal('hide');
+        $http.get('api/1.0/invitation/' + invitation).success(function(result) {
+            if (result.status == 'not_found') {
+                $scope.modalAlert('alert-warning', $filter('i18n')('register_invitation_not_found'));
+            }
+            else if (result.status == 'ok') {
+                $scope.register.email = result.invitation.email_address;
+                $scope.group_name = result.invitation.group_name;
+                $scope.register.invitation_code = invitation;
+            }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('register_invitation_fetching_failed'));
+            }
+            $("#register-modal").modal('show');
+        }).error(function(response, httpCode) {
+            $("#register-modal").modal('show');
+            $rootScope.operationFailed(httpCode, 'register_invitation_fetching_failed', $scope.modalAlert);
+        });
+    }
+    else {
+        $("#register-modal").modal();
+    }
+
 
     $('#register-modal').on('hidden.bs.modal', function () {
         $state.go("^");
@@ -246,6 +273,7 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.register = {
         email: "",
+        invitation_code: "",
         password: "",
         password_repeat: "",
         first_name: "",

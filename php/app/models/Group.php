@@ -115,7 +115,7 @@ class Group {
 
     private function getInvitationsAsArray()
     {
-        $result = DB::inst()->query("SELECT email_address FROM invites WHERE group_id = {$this->id}");
+        $result = DB::inst()->query("SELECT email_address FROM invitations WHERE group_id = {$this->id}");
         $invitations = array();
         while ($row = DB::inst()->fetchAssoc($result)) {
             $invitations[] = array(

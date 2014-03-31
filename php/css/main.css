@@ -319,8 +319,8 @@ label {
 
 .page-header-container .languages {
     position: absolute;
-    right: 30px;
-    top: 5px;
+    right: 32px;
+    top: 7px;
     font-size: 11px;
     color: #999;
     cursor: pointer;
@@ -478,8 +478,8 @@ label {
 
 .main-alert {
     position: absolute;
-    top: 10px;
-    right: 0px;
+    top: 8px;
+    right: -2px;
     margin-right: 17px;
     padding-right: 25px;
     cursor: pointer;

@@ -52,6 +52,9 @@ $GLOBALS['language']['fi'] = array(
     'register_email_verify_failed' => 'Sähköpostin vahvistus epäonnistui',
     'register_email_verify_succeeded' => 'Sähköpostin vahvistus onnistui, tervetuloa Mealbookersiin!',
     'register_email_verify_token_not_found' => 'Vahvistuslinkkisi on jo käytetty tai se ei ollut kelvollinen',
+    'register_invitation_fetching_failed' => 'Ryhmäkutsusi haku epäonnistui, voit silti rekisteröityä Mealbookersiin',
+    'register_invitation_fetching_failed_404' => 'Ryhmäkutsuasi ei löytynyt, voit silti rekisteröityä Mealbookersiin',
+    'register_membership_to_group' => 'Jäsenyys ryhmään',
     'log_in' => 'Kirjaudu sisään',
     'log_in_password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
@@ -221,7 +224,7 @@ $GLOBALS['language']['fi'] = array(
         'mailer_body_invite' => 
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invite={code}">tästä</a>'
+            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invitation={code}">tästä</a>'
             . ' tai jos olet jo rekisteröitynyt palveluun, liity ryhmään kutsukoodilla <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

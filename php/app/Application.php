@@ -206,7 +206,7 @@ class Application
     {
         do {
             $code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
-        } while (DB::inst()->getOne("SELECT COUNT(id) FROM invites WHERE code = '$code'") > 0);
+        } while (DB::inst()->getOne("SELECT COUNT(id) FROM invitations WHERE code = '$code'") > 0);
         return $code;
     }
 }

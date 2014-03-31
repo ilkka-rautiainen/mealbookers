@@ -49,7 +49,7 @@ angular.module('Mealbookers', [
         data: {
             modal: true,
             modalId: "register-modal"
-        },
+        }
     })
     
     .state('Navigation.Menu.Suggestion', {
@@ -124,7 +124,7 @@ angular.module('Mealbookers', [
         controller: 'VerifyEmailController'
     })
 
-    $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
+    $urlRouterProvider.otherwise("/menu/today");
 }])
 
 .run(['$rootScope', '$window', '$http', '$timeout', '$interval', '$state', '$stateParams', 'InitApp', '$log', '$filter', function($rootScope, $window, $http, $timeout, $interval, $state, $stateParams, InitApp, $log, $filter) {

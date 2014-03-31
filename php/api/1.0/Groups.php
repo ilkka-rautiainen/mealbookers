@@ -318,30 +318,31 @@ class GroupAPI
             Logger::info(__METHOD__ . " POST /user/groups/join called by user {$current_user->id}");
         }
 
+        // Fetch data and do checks
         $data = Application::inst()->getPostData();
 
         if (!isset($data['code'])) {
             Application::inst()->exitWithHttpCode(400, "code not present in request");
         }
 
-        $group_id = DB::inst()->getOne("SELECT group_id FROM invites
+        // Fetch group
+        $group_id = DB::inst()->getOne("SELECT group_id FROM invitations
             WHERE code = '" . DB::inst()->quote($data['code']) . "'");
-
         if (is_null($group_id))
             Application::inst()->exitWithHttpCode(404, "No invitation found with given code");
-
         $group = new Group();
         $group->fetch($group_id);
 
         if ($user->isMemberOfGroup($group)) {
-            DB::inst()->query("DELETE FROM invites WHERE code = '" . DB::inst()->quote($data['code']) . "'");
+            DB::inst()->query("DELETE FROM invitations WHERE code = '" . DB::inst()->quote($data['code']) . "'");
             return print json_encode(array(
                 'status' => 'already_member',
             ));
         }
 
+        // Join group and delete invitation
         $user->joinGroup($group);
-        DB::inst()->query("DELETE FROM invites WHERE code = '" . DB::inst()->quote($data['code']) . "'");
+        DB::inst()->query("DELETE FROM invitations WHERE code = '" . DB::inst()->quote($data['code']) . "'");
 
         print json_encode(array(
             'status' => 'ok',

@@ -432,6 +432,7 @@ class UserAPI
                 || !isset($data['password'])
                 || !isset($data['password_repeat'])
                 || !isset($data['language'])
+                || !isset($data['invitation_code'])
             ) {
                 Application::inst()->exitWithHttpCode(400, "Invalid data sent");
             }
@@ -479,6 +480,17 @@ class UserAPI
 
             $user = new User();
             $user->fetch(DB::inst()->getInsertId());
+
+            // Invitation
+            if ($data['invitation_code'] && $group_id = DB::inst()->getOne("SELECT group_id FROM invitations
+                WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'"))
+            {
+                $group = new Group();
+                $group->fetch($group_id);
+                $user->joinGroup($group);
+                DB::inst()->query("DELETE FROM invitations
+                    WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'");
+            }
 
             EventLog::inst()->add('user', $user->id);
 
