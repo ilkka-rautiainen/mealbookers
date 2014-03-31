@@ -5,7 +5,7 @@
 angular.module('Mealbookers.controllers', [])
 
 
-.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', '$timeout', function($http, $filter, $rootScope, $state, $stateParams, $timeout) {
+.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', function($http, $filter, $rootScope, $state, $stateParams) {
     if ($stateParams.token) {
         $http.post('api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -58,6 +58,36 @@ angular.module('Mealbookers.controllers', [])
     else {
         $state.go("Navigation.Menu");
         $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+    }
+}])
+
+
+.controller('VerifyEmailController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', function($http, $filter, $rootScope, $state, $stateParams) {
+    if ($stateParams.token) {
+        $http.post('api/1.0/user/email/verify/' + $stateParams.token).success(function(result) {
+            if (typeof result != 'object' || result.status == undefined) {
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
+            }
+            else if (result.status == 'not_found') {
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_token_not_found'));
+            }
+            else if (result.status == 'ok') {
+                $state.go("Navigation.Menu", {day: result.weekDay});
+                $rootScope.refreshCurrentUser(function() {
+                    $rootScope.alert('alert-success', $filter('i18n')('register_email_verify_succeeded'));
+                });
+            }
+            else {
+                $state.go("Navigation.Menu");
+                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
+            }
+        });
+    }
+    else {
+        $state.go("Navigation.Menu");
+        $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
     }
 }])
 
@@ -141,11 +171,20 @@ angular.module('Mealbookers.controllers', [])
         remember: false
     };
     $scope.processForm = function() {
+        $scope.loginProcess = true;
         $http.post('api/1.0/user/login', $scope.login)
-            .success(function(response) {
-                $scope.response = response;
-                
-                if (response.status == 'ok') {
+            .success(function(result) {
+                $scope.loginProcess = false;
+                if (typeof result != 'object' || result.status == undefined) {
+                    $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
+                }
+                else if (result.status == 'wrong_username_or_password') {
+                    $scope.modalAlert('alert-warning', $filter('i18n')('log_in_wrong_username_or_password'));
+                }
+                else if (result.status == 'email_not_verified') {
+                    $scope.modalAlert('alert-warning', $filter('i18n')('log_in_email_not_verified'));
+                }
+                else if (result.status == 'ok') {
                     $log.info("Logged in");
                     $rootScope.refreshCurrentUser(function() {
                         $("#logInModal").modal('hide');
@@ -169,9 +208,10 @@ angular.module('Mealbookers.controllers', [])
                     });
                 }
                 else {
+                    console.error("Unknown response");
+                    console.error(result);
                     $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
                 }
-                
             });
     };
 

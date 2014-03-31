@@ -45,12 +45,18 @@ $GLOBALS['language']['en'] = array(
     'register_email_exists' => 'There is already a user account with the given email address',
     'register_failed_give_first_name' => 'Give first name',
     'register_failed_give_last_name' => 'Give last name',
-    'register_succeeded' => 'Registration succeeded. Welcome to Mealbookers!',
+    'register_succeeded' => 'Registration succeeded, check the verification email in your mailbox.',
+    'register_verifying_email' => 'Verifying your email address...',
+    'register_email_verify_failed' => 'Failed to verify the email address',
+    'register_email_verify_succeeded' => 'Email address verified successfully, welcome to Mealbookers!',
+    'register_email_verify_token_not_found' => 'Your verification link wasn\'t valid',
     'log_in' => 'Log in',
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
-    'log_in_failed' => 'Wrong email or password',
+    'log_in_failed' => 'Login failed',
     'log_in_forgot_password' => 'Forgot your password?',
+    'log_in_wrong_username_or_password' => 'Wrong email or password',
+    'log_in_email_not_verified' => 'Email address has not been verified yet',
     'logged_in' => 'Logged in',
     'log_out' => 'Log out',
     'logged_out' => 'Logged out',
@@ -227,5 +233,11 @@ $GLOBALS['language']['en'] = array(
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
+        'mailer_subject_password_change_notification' => 'Sähköpostin vahvistus',
+        'mailer_body_password_change_notification' => 
+            'Hei!<br /><br /><a href="http://{server_hostname}/#/menu/email/verify/{hash}">Linkki</a>'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
     ),
 );

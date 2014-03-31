@@ -665,4 +665,27 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
+
+    public function sendEmailVerification()
+    {
+        global $admin;
+        Logger::debug(__METHOD__ . " sending user {$this->id} email verification mail");
+
+        $token = Application::inst()->insertToken($this->id);
+
+        $subject = Lang::inst()->get('mailer_subject_email_verification', $this);
+        $body = str_replace(
+            array(
+                '{server_hostname}',
+                '{hash}',
+            ),
+            array(
+                $_SERVER['HTTP_HOST'],
+                $token,
+            ),
+            Lang::inst()->get('mailer_body_email_verification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
 }

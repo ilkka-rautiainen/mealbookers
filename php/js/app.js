@@ -117,6 +117,12 @@ angular.module('Mealbookers', [
         templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
     })
+    
+    .state('Navigation.VerifyEmail', {
+        url: "/email/verify/:token",
+        templateUrl: "partials/VerifyEmail.html",
+        controller: 'VerifyEmailController'
+    })
 
     $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
 }])

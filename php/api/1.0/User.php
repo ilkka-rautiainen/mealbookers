@@ -3,6 +3,7 @@
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
+Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'));
 Flight::route('POST /user(/@userId)/language', array('UserAPI', 'updateUserLanguage'));
 Flight::route('POST /user(/@userId)', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user(/@userId)', array('UserAPI', 'deleteUser'));
@@ -382,11 +383,17 @@ class UserAPI
 
         $passhash = Application::inst()->hash($data["password"]);
 
-        $user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-            email_address = '" . DB::inst()->quote($data["email"]) . "' AND
-            passhash = '$passhash' AND email_verified = 1");
 
-        if ($user_id) {
+        try {
+            if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+                email_address = '" . DB::inst()->quote($data["email"]) . "' AND
+                passhash = '$passhash'"))
+            {
+                throw new ApiException('wrong_username_or_password');
+            }
+
+            if (DB::inst()->getOne("SELECT email_verified FROM users WHERE id = $user_id") == 0)
+                throw new ApiException('email_not_verified');
 
             if ($data["remember"])
                 $expiry_time = PHP_INT_MAX;
@@ -402,9 +409,9 @@ class UserAPI
             ));
         
         }
-        else {
+        catch (ApiException $e) {
             print json_encode(array(
-                'status' => 'fail',
+                'status' => $e->getMessage(),
             ));
         }
     }
@@ -470,9 +477,32 @@ class UserAPI
                     0
                 )");
 
-            $user_id = DB::inst()->getInsertId();
+            $user = new User();
+            $user->fetch(DB::inst()->getInsertId());
 
-            EventLog::inst()->add('user', $user_id);
+            EventLog::inst()->add('user', $user->id);
+
+            $user->sendEmailVerification();
+
+            print json_encode(array(
+                'status' => 'ok',
+            ));
+        }
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage()
+            ));
+        }
+    }
+
+    function verifyEmail($token)
+    {
+        Logger::debug(__METHOD__ . " POST /user/email/verify/$token called");
+
+        try {
+            $user_id = Application::inst()->getTokenId($token);
+            DB::inst()->query("UPDATE users SET email_verified = 1 WHERE id = $user_id");
+            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
 
             // Add valid login
             setcookie("id", $user_id, 0, '/');
@@ -483,9 +513,9 @@ class UserAPI
                 'status' => 'ok',
             ));
         }
-        catch (ApiException $e) {
+        catch (NotFoundException $e) {
             print json_encode(array(
-                'status' => $e->getMessage()
+                'status' => 'not_found',
             ));
         }
     }

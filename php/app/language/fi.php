@@ -45,12 +45,18 @@ $GLOBALS['language']['fi'] = array(
     'register_email_exists' => 'Kyseisellä sähköpostiosoitteella on jo käyttäjätili olemassa',
     'register_failed_give_first_name' => 'Anna etunimi',
     'register_failed_give_last_name' => 'Anna sukunimi',
-    'register_succeeded' => 'Rekisteröityminen onnistui. Tervetuloa Mealbookersiin!',
+    'register_succeeded' => 'Rekisteröityminen onnistui, tarkista vahvistusviesti sähköpostistasi.',
+    'register_verifying_email' => 'Vahvistetaan sähköpostiosoitetta...',
+    'register_email_verify_failed' => 'Sähköpostin vahvistus epäonnistui',
+    'register_email_verify_succeeded' => 'Sähköpostin vahvistus onnistui, tervetuloa Mealbookersiin!',
+    'register_email_verify_token_not_found' => 'Vahvistuslinkkisi ei ollut kelvollinen',
     'log_in' => 'Kirjaudu sisään',
     'log_in_password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
-    'log_in_failed' => 'Väärä sähköpostiosoite tai salasana',
+    'log_in_failed' => 'Sisäänkirjautuminen epäonnistui',
     'log_in_forgot_password' => 'Unohditko salasanasi?',
+    'log_in_wrong_username_or_password' => 'Väärä sähköpostiosoite tai salasana',
+    'log_in_email_not_verified' => 'Sähköpostiosoitetta ei ole vielä vahvistettu',
     'logged_in' => 'Kirjauduttu sisään',
     'log_out' => 'Kirjaudu ulos',
     'logged_out' => 'Kirjauduttu ulos',
@@ -224,6 +230,12 @@ $GLOBALS['language']['fi'] = array(
         'mailer_body_password_change_notification' => 
             'Hei!<br /><br />{admin} vaihtoi Mealbookers-salasanasi.'
             . ' <br /><br />Uusi salasanasi on <strong>{new_password}</strong><br /><br />'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
+            . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
+        'mailer_body_email_verification' => 
+            'Hei!<br /><br /><a href="http://{server_hostname}/#/menu/email/verify/{hash}">Linkki</a>'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

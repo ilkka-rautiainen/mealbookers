@@ -147,7 +147,7 @@ class Application
 
     public function getUniqueHash()
     {
-        return md5(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
+        return sha1(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
     }
 
     public function getWeekdayNumber()
@@ -169,5 +169,27 @@ class Application
         else {
             throw new Exception("Unimplemented for $which");
         }
+    }
+
+    public function insertToken($id)
+    {
+        do {
+            $token = $this->getUniqueHash();
+        } while (DB::inst()->getOne("SELECT COUNT(token) FROM tokens WHERE token = '$token' LIMIT 1") > 0);
+
+        DB::inst()->query("INSERT INTO tokens (token, id) VALUES ('$token', $id)");
+        return $token;
+    }
+
+    public function getTokenId($token)
+    {
+        $id = DB::inst()->getOne("SELECT id FROM tokens WHERE token = '$token'");
+
+        if (is_null($id))
+            throw new NotFoundException("No such token found");
+
+        DB::inst()->query("DELETE FROM tokens WHERE token = '$token'");
+
+        return $id;
     }
 }
