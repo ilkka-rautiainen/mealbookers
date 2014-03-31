@@ -467,7 +467,12 @@ class UserAPI
                     last_name,
                     language,
                     joined,
-                    email_verified
+                    email_verified,
+                    notify_suggestion_received,
+                    notify_suggestion_accepted,
+                    notify_suggestion_left_alone,
+                    notify_suggestion_deleted,
+                    notify_group_memberships
                 ) VALUES (
                     '" . DB::inst()->quote($data['email']) . "',
                     '$passhash',
@@ -475,7 +480,12 @@ class UserAPI
                     '" . DB::inst()->quote($data['last_name']) . "',
                     '" . $data['language'] . "',
                     '" . time() . "',
-                    0
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
                 )");
 
             $user = new User();
