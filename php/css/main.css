@@ -612,6 +612,14 @@ span.line-break {
     color: gray;
 }
 
+#groupSettingsModal .new-group {
+    margin-bottom: 10px;
+}
+
+#groupSettingsModal .join-group {
+    margin-top: 10px;
+}
+
 .col-nopadding {
     padding: 0px;
 }

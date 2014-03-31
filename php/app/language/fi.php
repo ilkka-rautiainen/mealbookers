@@ -144,7 +144,12 @@ $GLOBALS['language']['fi'] = array(
     'group_add_group_failed_invalid_name' => 'Ryhmän nimi ei ole kelvollinen',
     'group_add_group_ok_but_notification_failed' => 'Ryhmä lisätty, mutta ilmoitusviestin lähetys käyttäjälle epäonnistui',
     'group_invitations' => 'Kutsutut',
-    'group_invitation_code' => 'Kutsukoodi:',
+    'group_invitation_code' => 'Kutsukoodi',
+    'group_join' => 'Liity ryhmään',
+    'group_join_succeeded' => 'Ryhmään liittyminen onnistui',
+    'group_join_failed' => 'Ryhmään liittyminen epäonnistui',
+    'group_join_failed_404' => 'Kutsukoodilla ei löytynyt ryhmää tai kutsu on jo käytetty',
+    'group_join_already_member' => 'Olet jo jäsen kyseisessä ryhmässä',
     'suggest_eating_time' => 'Ehdota aikaa',
     'suggest' => 'Ehdota',
     'suggest_time' => 'Aika',
@@ -216,7 +221,8 @@ $GLOBALS['language']['fi'] = array(
         'mailer_body_invite' => 
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invite={token}">tästä</a>.'
+            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invite={code}">tästä</a>'
+            . ' tai jos olet jo rekisteröitynyt palveluun, liity ryhmään kutsukoodilla <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',

@@ -201,4 +201,12 @@ class Application
     {
         DB::inst()->query("DELETE FROM tokens WHERE token = '" . DB::inst()->quote($token) . "'");
     }
+
+    public function generateInvitationCode()
+    {
+        do {
+            $code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
+        } while (DB::inst()->getOne("SELECT COUNT(id) FROM invites WHERE code = '$code'") > 0);
+        return $code;
+    }
 }

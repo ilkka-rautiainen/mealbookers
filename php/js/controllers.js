@@ -793,7 +793,7 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
-.controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll) {
+.controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', '$log', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll, $log) {
     
     // Function for loading the user for the scope
     $scope.loadOtherUser = function(done) {
@@ -913,25 +913,25 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
             }
             else if (result.status == 'joined_existing') {
-                $scope.refreshUser();
-                if (!result.notification_error) {
-                    $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
-                }
-                else {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_success_joined_existing_but_notification_error'));
-                }
-                console.log("Joined existing member to group");
+                $scope.refreshUser(function() {
+                    if (!result.notification_error) {
+                        $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
+                    }
+                    else {
+                        $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_success_joined_existing_but_notification_error'));
+                    }
+                    console.log("Joined existing member to group");
+                });
             }
             else if (result.status == 'failed_to_send_invite') {
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed_to_send_invite'));
             }
             else if (result.status == 'invited_new') {
-                group.addMemberOpened = false;
-                group.addMemberSaveProcess = false;
-                group.newMemberEmail = '';
-                $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
-                console.log("Invited new member to group");
+                $scope.refreshUser(function() {
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
+                    console.log("Invited new member to group");
+                });
             }
             else {
                 console.error("Unknown response");
@@ -1095,6 +1095,59 @@ angular.module('Mealbookers.controllers', [])
         }).error(function(response) {
             $scope.newGroup.saving = false;
             $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+        });
+    };
+
+    $scope.openJoinGroup = function() {
+        $scope.invitationCode = {
+            text: ''
+        };
+        $scope.joinGroupProcess = true;
+        $scope.modalAlert('', '');
+    };
+
+    $scope.closeJoinGroup = function() {
+        $scope.joinGroupProcess = false;
+        $scope.invitationCode = {
+            text: ''
+        };
+    };
+
+    $scope.joinGroup = function() {
+        $scope.joinGroupSaveProcess = true;
+        $scope.modalAlert('', '');
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = '/api/1.0/user/groups/join';
+        else
+            address = '/api/1.0/user/' + $scope.user.id + '/groups/join';
+
+        $http.post(address, {
+            code: $scope.invitationCode.text
+        }).success(function(result) {
+            $scope.joinGroupSaveProcess = false;
+            if (typeof result != 'object' || result.status == undefined) {
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_join_failed'));
+            }
+            else if (result.status == 'already_member') {
+                $scope.modalAlert('alert-info', $filter('i18n')('group_join_already_member'));
+            }
+            else if (result.status == 'ok') {
+                $log.log("Joined group")
+                $scope.closeJoinGroup();
+                $scope.refreshUser(function() {
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_join_succeeded'));
+                });
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_join_failed'));
+            }
+        }).error(function(response, httpCode) {
+            $scope.joinGroupSaveProcess = false;
+            $rootScope.operationFailed(httpCode, 'group_join_failed', $scope.modalAlert);
         });
     };
 

@@ -1,5 +1,6 @@
 <?php
 
+Flight::route('POST /user(/@userId)/groups/join', array('GroupAPI', 'joinGroup'));
 Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
 Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
 Flight::route('POST /user(/@userId)/groups', array('GroupAPI', 'addGroup'));
@@ -292,5 +293,58 @@ class GroupAPI
                 'status' => 'ok',
             ));
         }
+    }
+
+    function joinGroup($userId, $groupId)
+    {
+        global $current_user;
+
+        if ($userId) {
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+            }
+            Logger::info(__METHOD__ . " POST /user/$userId/groups/join called by user {$current_user->id}");
+        }
+        else {
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+            Logger::info(__METHOD__ . " POST /user/groups/join called by user {$current_user->id}");
+        }
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['code'])) {
+            Application::inst()->exitWithHttpCode(400, "code not present in request");
+        }
+
+        $group_id = DB::inst()->getOne("SELECT group_id FROM invites
+            WHERE code = '" . DB::inst()->quote($data['code']) . "'");
+
+        if (is_null($group_id))
+            Application::inst()->exitWithHttpCode(404, "No invitation found with given code");
+
+        $group = new Group();
+        $group->fetch($group_id);
+
+        if ($user->isMemberOfGroup($group)) {
+            DB::inst()->query("DELETE FROM invites WHERE code = '" . DB::inst()->quote($data['code']) . "'");
+            return print json_encode(array(
+                'status' => 'already_member',
+            ));
+        }
+
+        $user->joinGroup($group);
+        DB::inst()->query("DELETE FROM invites WHERE code = '" . DB::inst()->quote($data['code']) . "'");
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 }

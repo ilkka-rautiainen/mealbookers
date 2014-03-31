@@ -509,19 +509,19 @@ class User
     {
         Logger::debug(__METHOD__ . " inviting $email_address to group {$group->id}");
 
-
+        $code = Application::inst()->generateInvitationCode();
         DB::inst()->startTransaction();
         DB::inst()->query("INSERT INTO invites (
                 email_address,
                 group_id,
-                inviter_id
+                inviter_id,
+                code
             ) VALUES (
                 '" . DB::inst()->quote($email_address) . "',
                 {$group->id},
-                {$this->id}
+                {$this->id},
+                '$code'
             )");
-        
-        $token = Application::inst()->insertToken(DB::inst()->getInsertId());
 
         $subject = str_replace(
             '{inviter}',
@@ -533,13 +533,13 @@ class User
                 '{inviter}',
                 '{group_name}',
                 '{server_hostname}',
-                '{token}',
+                '{code}',
             ),
             array(
                 $this->getName(),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
-                $token,
+                $code,
             ),
             Lang::inst()->get('mailer_body_invite', $this)
         );

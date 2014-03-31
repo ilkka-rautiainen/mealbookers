@@ -144,7 +144,12 @@ $GLOBALS['language']['en'] = array(
     'group_add_group_failed_invalid_name' => 'Invalid group name given',
     'group_add_group_ok_but_notification_failed' => 'Group added but sending notification message to the user failed',
     'group_invitations' => 'Invitations',
-    'group_invitation_code' => 'Invitation code:',
+    'group_invitation_code' => 'Invitation code',
+    'group_join' => 'Join group',
+    'group_join_succeeded' => 'Joining the group succeeded',
+    'group_join_failed' => 'Joining the group failed',
+    'group_join_failed_404' => 'No group found with the given invitation code, or the invitation has already been used',
+    'group_join_already_member' => 'You are already a member in the group',
     'suggest_eating_time' => 'Suggest eating time',
     'suggest' => 'Suggest',
     'suggest_time' => 'Time',
@@ -216,7 +221,8 @@ $GLOBALS['language']['en'] = array(
         'mailer_body_invite' => 
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
-            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invite={token}">here</a>.'
+            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invite={code}">here</a>'
+            . ' or if you have already registered, join using this invitation code <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
