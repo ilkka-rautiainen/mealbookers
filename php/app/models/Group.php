@@ -109,6 +109,20 @@ class Group {
             'name' => $this->name,
             'creator' => $creator_array,
             'members' => $this->getMembersAsArray($viewer, $initials_context),
+            'invitations' => $this->getInvitationsAsArray(),
         );
+    }
+
+    private function getInvitationsAsArray()
+    {
+        $result = DB::inst()->query("SELECT email_address, code FROM invites WHERE group_id = {$this->id}");
+        $invitations = array();
+        while ($row = DB::inst()->fetchAssoc($result)) {
+            $invitations[] = array(
+                'email_address' => $row['email_address'],
+                'code' => $row['code'],
+            );
+        }
+        return $invitations;
     }
 }

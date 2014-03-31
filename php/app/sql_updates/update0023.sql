@@ -1,0 +1,1 @@
+ALTER TABLE  `invites` ADD  `code` CHAR( 10 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ;

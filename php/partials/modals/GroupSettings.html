@@ -60,6 +60,16 @@
                     </div>
                     <div class="clearfix"></div>
 
+                    <!-- Invited members -->
+                    <div ng-if="group.invitations" class="invitations">
+                        <strong>{{ 'group_invitations' | i18n }}</strong>
+                        <div ng-repeat="invitation in group.invitations" class="invitation">
+                            <i class="glyphicon glyphicon-user icon"></i>
+                            {{ invitation.email_address }}
+                            <strong>{{ 'group_invitation_code' | i18n }}</strong> {{ invitation.code }}
+                        </div>
+                    </div>
+
                     <!-- Add member -->
                     <div ng-if="group.addMemberOpened">
                         <form ng-submit="addMemberToGroup(group)">
