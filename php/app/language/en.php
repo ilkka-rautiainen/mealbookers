@@ -247,9 +247,10 @@ $GLOBALS['language']['en'] = array(
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
-        'mailer_subject_password_change_notification' => 'Sähköpostin vahvistus',
-        'mailer_body_password_change_notification' => 
-            'Hei!<br /><br /><a href="http://{server_hostname}/#/menu/email/verify/{hash}">Linkki</a>'
+        'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
+        'mailer_body_email_verification' => 
+            'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
+            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

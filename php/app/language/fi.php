@@ -249,7 +249,8 @@ $GLOBALS['language']['fi'] = array(
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
         'mailer_body_email_verification' => 
-            'Hei!<br /><br /><a href="http://{server_hostname}/#/menu/email/verify/{hash}">Linkki</a>'
+            'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
+            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>'
             . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
