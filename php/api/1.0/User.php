@@ -440,6 +440,7 @@ class UserAPI
 
             if ($data['password'] != $data['password_repeat'])
                 throw new ApiException('passwords_dont_match');
+            $passhash = Application::inst()->hash($data['password']);
 
             $user = new User();
             $user->first_name = $data['first_name'];
@@ -460,14 +461,22 @@ class UserAPI
                     joined
                 ) VALUES (
                     '" . DB::inst()->quote($data['email']) . "',
-                    '" . Application::inst()->hash($data['password']) . "',
+                    '$passhash',
                     '" . DB::inst()->quote($data['first_name']) . "',
                     '" . DB::inst()->quote($data['last_name']) . "',
                     '" . $data['language'] . "',
                     '" . time() . "'
                 )");
 
-            EventLog::inst()->add('user', DB::inst()->getInsertId());
+            $user_id = DB::inst()->getInsertId();
+
+            EventLog::inst()->add('user', $user_id);
+
+            // Add valid login
+            setcookie("id", $user_id, 0, '/');
+            setcookie("check", Application::inst()->hash($passhash), 0, '/');
+            setcookie("remember", "0", 0, '/');
+
             print json_encode(array(
                 'status' => 'ok',
             ));

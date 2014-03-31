@@ -195,6 +195,10 @@ angular.module('Mealbookers.controllers', [])
     $('#register-modal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
+    
+    $('#register-modal').on('shown.bs.modal', function () {
+        $scope.$broadcast('modalOpened');
+    });
 
     $scope.register = {
         email: "",
@@ -245,6 +249,7 @@ angular.module('Mealbookers.controllers', [])
                     $log.info("Registration done");
                     $rootScope.refreshCurrentUser(function() {
                         $("#register-modal").modal('hide');
+                        $rootScope.alert('alert-success', $filter('i18n')('register_succeeded'));
                     });
                 }
                 else {

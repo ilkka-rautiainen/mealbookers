@@ -243,9 +243,10 @@ angular.module('Mealbookers', [
                         $rootScope.clearSuggestions();
                         $rootScope.stopLiveView();
                         $rootScope.resetToMenu();
-                        if (typeof done == 'function') {
-                            done();
-                        }
+                    }
+                    
+                    if (typeof done == 'function') {
+                        done();
                     }
                 }
             }
