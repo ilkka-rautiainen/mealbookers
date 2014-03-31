@@ -45,7 +45,8 @@ class Application
     {
         if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
             $user_id = (int)$_COOKIE['id'];
-            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
+            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id
+                AND email_verified = 1");
             $passhash = Application::inst()->hash($passhash);
 
             // Valid authentication
