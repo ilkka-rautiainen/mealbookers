@@ -122,6 +122,7 @@ abstract class Import
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT => Conf::inst()->get('import.useragent'),
+            CURLOPT_SSL_VERIFYPEER => false,
         ));
         $result = curl_exec($c);
 
