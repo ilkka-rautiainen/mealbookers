@@ -3,7 +3,8 @@
 class TaffaImport extends Import
 {
 	protected $restaurant_id = 7;
-	protected $url = "https://www.teknologforeningen.fi/menu.html?lang=fi";
+	protected $url = "https://www.teknologforeningen.fi/fi/menu.html";
+	protected $lang = 'fi';
 
 	protected $langs = array(
         'fi' => array(
@@ -83,13 +84,13 @@ class TaffaImport extends Import
     {
     	require_once __DIR__ . '/../lib/phpQuery.php';
     	$this->saveOpeningHours();
-    	$source = $this->fetchURL($this->url);
+		$source = $this->fetchURL($this->url);
     	phpQuery::newDocument($source);
     	$p_list = pq('#page > div > p');
     	$patterns = array ('/<p>/', '/<\/p>/');
     	$p_list = trim(preg_replace($patterns, '', $p_list));
     	$list = preg_split('/[\s]+/', $p_list);
-    	$count = array_search($list[0], $this->langs['fi']['weekdays']);
+    	$count = array_search($list[0], $this->langs[$this->lang]['weekdays']);
     	$source = $this->fetchURL($this->url);
     	phpQuery::newDocument($source);
     	$ul_list = pq('#page > div > ul');
@@ -102,15 +103,20 @@ class TaffaImport extends Import
     			$this->endDayAndSave();
 		    	$this->startDay($count);
 				$meal = new Meal();
-			    $meal->language = 'fi';
+			    $meal->language = $this->lang;
 			    $meal->name = $line;
 			    $this->addMeal($meal);
 			    $this->endSection();
     		}
     		$count += 1;
-    		if ($count == 5) {
+    		if ($count == 5 && $this->lang == 'fi') {
+    			$this->lang = 'en';
+    			$this->url = "https://www.teknologforeningen.fi/en/menu.html";
+    			$this->run();
+    		}
+    		else if ($count == 5){
     			break;
     		}
     	}
-    }
+	}
 }
