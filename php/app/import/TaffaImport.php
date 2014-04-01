@@ -5,6 +5,7 @@ class TaffaImport extends Import
 	protected $restaurant_id = 7;
 	protected $url = "https://www.teknologforeningen.fi/fi/menu.html";
 	protected $lang = 'fi';
+	protected $patterns = array ('/<p>/', '/<\/p>/', '/<ul>/', '/<\/ul>/', '/<li>/', '/<\/li>/', '/<br>/');
 
 	protected $langs = array(
         'fi' => array(
@@ -18,13 +19,10 @@ class TaffaImport extends Import
                 'Sunnuntai',
             ),
             'sections' => array(
-                'Kahvila\:?' => 'cafe',
                 'A la carte\:?' => 'alacarte',
-                'Bistro\:?' => 'bistro',
-                'Tuunaa oma hampurilaisesi' => 'tune_own_burger',
             ),
             'ignore' => array(
-                'Hyvää ruokahalua!',
+                'No menu available',
             ),
         ),
         'en' => array(
@@ -38,13 +36,10 @@ class TaffaImport extends Import
                 'Sunday',
             ),
             'sections' => array(
-                'Cafe\:?' => 'cafe',
                 'A la carte\:?' => 'alacarte',
-                'Bistro\:?' => 'bistro',
-                'Fine-tune your own burger' => 'tune_own_burger',
             ),
             'ignore' => array(
-                'Enjoy your meal!',
+                'No menu available',
             ),
         ),
     );
@@ -52,26 +47,32 @@ class TaffaImport extends Import
 
     protected function saveOpeningHours()
     {
+    	$source = $this->fetchURL($this->url);
+    	phpQuery::newDocument($source);
+    	$p_list = pq('#page > p');
+    	$p_list = trim(preg_replace($this->patterns, ' ', $p_list));
+    	$list = preg_split('/[\s]+/', $p_list);
+    	Logger::debug(__METHOD__ . implode($list));
 	    DB::inst()->query("DELETE FROM restaurant_opening_hours WHERE restaurant_id = {$this->restaurant_id}");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
 	        ) VALUES (
-	            {$this->restaurant_id}, 0, 3, '10:30', '16:00', 'normal'
+	            {$this->restaurant_id}, 0, 3, '$list[5]', '$list[7]', 'normal'
 	        )");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
 	        ) VALUES (
-	            {$this->restaurant_id}, 0, 3, '10:30', '16:00', 'lunch'
+	            {$this->restaurant_id}, 0, 3, '$list[5]', '$list[7]', 'lunch'
 	        )");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
 	        ) VALUES (
-	            {$this->restaurant_id}, 4, 4, '10:30', '15:00', 'normal'
+	            {$this->restaurant_id}, 4, 4, '$list[9]', '$list[11]', 'normal'
 	        )");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
 	        ) VALUES (
-	            {$this->restaurant_id}, 4, 4, '10:30', '15:00', 'lunch'
+	            {$this->restaurant_id}, 4, 4, '$list[9]', '$list[11]', 'lunch'
 	        )");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
@@ -80,41 +81,54 @@ class TaffaImport extends Import
 	        )");
 	    Logger::debug(__METHOD__ . " opening hours saved successfully");
     }
-    public function run()
+
+    /**
+     * Runs the import
+     */
+    public function run($save_opening_hours = false)
     {
+    	Logger::note(__METHOD__ . " start");
     	require_once __DIR__ . '/../lib/phpQuery.php';
-    	$this->saveOpeningHours();
+
+    	if (!$this->is_import_needed) {
+            Logger::info(__METHOD__ . " import not needed, skipping");
+            return;
+        }
+
+        if ($save_opening_hours)
+    		$this->saveOpeningHours();
+
 		$source = $this->fetchURL($this->url);
     	phpQuery::newDocument($source);
     	$p_list = pq('#page > div > p');
-    	$patterns = array ('/<p>/', '/<\/p>/');
-    	$p_list = trim(preg_replace($patterns, '', $p_list));
+    	$p_list = trim(preg_replace($this->patterns, '', $p_list));
     	$list = preg_split('/[\s]+/', $p_list);
     	$count = array_search($list[0], $this->langs[$this->lang]['weekdays']);
+
+
     	$source = $this->fetchURL($this->url);
     	phpQuery::newDocument($source);
     	$ul_list = pq('#page > div > ul');
-    	$patterns = array ('/<ul>/', '/<\/ul>/', '/<li>/', '/<\/li>/');
     	foreach ($ul_list as $ul) {
     		$li_list = pq($ul);
-    		$li_list = trim(preg_replace($patterns, '', $li_list));
+    		$li_list = trim(preg_replace($this->patterns, '', $li_list));
     		$list = preg_split('/[\n]+/', $li_list);
+    		$this->startDay($count);
     		foreach($list as $line) {
-    			$this->endDayAndSave();
-		    	$this->startDay($count);
 				$meal = new Meal();
 			    $meal->language = $this->lang;
 			    $meal->name = $line;
 			    $this->addMeal($meal);
 			    $this->endSection();
     		}
+    		$this->endDayAndSave();
     		$count += 1;
     		if ($count == 5 && $this->lang == 'fi') {
     			$this->lang = 'en';
     			$this->url = "https://www.teknologforeningen.fi/en/menu.html";
     			$this->run();
     		}
-    		else if ($count == 5){
+    		if ($count == 5){
     			break;
     		}
     	}
