@@ -19,7 +19,7 @@ class TaffaImport extends Import
                 'Sunnuntai',
             ),
             'sections' => array(
-                'A la carte\:?' => 'alacarte',
+                'A la Carte\:?' => 'alacarte',
             ),
             'ignore' => array(
                 'No menu available',
@@ -36,7 +36,7 @@ class TaffaImport extends Import
                 'Sunday',
             ),
             'sections' => array(
-                'A la carte\:?' => 'alacarte',
+                'A la Carte\:?' => 'alacarte',
             ),
             'ignore' => array(
                 'No menu available',
@@ -44,7 +44,9 @@ class TaffaImport extends Import
         ),
     );
 
-
+	/**
+     * Import and Save opening hours
+     */
     protected function saveOpeningHours()
     {
     	$source = $this->fetchURL($this->url);
@@ -52,7 +54,6 @@ class TaffaImport extends Import
     	$p_list = pq('#page > p');
     	$p_list = trim(preg_replace($this->patterns, ' ', $p_list));
     	$list = preg_split('/[\s]+/', $p_list);
-    	Logger::debug(__METHOD__ . implode($list));
 	    DB::inst()->query("DELETE FROM restaurant_opening_hours WHERE restaurant_id = {$this->restaurant_id}");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
@@ -82,6 +83,18 @@ class TaffaImport extends Import
 	    Logger::debug(__METHOD__ . " opening hours saved successfully");
     }
 
+    private function getSectionName(&$line_html, $lang)
+    {
+        foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
+            if (preg_match("/^(" . preg_quote("<strong>", "/") . ")?[\\s]*" . $name_lang . "[\\s]*(" . preg_quote("</strong>", "/") . ")?/i", $line_html, $matches)) {
+                $line_html = trim(mb_substr($line_html, strlen($matches[0])));
+                return $name_en;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Runs the import
      */
@@ -105,7 +118,6 @@ class TaffaImport extends Import
     	$list = preg_split('/[\s]+/', $p_list);
     	$count = array_search($list[0], $this->langs[$this->lang]['weekdays']);
 
-
     	$source = $this->fetchURL($this->url);
     	phpQuery::newDocument($source);
     	$ul_list = pq('#page > div > ul');
@@ -115,6 +127,10 @@ class TaffaImport extends Import
     		$list = preg_split('/[\n]+/', $li_list);
     		$this->startDay($count);
     		foreach($list as $line) {
+    			if (($section_name = $this->getSectionName($line, $this->lang)) !== false) {
+            		$this->startSection($section_name);
+            		Logger::debug(__METHOD__ . " section found $section_name");
+            	}
 				$meal = new Meal();
 			    $meal->language = $this->lang;
 			    $meal->name = $line;
