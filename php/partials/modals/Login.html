@@ -1,38 +1,45 @@
 <!-- Login Modal -->
 <div class="modal fade" id="logInModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<form role="form" ng-submit="processForm()">
-			<div class="modal-content">
+    <div class="modal-dialog">
+        <form role="form" ng-submit="processForm()">
+            <div class="modal-content">
             <a name="login-modal" />
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">{{ 'log_in' | i18n }}</h4>
-				</div>
-				<div class="modal-body">
-                    	<div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
-						<div class="form-group">
-							<label for="email_log_in">{{ 'email' | i18n }}</label>
-							<input type="email" class="form-control" id="email_log_in" ng-model="login.email" focus-on="modalOpened" tabindex="1" required>
-						</div>
-						<div class="form-group">
-							<label for="password_log_in">{{ 'log_in_password' | i18n }}</label>
-							<input type="password" class="form-control" id="password_log_in" ng-model="login.password" tabindex="2" required>
-						</div>
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" tabindex="3" ng-model="login.remember"> {{ 'log_in_remember_me' | i18n }}
-							</label>
-						</div>
-						<a href="#" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</a>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" tabindex="4" class="btn btn-default" ng-disabled="loginProcess">
-						<i class="glyphicon glyphicon-refresh saving-icon" ng-show="loginProcess"></i>
-						{{ 'log_in' | i18n }}
-					</button>
-					<button type="button" tabindex="5" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
-				</div>
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">{{ 'log_in' | i18n }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+                    <div class="form-group">
+                        <label for="email_log_in">{{ 'email' | i18n }}</label>
+                        <input type="email" class="form-control" id="email_log_in" ng-model="login.email" focus-on="modalOpened" tabindex="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password_log_in">{{ 'log_in_password' | i18n }}</label>
+                        <input type="password" class="form-control" id="password_log_in" ng-model="login.password" tabindex="2" required>
+                    </div>
+
+                    <!-- Remember me -->
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" tabindex="3" ng-model="login.remember"> {{ 'log_in_remember_me' | i18n }}
+                        </label>
+                    </div>
+
+                    <!-- Forgot password -->
+                    <a ui-sref="Navigation.Menu.LoginForgotPassword" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</a><br />
+
+                    <!-- Register -->
+                    <a ui-sref="Navigation.Menu.Register" tabindex="7">{{ 'register' | i18n }}</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" tabindex="4" class="btn btn-default" ng-disabled="sendProcess">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="sendProcess"></i>
+                        {{ 'log_in' | i18n }}
+                    </button>
+                    <button type="button" tabindex="5" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

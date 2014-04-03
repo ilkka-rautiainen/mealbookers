@@ -16,6 +16,8 @@ $GLOBALS['language']['en'] = array(
     'title_postfix' => ' :: Mealbookers',
     'title_Navigation.Menu' => 'Menu',
     'title_Navigation.Menu.Login' => 'Log in',
+    'title_Navigation.Menu.LoginForgotPassword' => 'New password',
+    'title_Navigation.Menu.LoginCreateNewPassword' => 'New password',
     'title_Navigation.Menu.Register' => 'Register',
     'title_Navigation.Menu.Suggestion' => 'Suggestion',
     'title_Navigation.Menu.AccountSettings' => 'Account settings',
@@ -39,7 +41,7 @@ $GLOBALS['language']['en'] = array(
     'email' => 'Email',
     'register' => 'Register',
     'register_to_mealbookers' => 'Register to Mealbookers',
-    'register_password' => 'Password (min. 5 characters)',
+    'register_password' => 'New password (min. 5 characters)',
     'register_password_repeat' => 'Repeat the password',
     'register_passwords_dont_match' => 'Passwords don\'t match',
     'register_failed' => 'Registration failed',
@@ -59,13 +61,30 @@ $GLOBALS['language']['en'] = array(
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
     'log_in_failed' => 'Login failed',
-    'log_in_forgot_password' => 'Forgot your password?',
+    'log_in_forgot_password' => 'Forgot password?',
     'log_in_wrong_username_or_password' => 'Wrong email or password',
     'log_in_email_not_verified' => 'Email address has not been verified yet',
     'logged_in' => 'Logged in',
     'log_out' => 'Log out',
     'logged_out' => 'Logged out',
     'logged_out_invalid_user_info' => 'Logged out due to invalid login information',
+    'forgot_password_title' => 'New password',
+    'forgot_password_email_placeholder' => 'Give your email address',
+    'forgot_password_send_password_request' => 'Send password request',
+    'forgot_password_we_send_a_new' => 'We send you an email with a link for creating a new password',
+    'forgot_password_failed' => 'Sending the password change email failed',
+    'forgot_password_failed_404' => 'No user found with the given email address',
+    'forgot_password_succeeded' => 'Email change message has been sent to the given email address',
+    'new_password_title' => 'New password',
+    'new_password_submit' => 'Create new password',
+    'new_password_password' => 'New password (min. 5 characters)',
+    'new_password_password_repeat' => 'Repeat new password',
+    'new_password_fetch_failed' => 'Fetching the user failed',
+    'new_password_fetch_failed_token_not_found' => 'Password change link has already been used',
+    'new_password_fetch_failed_404' => 'User that has created the link wasn\'t found',
+    'new_password_succeeded' => 'Password changed',
+    'new_password_failed' => 'Changing password failed',
+    'new_password_passwords_dont_match' => 'The new passwords you gave don\'t match',
     'meal_section_cafe' => 'Café',
     'meal_section_alacarte' => 'À la carte',
     'meal_section_bistro' => 'Bistro',
@@ -184,7 +203,7 @@ $GLOBALS['language']['en'] = array(
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
-        'mailer_body_suggestion' => 
+        'mailer_body_suggestion' =>
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
@@ -193,35 +212,35 @@ $GLOBALS['language']['en'] = array(
             . ' <a href="http://{server_hostname}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
-        'mailer_body_suggestion_accepted_creator' => 
+        'mailer_body_suggestion_accepted_creator' =>
             'Hello!<br /><br />{accepter} has accepted your suggestion to go to eat at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
             . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
-        'mailer_body_suggestion_accepted_other' => 
+        'mailer_body_suggestion_accepted_other' =>
             'Hello!<br /><br />{accepter} is coming to eat with you at {restaurant} on'
             . ' {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
             . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
-        'mailer_body_suggestion_left_alone' => 
+        'mailer_body_suggestion_left_alone' =>
             'Hello!<br /><br />{canceler} can\'t come to eat with you at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
             . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} canceled the suggestion',
-        'mailer_body_suggestion_deleted' => 
+        'mailer_body_suggestion_deleted' =>
             'Hello!<br /><br />{canceler} canceled his/her suggestion to go to eat at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
             . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite' => '{inviter} invites you to Mealbookers',
-        'mailer_body_invite' => 
+        'mailer_body_invite' =>
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
             . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invitation={code}">here</a>'
@@ -229,30 +248,37 @@ $GLOBALS['language']['en'] = array(
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
-        'mailer_body_invite_notification' => 
+        'mailer_body_invite_notification' =>
             'Hello!<br /><br />{inviter} joined you to group {group_name} at Mealbookers.<br /><br />'
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_group_leave_notification' => '{deleter} removed you from group {group_name}',
-        'mailer_body_group_leave_notification' => 
+        'mailer_body_group_leave_notification' =>
             'Hello!<br /><br />{deleter} removed you from group {group_name} at Mealbookers.<br /><br />'
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_password_change_notification' => 'Your new password at Mealbookers',
-        'mailer_body_password_change_notification' => 
-            'Hei!<br /><br />{admin} changed your password at Mealbookers.'
+        'mailer_body_password_change_notification' =>
+            'Hello!<br /><br />{admin} changed your password at Mealbookers.'
             . ' <br /><br />Your new password is <strong>{new_password}</strong><br /><br />'
             . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
-        'mailer_body_email_verification' => 
+        'mailer_body_email_verification' =>
             'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>.'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_new_password' => 'Password change',
+        'mailer_body_new_password' =>
+            'Hello!<br /><br />Create a new password '
+            . ' <a href="http://{server_hostname}/#/menu/today/login/forgot/new/{token}">here</a>.'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
     ),
 );

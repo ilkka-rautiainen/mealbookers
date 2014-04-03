@@ -163,7 +163,7 @@ angular.module('Mealbookers.controllers', [])
         delete $rootScope.postLoginState;
         $state.go("^");
     });
-    
+
     $('#logInModal').on('shown.bs.modal', function () {
         $scope.$broadcast('modalOpened');
     });
@@ -171,7 +171,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.login = {
         email: "",
         password: "",
-        remember: false
+        remember: true
     };
 
     $scope.processForm = function() {
@@ -229,6 +229,139 @@ angular.module('Mealbookers.controllers', [])
         };
         if (message.length) {
             $location.hash('login-modal');
+            $anchorScroll();
+        }
+    };
+
+}])
+
+.controller('LoginForgotPasswordController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll) {
+
+    $("#forgot-password-modal").modal();
+    $('#forgot-password-modal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
+    $('#forgot-password-modal').on('shown.bs.modal', function () {
+        $scope.$broadcast('modalOpened');
+    });
+
+
+    $scope.forgot = {
+        email: ""
+    };
+
+    $scope.forgotPasswordProcess = false;
+    $scope.forgotPasswordSaveProcess = false;
+
+    $scope.closeForgotPassword = function() {
+        $scope.forgotPasswordProcess = false;
+        $scope.forgotPasswordSaveProcess = false;
+    };
+
+    $scope.processForm = function() {
+        $scope.modalAlert('', '');
+        $scope.sendProcess = true;
+        $http.post('api/1.0/user/login/forgot', $scope.forgot)
+            .success(function(result) {
+                $scope.sendProcess = false;
+                if (result.status == 'ok') {
+                    $log.info("Password request sent");
+                    $("#forgot-password-modal").modal('hide');
+                    $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
+                }
+                else {
+                    console.error("Unknown response");
+                    console.error(result);
+                    $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
+                }
+            }).error(function(response, httpCode) {
+                $scope.sendProcess = false;
+                $rootScope.operationFailed(httpCode, 'forgot_password_failed', $scope.modalAlert);
+            });
+    };
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
+        if (message.length) {
+            $location.hash('forgot-password-modal');
+            $anchorScroll();
+        }
+    };
+
+}])
+
+.controller('LoginCreateNewPasswordController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', '$stateParams', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll, $stateParams) {
+
+    $http.get('api/1.0/user/login/forgot/' + $stateParams.token).success(function(result) {
+        if (result.status == 'ok') {
+            $scope.user = result.user;
+            $("#create-new-password-modal").modal();
+            $('#create-new-password-modal').on('hidden.bs.modal', function () {
+                $state.go("^");
+            });
+
+            $('#create-new-password-modal').on('shown.bs.modal', function () {
+                $scope.$broadcast('modalOpened');
+            });
+            $rootScope.logOut();
+        }
+        else if (result.status == 'token_not_found') {
+            $state.go("^");
+            $rootScope.alert('alert-warning', $filter('i18n')('new_password_fetch_failed_token_not_found'));
+        }
+        else {
+            $state.go("^");
+            $rootScope.alert('alert-danger', $filter('i18n')('new_password_fetch_failed'));
+        }
+    }).error(function(response, httpCode) {
+        $state.go("^");
+        $rootScope.operationFailed(httpCode, 'new_password_fetch_failed');
+    });
+
+    $scope.password = {
+        new: '',
+        repeat: ''
+    }
+
+    $scope.processForm = function() {
+        $scope.modalAlert('', '');
+        $scope.sendProcess = true;
+        $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password)
+            .success(function(result) {
+                $scope.sendProcess = false;
+                if (result.status == 'ok') {
+                    $log.info("Password request sent");
+                    $("#create-new-password-modal").modal('hide');
+                    $rootScope.alert('alert-success', $filter('i18n')('new_password_succeeded'));
+                }
+                else if (result.status == 'passwords_dont_match') {
+                    $scope.modalAlert('alert-warning', $filter('i18n')('new_password_passwords_dont_match'));
+                }
+                else if (result.status == 'weak_password') {
+                    $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
+                }
+                else {
+                    console.error("Unknown response");
+                    console.error(result);
+                    $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
+                }
+            }).error(function(response, httpCode) {
+                $scope.sendProcess = false;
+                $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert);
+            });
+    };
+
+    $scope.modalAlert = function(type, message) {
+        $scope.modalAlertMessage = {
+            type: type,
+            message: message
+        };
+        if (message.length) {
+            $location.hash('create-new-password-modal');
             $anchorScroll();
         }
     };

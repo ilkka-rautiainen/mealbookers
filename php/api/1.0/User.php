@@ -1,6 +1,9 @@
 <?php
 
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
+Flight::route('POST /user/login/forgot', array('UserAPI', 'forgotPassword'));
+Flight::route('POST /user/login/forgot/new/@token', array('UserAPI', 'createNewPassword'));
+Flight::route('GET /user/login/forgot/@token', array('UserAPI', 'getForgotPasswordUser'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
 Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'));
@@ -24,7 +27,7 @@ class UserAPI
                 'status' => 'no_search_term',
             ));
         }
-        
+
         $user = str_replace("*", "%", DB::inst()->quote($user));
         $group = str_replace("*", "%", DB::inst()->quote($group));
 
@@ -83,13 +86,16 @@ class UserAPI
         ));
     }
 
-    function getUser($userId = null)
+    function getUser($userId = null, $omit_authentication = false)
     {
         global $current_user;
 
         if ($userId) {
             Logger::debug(__METHOD__ . " GET /user/$userId called");
-            Application::inst()->checkAuthentication('admin');
+
+            if (!$omit_authentication) {
+                Application::inst()->checkAuthentication('admin');
+            }
 
             try {
                 $user = new User();
@@ -249,7 +255,7 @@ class UserAPI
                 throw new ApiException('no_first_name');
             if (!strlen($data['name']['last_name']))
                 throw new ApiException('no_last_name');
-                
+
             DB::inst()->query("UPDATE users SET
                     first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
                     last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
@@ -289,7 +295,7 @@ class UserAPI
                     if ($user->id != $current_user->id
                         && !$user->notifyPasswordChanged($data['password']['new']))
                         throw new ApiException('notify_failed');
-                        
+
                     DB::inst()->query("UPDATE users
                         SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
                         WHERE id = {$user->id}");
@@ -372,7 +378,7 @@ class UserAPI
 
     function login()
     {
-        Logger::debug(__METHOD__ . " GET /user/login called");
+        Logger::debug(__METHOD__ . " POST /user/login called");
 
         $data = Application::inst()->getPostData();
 
@@ -407,7 +413,108 @@ class UserAPI
             print json_encode(array(
                 'status' => 'ok',
             ));
-        
+
+        }
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage(),
+            ));
+        }
+    }
+
+    function forgotPassword()
+    {
+        Logger::debug(__METHOD__ . " POST /user/login/forgot called");
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['email'])) {
+            Application::inst()->exitWithHttpCode(400, "Email is missing");
+        }
+
+        if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+            email_address = '" . DB::inst()->quote($data["email"]) . "'"))
+        {
+            Application::inst()->exitWithHttpCode(404, "Nu user found with that email");
+        }
+
+        $user = new User();
+        $user->fetch($user_id);
+
+        if (!$user->sendNewPasswordEmail()) {
+            Application::inst()->exitWithHttpCode(500, "Couldn't send the new password email");
+        }
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
+    }
+
+    function getForgotPasswordUser($token)
+    {
+        Logger::debug(__METHOD__ . " GET /user/login/forgot/$token called");
+
+        if (!$token) {
+            Application::inst()->exitWithHttpCode(400, "Token is missing");
+        }
+
+        try {
+            $user_id = Application::inst()->getTokenId($token, false);
+        }
+        catch (NotFoundException $e) {
+            return print json_encode(array(
+                'status' => 'token_not_found',
+            ));
+        }
+
+        UserApi::getUser($user_id, true);
+    }
+
+    function createNewPassword($token)
+    {
+        Logger::debug(__METHOD__ . " POST /user/login/forgot/new/$token called");
+
+        if (!$token) {
+            Application::inst()->exitWithHttpCode(400, "Token is missing");
+        }
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['new'])
+            || !isset($data['repeat'])) {
+            Application::inst()->exitWithHttpCode(400, "Invalid post data");
+        }
+
+        try {
+            $user_id = Application::inst()->getTokenId($token, false);
+        }
+        catch (NotFoundException $e) {
+            Application::inst()->exitWithHttpCode(404, "No user found with the token");
+        }
+
+        $user = new User();
+        try {
+            $user->fetch($user_id);
+        }
+        catch (NotFoundException $e) {
+            Application::inst()->exitWithHttpCode(404, "User with id of the token not found");
+        }
+
+        try {
+
+            if ($data['new'] != $data['repeat']) {
+                throw new ApiException('passwords_dont_match');
+            }
+            else if (!Application::inst()->isStrongPassword($data['new'], $user)) {
+                throw new ApiException('weak_password');
+            }
+
+            DB::inst()->query("UPDATE users SET passhash = '" . Application::inst()->hash($data['new']). "'
+                WHERE id = $user_id");
+            Application::inst()->deleteToken($token);
+            print json_encode(array(
+                'status' => 'ok',
+            ));
         }
         catch (ApiException $e) {
             print json_encode(array(
@@ -425,7 +532,7 @@ class UserAPI
         try {
             if (DB::inst()->getOne("SELECT COUNT(id) FROM users WHERE email_address = '" . $data['email'] . "'"))
                 throw new ApiException('email_exists');
-            
+
             if (!isset($data['first_name'])
                 || !isset($data['last_name'])
                 || !isset($data['email'])

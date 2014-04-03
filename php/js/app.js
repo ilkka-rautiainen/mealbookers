@@ -25,13 +25,13 @@ angular.module('Mealbookers', [
             InitApp: "InitApp"
         }
     })
-    
+
     .state('Navigation.Menu', {
         url: "/:day",
         templateUrl: "partials/Menu.html",
         controller: 'MenuController'
     })
-    
+
     .state('Navigation.Menu.Login', {
         url: "/login",
         templateUrl: "partials/modals/Login.html",
@@ -39,6 +39,26 @@ angular.module('Mealbookers', [
         data: {
             modal: true,
             modalId: "logInModal"
+        },
+    })
+
+    .state('Navigation.Menu.LoginForgotPassword', {
+        url: "/login/forgot",
+        templateUrl: "partials/modals/LoginForgotPassword.html",
+        controller: 'LoginForgotPasswordController',
+        data: {
+            modal: true,
+            modalId: "forgot-password-modal"
+        },
+    })
+
+    .state('Navigation.Menu.LoginCreateNewPassword', {
+        url: "/login/forgot/new/:token",
+        templateUrl: "partials/modals/LoginCreateNewPassword.html",
+        controller: 'LoginCreateNewPasswordController',
+        data: {
+            modal: true,
+            modalId: "create-new-password-modal"
         },
     })
 
@@ -51,7 +71,7 @@ angular.module('Mealbookers', [
             modalId: "register-modal"
         }
     })
-    
+
     .state('Navigation.Menu.Suggestion', {
         url: "/restaurant/:restaurantId/suggestion",
         templateUrl: "partials/modals/Suggestion.html",
@@ -61,7 +81,7 @@ angular.module('Mealbookers', [
         },
         controller: 'SuggestionController'
     })
-    
+
     .state('Navigation.Menu.AccountSettings', {
         url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",
@@ -71,7 +91,7 @@ angular.module('Mealbookers', [
         },
         controller: 'AccountSettingsController'
     })
-    
+
     .state('Navigation.Menu.GroupSettings', {
         url: "/settings/groups",
         templateUrl: "partials/modals/GroupSettings.html",
@@ -81,7 +101,7 @@ angular.module('Mealbookers', [
         },
         controller: 'GroupSettingsController'
     })
-    
+
     .state('Navigation.Menu.UserManagement', {
         url: "/settings/users",
         templateUrl: "partials/modals/UserManagement.html",
@@ -91,7 +111,7 @@ angular.module('Mealbookers', [
         },
         controller: 'UserManagementController'
     })
-    
+
     .state('Navigation.Menu.UserManagement.AccountSettings', {
         url: "/:userId/account",
         templateUrl: "partials/modals/AccountSettings.html",
@@ -101,7 +121,7 @@ angular.module('Mealbookers', [
         },
         controller: 'AccountSettingsController'
     })
-    
+
     .state('Navigation.Menu.UserManagement.GroupSettings', {
         url: "/:userId/group",
         templateUrl: "partials/modals/GroupSettings.html",
@@ -111,13 +131,13 @@ angular.module('Mealbookers', [
         },
         controller: 'GroupSettingsController'
     })
-    
+
     .state('Navigation.AcceptSuggestion', {
         url: "/suggestion/accept/:token",
         templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
     })
-    
+
     .state('Navigation.VerifyEmail', {
         url: "/email/verify/:token",
         templateUrl: "partials/VerifyEmail.html",
@@ -226,7 +246,7 @@ angular.module('Mealbookers', [
             else {
                 $log.debug("Current user refreshed");
                 for (var i in result.user) {
-                    $rootScope.currentUser[i] = result.user[i];    
+                    $rootScope.currentUser[i] = result.user[i];
                 }
 
                 $rootScope.$broadcast("currentUserRefresh");
@@ -249,7 +269,7 @@ angular.module('Mealbookers', [
                         $rootScope.stopLiveView();
                         $rootScope.resetToMenu();
                     }
-                    
+
                     $rootScope.clearSuggestions();
                     if (typeof done == 'function') {
                         done();
@@ -495,12 +515,13 @@ angular.module('Mealbookers', [
 
         // To modal
         if (toState.data && toState.data.modal) {
+            $(".modal-backdrop").remove();
             $timeout(function() {
                 $("body").addClass("modal-open");
                 $("#" + toState.data.modalId).focus();
             }, 0);
         }
-        
+
         if ($rootScope.initAppDone) {
             $rootScope.setTitle(toState.name);
         }
@@ -530,7 +551,7 @@ angular.module('Mealbookers', [
         if (day < 1 || day > 7) {
             return console.error("Incorrect day passed: " + day);
         }
-        
+
         var today = ((new Date().getDay() + 6) % 7) + 1;
         if (day == today) {
             return $rootScope.localization.today;

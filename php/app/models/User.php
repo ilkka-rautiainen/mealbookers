@@ -2,7 +2,7 @@
 
 class User
 {
-    
+
     public $id;
     public $email_address;
     public $first_name;
@@ -114,7 +114,7 @@ class User
     /**
      * This function makes a context for the user's groupmates and suggestion outside members
      * initials.
-     * 
+     *
      * @param  array  $outside_members  Members who are NOT in the user's groups but who are to be considered as well in the context
      */
     public function getInitialsContext($outside_members = array())
@@ -179,7 +179,7 @@ class User
         {
             $item['last_name'] = mb_substr($item['last_name'], 0, $n);
         };
-        
+
         // Helper function: returns only names as array from last_name_contexts array
         $getLastNames = function($job_array)
         {
@@ -385,7 +385,7 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifySuggestionAccepted(Suggestion $suggestion, User $accepter, $is_creator)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
@@ -427,7 +427,7 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having"
@@ -467,7 +467,7 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifySuggestionDeleted(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
@@ -683,6 +683,29 @@ class User
                 $token,
             ),
             Lang::inst()->get('mailer_body_email_verification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function sendNewPasswordEmail()
+    {
+        global $admin;
+        Logger::debug(__METHOD__ . " sending user {$this->id} new password email");
+
+        $token = Application::inst()->insertToken($this->id);
+
+        $subject = Lang::inst()->get('mailer_subject_new_password', $this);
+        $body = str_replace(
+            array(
+                '{server_hostname}',
+                '{token}',
+            ),
+            array(
+                $_SERVER['HTTP_HOST'],
+                $token,
+            ),
+            Lang::inst()->get('mailer_body_new_password', $this)
         );
 
         return Mailer::inst()->send($subject, $body, $this);
