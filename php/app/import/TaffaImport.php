@@ -149,4 +149,14 @@ class TaffaImport extends Import
     		}
     	}
 	}
+
+    private function formatAttributes($line)
+    {
+        // ^.+[\s]+(((veg|vs|g|l|vl|m|\*) ?)+)$
+        // ^ alku
+        // .+ mitä tahansa merkkiä väh 1 kappaletta
+        // [\s] whitespacea väh 1 kappaletta
+        // (((veg|vs|g|l|vl|m|\*) ?)+ "veg|vs|g|l|vl|m|*" jonka jälkeen mahdollisesti yksi space, joita (koko ryhmiä) useampi kappale peräkkäin
+        // $ loppu
+    }
 }

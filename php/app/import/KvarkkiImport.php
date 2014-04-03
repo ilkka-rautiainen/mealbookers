@@ -9,7 +9,7 @@ class KvarkkiImport extends AmicaImport
     {
         Logger::debug(__METHOD__ . " called");
         $p_list = pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_RegionMainContentInnerMiddle_RegionMainContentText_MainContentBottomTextArea_MainContentToolBox_OpeningHours p");
-        
+
         if (is_array($p_list))
             $p = array_shift($p_list);
         else
