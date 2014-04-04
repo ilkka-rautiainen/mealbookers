@@ -102,7 +102,7 @@ class UserAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                Application::inst()->exitWithHttpCode(404, 'user_not_found');
             }
         }
         else {
@@ -465,16 +465,14 @@ class UserAPI
         Logger::debug(__METHOD__ . " GET /user/login/forgot/$token called");
 
         if (!$token) {
-            Application::inst()->exitWithHttpCode(400, "Token is missing");
+            Application::inst()->exitWithHttpCode(400, 'token_missing');
         }
 
         try {
             $user_id = Application::inst()->getTokenId($token, false);
         }
         catch (NotFoundException $e) {
-            return print json_encode(array(
-                'status' => 'token_not_found',
-            ));
+            Application::inst()->exitWithHttpCode(404, 'token_not_found');
         }
 
         UserApi::getUser($user_id, true);
@@ -485,21 +483,21 @@ class UserAPI
         Logger::debug(__METHOD__ . " POST /user/login/forgot/new/$token called");
 
         if (!$token) {
-            Application::inst()->exitWithHttpCode(400, "Token is missing");
+            Application::inst()->exitWithHttpCode(400, 'token_missing');
         }
 
         $data = Application::inst()->getPostData();
 
         if (!isset($data['new'])
             || !isset($data['repeat'])) {
-            Application::inst()->exitWithHttpCode(400, "Invalid post data");
+            Application::inst()->exitWithHttpCode(400, 'passwords_missing');
         }
 
         try {
             $user_id = Application::inst()->getTokenId($token, false);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "Token not found");
+            Application::inst()->exitWithHttpCode(404, 'token_not_found');
         }
 
         $user = new User();
@@ -507,7 +505,7 @@ class UserAPI
             $user->fetch($user_id);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "User with id of the token not found");
+            Application::inst()->exitWithHttpCode(404, 'user_not_found');
         }
 
         try {

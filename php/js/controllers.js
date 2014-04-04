@@ -262,7 +262,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.processForm = function() {
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot', {})
+        $http.post('api/1.0/user/login/forgot', $scope.forgot)
             .success(function(result) {
                 $scope.sendProcess = false;
                 if (result.status == 'ok') {
@@ -312,17 +312,13 @@ angular.module('Mealbookers.controllers', [])
             });
             $rootScope.logOut();
         }
-        else if (result.status == 'token_not_found') {
-            $state.go("^");
-            $rootScope.alert('alert-warning', $filter('i18n')('new_password_fetch_failed_token_not_found'));
-        }
         else {
             $state.go("^");
             $rootScope.alert('alert-danger', $filter('i18n')('new_password_fetch_failed'));
         }
-    }).error(function(response, httpCode) {
+    }).error(function(response, httpCode, headers) {
         $state.go("^");
-        $rootScope.operationFailed(httpCode, 'new_password_fetch_failed');
+        $rootScope.operationFailed(httpCode, 'new_password_fetch_failed', null, headers());
     });
 
     $scope.password = {
@@ -352,9 +348,9 @@ angular.module('Mealbookers.controllers', [])
                     console.error(result);
                     $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
                 }
-            }).error(function(response, httpCode) {
+            }).error(function(response, httpCode, headers) {
                 $scope.sendProcess = false;
-                $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert);
+                $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert, headers());
             });
     };
 
@@ -392,9 +388,9 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('register_invitation_fetching_failed'));
             }
             $("#register-modal").modal('show');
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             $("#register-modal").modal('show');
-            $rootScope.operationFailed(httpCode, 'register_invitation_fetching_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'register_invitation_fetching_failed', $scope.modalAlert, headers());
         });
     }
     else {
@@ -405,7 +401,7 @@ angular.module('Mealbookers.controllers', [])
     $('#register-modal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
-    
+
     $('#register-modal').on('shown.bs.modal', function () {
         $scope.$broadcast('modalOpened');
     });
@@ -469,9 +465,9 @@ angular.module('Mealbookers.controllers', [])
                     $scope.registerSaveProcess = false;
                     $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
                 }
-            }).error(function(response, httpCode) {
+            }).error(function(response, httpCode, headers) {
                 $scope.registerSaveProcess = false;
-                $rootScope.operationFailed(httpCode, 'register_failed', $scope.modalAlert);
+                $rootScope.operationFailed(httpCode, 'register_failed', $scope.modalAlert, headers());
             });
     };
 
@@ -629,9 +625,9 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
         })
-        .error(function(response, httpCode) {
+        .error(function(response, httpCode, headers) {
             suggestion.processing = false;
-            $rootScope.operationFailed(httpCode, 'suggestion_accept_failed');
+            $rootScope.operationFailed(httpCode, 'suggestion_accept_failed', null, headers());
         });
     };
 }])
@@ -696,9 +692,9 @@ angular.module('Mealbookers.controllers', [])
                 $scope.searchProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             $scope.searchProcess = false;
-            $rootScope.operationFailed(httpCode, 'user_management_search_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'user_management_search_failed', $scope.modalAlert, headers());
         });
     };
 
@@ -811,9 +807,9 @@ angular.module('Mealbookers.controllers', [])
                 $scope.languageSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             $scope.languageSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'account_save_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'account_save_failed', $scope.modalAlert, headers());
         });
     };
 
@@ -1106,9 +1102,9 @@ angular.module('Mealbookers.controllers', [])
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             group.addMemberSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'group_add_member_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'group_add_member_failed', $scope.modalAlert, headers());
         });
     };
 
@@ -1143,9 +1139,9 @@ angular.module('Mealbookers.controllers', [])
                 group.editNameSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             group.editNameSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'group_edit_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'group_edit_failed', $scope.modalAlert, headers());
         });
     }
 
@@ -1199,9 +1195,9 @@ angular.module('Mealbookers.controllers', [])
                 member.deleteSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             member.deleteSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'group_member_delete_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'group_member_delete_failed', $scope.modalAlert, headers());
         });
     }
 
@@ -1312,9 +1308,9 @@ angular.module('Mealbookers.controllers', [])
                 console.error(result);
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_join_failed'));
             }
-        }).error(function(response, httpCode) {
+        }).error(function(response, httpCode, headers) {
             $scope.joinGroupSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'group_join_failed', $scope.modalAlert);
+            $rootScope.operationFailed(httpCode, 'group_join_failed', $scope.modalAlert, headers());
         });
     };
 
