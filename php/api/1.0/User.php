@@ -1,9 +1,9 @@
 <?php
 
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
-Flight::route('POST /user/login/forgot', array('UserAPI', 'forgotPassword'));
 Flight::route('POST /user/login/forgot/new/@token', array('UserAPI', 'createNewPassword'));
-Flight::route('GET /user/login/forgot/@token', array('UserAPI', 'getForgotPasswordUser'));
+Flight::route('POST /user/login/forgot', array('UserAPI', 'sendForgotPasswordLink'));
+Flight::route('GET /user/login/forgot/@token', array('UserAPI', 'getUserForForgotPassword'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
 Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'));
@@ -422,7 +422,7 @@ class UserAPI
         }
     }
 
-    function forgotPassword()
+    function sendForgotPasswordLink()
     {
         Logger::debug(__METHOD__ . " POST /user/login/forgot called");
 
@@ -435,7 +435,7 @@ class UserAPI
         if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
             email_address = '" . DB::inst()->quote($data["email"]) . "'"))
         {
-            Application::inst()->exitWithHttpCode(404, "Nu user found with that email");
+            Application::inst()->exitWithHttpCode(404, "No user found with that email");
         }
 
         $user = new User();
@@ -450,7 +450,7 @@ class UserAPI
         ));
     }
 
-    function getForgotPasswordUser($token)
+    function getUserForForgotPassword($token)
     {
         Logger::debug(__METHOD__ . " GET /user/login/forgot/$token called");
 
@@ -489,7 +489,7 @@ class UserAPI
             $user_id = Application::inst()->getTokenId($token, false);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "No user found with the token");
+            Application::inst()->exitWithHttpCode(404, "Token not found");
         }
 
         $user = new User();

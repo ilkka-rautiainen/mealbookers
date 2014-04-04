@@ -297,7 +297,7 @@ angular.module('Mealbookers.controllers', [])
 .controller('LoginCreateNewPasswordController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', '$stateParams', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll, $stateParams) {
 
     $http.get('api/1.0/user/login/forgot/' + $stateParams.token).success(function(result) {
-        if (result.status == 'ok') {
+        if (result.status == 'ok' && result.user.role != 'guest') {
             $scope.user = result.user;
             $("#create-new-password-modal").modal();
             $('#create-new-password-modal').on('hidden.bs.modal', function () {
