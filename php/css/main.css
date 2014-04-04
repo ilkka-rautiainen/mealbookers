@@ -363,11 +363,15 @@ label {
     padding: 5px 0 0px 0;
 }
 
-.button-group .btn {
-    margin-bottom: 5px;
+.button-group .btn, .modal-footer .btn {
+    margin-bottom: 5px !important;
 }
 
-.button-group .btn+.btn {
+.button-group .btn:not(:last-child) {
+    margin-right: 5px;
+}
+
+.modal-footer .btn:not(:first-child) {
     margin-left: 5px;
 }
 

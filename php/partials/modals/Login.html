@@ -26,11 +26,10 @@
                         </label>
                     </div>
 
-                    <!-- Forgot password -->
-                    <a ui-sref="Navigation.Menu.LoginForgotPassword" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</a><br />
-
-                    <!-- Register -->
-                    <a ui-sref="Navigation.Menu.Register" tabindex="7">{{ 'register' | i18n }}</a>
+                    <div class="button-group">
+                        <button class="btn btn-default" ui-sref="Navigation.Menu.LoginForgotPassword" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</button> 
+                        <button class="btn btn-default" ui-sref="Navigation.Menu.Register" tabindex="7">{{ 'register' | i18n }}</button>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" tabindex="4" class="btn btn-default" ng-disabled="sendProcess">
