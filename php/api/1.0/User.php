@@ -428,26 +428,36 @@ class UserAPI
 
         $data = Application::inst()->getPostData();
 
-        if (!isset($data['email'])) {
-            Application::inst()->exitWithHttpCode(400, "Email is missing");
+        try {
+            if (!isset($data['email'])) {
+                Application::inst()->exitWithHttpCode(400, 'email_missing');
+            }
+
+            if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($data['email'])))
+                throw new ApiException('invalid_email');
+
+            if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+                email_address = '" . DB::inst()->quote($data["email"]) . "'"))
+            {
+                Application::inst()->exitWithHttpCode(404, 'email_not_found');
+            }
+
+            $user = new User();
+            $user->fetch($user_id);
+
+            if (!$user->sendNewPasswordEmail()) {
+                Application::inst()->exitWithHttpCode(500, "Couldn't send the new password email");
+            }
+
+            print json_encode(array(
+                'status' => 'ok',
+            ));
         }
-
-        if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-            email_address = '" . DB::inst()->quote($data["email"]) . "'"))
-        {
-            Application::inst()->exitWithHttpCode(404, "No user found with that email");
+        catch (ApiException $e) {
+            print json_encode(array(
+                'status' => $e->getMessage(),
+            ));
         }
-
-        $user = new User();
-        $user->fetch($user_id);
-
-        if (!$user->sendNewPasswordEmail()) {
-            Application::inst()->exitWithHttpCode(500, "Couldn't send the new password email");
-        }
-
-        print json_encode(array(
-            'status' => 'ok',
-        ));
     }
 
     function getUserForForgotPassword($token)
@@ -545,7 +555,7 @@ class UserAPI
             }
 
             $email_address = $data['email'];
-            if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address)))
+            if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($email_address)))
                 throw new ApiException('invalid_email');
 
             if (!strlen($data['first_name']))

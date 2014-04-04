@@ -479,19 +479,33 @@ angular.module('Mealbookers', [
         });
     };
 
-    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction) {
+    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction, headers) {
         var alertFunction;
         if (typeof customAlertFunction == 'function')
             alertFunction = customAlertFunction;
         else
             alertFunction = $rootScope.alert;
 
-        $rootScope.refreshCurrentUser(function() {
-            if ($rootScope.localization[errorMessage + '_' + httpCode.toString()])
-                alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode.toString()]);
-            else
-                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+        var localizationKeys = [];
 
+        // Translation with fail-reason
+        if (headers && headers['fail-reason'])
+            localizationKeys.push(errorMessage + '_' + httpCode.toString() + '_' + headers['fail-reason']);
+        // Translation for the error code
+        localizationKeys.push(errorMessage + '_' + httpCode.toString());
+
+        // General translation for the error code
+        if ($rootScope.localization['general_' + httpCode.toString()])
+            localizationKeys.push('general_' + httpCode.toString());
+
+        $rootScope.refreshCurrentUser(function() {
+            for (var i = 0; i < localizationKeys.length; i++) {
+                if ($rootScope.localization[localizationKeys[i]]) {
+                    alertFunction('alert-warning', $rootScope.localization[localizationKeys[i]]);
+                    break;
+                }
+                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+            }
         });
     };
 

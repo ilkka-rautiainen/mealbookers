@@ -112,12 +112,13 @@ class Application
             header("Status: $number $text");
         else
             header("HTTP/1.1 $number $text");
+        header("Fail-reason: $text");
         print "<h1>$number $text</h1>";
 
         if (DB::inst()->isTransactionActive()) {
             DB::inst()->rollbackTransaction();
         }
-        
+
         die;
     }
 
@@ -208,5 +209,10 @@ class Application
             $code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
         } while (DB::inst()->getOne("SELECT COUNT(id) FROM invitations WHERE code = '$code'") > 0);
         return $code;
+    }
+
+    public function getEmailValidationRegex()
+    {
+        return "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/";
     }
 }

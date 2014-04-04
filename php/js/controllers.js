@@ -262,7 +262,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.processForm = function() {
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot', $scope.forgot)
+        $http.post('api/1.0/user/login/forgot', {})
             .success(function(result) {
                 $scope.sendProcess = false;
                 if (result.status == 'ok') {
@@ -270,14 +270,17 @@ angular.module('Mealbookers.controllers', [])
                     $("#forgot-password-modal").modal('hide');
                     $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
                 }
+                else if (result.status == 'invalid_email') {
+                    $scope.modalAlert('alert-warning', $filter('i18n')('forgot_password_invalid_email'));
+                }
                 else {
                     console.error("Unknown response");
                     console.error(result);
                     $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
                 }
-            }).error(function(response, httpCode) {
+            }).error(function(response, httpCode, headers) {
                 $scope.sendProcess = false;
-                $rootScope.operationFailed(httpCode, 'forgot_password_failed', $scope.modalAlert);
+                $rootScope.operationFailed(httpCode, 'forgot_password_failed', $scope.modalAlert, headers());
             });
     };
 
