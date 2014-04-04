@@ -324,9 +324,11 @@ angular.module('Mealbookers.controllers', [])
     $scope.password = {
         new: '',
         repeat: ''
-    }
+    };
 
     $scope.processForm = function() {
+        if (!$scope.validateForm())
+            return;
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
         $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password)
@@ -352,6 +354,15 @@ angular.module('Mealbookers.controllers', [])
                 $scope.sendProcess = false;
                 $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert, headers());
             });
+    };
+
+    $scope.validateForm = function() {
+        if ($scope.password.new != $scope.password.repeat) {
+            $scope.modalAlert('alert-warning', $filter('i18n')('new_password_passwords_dont_match'));
+            return false;
+        }
+
+        return true;
     };
 
     $scope.modalAlert = function(type, message) {
