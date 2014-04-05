@@ -209,134 +209,127 @@ class UserAPI
             $user = &$current_user;
         }
 
-        try {
-            DB::inst()->startTransaction();
+        DB::inst()->startTransaction();
 
-            $data = Application::inst()->getPostData();
+        $data = Application::inst()->getPostData();
 
-            if (!isset($data['password'])
-                || !isset($data['password']['old'])
-                || !isset($data['password']['new'])
-                || !isset($data['password']['repeat'])
-            ) {
-                Application::inst()->exitWithHttpCode(400, "Invalid password object");
-            }
-
-            if (!isset($data['suggestion'])
-                || !isset($data['suggestion']['received'])
-                || !isset($data['suggestion']['accepted'])
-                || !isset($data['suggestion']['left_alone'])
-                || !isset($data['suggestion']['deleted'])
-            ) {
-                Application::inst()->exitWithHttpCode(400, "Invalid suggestion object");
-            }
-
-            if (!isset($data['group'])
-                || !isset($data['group']['memberships'])
-            ) {
-                Application::inst()->exitWithHttpCode(400, "Invalid group object");
-            }
-
-            if (!isset($data['name'])
-                || !isset($data['name']['first_name'])
-                || !isset($data['name']['last_name'])
-            ) {
-                Application::inst()->exitWithHttpCode(400, "Invalid name object");
-            }
-
-            if (!isset($data['role'])) {
-                Application::inst()->exitWithHttpCode(400, "Role is missing");
-            }
-
-            // UPDATE NAME
-            if (!strlen($data['name']['first_name']))
-                throw new ApiException('no_first_name');
-            if (!strlen($data['name']['last_name']))
-                throw new ApiException('no_last_name');
-
-            DB::inst()->query("UPDATE users SET
-                    first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
-                    last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
-                WHERE id = {$user->id}");
-
-            // UPDATE NOTIFICATION SETTINGS
-            DB::inst()->query("UPDATE users SET
-                    notify_suggestion_received = " . ((int)((boolean) $data['suggestion']['received'])) . ",
-                    notify_suggestion_accepted = " . ((int)((boolean) $data['suggestion']['accepted'])) . ",
-                    notify_suggestion_left_alone = " . ((int)((boolean) $data['suggestion']['left_alone'])) . ",
-                    notify_suggestion_deleted = " . ((int)((boolean) $data['suggestion']['deleted'])) . ",
-                    notify_group_memberships = " . ((int)((boolean) $data['group']['memberships'])) . "
-                WHERE id = {$user->id}");
-
-            // UPDATE PASSWORD
-            // New password given
-            if ($data['password']['new'] || $data['password']['repeat']) {
-
-                if ($current_user->role != 'admin') {
-                    if (!$data['password']['old']) {
-                        throw new ApiException('no_old_password');
-                    }
-                    $old_hash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$user->id}");
-                    if ($old_hash != Application::inst()->hash($data['password']['old'])) {
-                        throw new ApiException('wrong_password');
-                    }
-                }
-
-                if ($data['password']['new'] != $data['password']['repeat']) {
-                    throw new ApiException('passwords_dont_match');
-                }
-                else if (!Application::inst()->isStrongPassword($data['password']['new'], $user)) {
-                    throw new ApiException('weak_password');
-                }
-                else {
-
-                    if ($user->id != $current_user->id
-                        && !$user->notifyPasswordChanged($data['password']['new']))
-                        throw new ApiException('notify_failed');
-
-                    DB::inst()->query("UPDATE users
-                        SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
-                        WHERE id = {$user->id}");
-
-                    if ($user->id == $current_user->id) {
-                        if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
-                            $expiry_time = PHP_INT_MAX;
-                        else
-                            $expiry_time = 0;
-
-                        setcookie(
-                            "check",
-                            Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
-                            $expiry_time,
-                            '/'
-                        );
-                    }
-                }
-            }
-            // No new password but the old given
-            else if ($data['password']['old']) {
-                throw new ApiException('no_new_password');
-            }
-
-            // UPDATE ROLE
-            if ($current_user->role == 'admin' && in_array($data['role'], array(
-                    'normal',
-                    'admin',
-                )) && $user->id != $current_user->id && $data['role'] != $user->role)
-            {
-                DB::inst()->query("UPDATE users SET role = '" . $data['role'] . "' WHERE id = {$user->id}");
-            }
-
-            DB::inst()->commitTransaction();
-            print json_encode(array(
-                'status' => 'ok'
-            ));
+        if (!isset($data['password'])
+            || !isset($data['password']['old'])
+            || !isset($data['password']['new'])
+            || !isset($data['password']['repeat'])
+        ) {
+            throw new HttpException(400, 'invalid_password_object');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage()
-            ));
+
+        if (!isset($data['suggestion'])
+            || !isset($data['suggestion']['received'])
+            || !isset($data['suggestion']['accepted'])
+            || !isset($data['suggestion']['left_alone'])
+            || !isset($data['suggestion']['deleted'])
+        ) {
+            throw new HttpException(400, 'invalid_suggestion_object');
         }
+
+        if (!isset($data['group'])
+            || !isset($data['group']['memberships'])
+        ) {
+            throw new HttpException(400, 'invalid_group_object');
+        }
+
+        if (!isset($data['name'])
+            || !isset($data['name']['first_name'])
+            || !isset($data['name']['last_name'])
+        ) {
+            throw new HttpException(400, 'invalid_name_object');
+        }
+
+        if (!isset($data['role'])) {
+            throw new HttpException(400, 'invalid_role');
+        }
+
+        // UPDATE NAME
+        if (!strlen($data['name']['first_name']))
+            throw new HttpException(409, 'no_first_name');
+        if (!strlen($data['name']['last_name']))
+            throw new HttpException(409, 'no_last_name');
+
+        DB::inst()->query("UPDATE users SET
+                first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
+                last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
+            WHERE id = {$user->id}");
+
+        // UPDATE NOTIFICATION SETTINGS
+        DB::inst()->query("UPDATE users SET
+                notify_suggestion_received = " . ((int)((boolean) $data['suggestion']['received'])) . ",
+                notify_suggestion_accepted = " . ((int)((boolean) $data['suggestion']['accepted'])) . ",
+                notify_suggestion_left_alone = " . ((int)((boolean) $data['suggestion']['left_alone'])) . ",
+                notify_suggestion_deleted = " . ((int)((boolean) $data['suggestion']['deleted'])) . ",
+                notify_group_memberships = " . ((int)((boolean) $data['group']['memberships'])) . "
+            WHERE id = {$user->id}");
+
+        // UPDATE PASSWORD
+        // New password given
+        if ($data['password']['new'] || $data['password']['repeat']) {
+
+            if ($current_user->role != 'admin') {
+                if (!$data['password']['old']) {
+                    throw new HttpException(409, 'no_old_password');
+                }
+                $old_hash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$user->id}");
+                if ($old_hash != Application::inst()->hash($data['password']['old'])) {
+                    throw new HttpException(409, 'wrong_password');
+                }
+            }
+
+            if ($data['password']['new'] != $data['password']['repeat']) {
+                throw new HttpException(409, 'passwords_dont_match');
+            }
+            else if (!Application::inst()->isStrongPassword($data['password']['new'], $user)) {
+                throw new HttpException(409, 'weak_password');
+            }
+            else {
+
+                if ($user->id != $current_user->id
+                    && !$user->notifyPasswordChanged($data['password']['new']))
+                    throw new HttpException(500, 'notify_failed');
+
+                DB::inst()->query("UPDATE users
+                    SET passhash = '" . Application::inst()->hash($data['password']['new']) . "'
+                    WHERE id = {$user->id}");
+
+                if ($user->id == $current_user->id) {
+                    if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
+                        $expiry_time = PHP_INT_MAX;
+                    else
+                        $expiry_time = 0;
+
+                    setcookie(
+                        "check",
+                        Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
+                        $expiry_time,
+                        '/'
+                    );
+                }
+            }
+        }
+        // No new password but the old given
+        else if ($data['password']['old']) {
+            throw new HttpException(409, 'no_new_password');
+        }
+
+        // UPDATE ROLE
+        if ($current_user->role == 'admin' && in_array($data['role'], array(
+                'normal',
+                'admin',
+            )) && $user->id != $current_user->id && $data['role'] != $user->role)
+        {
+            DB::inst()->query("UPDATE users SET role = '" . $data['role'] . "' WHERE id = {$user->id}");
+        }
+
+        DB::inst()->commitTransaction();
+        print json_encode(array(
+            'status' => 'ok'
+        ));
     }
 
     function updateUserLanguage($userId = null)

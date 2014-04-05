@@ -796,76 +796,38 @@ angular.module('Mealbookers.controllers', [])
             },
             role: $scope.user.role
         }).success(function(result) {
-            // Fail
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
-            }
-            else if (result.status == 'no_old_password') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_old_password'));
-            }
-            else if (result.status == 'no_new_password') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_new_password'));
-            }
-            else if (result.status == 'passwords_dont_match') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
-            }
-            else if (result.status == 'wrong_password') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_wrong_password'));
-            }
-            else if (result.status == 'weak_password') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
-            }
-            else if (result.status == 'no_first_name') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_first_name'));
-            }
-            else if (result.status == 'no_last_name') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_last_name'));
-            }
-            else if (result.status == 'notify_failed') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_password_change_notify_failed'));
-            }
-            // Success
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $scope.resetPassword();
                 $scope.saveProcess = false;
                 $rootScope.alert('alert-success', $filter('i18n')('account_save_succeeded'));
                 $("#accountSettingsModal").modal('hide');
-                console.log("Account settings saved");
+                $log.log("Account settings saved");
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.saveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
             }
-        }).error(function(response, code) {
+        }).error(function(response, httpCode, headers) {
             $scope.saveProcess = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
+            $rootScope.operationFailed(httpCode, 'account_save_failed', $scope.modalAlert, headers());
         });
     };
 
     $scope.validateForm = function() {
         if ($scope.password.new || $scope.password.repeat) {
             if (!$rootScope.currentUser.role == 'admin' && !$scope.password.old) {
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_give_old_password'));
+                $scope.modalAlert('alert-warning', $filter('i18n')('account_save_failed_409_no_old_password'));
                 return false;
             }
             if ($scope.password.new != $scope.password.repeat) {
-                $scope.modalAlert('alert-warning', $filter('i18n')('account_passwords_dont_match'));
+                $scope.modalAlert('alert-warning', $filter('i18n')('account_save_failed_409_passwords_dont_match'));
                 return false;
             }
         }
         else if ($scope.password.old) {
-            $scope.modalAlert('alert-warning', $filter('i18n')('account_give_new_password'));
+            $scope.modalAlert('alert-warning', $filter('i18n')('account_save_failed_409_no_new_password'));
             return false;
         }
 
