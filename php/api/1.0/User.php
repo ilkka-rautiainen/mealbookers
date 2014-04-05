@@ -100,7 +100,7 @@ class UserAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, 'user_not_found');
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {

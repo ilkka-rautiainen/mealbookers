@@ -686,11 +686,9 @@ angular.module('Mealbookers.controllers', [])
                 else {
                     console.error("Unknown response");
                     console.error(result);
-                    $state.go("^");
                     $scope.modalAlert('alert-danger', $filter('i18n')('account_settings_user_fetch_failed'));
                 }
             }).error(function(response, httpCode, headers) {
-                $state.go("^");
                 $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $scope.modalAlert, headers());
             });
             $scope.isCurrentUser = false;
@@ -872,16 +870,23 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 .controller('GroupSettingsController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', '$log', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll, $log) {
-    
+
     // Function for loading the user for the scope
     $scope.loadOtherUser = function(done) {
         $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
             if (result && result.status == 'ok') {
                 $scope.user = result.user;
                 $scope.$broadcast("userReady");
+                if (typeof done == 'function')
+                    done();
             }
-            if (typeof done == 'function')
-                done();
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_user_fetch_failed'));
+            }
+        }).error(function(response, httpCode, headers) {
+            $rootScope.operationFailed(httpCode, 'group_settings_user_fetch_failed', $scope.modalAlert, headers());
         });
     };
 

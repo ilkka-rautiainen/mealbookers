@@ -153,6 +153,7 @@ $GLOBALS['language']['en'] = array(
     'account_type_normal' => 'Normal',
     'account_type_admin' => 'Administrator',
     'group_settings' => 'Group settings',
+    'group_settings_user_fetch_failed' => 'Failed to fetch the user for group settings',
     'group_invite_member' => 'Invite member',
     'group_edit_failed' => 'Editing the group failed',
     'group_edit_failed_404' => 'The group has been deleted',

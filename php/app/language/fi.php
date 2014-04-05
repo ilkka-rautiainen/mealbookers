@@ -153,6 +153,7 @@ $GLOBALS['language']['fi'] = array(
     'account_type_normal' => 'Normaali',
     'account_type_admin' => 'Järjestelmänvalvoja',
     'group_settings' => 'Ryhmäasetukset',
+    'group_settings_user_fetch_failed' => 'Käyttäjän haku ryhmäasetuksiin epäonnistui',
     'group_invite_member' => 'Kutsu jäsen',
     'group_edit_failed' => 'Ryhmän muokkaus epäonnistui',
     'group_edit_failed_404' => 'Kyseinen ryhmä on poistettu',
