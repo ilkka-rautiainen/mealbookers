@@ -584,7 +584,7 @@ angular.module('Mealbookers.controllers', [])
             else {
                 console.error("Unknown response");
                 console.error(result);
-                $scope.searchProcess = false;
+                suggestion.processing = false;
                 $rootScope.alert('alert-danger', $filter('i18n')('suggestion_manage_failed'));
             }
         })
@@ -673,8 +673,8 @@ angular.module('Mealbookers.controllers', [])
     };
 }])
 
-.controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', '$stateParams', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll, $stateParams) {
-    
+.controller('AccountSettingsController', ['$scope', '$rootScope', '$state', '$filter', '$http', '$location', '$anchorScroll', '$stateParams', '$log', function($scope, $rootScope, $state, $filter, $http, $location, $anchorScroll, $stateParams, $log) {
+
     // If opened as someone other's settings
     if ($stateParams.userId) {
         // Load user if someone other
@@ -683,6 +683,15 @@ angular.module('Mealbookers.controllers', [])
                 if (result && result.status == 'ok') {
                     $scope.user = result.user;
                 }
+                else {
+                    console.error("Unknown response");
+                    console.error(result);
+                    $state.go("^");
+                    $scope.modalAlert('alert-danger', $filter('i18n')('account_settings_user_fetch_failed'));
+                }
+            }).error(function(response, httpCode, headers) {
+                $state.go("^");
+                $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $scope.modalAlert, headers());
             });
             $scope.isCurrentUser = false;
         }
@@ -741,12 +750,8 @@ angular.module('Mealbookers.controllers', [])
         $http.post(address, {
             language: $scope.user.language
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.languageSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
-            }
-            else if (result && result.status == 'ok') {
-                console.log("Language changed");
+            if (result && result.status == 'ok') {
+                $log.log("Language changed");
                 if ($scope.isCurrentUser) {
                     $rootScope.refreshLocalization(function() {
                         $scope.languageSaveProcess = false;

@@ -116,6 +116,7 @@ $GLOBALS['language']['fi'] = array(
     'user_management_groups' => 'Ryhmät:',
     'user_management_user_has_no_groups' => 'Käyttäjä ei ole jäsenenä missään ryhmässä',
     'account_settings' => 'Käyttäjäasetukset',
+    'account_settings_user_fetch_failed' => 'Käyttäjän haku käyttäjäasetuksiin epäonnistui',
     'account_language' => 'Kieli',
     'account_language_fi' => 'Suomi',
     'account_language_en' => 'English',

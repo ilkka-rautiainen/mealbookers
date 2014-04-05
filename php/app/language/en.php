@@ -116,6 +116,7 @@ $GLOBALS['language']['en'] = array(
     'user_management_groups' => 'Groups:',
     'user_management_user_has_no_groups' => 'User isn\'t a member in any group',
     'account_settings' => 'Account settings',
+    'account_settings_user_fetch_failed' => 'Failed to fetch the user for account settings',
     'account_language' => 'Language',
     'account_language_fi' => 'Suomi',
     'account_language_en' => 'English',
