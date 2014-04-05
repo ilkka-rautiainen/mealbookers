@@ -1,7 +1,7 @@
 <?php
 
 Flight::route('POST /user(/@userId)/groups/join', array('GroupAPI', 'joinGroup'));
-Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteGroupMember'));
+Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 'inviteMemberToGroup'));
 Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
 Flight::route('POST /user(/@userId)/groups', array('GroupAPI', 'addGroup'));
 Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'removeGroupMember'));
@@ -21,7 +21,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'no_user_found');
             }
         }
         else {
@@ -81,7 +81,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'no_user_found');
             }
         }
         else {
@@ -132,7 +132,7 @@ class GroupAPI
         }
     }
 
-    function inviteGroupMember($userId, $groupId)
+    function inviteMemberToGroup($userId, $groupId)
     {
         global $current_user;
 
@@ -145,7 +145,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'no_user_found');
             }
         }
         else {
@@ -155,6 +155,7 @@ class GroupAPI
             $user = &$current_user;
         }
 
+        // Fetch group
         $groupId = (int)$groupId;
         $data = Application::inst()->getPostData();
 
@@ -163,62 +164,56 @@ class GroupAPI
             $group->fetch($groupId);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "No group found with the given id");
+            throw new HttpException(404, 'group_not_found');
         }
 
         if (!$user->isMemberOfGroup($group)) {
-            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+            throw new HttpException(403, 'not_member_of_group', 'danger');
         }
 
         $notification_error = false;
-        try {
-            DB::inst()->startTransaction();
-            if (!isset($data['email_address'])) {
-                Application::inst()->exitWithHttpCode(400, "email_address not present in request");
-            }
 
-            $email_address = $data['email_address'];
-            if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address))) {
-                throw new ApiException('invalid_email');
-            }
-
-            // Check if there's already a user with that email
-            if ($invitee_id = DB::inst()->getOne("SELECT id FROM users
-                WHERE email_address = '" . DB::inst()->quote($email_address) . "'"))
-            {
-                $invitee = new User();
-                $invitee->fetch($invitee_id);
-                if ($invitee->isMemberOfGroup($group)) {
-                    throw new ApiException('already_member');
-                }
-                $invitee->joinGroup($group);
-                if (!$invitee->notifyGroupJoin($group, $user)) {
-                    $notification_error = true;
-                }
-
-                print json_encode(array(
-                    'status' => 'joined_existing',
-                    'notification_error' => $notification_error,
-                ));
-            }
-            // Invite new member
-            else {
-                if (!$user->inviteNewMember($email_address, $group)) {
-                    throw new ApiException('failed_to_send_invite');
-                }
-                print json_encode(array(
-                    'status' => 'invited_new',
-                ));
-            }
-
-            DB::inst()->commitTransaction();
+        // Check data
+        DB::inst()->startTransaction();
+        if (!isset($data['email_address'])) {
+            throw new HttpException(400, 'email_address_missing');
         }
-        catch (ApiException $e) {
-            DB::inst()->rollbackTransaction();
+
+        $email_address = $data['email_address'];
+        if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address))) {
+            throw new HttpException(409, 'invalid_email');
+        }
+
+        // Check if there's already a user with that email
+        if ($invitee_id = DB::inst()->getOne("SELECT id FROM users
+            WHERE email_address = '" . DB::inst()->quote($email_address) . "'"))
+        {
+            $invitee = new User();
+            $invitee->fetch($invitee_id);
+            if ($invitee->isMemberOfGroup($group)) {
+                throw new HttpException(409, 'already_member');
+            }
+            $invitee->joinGroup($group);
+            if (!$invitee->notifyGroupJoin($group, $user)) {
+                $notification_error = true;
+            }
+
             print json_encode(array(
-                'status' => $e->getMessage()
+                'status' => 'joined_existing',
+                'notification_error' => $notification_error,
             ));
         }
+        // Invite new member
+        else {
+            if (!$user->inviteNewMember($email_address, $group)) {
+                throw new HttpException(500, 'failed_to_send_invite');
+            }
+            print json_encode(array(
+                'status' => 'invited_new',
+            ));
+        }
+
+        DB::inst()->commitTransaction();
     }
 
     function removeGroupMember($userId, $groupId, $memberId)
@@ -233,7 +228,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'no_user_found');
             }
             Logger::info(__METHOD__ . " DELETE /user/$userId/groups/$groupId/members/$memberId called by user {$user->id}");
         }
@@ -307,7 +302,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'no_user_found');
             }
             Logger::info(__METHOD__ . " POST /user/$userId/groups/join called by user {$current_user->id}");
         }

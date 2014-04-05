@@ -983,19 +983,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post(address, {
             email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined || result.status == 'failed') {
-                group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
-            }
-            else if (result.status == 'invalid_email') {
-                group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_failed_invalid_email'));
-            }
-            else if (result.status == 'already_member') {
-                group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_already_member'));
-            }
-            else if (result.status == 'joined_existing') {
+            if (result && result.status == 'joined_existing') {
                 $scope.refreshUser(function() {
                     if (!result.notification_error) {
                         $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_joined_existing'));
@@ -1006,11 +994,7 @@ angular.module('Mealbookers.controllers', [])
                     console.log("Joined existing member to group");
                 });
             }
-            else if (result.status == 'failed_to_send_invite') {
-                group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed_to_send_invite'));
-            }
-            else if (result.status == 'invited_new') {
+            else if (result && result.status == 'invited_new') {
                 $scope.refreshUser(function() {
                     $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
                     console.log("Invited new member to group");
@@ -1020,11 +1004,11 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_member_failed'));
+                $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_invite_member_failed'));
             }
         }).error(function(response, httpCode, headers) {
             group.addMemberSaveProcess = false;
-            $rootScope.operationFailed(httpCode, 'group_add_member_failed', $scope.modalAlert, headers());
+            $rootScope.operationFailed(httpCode, 'group_settings_invite_member_failed', $scope.modalAlert, headers());
         });
     };
 
