@@ -45,7 +45,7 @@ angular.module('Mealbookers.controllers', [])
                     }
                 };
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.refreshCurrentUser(function() {
                     $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
@@ -77,7 +77,7 @@ angular.module('Mealbookers.controllers', [])
                 $state.go("Navigation.Menu");
                 $rootScope.alert('alert-warning', $filter('i18n')('register_email_verify_token_not_found'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.refreshCurrentUser(function() {
                     $rootScope.alert('alert-success', $filter('i18n')('register_email_verify_succeeded'));
@@ -179,16 +179,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user/login', $scope.login)
             .success(function(result) {
                 $scope.loginProcess = false;
-                if (typeof result != 'object' || result.status == undefined) {
-                    $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
-                }
-                else if (result.status == 'wrong_username_or_password') {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('log_in_wrong_username_or_password'));
-                }
-                else if (result.status == 'email_not_verified') {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('log_in_email_not_verified'));
-                }
-                else if (result.status == 'ok') {
+                if (result && result.status == 'ok') {
                     $log.info("Logged in");
                     $rootScope.refreshCurrentUser(function() {
                         $("#logInModal").modal('hide');
@@ -216,9 +207,9 @@ angular.module('Mealbookers.controllers', [])
                     console.error(result);
                     $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
                 }
-            }).error(function(response, httpCode) {
+            }).error(function(response, httpCode, headers) {
                 $scope.loginProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
+                $rootScope.operationFailed(httpCode, 'log_in_failed', $scope.modalAlert, headers());
             });
     };
 
@@ -265,7 +256,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user/login/forgot', $scope.forgot)
             .success(function(result) {
                 $scope.sendProcess = false;
-                if (result.status == 'ok') {
+                if (result && result.status == 'ok') {
                     $log.info("Password request sent");
                     $("#forgot-password-modal").modal('hide');
                     $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
@@ -334,7 +325,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password)
             .success(function(result) {
                 $scope.sendProcess = false;
-                if (result.status == 'ok') {
+                if (result && result.status == 'ok') {
                     $log.info("Password request sent");
                     $("#create-new-password-modal").modal('hide');
                     $rootScope.alert('alert-success', $filter('i18n')('new_password_succeeded'));
@@ -388,7 +379,7 @@ angular.module('Mealbookers.controllers', [])
             if (result.status == 'not_found') {
                 $scope.modalAlert('alert-warning', $filter('i18n')('register_invitation_not_found'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $scope.register.email = result.invitation.email_address;
                 $scope.group_name = result.invitation.group_name;
                 $scope.register.invitation_code = invitation;
@@ -463,7 +454,7 @@ angular.module('Mealbookers.controllers', [])
                     $scope.registerSaveProcess = false;
                     $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
                 }
-                else if (result.status == 'ok') {
+                else if (result && result.status == 'ok') {
                     $log.info("Registration done");
                     $rootScope.refreshCurrentUser(function() {
                         $("#register-modal").modal('hide');
@@ -689,7 +680,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.searchProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $scope.searchProcess = false;
                 $scope.results = result.results;
             }
@@ -736,7 +727,7 @@ angular.module('Mealbookers.controllers', [])
         // Load user if someone other
         if ($stateParams.userId != $rootScope.currentUser.id) {
             $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
-                if (result.status == 'ok') {
+                if (result && result.status == 'ok') {
                     $scope.user = result.user;
                 }
             });
@@ -801,7 +792,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.languageSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 console.log("Language changed");
                 if ($scope.isCurrentUser) {
                     $rootScope.refreshLocalization(function() {
@@ -885,7 +876,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('account_password_change_notify_failed'));
             }
             // Success
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $scope.resetPassword();
                 $scope.saveProcess = false;
                 $rootScope.alert('alert-success', $filter('i18n')('account_save_succeeded'));
@@ -972,7 +963,7 @@ angular.module('Mealbookers.controllers', [])
     // Function for loading the user for the scope
     $scope.loadOtherUser = function(done) {
         $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
-            if (result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $scope.user = result.user;
                 $scope.$broadcast("userReady");
             }
@@ -1140,7 +1131,7 @@ angular.module('Mealbookers.controllers', [])
                 group.editNameSaveProcess = false;
                 $scope.modalAlert('alert-warning', $filter('i18n')('group_edit_failed_invalid_name'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 console.log("Group name saved");
                 $scope.refreshUser();
             }
@@ -1172,7 +1163,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
                 return;
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 console.log("Removed member from group");
                 $scope.refreshUser(function() {
                     for (var i = 0; i < group.members.length; i++) {
@@ -1307,7 +1298,7 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'already_member') {
                 $scope.modalAlert('alert-info', $filter('i18n')('group_join_already_member'));
             }
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $log.log("Joined group")
                 $scope.closeJoinGroup();
                 $scope.refreshUser(function() {
@@ -1453,7 +1444,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_too_early'));
             }
             // Success
-            else if (result.status == 'ok') {
+            else if (result && result.status == 'ok') {
                 $rootScope.refreshCurrentUser(function() {
                     $scope.saveProcess = false;
                     $("#suggestionModal").modal('hide');

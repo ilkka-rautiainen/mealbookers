@@ -22,21 +22,21 @@
                     <!-- Remember me -->
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" tabindex="3" ng-model="login.remember"> {{ 'log_in_remember_me' | i18n }}
+                            <input type="checkbox" ng-model="login.remember"> {{ 'log_in_remember_me' | i18n }}
                         </label>
                     </div>
 
                     <div class="button-group">
-                        <button class="btn btn-default" ui-sref="Navigation.Menu.LoginForgotPassword" tabindex="6">{{ 'log_in_forgot_password' | i18n }}</button> 
-                        <button class="btn btn-default" ui-sref="Navigation.Menu.Register" tabindex="7">{{ 'register' | i18n }}</button>
+                        <button type="button" class="btn btn-default" ui-sref="Navigation.Menu.LoginForgotPassword">{{ 'log_in_forgot_password' | i18n }}</button> 
+                        <button type="button" class="btn btn-default" ui-sref="Navigation.Menu.Register">{{ 'register' | i18n }}</button>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" tabindex="4" class="btn btn-default" ng-disabled="sendProcess">
+                    <button type="submit" tabindex="3" class="btn btn-default" ng-disabled="sendProcess">
                         <i class="glyphicon glyphicon-refresh saving-icon" ng-show="sendProcess"></i>
                         {{ 'log_in' | i18n }}
                     </button>
-                    <button type="button" tabindex="5" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
+                    <button type="button" tabindex="4" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
                 </div>
             </div><!-- /.modal-content -->
         </form>

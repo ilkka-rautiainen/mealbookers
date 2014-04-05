@@ -486,24 +486,35 @@ angular.module('Mealbookers', [
         else
             alertFunction = $rootScope.alert;
 
-        var localizationKeys = [];
+        httpCode = httpCode.toString();
 
-        // Translation with fail-reason
-        if (headers && headers['fail-reason'])
-            localizationKeys.push(errorMessage + '_' + httpCode.toString() + '_' + headers['fail-reason']);
-        // Translation for the error code
-        localizationKeys.push(errorMessage + '_' + httpCode.toString());
-
-        // General translation for the error code
-        if ($rootScope.localization['general_' + httpCode.toString()])
-            localizationKeys.push('general_' + httpCode.toString());
+        var failReason = null, failLevel = null, skipGeneralCodeError = null;
+        if (headers) {
+            failReason = headers['fail-reason'] || null;
+            failLevel = headers['fail-level'] || null;
+            skipGeneralCodeError = headers['skip-general-code-error'] || null;
+        }
 
         $rootScope.refreshCurrentUser(function() {
-            for (var i = 0; i < localizationKeys.length; i++) {
-                if ($rootScope.localization[localizationKeys[i]]) {
-                    alertFunction('alert-warning', $rootScope.localization[localizationKeys[i]]);
-                    break;
+            // Base case: errorMessage_httpCode_failReason
+            if (failReason && $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]) {
+                if (failLevel) {
+                    alertFunction('alert-' + failLevel, $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
                 }
+                else {
+                    alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
+                }
+            }
+            // Second case: errorMessage_httpCode
+            else if ($rootScope.localization[errorMessage + '_' + httpCode]) {
+                alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode]);
+            }
+            // Third case: general_code
+            else if (!skipGeneralCodeError && $rootScope.localization['general_' + httpCode]) {
+                alertFunction('alert-warning', $rootScope.localization['general_' + httpCode]);
+            }
+            // Else: errorMessage
+            else {
                 alertFunction('alert-danger', $rootScope.localization[errorMessage]);
             }
         });

@@ -390,36 +390,28 @@ class UserAPI
         $passhash = Application::inst()->hash($data["password"]);
 
 
-        try {
-            if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-                email_address = '" . DB::inst()->quote($data["email"]) . "' AND
-                passhash = '$passhash'"))
-            {
-                throw new ApiException('wrong_username_or_password');
-            }
-
-            if (DB::inst()->getOne("SELECT email_verified FROM users WHERE id = $user_id") == 0)
-                throw new ApiException('email_not_verified');
-
-            if ($data["remember"])
-                $expiry_time = PHP_INT_MAX;
-            else
-                $expiry_time = 0;
-
-            setcookie("id", $user_id, $expiry_time, '/');
-            setcookie("check", Application::inst()->hash($passhash), $expiry_time, '/');
-            setcookie("remember", ($data['remember']) ? "1" : "0", $expiry_time, '/');
-
-            print json_encode(array(
-                'status' => 'ok',
-            ));
-
+        if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+            email_address = '" . DB::inst()->quote($data["email"]) . "' AND
+            passhash = '$passhash'"))
+        {
+            throw new HttpException(409, 'wrong_username_or_password');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage(),
-            ));
-        }
+
+        if (DB::inst()->getOne("SELECT email_verified FROM users WHERE id = $user_id") == 0)
+            throw new HttpException(409, 'email_not_verified');
+
+        if ($data["remember"])
+            $expiry_time = PHP_INT_MAX;
+        else
+            $expiry_time = 0;
+
+        setcookie("id", $user_id, $expiry_time, '/');
+        setcookie("check", Application::inst()->hash($passhash), $expiry_time, '/');
+        setcookie("remember", ($data['remember']) ? "1" : "0", $expiry_time, '/');
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function sendForgotPasswordLink()
