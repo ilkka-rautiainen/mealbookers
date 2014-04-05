@@ -529,99 +529,94 @@ class UserAPI
 
         $data = Application::inst()->getPostData();
 
-        try {
-            if (DB::inst()->getOne("SELECT COUNT(id) FROM users WHERE email_address = '" . $data['email'] . "'"))
-                throw new ApiException('email_exists');
+        if (DB::inst()->getOne("SELECT COUNT(id) FROM users WHERE email_address = '" . $data['email'] . "'"))
+            throw new HttpException(409, 'email_exists');
 
-            if (!isset($data['first_name'])
-                || !isset($data['last_name'])
-                || !isset($data['email'])
-                || !isset($data['password'])
-                || !isset($data['password_repeat'])
-                || !isset($data['language'])
-                || !isset($data['invitation_code'])
-            ) {
-                Application::inst()->exitWithHttpCode(400, "Invalid data sent");
-            }
-
-            $email_address = $data['email'];
-            if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($email_address)))
-                throw new ApiException('invalid_email');
-
-            if (!strlen($data['first_name']))
-                throw new ApiException('no_first_name');
-            if (!strlen($data['last_name']))
-                throw new ApiException('no_last_name');
-
-            if ($data['password'] != $data['password_repeat'])
-                throw new ApiException('passwords_dont_match');
-            $passhash = Application::inst()->hash($data['password']);
-
-            $user = new User();
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            if (!Application::inst()->isStrongPassword($data['password'], $user))
-                throw new ApiException('weak_password');
-
-            if (!in_array($data['language'], array('fi', 'en')))
-                $data['language'] = Config::inst()->get('defaultLanguage');
-
-
-            $result = DB::inst()->query("INSERT INTO users (
-                    email_address,
-                    passhash,
-                    first_name,
-                    last_name,
-                    language,
-                    joined,
-                    email_verified,
-                    notify_suggestion_received,
-                    notify_suggestion_accepted,
-                    notify_suggestion_left_alone,
-                    notify_suggestion_deleted,
-                    notify_group_memberships
-                ) VALUES (
-                    '" . DB::inst()->quote($data['email']) . "',
-                    '$passhash',
-                    '" . DB::inst()->quote($data['first_name']) . "',
-                    '" . DB::inst()->quote($data['last_name']) . "',
-                    '" . $data['language'] . "',
-                    '" . time() . "',
-                    0,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1
-                )");
-
-            $user = new User();
-            $user->fetch(DB::inst()->getInsertId());
-
-            // Invitation
-            if ($data['invitation_code'] && $group_id = DB::inst()->getOne("SELECT group_id FROM invitations
-                WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'"))
-            {
-                $group = new Group();
-                $group->fetch($group_id);
-                $user->joinGroup($group);
-                DB::inst()->query("DELETE FROM invitations
-                    WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'");
-            }
-
-            EventLog::inst()->add('user', $user->id);
-
-            $user->sendEmailVerification();
-
-            print json_encode(array(
-                'status' => 'ok',
-            ));
+        if (!isset($data['first_name'])
+            || !isset($data['last_name'])
+            || !isset($data['email'])
+            || !isset($data['password'])
+            || !isset($data['password_repeat'])
+            || !isset($data['language'])
+            || !isset($data['invitation_code'])
+        ) {
+            throw new HttpException(400, 'data_invalid');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage()
-            ));
+
+        $email_address = $data['email'];
+        if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($email_address)))
+            throw new HttpException(409, 'invalid_email');
+
+        if (!strlen($data['first_name']))
+            throw new HttpException(409, 'no_first_name');
+        if (!strlen($data['last_name']))
+            throw new HttpException(409, 'no_last_name');
+
+        if ($data['password'] != $data['password_repeat'])
+            throw new HttpException(409, 'passwords_dont_match');
+        $passhash = Application::inst()->hash($data['password']);
+
+        $user = new User();
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        if (!Application::inst()->isStrongPassword($data['password'], $user))
+            throw new HttpException(409, 'weak_password');
+
+        if (!in_array($data['language'], array('fi', 'en')))
+            $data['language'] = Config::inst()->get('defaultLanguage');
+
+        DB::inst()->startTransaction();
+        $result = DB::inst()->query("INSERT INTO users (
+                email_address,
+                passhash,
+                first_name,
+                last_name,
+                language,
+                joined,
+                email_verified,
+                notify_suggestion_received,
+                notify_suggestion_accepted,
+                notify_suggestion_left_alone,
+                notify_suggestion_deleted,
+                notify_group_memberships
+            ) VALUES (
+                '" . DB::inst()->quote($data['email']) . "',
+                '$passhash',
+                '" . DB::inst()->quote($data['first_name']) . "',
+                '" . DB::inst()->quote($data['last_name']) . "',
+                '" . $data['language'] . "',
+                '" . time() . "',
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+            )");
+
+        $user = new User();
+        $user->fetch(DB::inst()->getInsertId());
+
+        // Invitation
+        if ($data['invitation_code'] && $group_id = DB::inst()->getOne("SELECT group_id FROM invitations
+            WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'"))
+        {
+            $group = new Group();
+            $group->fetch($group_id);
+            $user->joinGroup($group);
+            DB::inst()->query("DELETE FROM invitations
+                WHERE code = '" . DB::inst()->quote($data['invitation_code']) . "'");
         }
+
+        EventLog::inst()->add('user', $user->id);
+
+        if (!$user->sendEmailVerification())
+            throw new HttpException(500, 'verification_email_sending_failed', 'danger');
+
+        DB::inst()->commitTransaction();
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function verifyEmail($token)

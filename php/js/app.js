@@ -491,23 +491,22 @@ angular.module('Mealbookers', [
         var failReason = null, failLevel = null, skipGeneralCodeError = null;
         if (headers) {
             failReason = headers['fail-reason'] || null;
-            failLevel = headers['fail-level'] || null;
+            failLevel = (headers['fail-level']) ? 'alert-' + headers['fail-level'] : null;
             skipGeneralCodeError = headers['skip-general-code-error'] || null;
         }
 
         $rootScope.refreshCurrentUser(function() {
             // Base case: errorMessage_httpCode_failReason
             if (failReason && $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]) {
-                if (failLevel) {
-                    alertFunction('alert-' + failLevel, $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
-                }
-                else {
-                    alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
-                }
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
+            }
+            // General case with failReason: general_code_failReason
+            else if (failReason && !skipGeneralCodeError && $rootScope.localization['general_' + httpCode + '_' + failReason]) {
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization['general_' + httpCode + '_' + failReason]);
             }
             // Second case: errorMessage_httpCode
             else if ($rootScope.localization[errorMessage + '_' + httpCode]) {
-                alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode]);
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode]);
             }
             // Third case: general_code
             else if (!skipGeneralCodeError && $rootScope.localization['general_' + httpCode]) {

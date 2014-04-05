@@ -423,35 +423,7 @@ angular.module('Mealbookers.controllers', [])
 
         $http.post('api/1.0/user/register', $scope.register)
             .success(function(result) {
-                if (typeof result != 'object' || result.status == undefined) {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
-                }
-                else if (result.status == 'email_exists') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('register_email_exists'));
-                }
-                else if (result.status == 'invalid_email') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_invalid_email'));
-                }
-                else if (result.status == 'no_first_name') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_give_first_name'));
-                }
-                else if (result.status == 'no_last_name') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_give_last_name'));
-                }
-                else if (result.status == 'passwords_dont_match') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('register_passwords_dont_match'));
-                }
-                else if (result.status == 'weak_password') {
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
-                }
-                else if (result && result.status == 'ok') {
+                if (result && result.status == 'ok') {
                     $log.info("Registration done");
                     $rootScope.refreshCurrentUser(function() {
                         $("#register-modal").modal('hide');
@@ -472,7 +444,7 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.validateForm = function() {
         if ($scope.register.password != $scope.register.password_repeat) {
-            $scope.modalAlert('alert-warning', $filter('i18n')('register_passwords_dont_match'));
+            $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_passwords_dont_match'));
             return false;
         }
 
