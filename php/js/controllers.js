@@ -842,13 +842,7 @@ angular.module('Mealbookers.controllers', [])
             address = 'api/1.0/user/' + $scope.user.id;
 
         $http.delete(address).success(function(result) {
-            // Fail
-            if (typeof result != 'object' || result.status != 'ok') {
-                $scope.resetForm(false);
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_remove_failed'));
-            }
-            // Ok
-            else {
+            if (result && result.status == 'ok') {
                 $("#accountSettingsModal").modal('hide');
                 if ($scope.isCurrentUser) {
                     $.removeCookie('id');
@@ -860,9 +854,8 @@ angular.module('Mealbookers.controllers', [])
                     });
                 }
             }
-        }).error(function(response, code) {
-            $scope.resetForm(false);
-            $scope.modalAlert('alert-danger', $filter('i18n')('account_remove_failed'));
+        }).error(function(response, httpCode, headers) {
+            $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert, headers());
         });
     };
 

@@ -147,6 +147,7 @@ $GLOBALS['language']['fi'] = array(
     'account_remove_cancel' => 'Peruuta',
     'account_remove_ok' => 'Poista tili pysyvästi',
     'account_remove_failed' => 'Tilin poistaminen epäonnistui',
+    'account_remove_failed_404_user_not_found' => 'Tilin poistaminen epäonnistui: Käyttäjää ei löytynyt',
     'account_remove_success' => 'Käyttäjätilisi on poistettu',
     'account_type' => 'Tilin tyyppi',
     'account_type_normal' => 'Normaali',

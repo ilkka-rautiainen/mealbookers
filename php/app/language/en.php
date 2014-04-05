@@ -147,6 +147,7 @@ $GLOBALS['language']['en'] = array(
     'account_remove_cancel' => 'Cancel',
     'account_remove_ok' => 'Delete account permanently',
     'account_remove_failed' => 'Failed to remove the account',
+    'account_remove_failed_404_user_not_found' => 'Failed to remove the account: The user wasn\'t found',
     'account_remove_success' => 'Your account has been deleted',
     'account_type' => 'Account type',
     'account_type_normal' => 'Normal',
