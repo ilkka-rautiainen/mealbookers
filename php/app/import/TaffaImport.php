@@ -91,7 +91,6 @@ class TaffaImport extends Import
 	        ) VALUES (
 	            {$this->restaurant_id}, 5, 6, '00:00:00', '00:00:00', 'normal'
 	        )");
-	    Logger::debug(__METHOD__ . implode($list));
 	    Logger::debug(__METHOD__ . " opening hours saved successfully");
     }
 
@@ -143,6 +142,7 @@ class TaffaImport extends Import
             		$this->startSection($section_name);
             		Logger::debug(__METHOD__ . " section found $section_name");
             	}
+            	$line = $this->formatAttributes($line);
 				$meal = new Meal();
 			    $meal->language = $this->lang;
 			    $meal->name = $line;
@@ -164,11 +164,31 @@ class TaffaImport extends Import
 
     private function formatAttributes($line)
     {
-        // ^.+[\s]+(((veg|vs|g|l|vl|m|\*) ?)+)$
-        // ^ alku
-        // .+ mitä tahansa merkkiä väh 1 kappaletta
-        // [\s] whitespacea väh 1 kappaletta
-        // (((veg|vs|g|l|vl|m|\*) ?)+ "veg|vs|g|l|vl|m|*" jonka jälkeen mahdollisesti yksi space, joita (koko ryhmiä) useampi kappale peräkkäin
-        // $ loppu
+        preg_match_all("/[\s]+(((g|l|vl) ?)+)$/", $line, $matches);
+
+        $subMatches = $matchStarts = array();
+        $lastMatchStart = -1;
+        foreach ($matches[0] as $subMatch) {
+            preg_match_all("/g|l|vl/", $subMatch, $subMatchArray);
+            foreach ($subMatchArray[0] as $key => $value)
+                $subMatchArray[0][$key] = $value;
+            $lastMatchStart = mb_stripos($line, $subMatch, $lastMatchStart + 1);
+            $matchStarts[] = $lastMatchStart;
+            $subMatches[] = array(
+                'start' => $lastMatchStart,
+                'length' => strlen($subMatch),
+                'attributes' => $subMatchArray[0],
+            );
+        }
+        array_multisort($matchStarts, SORT_DESC, $subMatches);
+        foreach ($subMatches as $subMatch) {
+            foreach ($subMatch['attributes'] as $key => $attribute)
+                $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
+            $line = mb_substr($line, 0, $subMatch['start'])
+                . " <span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>\n"
+                . mb_substr($line, $subMatch['start'] + $subMatch['length']);
+        }
+
+        return $line;
     }
 }
