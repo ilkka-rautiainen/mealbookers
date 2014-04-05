@@ -108,6 +108,7 @@ $GLOBALS['language']['en'] = array(
     'user_management_group_placeholder' => 'Belongs to group',
     'user_management_no_results' => 'No results',
     'user_management_search_failed' => 'Search failed',
+    'user_management_search_failed_409_no_search_term' => 'Give some search term',
     'user_management_searching' => 'Searching...',
     'user_management_member_in_groups' => 'member in groups',
     'user_management_account_settings' => 'Settings',

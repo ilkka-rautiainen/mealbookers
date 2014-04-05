@@ -108,6 +108,7 @@ $GLOBALS['language']['fi'] = array(
     'user_management_group_placeholder' => 'Kuuluu ryhmään',
     'user_management_no_results' => 'Ei hakutuloksia',
     'user_management_search_failed' => 'Haku epäonnistui',
+    'user_management_search_failed_409_no_search_term' => 'Syötä hakusana',
     'user_management_searching' => 'Haetaan...',
     'user_management_member_in_groups' => 'jäsenenä rymissä',
     'user_management_account_settings' => 'Asetukset',

@@ -637,17 +637,9 @@ angular.module('Mealbookers.controllers', [])
                 group: $scope.search.group
             }
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.searchProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
-            }
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $scope.searchProcess = false;
                 $scope.results = result.results;
-            }
-            else if (result.status == 'no_search_term') {
-                $scope.searchProcess = false;
-                $scope.results = [];
             }
             else {
                 console.error("Unknown response");

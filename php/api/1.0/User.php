@@ -23,9 +23,7 @@ class UserAPI
         $group = (isset($_GET['group'])) ? $_GET['group'] : '';
 
         if (!$user && !$group) {
-            return print json_encode(array(
-                'status' => 'no_search_term',
-            ));
+            throw new HttpException(409, 'no_search_term');
         }
 
         $user = str_replace("*", "%", DB::inst()->quote($user));
