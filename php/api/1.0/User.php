@@ -169,7 +169,7 @@ class UserAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {
@@ -199,7 +199,7 @@ class UserAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {
@@ -352,7 +352,7 @@ class UserAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                Application::inst()->exitWithHttpCode(404, "No user found with id $userId");
+                throw new HttpException(404, 'user_not_found', 'danger');
             }
         }
         else {
@@ -365,7 +365,7 @@ class UserAPI
         $data = Application::inst()->getPostData();
 
         if (!isset($data['language']) || !in_array($data['language'], array('fi', 'en')))
-            Application::inst()->exitWithHttpCode(400, "Invalid language");
+            throw new HttpException(400, 'invalid_language');
 
         DB::inst()->query("UPDATE users SET language = '" . $data['language'] . "' WHERE id = {$user->id}");
 

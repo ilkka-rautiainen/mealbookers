@@ -135,6 +135,7 @@ $GLOBALS['language']['fi'] = array(
     'account_new_password' => 'Uusi salasana (väh. 5 merkkiä)',
     'account_new_password_repeat' => 'Uusi salasana uudelleen',
     'account_save_failed' => 'Käyttäjätietojen tallennus epäonnistui',
+    'account_save_failed_404_user_not_found' => 'Käyttäjätietojen tallennus epäonnistui: Käyttäjää ei löytynyt',
     'account_wrong_password' => 'Väärä salasana',
     'account_save_succeeded' => 'Tiedot tallennettu!',
     'account_give_old_password' => 'Anna vanha salasana',

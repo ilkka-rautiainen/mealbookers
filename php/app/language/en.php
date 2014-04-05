@@ -135,6 +135,7 @@ $GLOBALS['language']['en'] = array(
     'account_new_password' => 'New password (min. 5 characters)',
     'account_new_password_repeat' => 'Repeat new password',
     'account_save_failed' => 'Failed to save account information',
+    'account_save_failed_404_user_not_found' => 'Failed to save account information: The user wasn\'t found',
     'account_wrong_password' => 'Wrong password',
     'account_save_succeeded' => 'Information saved!',
     'account_give_old_password' => 'Give the old password',
