@@ -54,6 +54,17 @@ class TaffaImport extends Import
     	$p_list = pq('#page > p');
     	$p_list = trim(preg_replace($this->patterns, ' ', $p_list));
     	$list = preg_split('/[\s]+/', $p_list);
+
+    	$list2 = array('Måndag', '-', 'Torsdag:', '10:30', '-', '16:00', 'Fredag:', '10:30', '-', '15:00');
+    	$count = 0;
+    	while ($count < sizeof($list2)) {
+    		if ($list[$count + 2] != $list2[$count]) {
+    			Logger::debug(__METHOD__ . " lines didn't match regex");
+    			return;
+    		}
+    		$count += 1;
+    	}
+    	Logger::debug(__METHOD__ . " lines matched");
 	    DB::inst()->query("DELETE FROM restaurant_opening_hours WHERE restaurant_id = {$this->restaurant_id}");
 	    DB::inst()->query("INSERT INTO restaurant_opening_hours (
 	            restaurant_id, start_weekday, end_weekday, start_time, end_time, type
@@ -80,6 +91,7 @@ class TaffaImport extends Import
 	        ) VALUES (
 	            {$this->restaurant_id}, 5, 6, '00:00:00', '00:00:00', 'normal'
 	        )");
+	    Logger::debug(__METHOD__ . implode($list));
 	    Logger::debug(__METHOD__ . " opening hours saved successfully");
     }
 
