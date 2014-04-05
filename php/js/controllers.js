@@ -537,7 +537,7 @@ angular.module('Mealbookers.controllers', [])
         }
         return openingHours.join("");
     };
-    
+
     /**
      * Suggest a restaurant and time
      */
@@ -564,21 +564,7 @@ angular.module('Mealbookers.controllers', [])
             action: action
         }).success(function(result) {
             // Check the result
-            if (typeof result !== 'object' || result.status !== 'ok') {
-                // Too old
-                if (result.status == 'not_manageable') {
-                    $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
-                }
-                // Failed
-                else {
-                    $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
-                    console.error("Failed to accept/cancel, got response:");
-                    console.error(result);
-                }
-                suggestion.processing = false;
-            }
-            // OK
-            else {
+            if (result && result.status == 'ok') {
                 $rootScope.refreshCurrentUser(function() {
                     // Canceled and deleted (last one out)
                     if (result.suggestionDeleted) {
@@ -595,10 +581,16 @@ angular.module('Mealbookers.controllers', [])
                     }
                 });
             }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.searchProcess = false;
+                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_manage_failed'));
+            }
         })
         .error(function(response, httpCode, headers) {
             suggestion.processing = false;
-            $rootScope.operationFailed(httpCode, 'suggestion_accept_failed', null, headers());
+            $rootScope.operationFailed(httpCode, 'suggestion_manage_failed', null, headers());
         });
     };
 }])

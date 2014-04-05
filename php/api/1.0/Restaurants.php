@@ -218,7 +218,7 @@ class RestaurantsAPI
         global $current_user;
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
         Application::inst()->checkAuthentication();
-        
+
         $postData = Application::inst()->getPostData();
         $suggestionId = (int) $suggestionId;
         $restaurantId = (int) $restaurantId;
@@ -228,7 +228,7 @@ class RestaurantsAPI
             'accept',
             'cancel',
         ))) {
-            Application::inst()->exitWithHttpCode(400, "Invalid action: '$action'");
+            throw new HttpException(400, 'invalid_action');
         }
 
 
@@ -237,7 +237,7 @@ class RestaurantsAPI
             || (!$suggestions_users_id = DB::inst()->getOne("SELECT id FROM suggestions_users
                 WHERE user_id = {$current_user->id} AND suggestion_id = $suggestionId")))
         {
-            Application::inst()->exitWithHttpCode(404, "Suggestion with id $suggestionId not found or you're not invited to it");
+            throw new HttpException(404, 'suggestion_not_found');
         }
 
         $suggestion = new Suggestion();
@@ -245,9 +245,7 @@ class RestaurantsAPI
 
         // Not manageable anymore
         if (!$suggestion->isManageable(true)) {
-            return print(json_encode(array(
-                'status' => 'not_manageable'
-            )));
+            throw new HttpException(409, 'not_manageable_anymore');
         }
 
         $hasSuggestionBeenDeleted = false;
@@ -261,7 +259,7 @@ class RestaurantsAPI
         else {
             $hasSuggestionBeenDeleted = $suggestion->cancel($suggestion_user);
         }
-        
+
         if ($hasSuggestionBeenDeleted) {
             print(json_encode(array(
                 'status' => 'ok',
