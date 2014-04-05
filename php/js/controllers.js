@@ -376,10 +376,7 @@ angular.module('Mealbookers.controllers', [])
     if (invitation) {
         $("#register-modal").modal('hide');
         $http.get('api/1.0/invitation/' + invitation).success(function(result) {
-            if (result.status == 'not_found') {
-                $scope.modalAlert('alert-warning', $filter('i18n')('register_invitation_not_found'));
-            }
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $scope.register.email = result.invitation.email_address;
                 $scope.group_name = result.invitation.group_name;
                 $scope.register.invitation_code = invitation;
