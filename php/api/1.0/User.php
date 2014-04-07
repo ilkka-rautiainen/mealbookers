@@ -266,6 +266,7 @@ class UserAPI
                 first_name = '" . DB::inst()->quote($data['name']['first_name']) . "',
                 last_name = '" . DB::inst()->quote($data['name']['last_name']) . "'
             WHERE id = {$user->id}");
+        $user->fetch($user->id);
 
         // UPDATE NOTIFICATION SETTINGS
         DB::inst()->query("UPDATE users SET
