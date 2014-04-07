@@ -1182,13 +1182,7 @@ angular.module('Mealbookers.controllers', [])
             code: $scope.invitationCode.text
         }).success(function(result) {
             $scope.joinGroupSaveProcess = false;
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_join_failed'));
-            }
-            else if (result.status == 'already_member') {
-                $scope.modalAlert('alert-info', $filter('i18n')('group_join_already_member'));
-            }
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $log.log("Joined group")
                 $scope.closeJoinGroup();
                 $scope.refreshUser(function() {

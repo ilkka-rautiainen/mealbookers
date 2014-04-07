@@ -324,22 +324,21 @@ class GroupAPI
         $data = Application::inst()->getPostData();
 
         if (!isset($data['code'])) {
-            Application::inst()->exitWithHttpCode(400, "code not present in request");
+            throw new HttpException(400, 'code_missing');
         }
 
         // Fetch group
         $group_id = DB::inst()->getOne("SELECT group_id FROM invitations
             WHERE code = '" . DB::inst()->quote($data['code']) . "'");
         if (is_null($group_id))
-            Application::inst()->exitWithHttpCode(404, "No invitation found with given code");
+            throw new HttpException(404, 'invitation_not_found_with_code');
+
         $group = new Group();
         $group->fetch($group_id);
 
         if ($user->isMemberOfGroup($group)) {
             DB::inst()->query("DELETE FROM invitations WHERE code = '" . DB::inst()->quote($data['code']) . "'");
-            return print json_encode(array(
-                'status' => 'already_member',
-            ));
+            throw new HttpException(409, 'already_member', 'info');
         }
 
         // Join group and delete invitation
