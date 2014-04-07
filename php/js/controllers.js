@@ -176,41 +176,40 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.processForm = function() {
         $scope.loginProcess = true;
-        $http.post('api/1.0/user/login', $scope.login)
-            .success(function(result) {
-                $scope.loginProcess = false;
-                if (result && result.status == 'ok') {
-                    $log.info("Logged in");
-                    $rootScope.refreshCurrentUser(function() {
-                        $("#logInModal").modal('hide');
+        $http.post('api/1.0/user/login', $scope.login).success(function(result) {
+            $scope.loginProcess = false;
+            if (result && result.status == 'ok') {
+                $log.info("Logged in");
+                $rootScope.refreshCurrentUser(function() {
+                    $("#logInModal").modal('hide');
 
-                        var ready = function() {
-                            if ($rootScope.postLoginState) {
-                                $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
-                                delete $rootScope.postLoginState;
-                            }
-                            else {
-                                $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
-                            }
-                        };
-
-                        if ($rootScope.currentUser.language != $rootScope.localizationCurrentLanguage) {
-                            $rootScope.refreshLocalization(ready);
+                    var ready = function() {
+                        if ($rootScope.postLoginState) {
+                            $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
+                            delete $rootScope.postLoginState;
                         }
                         else {
-                            ready();
+                            $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
                         }
-                    });
-                }
-                else {
-                    console.error("Unknown response");
-                    console.error(result);
-                    $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
-                }
-            }).error(function(response, httpCode, headers) {
-                $scope.loginProcess = false;
-                $rootScope.operationFailed(httpCode, 'log_in_failed', $scope.modalAlert, headers());
-            });
+                    };
+
+                    if ($rootScope.currentUser.language != $rootScope.localizationCurrentLanguage) {
+                        $rootScope.refreshLocalization(ready);
+                    }
+                    else {
+                        ready();
+                    }
+                });
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
+            }
+        }).error(function(response, httpCode, headers) {
+            $scope.loginProcess = false;
+            $rootScope.operationFailed(httpCode, 'log_in_failed', $scope.modalAlert, headers());
+        });
     };
 
     $scope.modalAlert = function(type, message) {
@@ -253,26 +252,22 @@ angular.module('Mealbookers.controllers', [])
     $scope.processForm = function() {
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot', $scope.forgot)
-            .success(function(result) {
-                $scope.sendProcess = false;
-                if (result && result.status == 'ok') {
-                    $log.info("Password request sent");
-                    $("#forgot-password-modal").modal('hide');
-                    $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
-                }
-                else if (result.status == 'invalid_email') {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('forgot_password_invalid_email'));
-                }
-                else {
-                    console.error("Unknown response");
-                    console.error(result);
-                    $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
-                }
-            }).error(function(response, httpCode, headers) {
-                $scope.sendProcess = false;
-                $rootScope.operationFailed(httpCode, 'forgot_password_failed', $scope.modalAlert, headers());
-            });
+        $http.post('api/1.0/user/login/forgot', $scope.forgot).success(function(result) {
+            $scope.sendProcess = false;
+            if (result && result.status == 'ok') {
+                $log.info("Password request sent");
+                $("#forgot-password-modal").modal('hide');
+                $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
+            }
+        }).error(function(response, httpCode, headers) {
+            $scope.sendProcess = false;
+            $rootScope.operationFailed(httpCode, 'forgot_password_failed', $scope.modalAlert, headers());
+        });
     };
 
     $scope.modalAlert = function(type, message) {

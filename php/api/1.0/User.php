@@ -411,36 +411,29 @@ class UserAPI
 
         $data = Application::inst()->getPostData();
 
-        try {
-            if (!isset($data['email'])) {
-                Application::inst()->exitWithHttpCode(400, 'email_missing');
-            }
-
-            if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($data['email'])))
-                throw new ApiException('invalid_email');
-
-            if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-                email_address = '" . DB::inst()->quote($data["email"]) . "'"))
-            {
-                Application::inst()->exitWithHttpCode(404, 'email_not_found');
-            }
-
-            $user = new User();
-            $user->fetch($user_id);
-
-            if (!$user->sendNewPasswordEmail()) {
-                Application::inst()->exitWithHttpCode(500, "Couldn't send the new password email");
-            }
-
-            print json_encode(array(
-                'status' => 'ok',
-            ));
+        if (!isset($data['email'])) {
+            throw new HttpException(400, 'email_address_missing');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage(),
-            ));
+
+        if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($data['email'])))
+            throw new HttpException(409, 'invalid_email');
+
+        if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
+            email_address = '" . DB::inst()->quote($data["email"]) . "'"))
+        {
+            throw new HttpException(404, 'email_not_found');
         }
+
+        $user = new User();
+        $user->fetch($user_id);
+
+        if (!$user->sendNewPasswordEmail()) {
+            throw new HttpException(500, 'link_sending_failed');
+        }
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function getUserForForgotPassword($token)
