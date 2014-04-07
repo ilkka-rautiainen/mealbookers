@@ -1130,12 +1130,8 @@ angular.module('Mealbookers.controllers', [])
         $http.post(address, {
             name: $scope.newGroup.name
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.newGroup.saving = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
-            }
-            else if (result.status == 'ok' || result.status == 'ok_but_notification_failed') {
-                console.log("Created new group");
+            if (result && (result.status == 'ok' || result.status == 'ok_but_notification_failed')) {
+                $log.log("Created new group");
                 $scope.refreshUser(function () {
                     $scope.newGroup.open = false;
                     $scope.newGroup.saving = false;
@@ -1145,13 +1141,9 @@ angular.module('Mealbookers.controllers', [])
                     }
                 });
             }
-            else if (result.status == 'invalid_name') {
-                $scope.newGroup.saving = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed_invalid_name'));
-            }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.newGroup.saving = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
             }

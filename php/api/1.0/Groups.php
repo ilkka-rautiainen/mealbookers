@@ -35,11 +35,11 @@ class GroupAPI
             $data = Application::inst()->getPostData();
 
             if (!isset($data['name'])) {
-                Application::inst()->exitWithHttpCode(400, "name not present in request");
+                throw new HttpException(400, 'name_missing');
             }
 
             if (!mb_strlen(trim($data['name']))) {
-                throw new ApiException('invalid_name');
+                throw new HttpException(409, 'invalid_name');
             }
 
             DB::inst()->query("INSERT INTO groups (name, creator_id)
