@@ -317,7 +317,7 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.resetToMenu = function() {
-        $state.go('Navigation.Menu');
+        $state.go("Navigation.Menu", {day: 'today'});
         $rootScope.alert('alert-warning', $filter('i18n')('logged_out_invalid_user_info'));
     };
 

@@ -9,15 +9,15 @@ angular.module('Mealbookers.controllers', [])
     if ($stateParams.token) {
         $http.post('api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
             }
             if (result.status == 'deleted') {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-warning', $filter('i18n')('suggestion_been_deleted'));
             }
             else if (result.status == 'not_found') {
-                $state.go("Navigation.Menu", {day: $rootScope.today});
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-warning', $filter('i18n')('suggestion_accepting_token_not_found'));
             }
             else if (result.status == 'too_old') {
@@ -26,7 +26,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'wrong_user') {
                 $rootScope.logOut(false);
-                $state.go("Navigation.Menu.Login", {day: $rootScope.today});
+                $state.go("Navigation.Menu.Login", {day: 'today'});
                 $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'));
                 $rootScope.postLoginState = {
                     name: "Navigation.AcceptSuggestion", 
@@ -36,7 +36,7 @@ angular.module('Mealbookers.controllers', [])
                 };
             }
             else if (result.status == 'not_logged_in') {
-                $state.go("Navigation.Menu.Login", {day: $rootScope.today});
+                $state.go("Navigation.Menu.Login", {day: 'today'});
                 $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'));
                 $rootScope.postLoginState = {
                     name: "Navigation.AcceptSuggestion", 
@@ -54,13 +54,13 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
             }
         });
     }
     else {
-        $state.go("Navigation.Menu");
+        $state.go("Navigation.Menu", {day: 'today'});
         $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
     }
 }])
@@ -70,11 +70,11 @@ angular.module('Mealbookers.controllers', [])
     if ($stateParams.token) {
         $http.post('api/1.0/user/email/verify/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
             }
             else if (result.status == 'not_found') {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-warning', $filter('i18n')('register_email_verify_token_not_found'));
             }
             else if (result && result.status == 'ok') {
@@ -84,13 +84,13 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                $state.go("Navigation.Menu");
+                $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
             }
         });
     }
     else {
-        $state.go("Navigation.Menu");
+        $state.go("Navigation.Menu", {day: 'today'});
         $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
     }
 }])
@@ -473,7 +473,7 @@ angular.module('Mealbookers.controllers', [])
         $rootScope.weekDay = parseInt($stateParams.day);
     }
     if (!$rootScope.weekDay || $rootScope.weekDay < $rootScope.today || $rootScope.weekDay > 7) {
-        $state.go("Navigation.Menu", {day: $rootScope.today});
+        $state.go("Navigation.Menu", {day: 'today'});
     }
 
     $scope.restaurantRows = [];
