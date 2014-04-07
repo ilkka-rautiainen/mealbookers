@@ -618,3 +618,7 @@ function RefreshDataException(message) {
     this.message = message;
     this.type = 'RefreshDataException';
 }
+
+$(window).bind("load", function() {
+    window.loaded = true;
+});
