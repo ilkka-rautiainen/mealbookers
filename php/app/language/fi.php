@@ -185,7 +185,25 @@ $GLOBALS['language']['fi'] = array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
         'mailer_body_suggestion' => 
-            'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
+            '<style type="text/css"><!--
+span.attribute {
+    font-size: 10px;
+    text-transform: uppercase;
+    overflow: hidden;
+    color: #c0c0c0;
+    padding: 2px 0px;
+    font-style: italic;
+}
+span.attribute-group {
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+}
+span.line-break {
+    display: block;
+    height: 0;
+    width: 0;
+} --></style>Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
             . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
             . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">tästä</a>.'
