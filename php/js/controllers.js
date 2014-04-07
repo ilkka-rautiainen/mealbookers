@@ -317,29 +317,22 @@ angular.module('Mealbookers.controllers', [])
             return;
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password)
-            .success(function(result) {
-                $scope.sendProcess = false;
-                if (result && result.status == 'ok') {
-                    $log.info("Password request sent");
-                    $("#create-new-password-modal").modal('hide');
-                    $rootScope.alert('alert-success', $filter('i18n')('new_password_succeeded'));
-                }
-                else if (result.status == 'passwords_dont_match') {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('new_password_passwords_dont_match'));
-                }
-                else if (result.status == 'weak_password') {
-                    $scope.modalAlert('alert-warning', $filter('i18n')('password_criteria'));
-                }
-                else {
-                    console.error("Unknown response");
-                    console.error(result);
-                    $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
-                }
-            }).error(function(response, httpCode, headers) {
-                $scope.sendProcess = false;
-                $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert, headers());
-            });
+        $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password).success(function(result) {
+            $scope.sendProcess = false;
+            if (result && result.status == 'ok') {
+                $log.info("Password request sent");
+                $("#create-new-password-modal").modal('hide');
+                $rootScope.alert('alert-success', $filter('i18n')('new_password_succeeded'));
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
+                $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
+            }
+        }).error(function(response, httpCode, headers) {
+            $scope.sendProcess = false;
+            $rootScope.operationFailed(httpCode, 'new_password_failed', $scope.modalAlert, headers());
+        });
     };
 
     $scope.validateForm = function() {

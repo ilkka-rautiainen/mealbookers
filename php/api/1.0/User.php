@@ -459,52 +459,49 @@ class UserAPI
         Logger::debug(__METHOD__ . " POST /user/login/forgot/new/$token called");
 
         if (!$token) {
-            Application::inst()->exitWithHttpCode(400, 'token_missing');
+            throw new HttpException(400, 'token_missing');
         }
 
+        // Get data
         $data = Application::inst()->getPostData();
 
         if (!isset($data['new'])
             || !isset($data['repeat'])) {
-            Application::inst()->exitWithHttpCode(400, 'passwords_missing');
+            throw new HttpException(400, 'passwords_missing');
         }
 
+        // Retrieve user id from token
         try {
             $user_id = Application::inst()->getTokenId($token, false);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, 'token_not_found');
+            throw new HttpException(404, 'token_not_found');
         }
 
+        // Retrieve user
         $user = new User();
         try {
             $user->fetch($user_id);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, 'user_not_found');
+            throw new HttpException(404, 'user_not_found');
         }
 
-        try {
-
-            if ($data['new'] != $data['repeat']) {
-                throw new ApiException('passwords_dont_match');
-            }
-            else if (!Application::inst()->isStrongPassword($data['new'], $user)) {
-                throw new ApiException('weak_password');
-            }
-
-            DB::inst()->query("UPDATE users SET passhash = '" . Application::inst()->hash($data['new']). "'
-                WHERE id = $user_id");
-            Application::inst()->deleteToken($token);
-            print json_encode(array(
-                'status' => 'ok',
-            ));
+        // Check passwords
+        if ($data['new'] != $data['repeat']) {
+            throw new HttpException(409, 'passwords_dont_match');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage(),
-            ));
+        else if (!Application::inst()->isStrongPassword($data['new'], $user)) {
+            throw new HttpException(409, 'weak_password');
         }
+
+        // Update the password
+        DB::inst()->query("UPDATE users SET passhash = '" . Application::inst()->hash($data['new']). "'
+            WHERE id = $user_id");
+        Application::inst()->deleteToken($token);
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function registerUser()
