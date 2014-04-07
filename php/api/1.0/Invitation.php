@@ -12,7 +12,7 @@ class InvitationAPI
             WHERE code = '" . DB::inst()->quote($code) . "'");
 
         if (!DB::inst()->getRowCount())
-            Application::inst()->exitWithHttpCode(404, "No invitation found with the code");
+            throw new HttpException(404, 'invitation_not_found');
 
         $invitation = DB::inst()->fetchAssoc($result);
 

@@ -3,7 +3,7 @@
 class Application
 {
     private static $instance = null;
-    
+
     /**
      * Singleton pattern: private constructor
      */
@@ -11,7 +11,7 @@ class Application
     {
 
     }
-    
+
     /**
      * Singleton pattern: instance
      */
@@ -19,7 +19,7 @@ class Application
     {
         if (is_null(self::$instance))
             self::$instance = new Application();
-        
+
         return self::$instance;
     }
 
@@ -89,11 +89,11 @@ class Application
         }
     }
 
-    public function exitWithHttpCode($number, $text = false)
+    public function exitWithHttpCode($number, $text = null, $level = null, $skip_general_code_error = false)
     {
         Logger::note(__METHOD__ . " exiting with http $number: $text");
 
-        if ($text === false) {
+        if (is_null($text)) {
             if ($number == 404)
                 $text = "Not Found";
             else if ($number == 400)
@@ -112,12 +112,24 @@ class Application
             header("Status: $number $text");
         else
             header("HTTP/1.1 $number $text");
+        header("Fail-reason: $text");
+
+        if ($level) {
+            if (!in_array($level, array('danger', 'warning', 'info', 'success')))
+                throw new Exception("Invalid http error level: $level");
+
+            header("Fail-level: $level");
+        }
+
+        if ($skip_general_code_error)
+            header("Skip-general-code-error: true");
+
         print "<h1>$number $text</h1>";
 
         if (DB::inst()->isTransactionActive()) {
             DB::inst()->rollbackTransaction();
         }
-        
+
         die;
     }
 
@@ -208,5 +220,10 @@ class Application
             $code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
         } while (DB::inst()->getOne("SELECT COUNT(id) FROM invitations WHERE code = '$code'") > 0);
         return $code;
+    }
+
+    public function getEmailValidationRegex()
+    {
+        return "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/";
     }
 }

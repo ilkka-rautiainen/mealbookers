@@ -7,4 +7,18 @@ require_once 'Groups.php';
 require_once 'User.php';
 require_once 'Invitation.php';
 
-Flight::start();
+try {
+    Flight::start();
+}
+catch (HttpException $e) {
+    if (DB::inst()->isTransactionActive()) {
+        DB::inst()->rollbackTransaction();
+    }
+
+    Application::inst()->exitWithHttpCode(
+        $e->getCode(),
+        $e->getMessage(),
+        $e->getLevel(),
+        $e->getSkipGeneralCodeError()
+    );
+}
