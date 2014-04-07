@@ -33,9 +33,14 @@ angular.module('Mealbookers.directives', [])
                     }
                 }, 0);
             };
-            $(window).bind("load", function() {
+            if (window.loaded) {
                 resize();
-            });
+            }
+            else {
+                $(window).bind("load", function() {
+                    resize();
+                });
+            }
             $scope.$on("restaurantsResize", resize);
         }
     };
