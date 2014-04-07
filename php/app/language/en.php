@@ -224,7 +224,25 @@ $GLOBALS['language']['en'] = array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
         'mailer_body_suggestion' =>
-            'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
+            '<style type="text/css"><!--
+span.attribute {
+    font-size: 10px;
+    text-transform: uppercase;
+    overflow: hidden;
+    color: #c0c0c0;
+    padding: 2px 0px;
+    font-style: italic;
+}
+span.attribute-group {
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+}
+span.line-break {
+    display: block;
+    height: 0;
+    width: 0;
+} --></style>Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
             . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">here</a>.'
