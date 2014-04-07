@@ -21,7 +21,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                throw new HttpException(404, 'no_user_found');
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {
@@ -81,7 +81,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                throw new HttpException(404, 'no_user_found');
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {
@@ -99,37 +99,30 @@ class GroupAPI
             $group->fetch($groupId);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "No group found with the given id");
+            throw new HttpException(404, 'group_not_found');
         }
 
         if (!$user->isMemberOfGroup($group)) {
-            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+            throw new HttpException(403, 'not_member_of_group', 'danger');
         }
 
-        try {
-            // Edit group
-            if (!isset($data['name'])) {
-                Application::inst()->exitWithHttpCode(400, "name not present in request");
-            }
-                
-            $name = $data['name'];
-            if (!strlen($name)) {
-                throw new ApiException('invalid_name');
-            }
-
-            DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
-                WHERE id = $groupId");
-            EventLog::inst()->add('group', $groupId);
-
-            print json_encode(array(
-                'status' => 'ok',
-            ));
+        // Edit group
+        if (!isset($data['name'])) {
+            throw new HttpException(400, 'name_missing');
         }
-        catch (ApiException $e) {
-            print json_encode(array(
-                'status' => $e->getMessage()
-            ));
+
+        $name = $data['name'];
+        if (!strlen($name)) {
+            throw new HttpException(409, 'invalid_name');
         }
+
+        DB::inst()->query("UPDATE groups SET name = '" . DB::inst()->quote($name) . "'
+            WHERE id = $groupId");
+        EventLog::inst()->add('group', $groupId);
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function inviteMemberToGroup($userId, $groupId)
@@ -145,7 +138,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                throw new HttpException(404, 'no_user_found');
+                throw new HttpException(404, 'user_not_found');
             }
         }
         else {
@@ -228,7 +221,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                throw new HttpException(404, 'no_user_found');
+                throw new HttpException(404, 'user_not_found');
             }
             Logger::info(__METHOD__ . " DELETE /user/$userId/groups/$groupId/members/$memberId called by user {$user->id}");
         }
@@ -302,7 +295,7 @@ class GroupAPI
                 $user->fetch($userId);
             }
             catch (NotFoundException $e) {
-                throw new HttpException(404, 'no_user_found');
+                throw new HttpException(404, 'user_not_found');
             }
             Logger::info(__METHOD__ . " POST /user/$userId/groups/join called by user {$current_user->id}");
         }

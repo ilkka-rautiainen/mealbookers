@@ -1025,15 +1025,7 @@ angular.module('Mealbookers.controllers', [])
         $http.post(address, {
             name: group.name
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                group.editNameSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'));
-            }
-            else if (result.status == 'invalid_name') {
-                group.editNameSaveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('group_edit_failed_invalid_name'));
-            }
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 console.log("Group name saved");
                 $scope.refreshUser();
             }
