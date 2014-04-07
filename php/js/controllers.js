@@ -1110,7 +1110,7 @@ angular.module('Mealbookers.controllers', [])
             address = '/api/1.0/user/' + $scope.user.id + '/groups';
 
         $http.post(address, {
-            name: $scope.newGroup.name
+            name: $scope.newGroup.name || ''
         }).success(function(result) {
             if (result && (result.status == 'ok' || result.status == 'ok_but_notification_failed')) {
                 $log.log("Created new group");
@@ -1129,9 +1129,9 @@ angular.module('Mealbookers.controllers', [])
                 $scope.newGroup.saving = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
             }
-        }).error(function(response) {
+        }).error(function(response, httpCode, headers) {
             $scope.newGroup.saving = false;
-            $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+            $rootScope.operationFailed(httpCode, 'group_add_group_failed', $scope.modalAlert, headers());
         });
     };
 
