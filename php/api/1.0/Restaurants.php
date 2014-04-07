@@ -57,98 +57,85 @@ class RestaurantsAPI
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions called");
         Application::inst()->checkAuthentication();
 
-        try {
-            DB::inst()->startTransaction();
-            $post_suggestion = Application::inst()->getPostData();
+        DB::inst()->startTransaction();
+        $post_suggestion = Application::inst()->getPostData();
 
-            $restaurantId = (int)$restaurantId;
-            if (!DB::inst()->getOne("SELECT id FROM restaurants WHERE id = $restaurantId LIMIT 1"))
-                Application::inst()->exitWithHttpCode(404, "Restaurant with id $restaurantId not found");
+        $restaurantId = (int)$restaurantId;
+        if (!DB::inst()->getOne("SELECT id FROM restaurants WHERE id = $restaurantId LIMIT 1"))
+            throw new HttpException(404, 'restaurant_not_found', 'danger');
 
-            $day = (int)$post_suggestion['day'];
+        $day = (int)$post_suggestion['day'];
 
-            // Validate time
-            $time = $post_suggestion['time'];
-            if (!preg_match("/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/", $time))
-                throw new ApiException('invalid_time');
+        // Validate time
+        $time = $post_suggestion['time'];
+        if (!preg_match("/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/", $time))
+            throw new HttpException(409, 'invalid_time');
 
-            // Insert the suggestion
-            $dayStamp = strtotime("last monday", strtotime("tomorrow")) + $day * 86400;
-            $datetime = date("Y-m-d", $dayStamp) . " $time:00";
-            if (strtotime($datetime) + Conf::inst()->get('limits.suggestion_create_in_past_time')
-                + Conf::inst()->get('limits.backend_threshold') < time())
-            {
-                throw new ApiException('too_early');
-            }
+        // Insert the suggestion
+        $dayStamp = strtotime("last monday", strtotime("tomorrow")) + $day * 86400;
+        $datetime = date("Y-m-d", $dayStamp) . " $time:00";
+        if (strtotime($datetime) + Conf::inst()->get('limits.suggestion_create_in_past_time')
+            + Conf::inst()->get('limits.backend_threshold') < time())
+        {
+            throw new HttpException(409, 'too_early');
+        }
 
-            DB::inst()->query("INSERT INTO suggestions (
-                creator_id,
-                datetime,
-                restaurant_id
-            ) VALUES (
-                1,
-                '$datetime',
-                $restaurantId
-            )");
-            $suggestion_id = DB::inst()->getInsertId();
-            
-            $suggestion = new Suggestion();
-            $suggestion->fetch($suggestion_id);
+        DB::inst()->query("INSERT INTO suggestions (
+            creator_id,
+            datetime,
+            restaurant_id
+        ) VALUES (
+            1,
+            '$datetime',
+            $restaurantId
+        )");
+        $suggestion_id = DB::inst()->getInsertId();
 
-            // Make the creator a member in the suggestion
-            $suggestion->insertMember($current_user, true);
+        $suggestion = new Suggestion();
+        $suggestion->fetch($suggestion_id);
 
-            // Insert the invited members to the suggestion
-            $failed_to_send_invitation_email = array();
-            if (is_array($post_suggestion['members'])) {
-                $members = array_keys($post_suggestion['members']);
-                foreach ($members as $member_id) {
-                    $member_id = (int)$member_id;
-                    if (!$member_id) {
-                        Application::inst()->exitWithHttpCode(400, "Suggestion field 'members' contained invalid member ids");
-                    }
-                    else if (!DB::inst()->getOne("SELECT COUNT(user_id) FROM group_memberships WHERE group_id IN (
-                            SELECT group_id FROM group_memberships WHERE user_id = {$current_user->id}
-                        ) AND user_id = $member_id LIMIT 1"))
-                    {
-                        Application::inst()->exitWithHttpCode(400, "Can't add user $member_id to suggestion: he's not member in your groups");
-                    }
-                    $member = new User();
-                    $member->fetch($member_id);
-                    $hash = $suggestion->insertMember($member, false);
+        // Make the creator a member in the suggestion
+        $suggestion->insertMember($current_user, true);
 
-                    // Send suggestion email
-                    if (!$member->sendSuggestion($suggestion, $hash)) {
-                        $failed_to_send_invitation_email[] = $member->getName();
-                    }
+        // Insert the invited members to the suggestion
+        $failed_to_send_invitation_email = array();
+        if (is_array($post_suggestion['members'])) {
+            $members = array_keys($post_suggestion['members']);
+            foreach ($members as $member_id) {
+                $member_id = (int)$member_id;
+                if (!$member_id) {
+                    Application::inst()->exitWithHttpCode(400, "Suggestion field 'members' contained invalid member ids");
+                }
+                else if (!DB::inst()->getOne("SELECT COUNT(user_id) FROM group_memberships WHERE group_id IN (
+                        SELECT group_id FROM group_memberships WHERE user_id = {$current_user->id}
+                    ) AND user_id = $member_id LIMIT 1"))
+                {
+                    Application::inst()->exitWithHttpCode(400, "Can't add user $member_id to suggestion: he's not member in your groups");
+                }
+                $member = new User();
+                $member->fetch($member_id);
+                $hash = $suggestion->insertMember($member, false);
+
+                // Send suggestion email
+                if (!$member->sendSuggestion($suggestion, $hash)) {
+                    $failed_to_send_invitation_email[] = $member->getName();
                 }
             }
-
-            EventLog::inst()->add('suggestion', $suggestion_id);
-
-            if (count($failed_to_send_invitation_email)) {
-                $response = array(
-                    'status' => 'ok',
-                    'failed_to_send_invitation_email' => $failed_to_send_invitation_email,
-                    'id' => $suggestion->id,
-                );
-            }
-            else {
-                $response = array(
-                    'status' => 'ok',
-                    'id' => $suggestion->id,
-                );
-            }
-            DB::inst()->commitTransaction();
-
-            print json_encode($response);
         }
-        catch (ApiException $e) {
-            DB::inst()->rollbackTransaction();
-            print json_encode(array(
-                'status' => $e->getMessage()
-            ));
+
+        EventLog::inst()->add('suggestion', $suggestion_id);
+
+        $response = array(
+            'status' => 'ok',
+            'id' => $suggestion->id,
+        );
+        if (count($failed_to_send_invitation_email)) {
+            $response['failed_to_send_invitation_email'] = $failed_to_send_invitation_email;
         }
+
+        DB::inst()->commitTransaction();
+
+        print json_encode($response);
     }
 
     /**

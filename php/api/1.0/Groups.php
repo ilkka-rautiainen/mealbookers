@@ -271,21 +271,18 @@ class GroupAPI
                 $last_member = true;
             }
 
+            $response = array(
+                'status' => 'removed_himself',
+                'last_member' => $last_member,
+            );
+
             // Admin deleted him
             if ($user->id != $current_user->id) {
-                $notificationSucceeded = $user->notifyRemovedFromGroup($group, $user);
-                print json_encode(array(
-                    'status' => 'removed_himself',
-                    'last_member' => $last_member,
-                    'notification_failed' => !$notificationSucceeded,
-                ));
+                if (!$user->notifyRemovedFromGroup($group, $user))
+                    $response['notification_failed'] = true;
             }
-            else {
-                print json_encode(array(
-                    'status' => 'removed_himself',
-                    'last_member' => $last_member,
-                ));
-            }
+
+            print json_encode($response);
         }
         // He deletes someone other
         else {

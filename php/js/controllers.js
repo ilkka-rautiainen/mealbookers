@@ -1315,20 +1315,7 @@ angular.module('Mealbookers.controllers', [])
             time: $scope.suggestTime,
             members: members
         }).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'));
-            }
-            else if (result.status == 'invalid_time') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_invalid_time'));
-            }
-            else if (result.status == 'too_early') {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_too_early'));
-            }
-            // Success
-            else if (result && result.status == 'ok') {
+            if (result && result.status == 'ok') {
                 $rootScope.refreshCurrentUser(function() {
                     $scope.saveProcess = false;
                     $("#suggestionModal").modal('hide');
@@ -1346,11 +1333,11 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'))
+                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_failed'));
             }
-        }).error(function(response, httpCode) {
-                $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_error'))
+        }).error(function(response, httpCode, headers) {
+            $scope.saveProcess = false;
+            $rootScope.operationFailed(httpCode, 'suggestion_save_failed', $scope.modalAlert, header());
         });
     };
 
