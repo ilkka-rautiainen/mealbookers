@@ -441,14 +441,14 @@ class UserAPI
         Logger::debug(__METHOD__ . " GET /user/login/forgot/$token called");
 
         if (!$token) {
-            Application::inst()->exitWithHttpCode(400, 'token_missing');
+            throw new HttpException(400, 'token_missing');
         }
 
         try {
             $user_id = Application::inst()->getTokenId($token, false);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, 'token_not_found');
+            throw new HttpException(404, 'token_not_found');
         }
 
         UserApi::getUser($user_id, true);
