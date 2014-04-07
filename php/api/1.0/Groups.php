@@ -231,31 +231,37 @@ class GroupAPI
             $user = &$current_user;
             Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/members/$memberId called by user {$user->id}");
         }
-        
+
         $groupId = (int)$groupId;
         $memberId = (int)$memberId;
 
         try {
             $group = new Group();
             $group->fetch($groupId);
+        }
+        catch (NotFoundException $e) {
+            throw new HttpException(404, 'group_not_found');
+        }
+
+        try {
             $deleted_member = new User();
             $deleted_member->fetch($memberId);
         }
         catch (NotFoundException $e) {
-            Application::inst()->exitWithHttpCode(404, "No group/member found with the given id");
+            throw new HttpException(404, 'group_member_not_found');
         }
 
         if (!$user->isMemberOfGroup($group)) {
-            Application::inst()->exitWithHttpCode(403, "You are not a member in that group");
+            throw new HttpException(403, 'not_member_of_group', 'danger');
         }
 
         if ($user->id != $deleted_member->id && !$deleted_member->isMemberOfGroup($group)) {
-            Application::inst()->exitWithHttpCode(400, "Member you are deleting is not a member in the group");
+            throw new HttpException(400, 'deleted_user_not_member_of_group', 'danger');
         }
 
         $deleted_member->leaveGroup($group);
 
-        // User deletes himself
+        // The active user himself is deleted
         if ($deleted_member->id == $user->id) {
 
             $last_member = false;
@@ -266,19 +272,27 @@ class GroupAPI
             }
 
             // Admin deleted him
-            if ($user->id != $current_user->id)
-                $user->notifyRemovedFromGroup($group, $user);
-
-            print json_encode(array(
-                'status' => 'removed_himself',
-                'last_member' => $last_member,
-            ));
+            if ($user->id != $current_user->id) {
+                $notificationSucceeded = $user->notifyRemovedFromGroup($group, $user);
+                print json_encode(array(
+                    'status' => 'removed_himself',
+                    'last_member' => $last_member,
+                    'notification_failed' => !$notificationSucceeded,
+                ));
+            }
+            else {
+                print json_encode(array(
+                    'status' => 'removed_himself',
+                    'last_member' => $last_member,
+                ));
+            }
         }
         // He deletes someone other
         else {
-            $deleted_member->notifyRemovedFromGroup($group, $user);
+            $notificationSucceeded = $deleted_member->notifyRemovedFromGroup($group, $user);
             print json_encode(array(
                 'status' => 'ok',
+                'notification_failed' => !$notificationSucceeded,
             ));
         }
     }

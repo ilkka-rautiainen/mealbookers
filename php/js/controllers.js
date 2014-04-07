@@ -991,18 +991,18 @@ angular.module('Mealbookers.controllers', [])
                     else {
                         $scope.modalAlert('alert-warning', $filter('i18n')('group_add_member_success_joined_existing_but_notification_error'));
                     }
-                    console.log("Joined existing member to group");
+                    $log.log("Joined existing member to group");
                 });
             }
             else if (result && result.status == 'invited_new') {
                 $scope.refreshUser(function() {
                     $scope.modalAlert('alert-success', $filter('i18n')('group_add_member_success_invited_new'));
-                    console.log("Invited new member to group");
+                    $log.log("Invited new member to group");
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 group.addMemberSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_invite_member_failed'));
             }
@@ -1026,12 +1026,12 @@ angular.module('Mealbookers.controllers', [])
             name: group.name
         }).success(function(result) {
             if (result && result.status == 'ok') {
-                console.log("Group name saved");
+                $log.log("Group name saved");
                 $scope.refreshUser();
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 group.editNameSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
             }
@@ -1052,13 +1052,8 @@ angular.module('Mealbookers.controllers', [])
             address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
 
         $http.delete(address).success(function(result) {
-            if (typeof result != 'object' || result.status == undefined) {
-                member.deleteSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
-                return;
-            }
-            else if (result && result.status == 'ok') {
-                console.log("Removed member from group");
+            if (result && result.status == 'ok') {
+                $log.log("Removed member from group");
                 $scope.refreshUser(function() {
                     for (var i = 0; i < group.members.length; i++) {
                         if (group.members[i].id == member.id) {
@@ -1067,8 +1062,11 @@ angular.module('Mealbookers.controllers', [])
                         }
                     }
                 });
+                if (result.notification_failed)
+                    $scope.modalAlert('alert-warning', $filter('i18n')('group_member_deleted_notification_failed'));
             }
-            else if (result.status == 'removed_himself') {
+            // User removed himself or admin removed the active user itself from the group
+            else if (result && result.status == 'removed_himself') {
                 for (var i = 0; i < $rootScope.currentUser.groups.length; i++) {
                     if ($rootScope.currentUser.groups[i].id == group.id) {
                         $rootScope.currentUser.groups.splice(i, 1);
@@ -1076,18 +1074,24 @@ angular.module('Mealbookers.controllers', [])
                     }
                 }
                 if (result.last_member) {
-                    console.log("Removed yourself from group + whole group removed");
-                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed' + (($scope.isCurrentUser) ? '':'_admin')));
+                    $log.log("Removed yourself from group + whole group removed");
+                    if (result.notification_failed)
+                        $scope.modalAlert('alert-warning', $filter('i18n')('group_member_deleted_yourself_group_removed_notification_failed_admin'));
+                    else
+                        $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself_group_removed' + (($scope.isCurrentUser) ? '':'_admin')));
                 }
                 else {
-                    console.log("Removed yourself from group");
-                    $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself' + (($scope.isCurrentUser) ? '':'_admin')));
+                    $log.log("Removed yourself from group");
+                    if (result.notification_failed)
+                        $scope.modalAlert('alert-warning', $filter('i18n')('group_member_deleted_yourself_notification_failed_admin'));
+                    else
+                        $scope.modalAlert('alert-success', $filter('i18n')('group_member_deleted_yourself' + (($scope.isCurrentUser) ? '':'_admin')));
                 }
                 $scope.refreshUser();
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 member.deleteSaveProcess = false;
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
             }
