@@ -409,25 +409,24 @@ angular.module('Mealbookers.controllers', [])
         $scope.registerSaveProcess = true;
         $scope.modalAlert('', '');
 
-        $http.post('api/1.0/user/register', $scope.register)
-            .success(function(result) {
-                if (result && result.status == 'ok') {
-                    $log.info("Registration done");
-                    $rootScope.refreshCurrentUser(function() {
-                        $("#register-modal").modal('hide');
-                        $rootScope.alert('alert-success', $filter('i18n')('register_succeeded'));
-                    });
-                }
-                else {
-                    console.error("Unknown response");
-                    console.error(result);
-                    $scope.registerSaveProcess = false;
-                    $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
-                }
-            }).error(function(response, httpCode, headers) {
+        $http.post('api/1.0/user/register', $scope.register).success(function(result) {
+            if (result && result.status == 'ok') {
+                $log.info("Registration done");
+                $rootScope.refreshCurrentUser(function() {
+                    $("#register-modal").modal('hide');
+                    $rootScope.alert('alert-success', $filter('i18n')('register_succeeded'));
+                });
+            }
+            else {
+                console.error("Unknown response");
+                console.error(result);
                 $scope.registerSaveProcess = false;
-                $rootScope.operationFailed(httpCode, 'register_failed', $scope.modalAlert, headers());
-            });
+                $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
+            }
+        }).error(function(response, httpCode, headers) {
+            $scope.registerSaveProcess = false;
+            $rootScope.operationFailed(httpCode, 'register_failed', $scope.modalAlert, headers());
+        });
     };
 
     $scope.validateForm = function() {
@@ -517,11 +516,8 @@ angular.module('Mealbookers.controllers', [])
     $scope.getOpeningHoursTooltip = function(restaurant) {
         var openingHours = [];
         for (var i in restaurant.openingHours[$scope.weekDay].all) {
-            openingHours.push(
-                '<div class="tooltip-row">'
-                + $filter('formatOpeningHour')(restaurant.openingHours[$scope.weekDay].all[i])
-                + '</div>'
-            );
+            openingHours.push('<div class="tooltip-row">'
+                + $filter('formatOpeningHour')(restaurant.openingHours[$scope.weekDay].all[i]) + '</div>');
         }
         return openingHours.join("");
     };
@@ -560,12 +556,10 @@ angular.module('Mealbookers.controllers', [])
                     }
                     // Accepted or canceled (not last one out)
                     else {
-                        if (accept) {
+                        if (accept)
                             $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
-                        }
-                        else {
+                        else
                             $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
-                        }
                     }
                 });
             }
@@ -836,7 +830,7 @@ angular.module('Mealbookers.controllers', [])
                     $.removeCookie('remember');
                     $rootScope.refreshCurrentUser(function() {
                         $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
-                        console.log("Account removed");
+                        $log.log("Account removed");
                     });
                 }
             }
@@ -869,8 +863,8 @@ angular.module('Mealbookers.controllers', [])
                     done();
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_user_fetch_failed'));
             }
         }).error(function(response, httpCode, headers) {

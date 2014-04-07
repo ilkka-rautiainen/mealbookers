@@ -30,7 +30,10 @@ class UserAPI
         $group = str_replace("*", "%", DB::inst()->quote($group));
 
         if ($user && !$group) {
-            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name SEPARATOR ', ') groups FROM users
+            $result = DB::inst()->query("SELECT
+                    users.*,
+                    GROUP_CONCAT(groups.name SEPARATOR ', ') groups
+                FROM users
                 LEFT JOIN group_memberships ON users.id = group_memberships.user_id
                 LEFT JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.email_address LIKE '$user%' OR
@@ -42,7 +45,10 @@ class UserAPI
             ");
         }
         else if ($group && !$user) {
-            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups FROM users
+            $result = DB::inst()->query("SELECT
+                    users.*,
+                    GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups
+                FROM users
                 INNER JOIN group_memberships ON group_memberships.user_id = users.id
                 INNER JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
@@ -53,7 +59,10 @@ class UserAPI
             ");
         }
         else {
-            $result = DB::inst()->query("SELECT users.*, GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups FROM users
+            $result = DB::inst()->query("SELECT
+                    users.*,
+                    GROUP_CONCAT(groups.name ORDER BY group_memberships.joined ASC SEPARATOR ', ') groups
+                FROM users
                 INNER JOIN group_memberships ON group_memberships.user_id = users.id
                 INNER JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
