@@ -10,19 +10,19 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+                $rootScope.alert('alert-danger', 'suggestion_accept_failed');
             }
             if (result.status == 'deleted') {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-warning', $filter('i18n')('suggestion_been_deleted'));
+                $rootScope.alert('alert-warning', 'suggestion_been_deleted');
             }
             else if (result.status == 'not_found') {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-warning', $filter('i18n')('suggestion_accepting_token_not_found'));
+                $rootScope.alert('alert-warning', 'suggestion_accepting_token_not_found');
             }
             else if (result.status == 'too_old') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
-                $rootScope.alert('alert-info', $filter('i18n')('suggestion_accept_gone'));
+                $rootScope.alert('alert-info', 'suggestion_accept_gone');
             }
             else if (result.status == 'wrong_user') {
                 $rootScope.logOut(false);
@@ -55,13 +55,13 @@ angular.module('Mealbookers.controllers', [])
             }
             else {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+                $rootScope.alert('alert-danger', 'suggestion_accept_failed');
             }
         });
     }
     else {
         $state.go("Navigation.Menu", {day: 'today'});
-        $rootScope.alert('alert-danger', $filter('i18n')('suggestion_accept_failed'));
+        $rootScope.alert('alert-danger', 'suggestion_accept_failed');
     }
 }])
 
@@ -71,27 +71,27 @@ angular.module('Mealbookers.controllers', [])
         $http.post('api/1.0/user/email/verify/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
+                $rootScope.alert('alert-danger', 'register_email_verify_failed');
             }
             else if (result.status == 'not_found') {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-warning', $filter('i18n')('register_email_verify_token_not_found'));
+                $rootScope.alert('alert-warning', 'register_email_verify_token_not_found');
             }
             else if (result && result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.refreshCurrentUser(function() {
-                    $rootScope.alert('alert-success', $filter('i18n')('register_email_verify_succeeded'));
+                    $rootScope.alert('alert-success', 'register_email_verify_succeeded');
                 });
             }
             else {
                 $state.go("Navigation.Menu", {day: 'today'});
-                $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
+                $rootScope.alert('alert-danger', 'register_email_verify_failed');
             }
         });
     }
     else {
         $state.go("Navigation.Menu", {day: 'today'});
-        $rootScope.alert('alert-danger', $filter('i18n')('register_email_verify_failed'));
+        $rootScope.alert('alert-danger', 'register_email_verify_failed');
     }
 }])
 
@@ -189,7 +189,7 @@ angular.module('Mealbookers.controllers', [])
                             delete $rootScope.postLoginState;
                         }
                         else {
-                            $rootScope.alert('alert-success', $filter('i18n')('logged_in'));
+                            $rootScope.alert('alert-success', 'logged_in');
                         }
                     };
 
@@ -257,7 +257,7 @@ angular.module('Mealbookers.controllers', [])
             if (result && result.status == 'ok') {
                 $log.info("Password request sent");
                 $("#forgot-password-modal").modal('hide');
-                $rootScope.alert('alert-success', $filter('i18n')('forgot_password_succeeded'));
+                $rootScope.alert('alert-success', 'forgot_password_succeeded');
             }
             else {
                 console.error("Unknown response");
@@ -300,7 +300,7 @@ angular.module('Mealbookers.controllers', [])
         }
         else {
             $state.go("^");
-            $rootScope.alert('alert-danger', $filter('i18n')('new_password_fetch_failed'));
+            $rootScope.alert('alert-danger', 'new_password_fetch_failed');
         }
     }).error(function(response, httpCode, headers) {
         $state.go("^");
@@ -322,7 +322,7 @@ angular.module('Mealbookers.controllers', [])
             if (result && result.status == 'ok') {
                 $log.info("Password request sent");
                 $("#create-new-password-modal").modal('hide');
-                $rootScope.alert('alert-success', $filter('i18n')('new_password_succeeded'));
+                $rootScope.alert('alert-success', 'new_password_succeeded');
             }
             else {
                 console.error("Unknown response");
@@ -414,7 +414,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.info("Registration done");
                 $rootScope.refreshCurrentUser(function() {
                     $("#register-modal").modal('hide');
-                    $rootScope.alert('alert-success', $filter('i18n')('register_succeeded'));
+                    $rootScope.alert('alert-success', 'register_succeeded');
                 });
             }
             else {
@@ -552,14 +552,14 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.refreshCurrentUser(function() {
                     // Canceled and deleted (last one out)
                     if (result.suggestionDeleted) {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled_and_deleted'));
+                        $rootScope.alert('alert-success', 'suggestion_manage_canceled_and_deleted');
                     }
                     // Accepted or canceled (not last one out)
                     else {
                         if (accept)
-                            $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted'));
+                            $rootScope.alert('alert-success', 'suggestion_manage_accepted');
                         else
-                            $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_canceled'));
+                            $rootScope.alert('alert-success', 'suggestion_manage_canceled');
                     }
                 });
             }
@@ -567,7 +567,7 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 suggestion.processing = false;
-                $rootScope.alert('alert-danger', $filter('i18n')('suggestion_manage_failed'));
+                $rootScope.alert('alert-danger', 'suggestion_manage_failed');
             }
         })
         .error(function(response, httpCode, headers) {
@@ -779,7 +779,7 @@ angular.module('Mealbookers.controllers', [])
             if (result && result.status == 'ok') {
                 $scope.resetPassword();
                 $scope.saveProcess = false;
-                $rootScope.alert('alert-success', $filter('i18n')('account_save_succeeded'));
+                $rootScope.alert('alert-success', 'account_save_succeeded');
                 $("#accountSettingsModal").modal('hide');
                 $log.log("Account settings saved");
             }
@@ -829,7 +829,7 @@ angular.module('Mealbookers.controllers', [])
                     $.removeCookie('check');
                     $.removeCookie('remember');
                     $rootScope.refreshCurrentUser(function() {
-                        $rootScope.alert('alert-success', $filter('i18n')('account_remove_success'));
+                        $rootScope.alert('alert-success', 'account_remove_success');
                         $log.log("Account removed");
                     });
                 }
@@ -1307,7 +1307,7 @@ angular.module('Mealbookers.controllers', [])
                             + ' ' + result.failed_to_send_invitation_email.join(", "));
                     }
                     else {
-                        $rootScope.alert('alert-success', $filter('i18n')('suggestion_created'));
+                        $rootScope.alert('alert-success', 'suggestion_created');
                     }
                 });
             }

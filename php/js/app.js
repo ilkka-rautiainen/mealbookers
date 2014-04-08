@@ -193,7 +193,7 @@ angular.module('Mealbookers', [
 
         $rootScope.alertMessage = {
             type: type,
-            message: message
+            message: $filter('i18n')(message)
         };
         $(".main-alert").finish();
         $(".main-alert").show();
@@ -312,13 +312,13 @@ angular.module('Mealbookers', [
         $rootScope.refreshCurrentUser(function() {
             $log.info("Logged out");
             if (showAlert)
-                $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
+                $rootScope.alert('alert-success', 'logged_out');
         });
     };
 
     $rootScope.resetToMenu = function() {
         $state.go("Navigation.Menu", {day: 'today'});
-        $rootScope.alert('alert-warning', $filter('i18n')('logged_out_invalid_user_info'));
+        $rootScope.alert('alert-warning', 'logged_out_invalid_user_info');
     };
 
     $rootScope.removeModalAlert = function() {
