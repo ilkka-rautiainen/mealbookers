@@ -337,7 +337,7 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.validateForm = function() {
         if ($scope.password.new != $scope.password.repeat) {
-            $scope.modalAlert('alert-warning', $filter('i18n')('new_password_passwords_dont_match'));
+            $scope.modalAlert('alert-warning', $filter('i18n')('new_password_failed_409_passwords_dont_match'));
             return false;
         }
 
@@ -1254,7 +1254,7 @@ angular.module('Mealbookers.controllers', [])
             if (suggestionDate.getTime() + $rootScope.currentUser.config.limits.suggestion_create_in_past_time * 1000
                 < new Date().getTime())
             {
-                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_too_early'));
+                $scope.modalAlert('alert-warning', $filter('i18n')('suggestion_save_failed_409_too_early'));
                 return false;
             }
         }
