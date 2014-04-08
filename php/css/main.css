@@ -1,5 +1,5 @@
 body {
-    font-family: OpenSans;
+    font-family: 'Open Sans';
     background-color: whitesmoke;
     padding-bottom: 20px;
 }
@@ -88,24 +88,6 @@ textarea.danger:focus, input[type="text"].danger:focus, input[type="password"].d
     border-color: rgba(169, 68, 68, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(169, 68, 68, 0.6);
     outline: 0 none;
-}
-
-@font-face
-{
-    font-family: OpenSans;
-    src: url(../fonts/OpenSans-Regular.ttf);
-}
-
-@font-face
-{
-    font-family: OpenSansBold;
-    src: url(../fonts/OpenSans-Bold.ttf);
-}
-
-@font-face
-{
-    font-family: Aclonica;
-    src: url(../fonts/Aclonica.ttf);
 }
 
 .featurette-divider {
@@ -253,7 +235,8 @@ label {
 }
 
 .restaurant .suggestion-time {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 .restaurant .closed-message {
@@ -459,7 +442,7 @@ label {
 
 #suggestionModal .opening-hours {
     float: right;
-    font-family: OpenSans;
+    font-family: 'Open Sans';
     font-weight: normal;
     font-size: 8pt;
     text-align: right;
@@ -532,12 +515,14 @@ span.line-break {
 }
 
 .meal-section {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
     display: block;
 }
 
 .chrome-fix-line {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
     font-size: 0px;
     display: block;
 }
@@ -562,7 +547,8 @@ span.line-break {
 }
 
 #accountSettingsModal h4 {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 #accountSettingsModal .remove-account button {
@@ -650,7 +636,8 @@ span.line-break {
 
 strong, b {
     font-weight: normal;
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 

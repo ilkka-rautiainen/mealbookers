@@ -619,6 +619,8 @@ function RefreshDataException(message) {
     this.type = 'RefreshDataException';
 }
 
-$(window).bind("load", function() {
-    window.loaded = true;
+WebFont.load({
+    google: {
+        families: ['Open Sans:normal,bold', 'Aclonica']
+    }
 });
