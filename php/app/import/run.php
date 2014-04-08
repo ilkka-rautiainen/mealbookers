@@ -5,9 +5,9 @@ set_time_limit(3600);
 
 $importers = array(
     new AlvariImport(),
-    // new KvarkkiImport(),
+    new KvarkkiImport(),
     new TUASImport(),
-    // new Puu2Import(),
+    new Puu2Import(),
     new SilinteriImport(),
     new LaureaImport(),
 );
