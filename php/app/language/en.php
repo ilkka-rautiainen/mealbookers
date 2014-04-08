@@ -219,6 +219,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_manage_accepted' => 'Accepted!',
     'suggestion_time_before_lunch' => 'NB: lunch hasn\'t yet opened at',
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
+    'suggestion_no_menu_available' => 'No menu available',
     'action_failed' => 'Action failed',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',

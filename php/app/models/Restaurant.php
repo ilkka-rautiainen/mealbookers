@@ -110,7 +110,10 @@ class Restaurant
             $meals[] = $meal['name'];
         }
 
-        return implode("<br />", $meals);
+        if (count($meals))
+            return implode("<br />", $meals);
+        else
+            return Lang::inst()->get('suggestion_no_menu_available');
     }
 
     private function getOpeningHoursAsArray()

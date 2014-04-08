@@ -219,13 +219,14 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_manage_accepted' => 'Hyväksytty!',
     'suggestion_time_before_lunch' => 'Ota huomioon, että lounas ei ole vielä alkanut',
     'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on jo päättynyt',
+    'suggestion_no_menu_available' => 'Ruokalistaa ei saatavilla',
     'action_failed' => 'Toimenpide epäonnistui',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
         'mailer_body_suggestion' =>
             'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
-            . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
+            . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - ruokalista</b><br />'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
             . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
