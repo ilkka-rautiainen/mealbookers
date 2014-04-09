@@ -2,7 +2,7 @@
 
 abstract class Import
 {
-    
+
     protected $restaurant;
     private $current_day;
     private $day_meals;
@@ -19,7 +19,7 @@ abstract class Import
         $restaurant = new Restaurant();
         $restaurant->fetch($this->restaurant_id); // restaurant_id comes from sub class
         $this->restaurant = $restaurant;
-        
+
         Logger::info(__METHOD__ . " initializing menu import for restaurant {$restaurant->name} id {$restaurant->id}");
 
 
@@ -36,7 +36,7 @@ abstract class Import
     {
         if (!$this->restaurant)
             throw new Exception("reset() called before init() call");
-        
+
         DB::inst()->query("DELETE FROM meals
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND
@@ -58,6 +58,8 @@ abstract class Import
     protected function startDay($weekDayNumber)
     {
         Logger::debug(__METHOD__ . " $weekDayNumber");
+        if (!is_null($this->current_day))
+            throw new Exception("Unable to start day, day already active");
         DB::inst()->startTransaction();
         $this->current_day = $weekDayNumber;
         $this->day_meals = array();
@@ -67,7 +69,7 @@ abstract class Import
     {
         if (is_null($this->current_day))
             throw new Exception("Unable to add meal, day not started");
-            
+
         $meal->restaurant = $this->restaurant;
         $meal->section = $this->activeSection;
         $meal->day = date("Y-m-d", strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay())));
@@ -78,12 +80,12 @@ abstract class Import
 
     protected function endDayAndSave()
     {
-        if (!is_array($this->day_meals))
-            return;
         Logger::debug(__METHOD__);
-
         $this->endSection();
         $this->current_day = null;
+        if (!is_array($this->day_meals))
+            return;
+
         DB::inst()->commitTransaction();
     }
 
@@ -96,7 +98,7 @@ abstract class Import
     {
         if (!is_null($this->activeSection))
             throw new Exception("Unable to start section $name, section {$this->activeSection} already exists");
-            
+
         $this->activeSection = $name;
     }
 
