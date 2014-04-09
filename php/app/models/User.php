@@ -2,7 +2,7 @@
 
 class User
 {
-    
+
     public $id;
     public $email_address;
     public $first_name;
@@ -114,7 +114,7 @@ class User
     /**
      * This function makes a context for the user's groupmates and suggestion outside members
      * initials.
-     * 
+     *
      * @param  array  $outside_members  Members who are NOT in the user's groups but who are to be considered as well in the context
      */
     public function getInitialsContext($outside_members = array())
@@ -179,7 +179,7 @@ class User
         {
             $item['last_name'] = mb_substr($item['last_name'], 0, $n);
         };
-        
+
         // Helper function: returns only names as array from last_name_contexts array
         $getLastNames = function($job_array)
         {
@@ -343,9 +343,9 @@ class User
             WHERE user_id = {$this->id} AND group_id = {$group->id}");
     }
 
-    public function sendSuggestion(Suggestion $suggestion, $hash)
+    public function sendSuggestion(Suggestion $suggestion, $token)
     {
-        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with hash $hash");
+        Logger::info(__METHOD__ . " inviting user {$this->id} to suggestion {$suggestion->id} with token $token");
         if (!$this->notify_suggestion_received) {
             Logger::debug(__METHOD__ . " canceled due to user's notification settings");
             return true;
@@ -369,7 +369,7 @@ class User
                 '{menu}',
                 '{suggestion_time}',
                 '{server_hostname}',
-                '{hash}',
+                '{token}',
             ),
             array(
                 $creator->getName(),
@@ -378,14 +378,14 @@ class User
                 $restaurant->getMenuForEmail($suggestion, $this),
                 $suggestion->getTime(),
                 $_SERVER['HTTP_HOST'],
-                $hash,
+                $token,
             ),
             Lang::inst()->get('mailer_body_suggestion', $this)
         );
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifySuggestionAccepted(Suggestion $suggestion, User $accepter, $is_creator)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having a suggestion"
@@ -427,7 +427,7 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for having"
@@ -467,7 +467,7 @@ class User
 
         return Mailer::inst()->send($subject, $body, $this);
     }
-    
+
     public function notifySuggestionDeleted(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
     {
         Logger::info(__METHOD__ . " notifying user {$this->id} for deletion of"
@@ -509,21 +509,20 @@ class User
     {
         Logger::debug(__METHOD__ . " inviting $email_address to group {$group->id}");
 
-        $hash = Application::inst()->getUniqueHash();
-
+        $code = Application::inst()->generateInvitationCode();
         DB::inst()->startTransaction();
-        DB::inst()->query("INSERT INTO invites (
+        DB::inst()->query("INSERT INTO invitations (
                 email_address,
                 group_id,
-                hash,
-                inviter_id
+                inviter_id,
+                code
             ) VALUES (
                 '" . DB::inst()->quote($email_address) . "',
                 {$group->id},
-                '$hash',
-                {$this->id}
+                {$this->id},
+                '$code'
             )");
-        
+
         $subject = str_replace(
             '{inviter}',
             $this->getName(),
@@ -534,13 +533,13 @@ class User
                 '{inviter}',
                 '{group_name}',
                 '{server_hostname}',
-                '{hash}',
+                '{code}',
             ),
             array(
                 $this->getName(),
                 $group->name,
                 $_SERVER['HTTP_HOST'],
-                $hash,
+                $code,
             ),
             Lang::inst()->get('mailer_body_invite', $this)
         );
@@ -661,6 +660,52 @@ class User
                 $_SERVER['HTTP_HOST'],
             ),
             Lang::inst()->get('mailer_body_password_change_notification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function sendEmailVerification()
+    {
+        global $admin;
+        Logger::debug(__METHOD__ . " sending user {$this->id} email verification mail");
+
+        $token = Application::inst()->insertToken($this->id);
+
+        $subject = Lang::inst()->get('mailer_subject_email_verification', $this);
+        $body = str_replace(
+            array(
+                '{server_hostname}',
+                '{hash}',
+            ),
+            array(
+                $_SERVER['HTTP_HOST'],
+                $token,
+            ),
+            Lang::inst()->get('mailer_body_email_verification', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function sendNewPasswordEmail()
+    {
+        global $admin;
+        Logger::debug(__METHOD__ . " sending user {$this->id} new password email");
+
+        $token = Application::inst()->insertToken($this->id);
+
+        $subject = Lang::inst()->get('mailer_subject_new_password', $this);
+        $body = str_replace(
+            array(
+                '{server_hostname}',
+                '{token}',
+            ),
+            array(
+                $_SERVER['HTTP_HOST'],
+                $token,
+            ),
+            Lang::inst()->get('mailer_body_new_password', $this)
         );
 
         return Mailer::inst()->send($subject, $body, $this);

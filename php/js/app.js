@@ -25,13 +25,13 @@ angular.module('Mealbookers', [
             InitApp: "InitApp"
         }
     })
-    
+
     .state('Navigation.Menu', {
         url: "/:day",
         templateUrl: "partials/Menu.html",
         controller: 'MenuController'
     })
-    
+
     .state('Navigation.Menu.Login', {
         url: "/login",
         templateUrl: "partials/modals/Login.html",
@@ -42,16 +42,36 @@ angular.module('Mealbookers', [
         },
     })
 
+    .state('Navigation.Menu.LoginForgotPassword', {
+        url: "/login/forgot",
+        templateUrl: "partials/modals/LoginForgotPassword.html",
+        controller: 'LoginForgotPasswordController',
+        data: {
+            modal: true,
+            modalId: "forgot-password-modal"
+        },
+    })
+
+    .state('Navigation.Menu.LoginCreateNewPassword', {
+        url: "/login/forgot/new/:token",
+        templateUrl: "partials/modals/LoginCreateNewPassword.html",
+        controller: 'LoginCreateNewPasswordController',
+        data: {
+            modal: true,
+            modalId: "create-new-password-modal"
+        },
+    })
+
     .state('Navigation.Menu.Register', {
         url: "/register",
         templateUrl: "partials/modals/Register.html",
         controller: 'RegisterController',
         data: {
             modal: true,
-            modalId: "registerModal"
-        },
+            modalId: "register-modal"
+        }
     })
-    
+
     .state('Navigation.Menu.Suggestion', {
         url: "/restaurant/:restaurantId/suggestion",
         templateUrl: "partials/modals/Suggestion.html",
@@ -61,7 +81,7 @@ angular.module('Mealbookers', [
         },
         controller: 'SuggestionController'
     })
-    
+
     .state('Navigation.Menu.AccountSettings', {
         url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",
@@ -71,7 +91,7 @@ angular.module('Mealbookers', [
         },
         controller: 'AccountSettingsController'
     })
-    
+
     .state('Navigation.Menu.GroupSettings', {
         url: "/settings/groups",
         templateUrl: "partials/modals/GroupSettings.html",
@@ -81,7 +101,7 @@ angular.module('Mealbookers', [
         },
         controller: 'GroupSettingsController'
     })
-    
+
     .state('Navigation.Menu.UserManagement', {
         url: "/settings/users",
         templateUrl: "partials/modals/UserManagement.html",
@@ -91,7 +111,7 @@ angular.module('Mealbookers', [
         },
         controller: 'UserManagementController'
     })
-    
+
     .state('Navigation.Menu.UserManagement.AccountSettings', {
         url: "/:userId/account",
         templateUrl: "partials/modals/AccountSettings.html",
@@ -101,7 +121,7 @@ angular.module('Mealbookers', [
         },
         controller: 'AccountSettingsController'
     })
-    
+
     .state('Navigation.Menu.UserManagement.GroupSettings', {
         url: "/:userId/group",
         templateUrl: "partials/modals/GroupSettings.html",
@@ -111,14 +131,20 @@ angular.module('Mealbookers', [
         },
         controller: 'GroupSettingsController'
     })
-    
+
     .state('Navigation.AcceptSuggestion', {
         url: "/suggestion/accept/:token",
         templateUrl: "partials/AcceptSuggestion.html",
         controller: 'AcceptSuggestionController'
     })
 
-    $urlRouterProvider.otherwise("/menu/" + (((new Date().getDay() + 6) % 7) + 1));
+    .state('Navigation.VerifyEmail', {
+        url: "/email/verify/:token",
+        templateUrl: "partials/VerifyEmail.html",
+        controller: 'VerifyEmailController'
+    })
+
+    $urlRouterProvider.otherwise("/menu/today");
 }])
 
 .run(['$rootScope', '$window', '$http', '$timeout', '$interval', '$state', '$stateParams', 'InitApp', '$log', '$filter', function($rootScope, $window, $http, $timeout, $interval, $state, $stateParams, InitApp, $log, $filter) {
@@ -167,7 +193,7 @@ angular.module('Mealbookers', [
 
         $rootScope.alertMessage = {
             type: type,
-            message: message
+            message: $filter('i18n')(message)
         };
         $(".main-alert").finish();
         $(".main-alert").show();
@@ -220,7 +246,7 @@ angular.module('Mealbookers', [
             else {
                 $log.debug("Current user refreshed");
                 for (var i in result.user) {
-                    $rootScope.currentUser[i] = result.user[i];    
+                    $rootScope.currentUser[i] = result.user[i];
                 }
 
                 $rootScope.$broadcast("currentUserRefresh");
@@ -240,12 +266,13 @@ angular.module('Mealbookers', [
 
                     if ($rootScope.liveViewOn) {
                         $log.info("User is logged out, stopping live view");
-                        $rootScope.clearSuggestions();
                         $rootScope.stopLiveView();
                         $rootScope.resetToMenu();
-                        if (typeof done == 'function') {
-                            done();
-                        }
+                    }
+
+                    $rootScope.clearSuggestions();
+                    if (typeof done == 'function') {
+                        done();
                     }
                 }
             }
@@ -278,20 +305,20 @@ angular.module('Mealbookers', [
     });
 
     $rootScope.logOut = function(showAlert) {
-        // $.cookie('language', $rootScope.currentUser.language, {expires: 365, path: '/'});
+        $rootScope.stopLiveView();
         $.removeCookie('id');
         $.removeCookie('check');
         $.removeCookie('remember');
         $rootScope.refreshCurrentUser(function() {
             $log.info("Logged out");
             if (showAlert)
-                $rootScope.alert('alert-success', $filter('i18n')('logged_out'));
+                $rootScope.alert('alert-success', 'logged_out');
         });
     };
 
     $rootScope.resetToMenu = function() {
-        $state.go('Navigation.Menu');
-        $rootScope.alert('alert-warning', $filter('i18n')('logged_out_invalid_user_info'));
+        $state.go("Navigation.Menu", {day: 'today'});
+        $rootScope.alert('alert-warning', 'logged_out_invalid_user_info');
     };
 
     $rootScope.removeModalAlert = function() {
@@ -334,6 +361,7 @@ angular.module('Mealbookers', [
             }
 
             $log.debug("Suggestions refreshed");
+            $rootScope.$broadcast("suggestionRefresh");
             if (typeof done == 'function') {
                 done();
             }
@@ -346,6 +374,7 @@ angular.module('Mealbookers', [
         for (var i = 0; i < $rootScope.restaurants.length; i++) {
             $rootScope.restaurants[i].suggestionList = [];
         }
+        $rootScope.$broadcast("suggestionRefresh");
     };
 
     $rootScope.liveViewUpdate = function() {
@@ -440,6 +469,7 @@ angular.module('Mealbookers', [
         }).success(function(result) {
             $log.debug("Restaurants refreshed");
             $rootScope.restaurants = result;
+            $rootScope.$broadcast("restaurantRefresh");
 
             if (typeof done == 'function') {
                 done();
@@ -449,19 +479,43 @@ angular.module('Mealbookers', [
         });
     };
 
-    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction) {
+    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction, headers) {
         var alertFunction;
         if (typeof customAlertFunction == 'function')
             alertFunction = customAlertFunction;
         else
             alertFunction = $rootScope.alert;
 
-        $rootScope.refreshCurrentUser(function() {
-            if ($rootScope.localization[errorMessage + '_' + httpCode.toString()])
-                alertFunction('alert-warning', $rootScope.localization[errorMessage + '_' + httpCode.toString()]);
-            else
-                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+        httpCode = httpCode.toString();
 
+        var failReason = null, failLevel = null, skipGeneralCodeError = null;
+        if (headers) {
+            failReason = headers['fail-reason'] || null;
+            failLevel = (headers['fail-level']) ? 'alert-' + headers['fail-level'] : null;
+            skipGeneralCodeError = headers['skip-general-code-error'] || null;
+        }
+
+        $rootScope.refreshCurrentUser(function() {
+            // Base case: errorMessage_httpCode_failReason
+            if (failReason && $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]) {
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
+            }
+            // General case with failReason: general_code_failReason
+            else if (failReason && !skipGeneralCodeError && $rootScope.localization['general_' + httpCode + '_' + failReason]) {
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization['general_' + httpCode + '_' + failReason]);
+            }
+            // Second case: errorMessage_httpCode
+            else if ($rootScope.localization[errorMessage + '_' + httpCode]) {
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode]);
+            }
+            // Third case: general_code
+            else if (!skipGeneralCodeError && $rootScope.localization['general_' + httpCode]) {
+                alertFunction('alert-warning', $rootScope.localization['general_' + httpCode]);
+            }
+            // Else: errorMessage
+            else {
+                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+            }
         });
     };
 
@@ -485,12 +539,13 @@ angular.module('Mealbookers', [
 
         // To modal
         if (toState.data && toState.data.modal) {
+            $(".modal-backdrop").remove();
             $timeout(function() {
                 $("body").addClass("modal-open");
                 $("#" + toState.data.modalId).focus();
             }, 0);
         }
-        
+
         if ($rootScope.initAppDone) {
             $rootScope.setTitle(toState.name);
         }
@@ -500,6 +555,13 @@ angular.module('Mealbookers', [
         if (newValue) {
             $rootScope.setTitle('currentState');
         }
+    });
+
+    angular.forEach(["suggestionRefresh","restaurantRefresh"], function(value) {
+        $rootScope.$on(value, function() {
+            $(".restaurant").css("height", "auto");
+            $rootScope.$broadcast("restaurantsResize");
+        });
     });
 
     $rootScope.setTitle = function(state) {
@@ -513,7 +575,7 @@ angular.module('Mealbookers', [
         if (day < 1 || day > 7) {
             return console.error("Incorrect day passed: " + day);
         }
-        
+
         var today = ((new Date().getDay() + 6) % 7) + 1;
         if (day == today) {
             return $rootScope.localization.today;
@@ -556,3 +618,9 @@ function RefreshDataException(message) {
     this.message = message;
     this.type = 'RefreshDataException';
 }
+
+WebFont.load({
+    google: {
+        families: ['Open Sans:normal,bold', 'Aclonica']
+    }
+});

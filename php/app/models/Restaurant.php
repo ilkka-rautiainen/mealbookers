@@ -102,7 +102,7 @@ class Restaurant
             restaurant_id = {$this->id} AND language = '{$user->language}'");
         if (!DB::inst()->getRowCount()) {
             $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
-                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLang') . "'");
+                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLanguage') . "'");
         }
 
         $meals = array();
@@ -110,7 +110,10 @@ class Restaurant
             $meals[] = $meal['name'];
         }
 
-        return implode("<br />", $meals);
+        if (count($meals))
+            return implode("<br />", $meals);
+        else
+            return Lang::inst()->get('suggestion_no_menu_available');
     }
 
     private function getOpeningHoursAsArray()

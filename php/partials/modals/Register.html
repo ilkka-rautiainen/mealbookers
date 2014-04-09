@@ -1,38 +1,62 @@
 <!-- Sign up Modal -->
-<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<form role="form" ng-submit="processRegister()">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">{{ 'register' | i18n }}</h4>
-				</div>
-					<div class="modal-body">
-						<h4>{{register}}</h4>
-						
-							<div class="form-group">
-								<label for="email_register">{{ 'email' | i18n }}</label>
-								<input type="email" class="form-control" id="email_register" required ng-model="register.email">
-							</div>
-							<div class="form-group">
-								<label for="password_register">{{ 'password' | i18n }}</label>
-								<input type="password" class="form-control" id="password_register" required ng-model="register.password">
-							</div>
-							<div class="form-group">
-								<label for="first_name_register">{{ 'first_name' | i18n }}</label>
-								<input type="text" class="form-control" id="first_name_register" required ng-model="register.firstName">
-							</div>
-							<div class="form-group">
-								<label for="last_name_register">{{ 'last_name' | i18n }}</label>
-								<input type="text" class="form-control" id="last_name_register" required ng-model="register.lastName">
-							</div>
-						
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-default">{{ 'register' | i18n }}</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
-					</div>
-				</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
+<div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form role="form" ng-submit="save()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">{{ 'register_to_mealbookers' | i18n }}</h4>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Alert -->
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">{{ 'email' | i18n }}</label>
+                        <input type="email" class="form-control" name="email" focus-on="modalOpened" required ng-model="register.email">
+                    </div>
+
+                    <!-- Name -->
+                    <div class="form-col-container">
+                        <div class="col-sm-6 col-xs-12 form-group">
+                            <label for="first_name">{{ 'first_name' | i18n }}</label>
+                            <input type="text" class="form-control" name="first_name" required ng-model="register.first_name">
+                        </div>
+                        <div class="col-sm-6 col-xs-12 form-group">
+                            <label for="last_name">{{ 'last_name' | i18n }}</label>
+                            <input type="text" class="form-control" name="last_name" required ng-model="register.last_name">
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <!-- Password -->
+                    <div class="form-col-container">
+                        <div class="col-sm-6 col-xs-12 form-group">
+                            <label for="password">{{ 'register_password' | i18n }}</label>
+                            <input type="password" class="form-control" pattern=".{5,}" title="{{ 'password_criteria' | i18n }}" name="password" required ng-model="register.password">
+                        </div>
+                        <div class="col-sm-6 col-xs-12 form-group">
+                        <label for="password_repeat">{{ 'register_password_repeat' | i18n }}</label>
+                        <input type="password" class="form-control" name="password_repeat" required ng-model="register.password_repeat">
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <!-- Invite group -->
+                    <div ng-show="register.invitation_code">
+                        <i class="glyphicon glyphicon-plus"></i> {{ 'register_membership_to_group' | i18n }} <strong>{{ group_name }}</strong>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default" ng-disabled="registerSaveProcess">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="registerSaveProcess"></i>
+                        {{ 'register' | i18n }}
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

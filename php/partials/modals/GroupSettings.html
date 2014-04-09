@@ -60,6 +60,15 @@
                     </div>
                     <div class="clearfix"></div>
 
+                    <!-- Invited members -->
+                    <div ng-if="group.invitations" class="invitations">
+                        <strong>{{ 'group_invitations' | i18n }}</strong>
+                        <div ng-repeat="invitation in group.invitations" class="invitation">
+                            <i class="glyphicon glyphicon-user icon"></i>
+                            {{ invitation.email_address }}
+                        </div>
+                    </div>
+
                     <!-- Add member -->
                     <div ng-if="group.addMemberOpened">
                         <form ng-submit="addMemberToGroup(group)">
@@ -97,7 +106,7 @@
                 <button type="button" class="btn btn-default" ng-show="!newGroup.open" ng-click="openAddGroup()">
                     <i class="glyphicon glyphicon-plus"></i> {{ 'group_create_new' | i18n }}
                 </button>
-                <div ng-if="newGroup.open">
+                <div ng-if="newGroup.open" class="new-group">
                     <form ng-submit="addGroup()">
                         <div class="input-group" ng-if="widthClass != 'xs'">
                             <input type="text" class="form-control" placeholder="{{ 'group_name' | i18n }}" ng-model="newGroup.name" ng-disabled="newGroup.saving" maxlength="30" required autofocus />
@@ -117,6 +126,36 @@
                                     {{ 'group_create_new' | i18n }}
                                 </button>
                                 <button type="button" class="btn btn-default" ng-click="closeAddGroup()">{{ 'cancel' | i18n }}</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Join group -->
+                <button type="button" class="btn btn-default" ng-show="!joinGroupProcess" ng-click="openJoinGroup()">
+                    <i class="glyphicon glyphicon-plus"></i> {{ 'group_join' | i18n }}
+                </button>
+                <div ng-if="joinGroupProcess" class="join-group">
+                    <form ng-submit="joinGroup()">
+                        <div class="input-group" ng-if="widthClass != 'xs'">
+                            <input type="text" class="form-control" placeholder="{{ 'group_invitation_code' | i18n }}" ng-model="invitationCode.text" ng-disabled="joinGroupSaveProcess" required autofocus />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default" ng-disabled="joinGroupSaveProcess">
+                                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="joinGroupSaveProcess"></i>
+                                    {{ 'group_join' | i18n }}
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="closeJoinGroup()">{{ 'cancel' | i18n }}</button>
+                            </span>
+                        </div>
+                        <div ng-if="widthClass == 'xs'">
+                            <input type="text" class="form-control" placeholder="{{ 'group_invitation_code' | i18n }}" ng-model="invitationCode.text" ng-disabled="joinGroupSaveProcess" required autofocus />
+                            <div class="button-group pull-right">
+                                <button type="submit" class="btn btn-default" ng-disabled="joinGroupSaveProcess">
+                                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="joinGroupSaveProcess"></i>
+                                    {{ 'group_join' | i18n }}
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="closeJoinGroup()">{{ 'cancel' | i18n }}</button>
                             </div>
                             <div class="clearfix"></div>
                         </div>

@@ -1,5 +1,5 @@
 body {
-    font-family: OpenSans;
+    font-family: 'Open Sans';
     background-color: whitesmoke;
     padding-bottom: 20px;
 }
@@ -84,30 +84,6 @@ body.modal-open {
     color: #333 !important;
 }
 
-textarea.danger:focus, input[type="text"].danger:focus, input[type="password"].danger:focus, input[type="datetime"].danger:focus, input[type="datetime-local"].danger:focus, input[type="date"].danger:focus, input[type="month"].danger:focus, input[type="time"].danger:focus, input[type="week"].danger:focus, input[type="number"].danger:focus, input[type="email"].danger:focus, input[type="url"].danger:focus, input[type="search"].danger:focus, input[type="tel"].danger:focus, input[type="color"].danger:focus, .uneditable-input.danger:focus {
-    border-color: rgba(169, 68, 68, 0.8);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(169, 68, 68, 0.6);
-    outline: 0 none;
-}
-
-@font-face
-{
-    font-family: OpenSans;
-    src: url(../fonts/OpenSans-Regular.ttf);
-}
-
-@font-face
-{
-    font-family: OpenSansBold;
-    src: url(../fonts/OpenSans-Bold.ttf);
-}
-
-@font-face
-{
-    font-family: Aclonica;
-    src: url(../fonts/Aclonica.ttf);
-}
-
 .featurette-divider {
     margin: 5px 0 5px 0;
 }
@@ -118,6 +94,12 @@ label {
 }
 
 @media all and (max-width: 767px) {
+
+    .form-col-container .col-xs-12 {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
     #menuContainer {
         padding: 0px;
     }
@@ -178,8 +160,6 @@ label {
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
     background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
     background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    overflow-y: hidden;
-
     -webkit-transition: height 0.30s ease-in-out;
     -moz-transition: height 0.30s ease-in-out;
     -o-transition: height 0.30s ease-in-out;
@@ -243,10 +223,12 @@ label {
 
 .restaurant .suggestion-manage-button {
     padding: 1px 6px 1px 6px;
+    margin-bottom: 1px;
 }
 
 .restaurant .suggestion-time {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 .restaurant .closed-message {
@@ -312,8 +294,8 @@ label {
 
 .page-header-container .languages {
     position: absolute;
-    right: 30px;
-    top: 5px;
+    right: 32px;
+    top: 7px;
     font-size: 11px;
     color: #999;
     cursor: pointer;
@@ -356,11 +338,15 @@ label {
     padding: 5px 0 0px 0;
 }
 
-.button-group .btn {
-    margin-bottom: 5px;
+.button-group .btn, .modal-footer .btn {
+    margin-bottom: 5px !important;
 }
 
-.button-group .btn+.btn {
+.button-group .btn:not(:last-child) {
+    margin-right: 5px;
+}
+
+.modal-footer .btn:not(:first-child) {
     margin-left: 5px;
 }
 
@@ -448,7 +434,7 @@ label {
 
 #suggestionModal .opening-hours {
     float: right;
-    font-family: OpenSans;
+    font-family: 'Open Sans';
     font-weight: normal;
     font-size: 8pt;
     text-align: right;
@@ -471,8 +457,8 @@ label {
 
 .main-alert {
     position: absolute;
-    top: 10px;
-    right: 0px;
+    top: 8px;
+    right: -2px;
     margin-right: 17px;
     padding-right: 25px;
     cursor: pointer;
@@ -521,12 +507,14 @@ span.line-break {
 }
 
 .meal-section {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
     display: block;
 }
 
 .chrome-fix-line {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
     font-size: 0px;
     display: block;
 }
@@ -551,7 +539,8 @@ span.line-break {
 }
 
 #accountSettingsModal h4 {
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 #accountSettingsModal .remove-account button {
@@ -594,6 +583,25 @@ span.line-break {
     padding-top: 2px;
 }
 
+#groupSettingsModal .invitations .invitation {
+    min-height: 25px;
+    line-height: 25px;
+    padding-left: 5px;
+}
+
+#groupSettingsModal .invitations .invitation .icon {
+    padding-right: 3px;
+    color: gray;
+}
+
+#groupSettingsModal .new-group {
+    margin-bottom: 10px;
+}
+
+#groupSettingsModal .join-group {
+    margin-top: 10px;
+}
+
 .col-nopadding {
     padding: 0px;
 }
@@ -620,7 +628,8 @@ span.line-break {
 
 strong, b {
     font-weight: normal;
-    font-family: OpenSansBold;
+    font-family: 'Open Sans';
+    font-weight: bold;
 }
 
 
@@ -628,6 +637,14 @@ strong, b {
 @media all and (min-width: 768px) {
     body {
         padding-top: 50px;
+    }
+
+    .form-col-container .col-sm-6:first-child {
+        padding-left: 0px !important;
+    }
+
+    .form-col-container .col-sm-6:last-child {
+        padding-right: 0px !important;
     }
 
     .restaurant-row .restaurant-outer {

@@ -37,8 +37,9 @@ $GLOBALS['config'] = array(
     'import' => array(
         'useragent' => 'Mealbookers data crawler',
     ),
-    'mealDefaultLang' => 'fi',
-    'restaurantsDefaultLang' => 'fi',
+    'defaultLanguage' => 'fi',
+    'mealDefaultLanguage' => 'fi',
+    'restaurantsDefaultLanguage' => 'fi',
     'mail' => array(
         'smtp_port' => 465,
         'smtp_secure' => 'ssl',

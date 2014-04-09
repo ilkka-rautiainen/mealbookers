@@ -5,7 +5,6 @@ class SuggestionUser {
     public $id;
     public $suggestion_id;
     public $user_id;
-    public $hash;
     public $accepted;
     public $accepted_timestamp;
 
@@ -25,7 +24,6 @@ class SuggestionUser {
         $this->id = $row['id'];
         $this->suggestion_id = $row['suggestion_id'];
         $this->user_id = $row['user_id'];
-        $this->hash = $row['hash'];
         $this->accepted = $row['accepted'];
         $this->accepted_timestamp = $row['accepted_timestamp'];
     }

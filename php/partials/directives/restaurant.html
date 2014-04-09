@@ -57,7 +57,7 @@
                         {{ 'suggestion_cancel' | i18n }}
                     </button>
                 </div>
-                <hr class="featurette-divider meal-divider">
+                <hr class="featurette-divider meal-divider" ng-show="restaurant.mealList[weekDay - 1].length">
             </div>
 
             <!-- Meals -->

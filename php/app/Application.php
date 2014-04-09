@@ -3,7 +3,7 @@
 class Application
 {
     private static $instance = null;
-    
+
     /**
      * Singleton pattern: private constructor
      */
@@ -11,7 +11,7 @@ class Application
     {
 
     }
-    
+
     /**
      * Singleton pattern: instance
      */
@@ -19,7 +19,7 @@ class Application
     {
         if (is_null(self::$instance))
             self::$instance = new Application();
-        
+
         return self::$instance;
     }
 
@@ -43,26 +43,30 @@ class Application
      */
     public function initAuthentication()
     {
+        $user = false;
+
         if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
             $user_id = (int)$_COOKIE['id'];
-            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
-            $passhash = Application::inst()->hash($passhash);
+            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id
+                AND email_verified = 1");
 
-            // Valid authentication
-            if ($passhash == $_COOKIE['check']) {
-                $GLOBALS['current_user'] = new User();
-                $GLOBALS['current_user']->fetch($user_id);
-            }
-            // Invalid auth
-            else {
-                $GLOBALS['current_user'] = new User();
-                $GLOBALS['current_user']->role = 'guest';
+            if (!is_null($passhash)) {
+                $passhash = Application::inst()->hash($passhash);
+
+                // Valid authentication
+                if ($passhash == $_COOKIE['check']) {
+                    $user = new User();
+                    $user->fetch($user_id);
+                }
             }
         }
-        // No cookies
-        else {
+
+        if (!$user) {
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->role = 'guest';
+        }
+        else {
+            $GLOBALS['current_user'] = $user;
         }
 
         $GLOBALS['admin'] = new Admin();
@@ -85,11 +89,11 @@ class Application
         }
     }
 
-    public function exitWithHttpCode($number, $text = false)
+    public function exitWithHttpCode($number, $text = null, $level = null, $skip_general_code_error = false)
     {
         Logger::note(__METHOD__ . " exiting with http $number: $text");
 
-        if ($text === false) {
+        if (is_null($text)) {
             if ($number == 404)
                 $text = "Not Found";
             else if ($number == 400)
@@ -108,12 +112,24 @@ class Application
             header("Status: $number $text");
         else
             header("HTTP/1.1 $number $text");
+        header("Fail-reason: $text");
+
+        if ($level) {
+            if (!in_array($level, array('danger', 'warning', 'info', 'success')))
+                throw new Exception("Invalid http error level: $level");
+
+            header("Fail-level: $level");
+        }
+
+        if ($skip_general_code_error)
+            header("Skip-general-code-error: true");
+
         print "<h1>$number $text</h1>";
 
         if (DB::inst()->isTransactionActive()) {
             DB::inst()->rollbackTransaction();
         }
-        
+
         die;
     }
 
@@ -137,7 +153,8 @@ class Application
     {
         if (mb_strlen($password) < 5)
             return false;
-        else if (mb_stripos($password, $user->first_name) || mb_stripos($password, $user->last_name))
+        else if (mb_stripos($password, $user->first_name) !== false
+            || mb_stripos($password, $user->last_name) !== false)
             return false;
         else
             return true;
@@ -145,7 +162,7 @@ class Application
 
     public function getUniqueHash()
     {
-        return md5(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
+        return sha1(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
     }
 
     public function getWeekdayNumber()
@@ -167,5 +184,46 @@ class Application
         else {
             throw new Exception("Unimplemented for $which");
         }
+    }
+
+    public function insertToken($id)
+    {
+        do {
+            $token = $this->getUniqueHash();
+        } while (DB::inst()->getOne("SELECT COUNT(token) FROM tokens WHERE token = '$token' LIMIT 1") > 0);
+
+        DB::inst()->query("INSERT INTO tokens (token, id) VALUES ('$token', $id)");
+        return $token;
+    }
+
+    public function getTokenId($token, $delete = true)
+    {
+        $id = DB::inst()->getOne("SELECT id FROM tokens WHERE token = '" . DB::inst()->quote($token) . "'");
+
+        if (is_null($id))
+            throw new NotFoundException("No such token found");
+
+        if ($delete)
+            $this->deleteToken($token);
+
+        return $id;
+    }
+
+    public function deleteToken($token)
+    {
+        DB::inst()->query("DELETE FROM tokens WHERE token = '" . DB::inst()->quote($token) . "'");
+    }
+
+    public function generateInvitationCode()
+    {
+        do {
+            $code = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 10);
+        } while (DB::inst()->getOne("SELECT COUNT(id) FROM invitations WHERE code = '$code'") > 0);
+        return $code;
+    }
+
+    public function getEmailValidationRegex()
+    {
+        return "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/";
     }
 }

@@ -62,7 +62,7 @@ class DB
         ));
         if (!$result = $this->connection->query($queryString)) {
             Logger::error(__METHOD__ . " MySQL error: " . $this->connection->error);
-            throw new Exception($this->connection->error);
+            throw new SqlException($this->connection->error);
         }
 
         $this->insertId = $this->connection->insert_id;
