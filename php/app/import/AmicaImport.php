@@ -250,7 +250,7 @@ abstract class AmicaImport extends Import
     {
         foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
             if (preg_match("/^(" . preg_quote("<strong>", "/") . ")?[\\s]*" . $name_lang . "[\\s]*(" . preg_quote("</strong>", "/") . ")?/i", $line, $matches)) {
-                $line = trim(htmlentities(mb_substr($line, strlen($matches[0]))));
+                $line = trim(htmlspecialchars((mb_substr($line, strlen($matches[0])))));
                 return $name_en;
             }
         }
