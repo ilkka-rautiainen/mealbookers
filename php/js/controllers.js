@@ -1304,7 +1304,7 @@ angular.module('Mealbookers.controllers', [])
 
                     if (result.failed_to_send_invitation_email) {
                         $rootScope.alert('alert-warning', $filter('i18n')('suggest_failed_to_send_invitation_email')
-                            + ' ' + result.failed_to_send_invitation_email.join(", "));
+                            + ' ' + result.failed_to_send_invitation_email.join(", "), true);
                     }
                     else {
                         $rootScope.alert('alert-success', 'suggestion_created');
