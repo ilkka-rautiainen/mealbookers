@@ -159,16 +159,14 @@ class TaffaImport extends Import
                     foreach (pq($child)->children('li') as $li) {
                         $line = pq($li)->text();
 
-                        if (($section_name = $this->getSectionName($line, $lang)) !== false) {
-                            $this->startSection($section_name);
-                            Logger::debug(__METHOD__ . " section found $section_name");
-                        }
+                        $section = $this->getSectionName($line, $lang);
                         $line = $this->formatAttributes($line);
+
                         $meal = new Meal();
                         $meal->language = $lang;
-                        $meal->name = trim($line);
+                        $meal->name = $line;
+                        $meal->section = $section;
                         $this->addMeal($meal);
-                        $this->endSection();
                     }
                     $this->endDayAndSave();
                 }
@@ -215,6 +213,6 @@ class TaffaImport extends Import
                 . mb_substr($line, $subMatch['start'] + $subMatch['length']);
         }
 
-        return $line;
+        return trim($line);
     }
 }

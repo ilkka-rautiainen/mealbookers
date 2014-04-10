@@ -8,11 +8,6 @@ abstract class Import
     private $day_meals;
     protected $is_import_needed;
 
-    /**
-     * @var Section in a day's menu, like 'A la carte:'
-     */
-    private $activeSection = null;
-
     public function init()
     {
         // Init the restaurant object
@@ -55,6 +50,9 @@ abstract class Import
         throw new ImportException("Not implemented");
     }
 
+    /**
+     * @param  $weekDayNumber 0..6
+     */
     protected function startDay($weekDayNumber)
     {
         Logger::debug(__METHOD__ . " $weekDayNumber");
@@ -71,7 +69,6 @@ abstract class Import
             throw new Exception("Unable to add meal, day not started");
 
         $meal->restaurant = $this->restaurant;
-        $meal->section = $this->activeSection;
         $meal->day = date("Y-m-d", strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay())));
         $meal->save();
 
@@ -81,7 +78,6 @@ abstract class Import
     protected function endDayAndSave()
     {
         Logger::debug(__METHOD__);
-        $this->endSection();
         $this->current_day = null;
         if (!is_array($this->day_meals))
             return;
@@ -92,19 +88,6 @@ abstract class Import
     protected function isDayActive()
     {
         return (!is_null($this->current_day));
-    }
-
-    protected function startSection($name)
-    {
-        if (!is_null($this->activeSection))
-            throw new Exception("Unable to start section $name, section {$this->activeSection} already exists");
-
-        $this->activeSection = $name;
-    }
-
-    protected function endSection()
-    {
-        $this->activeSection = null;
     }
 
     protected function getWeekStartDay()

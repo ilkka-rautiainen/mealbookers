@@ -10,7 +10,7 @@ class LaureaImport extends AmicaJSONImport
     {
         Logger::debug(__METHOD__ . " called");
         $p_list = pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_RegionMainContentInnerMiddle_RegionMainContentText_MainContentBottomTextArea_MainContentToolBox_OpeningHours p");
-        
+
         $lines = array();
         if (!$p_list instanceof Traversable) {
             Logger::warn(__METHOD__ . " {$this->restaurant_id} opening hours no p list found");

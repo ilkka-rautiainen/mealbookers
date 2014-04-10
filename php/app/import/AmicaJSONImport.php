@@ -110,13 +110,10 @@ abstract class AmicaJSONImport extends Import
         }
         $meal_obj->language = $lang;
         $meal_obj->name = implode("<span class=\"line-break\"></span>", $components);
-        
-        if ($section = $this->getSectionName($meal['Name'], $lang)) {
-            $this->startSection($section);
-        }
-        
+
+        $meal_obj->section = $this->getSectionName($meal['Name'], $lang);
+
         parent::addMeal($meal_obj);
-        $this->endSection();
     }
 
     /**

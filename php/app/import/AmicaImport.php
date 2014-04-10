@@ -91,7 +91,7 @@ abstract class AmicaImport extends Import
         $menu_type = $matches[1];
         $menu_number = $matches[2];
         Logger::debug(__METHOD__ . " parameters fetched");
-        
+
         // Fetch print page with the fetched parameters
         $error = false;
 
@@ -102,11 +102,14 @@ abstract class AmicaImport extends Import
                 $source = str_replace("&nbsp;", ' ', $source); // replace &nbsp; in utf-8
 
                 phpQuery::newDocument($source);
-                
-                // Get lines and process them
+
+                // Get lines
                 $lines = $this->getLines();
-                foreach ($lines as $line) {
-                    $this->processLine($line, $lang);
+                // Get days
+                $days = $this->getDays($lines, $lang);
+                // Process the lines
+                foreach ($days as $day => $day_lines) {
+                    $this->processDay($day, $day_lines, $lang);
                 }
 
                 $this->endDayAndSave(); // Save the last day which is open
@@ -130,110 +133,108 @@ abstract class AmicaImport extends Import
     /**
      * Retrieves meal lines from source code
      */
-    protected function getLines()
+    private function getLines()
     {
-        $p_list = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel > p');
-        if (!$p_list->length)
-            throw new ParseException("No <p> elements found in the menu");
-
-        $lines = array();
-        // Go through the menu
-        foreach ($p_list as $p) {
-            $html = pq($p)->html();
-            $inner_lines = preg_split("/" . preg_quote("<br>") . "[\\s]*" . preg_quote("<br>") . "/", trim($html));
-            $lines = array_merge($lines, $inner_lines);
+        $html = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel')->html();
+        if (!$html) {
+            throw new ParseException("No menu element found");
         }
+        $html = str_replace(array('<br>'), array(" "), $html);
+        $lines = preg_split("/[\s]*\r?\n[\s]*/", trim(pq($html)->text()));
         return $lines;
+    }
+
+    private function getDays($lines, $lang)
+    {
+        $active_day = false;
+        $days = array();
+        foreach ($lines as $line) {
+            $day = $this->getDayNumber($line, $lang);
+            if ($day !== false) {
+                $active_day = $day;
+            }
+            if ($active_day !== false && mb_strlen($line) && !$this->isLineIgnored($line, $lang)) {
+                if (!isset($days[$active_day]))
+                    $days[$active_day] = array();
+                $line = trim($line);
+                $line = strip_tags($line, '<strong>');
+                $line = html_entity_decode($line, ENT_QUOTES);
+                $days[$active_day][] = $line;
+            }
+        }
+        return $days;
+    }
+
+    private function fixOneLine($line)
+    {
+        if (!preg_match_all('/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)/', $line, $matches, PREG_OFFSET_CAPTURE)) {
+            return array($line);
+        }
+        else {
+            $lines = array();
+            for ($i = count($matches[0]) - 1; $i >= 0; $i--) {
+                $end = trim(substr($line, $matches[0][$i][1] + mb_strlen($matches[0][$i][0])));
+                if (mb_strlen($end)) {
+                    $lines[] = $end;
+                }
+                $line = substr($line, 0, $matches[0][$i][1] + mb_strlen($matches[0][$i][0]));
+            }
+            $lines[] = $line;
+            $lines = array_reverse($lines);
+            return $lines;
+        }
     }
 
     /**
      * Computes one line in the menu <p> list
      */
-    private function processLine($line_html, $lang)
+    private function processDay($day, $day_lines, $lang)
     {
-        Logger::trace(__METHOD__ . " processing line: $line_html");
+        Logger::trace(__METHOD__ . " with meals: " . count($day_lines));
 
-        // Check for <br><strong> within the line
-        $pos = mb_stripos($line_html, "<br><strong>");
-        if ($pos !== false) {
-            Logger::debug(__METHOD__ . " <br><strong> found processing first part");
-            $this->processLine(trim(mb_substr($line_html, 0, $pos)), $lang);
-            Logger::debug(__METHOD__ . " <br><strong> found processing second part");
-            $this->processLine(trim(mb_substr($line_html, $pos + 4)), $lang);
-            return;
+        if (count($day_lines) == 1) {
+            $day_lines = $this->fixOneLine($day_lines[0]);
         }
 
-        // Do some replacements
-        $line_html = str_replace(array('\r\n', '\n'), array(" ", " "), $line_html);
-        $line_html = preg_replace('#<br\s*/?>#i', "\n", $line_html);
-        $line_html = strip_tags($line_html, '<strong>');
-        $line_html = html_entity_decode($line_html, ENT_QUOTES);
-        $line_html = trim($line_html);
+        $this->startDay($day);
+        foreach ($day_lines as $line) {
+            $section = $this->getSection($line, $lang);
+            $line = $this->formatAttributes($line);
 
-        Logger::trace(__METHOD__ . " line after replacements: $line_html");
+            if (!mb_strlen(trim($line))) {
+                Logger::debug(__METHOD__ . " empty line");
+                return;
+            }
 
-        if (!$line_html) {
-            Logger::debug(__METHOD__ . " empty line");
-            return;
+            $line = $this->formatLineBreaks($line);
+
+            $meal = new Meal();
+            $meal->language = $lang;
+            $meal->name = $line;
+            $meal->section = $section;
+
+            $this->addMeal($meal);
         }
-        else if ($this->isLineIgnored($line_html, $lang)) {
-            Logger::debug(__METHOD__ . " line in ignore list");
-            return;
-        }
-
-        // Day starts
-        if (($day_number = $this->getDayNumber($line_html, $lang)) !== false) {
-            $this->endDayAndSave();
-            $this->startDay($day_number);
-            Logger::debug(__METHOD__ . " start day found $day_number");
-        }
-        // Section starts
-        else if (($section_name = $this->getSectionName($line_html, $lang)) !== false) {
-            $this->startSection($section_name);
-            Logger::debug(__METHOD__ . " section found $section_name");
-        }
-
-        if (!$this->isDayActive()) {
-            Logger::debug(__METHOD__ . " no day active, ignoring line");
-            return;
-        }
-
-        // Add the meal
-        $line_html = trim($this->formatAttributes($line_html));
-        $line_html = $this->formatLineBreaks($line_html);
-
-        if (!$line_html) {
-            Logger::debug(__METHOD__ . " empty line");
-            return;
-        }
-
-        $meal = new Meal();
-        $meal->language = $lang;
-        $meal->name = $line_html;
-
-        $this->addMeal($meal);
-
-        // Amicas sections are only for one row
-        $this->endSection();
+        $this->endDayAndSave();
     }
 
     /**
      * Get number of the day if a day starts at the current line.
-     * This function strips the day also away from the line_html string.
+     * This function strips the day also away from the line string.
      * @return int if start day is found, otherwise false
      */
-    private function getDayNumber(&$line_html, $lang)
+    private function getDayNumber(&$line, $lang)
     {
         foreach ($this->langs[$lang]['weekdays'] as $day_number => $weekday) {
-            if (mb_stripos(trim(strip_tags($line_html)), $weekday) === 0) {
+            if (mb_stripos(trim(strip_tags($line)), $weekday) === 0) {
 
                 // There's most oftenly <strong> around the day
-                $strong_end = mb_stripos($line_html, "</strong>");
+                $strong_end = mb_stripos($line, "</strong>");
                 if ($strong_end !== false)
-                    $line_html = trim(mb_substr($line_html, $strong_end + 9));
+                    $line = trim(mb_substr($line, $strong_end + 9));
                 else { // But not always
-                    $weekday_pos = mb_stripos($line_html, $weekday);
-                    $line_html = trim(substr($line_html, $weekday_pos + mb_strlen($weekday)));
+                    $weekday_pos = mb_stripos($line, $weekday);
+                    $line = trim(substr($line, $weekday_pos + mb_strlen($weekday)));
                 }
                 return $day_number;
             }
@@ -242,25 +243,25 @@ abstract class AmicaImport extends Import
     }
 
     /**
-     * Get section name from the current line
+     * Get section name from the current line, and strip away the section name
      * @return int if section is found, otherwise false
      */
-    private function getSectionName(&$line_html, $lang)
+    private function getSection(&$line, $lang)
     {
         foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
-            if (preg_match("/^(" . preg_quote("<strong>", "/") . ")?[\\s]*" . $name_lang . "[\\s]*(" . preg_quote("</strong>", "/") . ")?/i", $line_html, $matches)) {
-                $line_html = trim(mb_substr($line_html, strlen($matches[0])));
+            if (preg_match("/^(" . preg_quote("<strong>", "/") . ")?[\\s]*" . $name_lang . "[\\s]*(" . preg_quote("</strong>", "/") . ")?/i", $line, $matches)) {
+                $line = trim(htmlentities(mb_substr($line, strlen($matches[0]))));
                 return $name_en;
             }
         }
 
-        return false;
+        return null;
     }
 
-    private function isLineIgnored($line_html, $lang)
+    private function isLineIgnored($line, $lang)
     {
         foreach ($this->langs[$lang]['ignore'] as $ignore) {
-            if (preg_match("/" . $ignore . "/", $line_html))
+            if (preg_match("/" . $ignore . "/", $line))
                 return true;
         }
         return false;
@@ -269,18 +270,18 @@ abstract class AmicaImport extends Import
     /**
      * Formats the line breaks in a row
      */
-    protected function formatLineBreaks($line_html)
+    protected function formatLineBreaks($line)
     {
-        return str_replace(array("\r\n", "\n"), array('<span class="line-break"></span>', '<span class="line-break"></span>'), $line_html);
+        return str_replace(array("\r\n", "\n"), array('<span class="line-break"></span>', '<span class="line-break"></span>'), $line);
     }
 
     /**
      * Formats the attributes in a row.
      * Adds line break after attribute group if there's not.
      */
-    private function formatAttributes($line_html)
+    private function formatAttributes($line)
     {
-        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line_html, $matches);
+        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
@@ -288,7 +289,7 @@ abstract class AmicaImport extends Import
             preg_match_all("/(?:Veg)|(?:VS)|G|L|(?:VL)|M|\*/i", $subMatch, $subMatchArray);
             foreach ($subMatchArray[0] as $key => $value)
                 $subMatchArray[0][$key] = $value;
-            $lastMatchStart = mb_stripos($line_html, $subMatch, $lastMatchStart + 1);
+            $lastMatchStart = mb_stripos($line, $subMatch, $lastMatchStart + 1);
             $matchStarts[] = $lastMatchStart;
             $subMatches[] = array(
                 'start' => $lastMatchStart,
@@ -300,12 +301,12 @@ abstract class AmicaImport extends Import
         foreach ($subMatches as $subMatch) {
             foreach ($subMatch['attributes'] as $key => $attribute)
                 $subMatch['attributes'][$key] = "<span class=\"attribute\">$attribute</span>";
-            $line_html = mb_substr($line_html, 0, $subMatch['start'])
+            $line = mb_substr($line, 0, $subMatch['start'])
                 . " <span class=\"attribute-group\">" . implode(" ", $subMatch['attributes']) . "</span>\n"
-                . mb_substr($line_html, $subMatch['start'] + $subMatch['length']);
+                . mb_substr($line, $subMatch['start'] + $subMatch['length']);
         }
 
-        return $line_html;
+        return trim($line);
     }
 
     /**
