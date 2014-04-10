@@ -6,6 +6,9 @@ $GLOBALS['config'] = array(
     'admin' => array(
         'email_address' => 'mealbookers@gmail.com',
     ),
+    'server' => array(
+        'http_host' => 'localhost',
+    ),
 	'db' => array(
 		'user' => 'root',
 		'pass' => '',

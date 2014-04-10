@@ -3,7 +3,7 @@
 class Conf
 {
     private static $instance = null;
-    
+
     /**
      * Singleton pattern: private constructor
      */
@@ -11,7 +11,7 @@ class Conf
     {
         require __DIR__ . '/config.php';
     }
-    
+
     /**
      * Singleton pattern: instance
      */
@@ -19,7 +19,7 @@ class Conf
     {
         if (is_null(self::$instance))
             self::$instance = new Conf();
-        
+
         return self::$instance;
     }
 

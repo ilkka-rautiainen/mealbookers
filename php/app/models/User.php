@@ -368,7 +368,7 @@ class User
                 '{restaurant}',
                 '{menu}',
                 '{suggestion_time}',
-                '{server_hostname}',
+                '{http_host}',
                 '{token}',
             ),
             array(
@@ -377,7 +377,7 @@ class User
                 $restaurant->name,
                 $restaurant->getMenuForEmail($suggestion, $this),
                 $suggestion->getTime(),
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $token,
             ),
             Lang::inst()->get('mailer_body_suggestion', $this)
@@ -411,7 +411,7 @@ class User
                 '{suggestion_date}',
                 '{restaurant}',
                 '{suggestion_time}',
-                '{server_hostname}',
+                '{http_host}',
                 '{day}',
             ),
             array(
@@ -419,7 +419,7 @@ class User
                 $suggestion->getDate(),
                 $restaurant->name,
                 $suggestion->getTime(),
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $suggestion->getWeekDay() + 1,
             ),
             Lang::inst()->get('mailer_body_suggestion_accepted_' . $version_postfix, $this)
@@ -451,7 +451,7 @@ class User
                 '{suggestion_date}',
                 '{restaurant}',
                 '{suggestion_time}',
-                '{server_hostname}',
+                '{http_host}',
                 '{day}',
             ),
             array(
@@ -459,7 +459,7 @@ class User
                 $suggestion->getDate(),
                 $restaurant->name,
                 $suggestion->getTime(),
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $suggestion->getWeekDay() + 1,
             ),
             Lang::inst()->get('mailer_body_suggestion_left_alone', $this)
@@ -488,7 +488,7 @@ class User
                 '{suggestion_date}',
                 '{restaurant}',
                 '{suggestion_time}',
-                '{server_hostname}',
+                '{http_host}',
                 '{day}',
             ),
             array(
@@ -496,7 +496,7 @@ class User
                 $suggestion->getDate(),
                 $restaurant->name,
                 $suggestion->getTime(),
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $suggestion->getWeekDay() + 1,
             ),
             Lang::inst()->get('mailer_body_suggestion_deleted', $this)
@@ -532,13 +532,13 @@ class User
             array(
                 '{inviter}',
                 '{group_name}',
-                '{server_hostname}',
+                '{http_host}',
                 '{code}',
             ),
             array(
                 $this->getName(),
                 $group->name,
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $code,
             ),
             Lang::inst()->get('mailer_body_invite', $this)
@@ -585,12 +585,12 @@ class User
             array(
                 '{inviter}',
                 '{group_name}',
-                '{server_hostname}',
+                '{http_host}',
             ),
             array(
                 $inviter_name,
                 $group->name,
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
             ),
             Lang::inst()->get('mailer_body_invite_notification', $this)
         );
@@ -627,12 +627,12 @@ class User
             array(
                 '{deleter}',
                 '{group_name}',
-                '{server_hostname}',
+                '{http_host}',
             ),
             array(
                 $deleter_name,
                 $group->name,
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
             ),
             Lang::inst()->get('mailer_body_group_leave_notification', $this)
         );
@@ -652,12 +652,12 @@ class User
             array(
                 '{admin}',
                 '{new_password}',
-                '{server_hostname}',
+                '{http_host}',
             ),
             array(
                 $admin_name,
                 $new_password,
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
             ),
             Lang::inst()->get('mailer_body_password_change_notification', $this)
         );
@@ -675,11 +675,11 @@ class User
         $subject = Lang::inst()->get('mailer_subject_email_verification', $this);
         $body = str_replace(
             array(
-                '{server_hostname}',
+                '{http_host}',
                 '{hash}',
             ),
             array(
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $token,
             ),
             Lang::inst()->get('mailer_body_email_verification', $this)
@@ -698,11 +698,11 @@ class User
         $subject = Lang::inst()->get('mailer_subject_new_password', $this);
         $body = str_replace(
             array(
-                '{server_hostname}',
+                '{http_host}',
                 '{token}',
             ),
             array(
-                $_SERVER['HTTP_HOST'],
+                Application::inst()->getHttpHost(),
                 $token,
             ),
             Lang::inst()->get('mailer_body_new_password', $this)

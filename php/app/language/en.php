@@ -228,77 +228,77 @@ $GLOBALS['language']['en'] = array(
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
             . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/suggestion/accept/{token}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
-            . ' <a href="http://{server_hostname}">here</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <a href="http://{http_host}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
         'mailer_body_suggestion_accepted_creator' =>
             'Hello!<br /><br />{accepter} has accepted your suggestion to go to eat at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
         'mailer_body_suggestion_accepted_other' =>
             'Hello!<br /><br />{accepter} is coming to eat with you at {restaurant} on'
             . ' {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
         'mailer_body_suggestion_left_alone' =>
             'Hello!<br /><br />{canceler} can\'t come to eat with you at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} canceled the suggestion',
         'mailer_body_suggestion_deleted' =>
             'Hello!<br /><br />{canceler} canceled his/her suggestion to go to eat at {restaurant}'
             . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite' => '{inviter} invites you to Mealbookers',
         'mailer_body_invite' =>
             'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
             . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
-            . ' Become member in the group <a href="http://{server_hostname}/#/menu/today/register?invitation={code}">here</a>'
+            . ' Become member in the group <a href="http://{http_host}/#/menu/today/register?invitation={code}">here</a>'
             . ' or if you have already registered, join using this invitation code <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
         'mailer_body_invite_notification' =>
             'Hello!<br /><br />{inviter} joined you to group {group_name} at Mealbookers.<br /><br />'
-            . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_group_leave_notification' => '{deleter} removed you from group {group_name}',
         'mailer_body_group_leave_notification' =>
             'Hello!<br /><br />{deleter} removed you from group {group_name} at Mealbookers.<br /><br />'
-            . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_password_change_notification' => 'Your new password at Mealbookers',
         'mailer_body_password_change_notification' =>
             'Hello!<br /><br />{admin} changed your password at Mealbookers.'
             . ' <br /><br />Your new password is <strong>{new_password}</strong><br /><br />'
-            . ' You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
         'mailer_body_email_verification' =>
             'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>.'
-            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/email/verify/{hash}">tästä</a>.'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_new_password' => 'Password change',
         'mailer_body_new_password' =>
             'Hello!<br /><br />Create a new password '
-            . ' <a href="http://{server_hostname}/#/menu/today/login/forgot/new/{token}">here</a>.'
-            . ' <br /><br />You can go to Mealbookers <a href="http://{server_hostname}">here</a>.'
+            . ' <a href="http://{http_host}/#/menu/today/login/forgot/new/{token}">here</a>.'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
     ),

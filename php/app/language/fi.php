@@ -228,77 +228,77 @@ $GLOBALS['language']['fi'] = array(
             'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
             . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - ruokalista</b><br />'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/suggestion/accept/{token}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/suggestion/accept/{token}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
-            . ' <a href="http://{server_hostname}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <a href="http://{http_host}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} on hyväksynyt ehdotuksesi',
         'mailer_body_suggestion_accepted_creator' =>
             'Hei!<br /><br />{accepter} on hyväksynyt ehdotuksesi mennä {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} tulee kanssasi syömään',
         'mailer_body_suggestion_accepted_other' =>
             'Hei!<br /><br />{accepter} on tulossa kanssasi {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} ei pääsekään kanssasi syömään',
         'mailer_body_suggestion_left_alone' =>
             'Hei!<br /><br />{canceler} ei pääsekään kanssasi {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} perui ehdotuksen',
         'mailer_body_suggestion_deleted' =>
             'Hei!<br /><br />{canceler} peruikin ehdotuksensa mennä {suggestion_date} syömään ravintolaan'
             . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{server_hostname}/#/menu/{day}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite' => '{inviter} kutsuu sinut Mealbookersiin',
         'mailer_body_invite' =>
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{server_hostname}/#/menu/today/register?invitation={code}">tästä</a>'
+            . ' Liity jäseneksi ryhmään <a href="http://{http_host}/#/menu/today/register?invitation={code}">tästä</a>'
             . ' tai jos olet jo rekisteröitynyt palveluun, liity ryhmään kutsukoodilla <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} liitti sinut ryhmään {group_name}',
         'mailer_body_invite_notification' =>
             'Hei!<br /><br />{inviter} liitti sinut käyttäjäryhmään {group_name} Mealbookersissa.<br /><br />'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_group_leave_notification' => '{deleter} poisti sinut ryhmästä {group_name}',
         'mailer_body_group_leave_notification' =>
             'Hei!<br /><br />{deleter} poisti sinut käyttäjäryhmästä {group_name} Mealbookersissa.<br /><br />'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_password_change_notification' => 'Uusi salasani Mealbookersiin',
         'mailer_body_password_change_notification' =>
             'Hei!<br /><br />{admin} vaihtoi Mealbookers-salasanasi.'
             . ' <br /><br />Uusi salasanasi on <strong>{new_password}</strong><br /><br />'
-            . ' Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
         'mailer_body_email_verification' =>
             'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/email/verify/{hash}">tästä</a>.'
-            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/email/verify/{hash}">tästä</a>.'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_new_password' => 'Salasanan vaihto',
         'mailer_body_new_password' =>
             'Hei!<br /><br />Luo uusi salasana klikkaamalla'
-            . ' <a href="http://{server_hostname}/#/menu/today/login/forgot/new/{token}">tästä</a>.'
-            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{server_hostname}">tästä</a>.'
+            . ' <a href="http://{http_host}/#/menu/today/login/forgot/new/{token}">tästä</a>.'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
     ),
