@@ -178,7 +178,7 @@ class TaffaImport extends Import
     {
         foreach ($this->langs[$lang]['sections'] as $name_lang => $name_en) {
             if (preg_match("/^[\\s]*" . $name_lang . "[\\s]*/i", $line_html, $matches)) {
-                $line_html = trim(mb_substr($line_html, strlen($matches[0])));
+                $line_html = trim(htmlspecialchars(mb_substr($line_html, strlen($matches[0]))));
                 return $name_en;
             }
         }
