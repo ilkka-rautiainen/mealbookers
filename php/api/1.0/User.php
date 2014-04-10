@@ -309,7 +309,7 @@ class UserAPI
 
                 if ($user->id == $current_user->id) {
                     if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
-                        $expiry_time = time() + 86400*365*30;
+                        $expiry_time = time() + 86400*365*5;
                     else
                         $expiry_time = 0;
 
@@ -317,7 +317,7 @@ class UserAPI
                         "check",
                         Application::inst()->hash(Application::inst()->hash($data['password']['new'])),
                         $expiry_time,
-                        '/'
+                        Conf::inst()->get('server.relative_path')
                     );
                 }
             }
@@ -402,13 +402,13 @@ class UserAPI
             throw new HttpException(409, 'email_not_verified');
 
         if ($data["remember"])
-            $expiry_time = time() + 86400*365*30;
+            $expiry_time = time() + 86400*365*5;
         else
             $expiry_time = 0;
 
-        setcookie("id", $user_id, $expiry_time, '/');
-        setcookie("check", Application::inst()->hash($passhash), $expiry_time, '/');
-        setcookie("remember", ($data['remember']) ? "1" : "0", $expiry_time, '/');
+        setcookie("id", $user_id, $expiry_time, Conf::inst()->get('server.relative_path'));
+        setcookie("check", Application::inst()->hash($passhash), $expiry_time, Conf::inst()->get('server.relative_path'));
+        setcookie("remember", ($data['remember']) ? "1" : "0", $expiry_time, Conf::inst()->get('server.relative_path'));
 
         print json_encode(array(
             'status' => 'ok',
@@ -620,9 +620,9 @@ class UserAPI
             $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id");
 
             // Add valid login
-            setcookie("id", $user_id, 0, '/');
-            setcookie("check", Application::inst()->hash($passhash), 0, '/');
-            setcookie("remember", "0", 0, '/');
+            setcookie("id", $user_id, 0, Conf::inst()->get('server.relative_path'));
+            setcookie("check", Application::inst()->hash($passhash), 0, Conf::inst()->get('server.relative_path'));
+            setcookie("remember", "0", 0, Conf::inst()->get('server.relative_path'));
 
             print json_encode(array(
                 'status' => 'ok',

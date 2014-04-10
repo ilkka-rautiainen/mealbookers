@@ -8,6 +8,7 @@ $GLOBALS['config'] = array(
     ),
     'server' => array(
         'http_host' => 'localhost',
+        'relative_path' => '/',
     ),
 	'db' => array(
 		'user' => 'root',
