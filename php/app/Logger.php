@@ -7,7 +7,7 @@ class Logger
     private $levelNames;
     private $loggingLevel;
     private $file;
-    
+
     /**
      * Singleton pattern: private constructor
      * Initialize log file
@@ -20,10 +20,10 @@ class Logger
             $this->levels[$name] = $key;
             $this->levelNames[] = $name;
         }
-        
+
         $loggingLevel = Conf::inst()->get('log.level');
         $this->loggingLevel = $this->levels[$loggingLevel];
-        $this->file = fopen(__DIR__ . "/" . Conf::inst()->get('log.file'), "a");
+        $this->file = fopen(__DIR__ . "/../log/" . Conf::inst()->get('log.file'), "a");
     }
 
     /**
@@ -32,7 +32,7 @@ class Logger
     function __destruct() {
         fclose($this->file);
     }
-    
+
     /**
      * Singleton pattern: Instance
      */
@@ -40,10 +40,10 @@ class Logger
     {
         if (is_null(self::$instance))
             self::$instance = new Logger();
-        
+
         return self::$instance;
     }
-    
+
     /**
      * Put a log message to log
      */
@@ -54,10 +54,9 @@ class Logger
             $id = "-none-";
         else
             $id = $current_user->id;
-        
+
         if (fwrite($this->file, gmdate("d/m/y H:i:s"). substr((string)microtime(), 1, 4) . " [$id][" . strtoupper($level) . "] $message\n") === false)
-            throw new Exception("Couldn't put error message");
-            
+            throw new Exception("Unable to write to log");
     }
 
     /**
@@ -74,7 +73,7 @@ class Logger
             return;
         else if (count($arguments) != 1)
             throw new Exception("Invalid number of arguments");
-            
+
         return self::inst()->log($name, $arguments[0]);
     }
 }
