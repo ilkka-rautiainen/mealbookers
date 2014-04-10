@@ -176,6 +176,8 @@ angular.module('Mealbookers.controllers', [])
 
     $scope.processForm = function() {
         $scope.loginProcess = true;
+        $scope.login.email = $("#email_log_in").val();
+        $scope.login.password = $("#password_log_in").val();
         $http.post('api/1.0/user/login', $scope.login).success(function(result) {
             $scope.loginProcess = false;
             if (result && result.status == 'ok') {
