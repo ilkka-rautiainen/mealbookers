@@ -958,9 +958,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = '/api/1.0/user/groups/' + group.id + '/members';
+            address = 'api/1.0/user/groups/' + group.id + '/members';
         else
-            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members';
+            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members';
 
         $http.post(address, {
             email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
@@ -1000,9 +1000,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = '/api/1.0/user/groups/' + group.id;
+            address = 'api/1.0/user/groups/' + group.id;
         else
-            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
+            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
 
         $http.post(address, {
             name: group.name
@@ -1029,9 +1029,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = '/api/1.0/user/groups/' + group.id + '/members/' + member.id;
+            address = 'api/1.0/user/groups/' + group.id + '/members/' + member.id;
         else
-            address = '/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
+            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
 
         $http.delete(address).success(function(result) {
             if (result && result.status == 'ok') {
@@ -1105,9 +1105,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = '/api/1.0/user/groups';
+            address = 'api/1.0/user/groups';
         else
-            address = '/api/1.0/user/' + $scope.user.id + '/groups';
+            address = 'api/1.0/user/' + $scope.user.id + '/groups';
 
         $http.post(address, {
             name: $scope.newGroup.name || ''
@@ -1156,9 +1156,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = '/api/1.0/user/groups/join';
+            address = 'api/1.0/user/groups/join';
         else
-            address = '/api/1.0/user/' + $scope.user.id + '/groups/join';
+            address = 'api/1.0/user/' + $scope.user.id + '/groups/join';
 
         $http.post(address, {
             code: $scope.invitationCode.text

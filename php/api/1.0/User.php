@@ -309,7 +309,7 @@ class UserAPI
 
                 if ($user->id == $current_user->id) {
                     if (isset($_COOKIE['remember']) && $_COOKIE['remember'])
-                        $expiry_time = PHP_INT_MAX;
+                        $expiry_time = time() + 86400*365*30;
                     else
                         $expiry_time = 0;
 
@@ -402,7 +402,7 @@ class UserAPI
             throw new HttpException(409, 'email_not_verified');
 
         if ($data["remember"])
-            $expiry_time = PHP_INT_MAX;
+            $expiry_time = time() + 86400*365*30;
         else
             $expiry_time = 0;
 
