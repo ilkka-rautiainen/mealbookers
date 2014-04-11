@@ -149,12 +149,9 @@ class Application
         return sha1("gw89h#%HPHG392h23t)#(¤T" . $s);
     }
 
-    public function isStrongPassword($password, User $user)
+    public function isStrongPassword($password)
     {
         if (mb_strlen($password) < 5)
-            return false;
-        else if (mb_stripos($password, $user->first_name) !== false
-            || mb_stripos($password, $user->last_name) !== false)
             return false;
         else
             return true;

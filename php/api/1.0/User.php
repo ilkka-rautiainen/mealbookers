@@ -294,7 +294,7 @@ class UserAPI
             if ($data['password']['new'] != $data['password']['repeat']) {
                 throw new HttpException(409, 'passwords_dont_match');
             }
-            else if (!Application::inst()->isStrongPassword($data['password']['new'], $user)) {
+            else if (!Application::inst()->isStrongPassword($data['password']['new'])) {
                 throw new HttpException(409, 'weak_password');
             }
             else {
@@ -501,7 +501,7 @@ class UserAPI
         if ($data['new'] != $data['repeat']) {
             throw new HttpException(409, 'passwords_dont_match');
         }
-        else if (!Application::inst()->isStrongPassword($data['new'], $user)) {
+        else if (!Application::inst()->isStrongPassword($data['new'])) {
             throw new HttpException(409, 'weak_password');
         }
 
@@ -547,10 +547,7 @@ class UserAPI
             throw new HttpException(409, 'passwords_dont_match');
         $passhash = Application::inst()->hash($data['password']);
 
-        $user = new User();
-        $user->first_name = $data['first_name'];
-        $user->last_name = $data['last_name'];
-        if (!Application::inst()->isStrongPassword($data['password'], $user))
+        if (!Application::inst()->isStrongPassword($data['password']))
             throw new HttpException(409, 'weak_password');
 
         if (!in_array($data['language'], array('fi', 'en')))
