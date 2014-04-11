@@ -223,6 +223,8 @@ $GLOBALS['language']['fi'] = array(
     'action_failed' => 'Toimenpide epäonnistui',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
+        'mailer_header' => "<!DOCTYPE html>\n<html><head><style type=\"text/css\">body {font-family: verdana;}</style></head><body>",
+        'mailer_footer' => '</body></html>',
         'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
         'mailer_body_suggestion' =>
             'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'

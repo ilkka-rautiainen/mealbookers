@@ -3,7 +3,7 @@
 class Lang
 {
     private static $instance = null;
-    
+
     /**
      * Singleton pattern: private constructor
      */
@@ -11,7 +11,7 @@ class Lang
     {
         require __DIR__ . '/language/include.php';
     }
-    
+
     /**
      * Singleton pattern: instance
      */
@@ -19,7 +19,7 @@ class Lang
     {
         if (is_null(self::$instance))
             self::$instance = new Lang();
-        
+
         return self::$instance;
     }
 

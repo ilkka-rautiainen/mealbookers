@@ -48,7 +48,10 @@ class Mailer
         $this->phpMailer->clearAddresses();
         $this->phpMailer->AddAddress($recipient->email_address, $recipient->getName());
         $this->phpMailer->Subject = $subject;
-        $this->phpMailer->MsgHTML($body);
+        $this->phpMailer->MsgHTML(
+            Lang::inst()->get('mailer_header')
+            . $body
+            . Lang::inst()->get('mailer_footer'));
 
         if ($this->phpMailer->send()) {
             Logger::info(__METHOD__ . " sending message to {$recipient->email_address} succeeded");
@@ -68,7 +71,10 @@ class Mailer
         );
         $this->phpMailer->AddAddress($email_address);
         $this->phpMailer->Subject = $subject;
-        $this->phpMailer->MsgHTML($body);
+        $this->phpMailer->MsgHTML(
+            Lang::inst()->get('mailer_header')
+            . $body
+            . Lang::inst()->get('mailer_footer'));
 
         if ($this->phpMailer->send()) {
             Logger::info(__METHOD__ . " sending message to {$email_address} succeeded");

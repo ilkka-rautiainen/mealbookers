@@ -223,6 +223,8 @@ $GLOBALS['language']['en'] = array(
     'action_failed' => 'Action failed',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
+        'mailer_header' => "<!DOCTYPE html>\n<html><head><style type=\"text/css\">body {font-family: verdana;}</style></head><body>",
+        'mailer_footer' => '</body></html>',
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
         'mailer_body_suggestion' =>
             'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'

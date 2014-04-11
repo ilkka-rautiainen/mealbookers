@@ -111,7 +111,19 @@ class Restaurant
         }
 
         if (count($meals))
-            return implode("<br />", $meals);
+            return implode("<br />", str_replace(
+                array(
+                    '<span class="attribute-group">',
+                    '<span class="attribute">',
+                    '<span class="line-break">',
+                ),
+                array(
+                    '<span style="padding-left:5px;display:inline-block;">',
+                    '<span style="font-size:10px;text-transform:uppercase;overflow:hidden;color:#c0c0c0;padding:2px0px;font-style:italic;">',
+                    '<span style="margin:0;padding-left:10px;">',
+                ),
+                $meals
+            ));
         else
             return Lang::inst()->get('suggestion_no_menu_available');
     }
