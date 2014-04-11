@@ -280,7 +280,6 @@ class UserAPI
         // UPDATE PASSWORD
         // New password given
         if ($data['password']['new'] || $data['password']['repeat']) {
-
             if ($current_user->role != 'admin') {
                 if (!$data['password']['old']) {
                     throw new HttpException(409, 'no_old_password');
@@ -298,7 +297,6 @@ class UserAPI
                 throw new HttpException(409, 'weak_password');
             }
             else {
-
                 if ($user->id != $current_user->id
                     && !$user->notifyPasswordChanged($data['password']['new']))
                     throw new HttpException(500, 'notify_failed');
