@@ -23,7 +23,7 @@ class Mailer
         $this->phpMailer->Username = Conf::inst()->get('mail.smtp_username');
         $this->phpMailer->Password = Conf::inst()->get('mail.smtp_password');
     }
-    
+
     /**
      * Singleton pattern: Instance
      */
@@ -31,7 +31,7 @@ class Mailer
     {
         if (is_null(self::$instance))
             self::$instance = new Mailer();
-        
+
         return self::$instance;
     }
 
@@ -45,10 +45,11 @@ class Mailer
             Conf::inst()->get('mail.from_address'),
             Lang::inst()->get('mailer_sender_name', $recipient)
         );
+        $this->phpMailer->clearAddresses();
         $this->phpMailer->AddAddress($recipient->email_address, $recipient->getName());
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->MsgHTML($body);
-        
+
         if ($this->phpMailer->send()) {
             Logger::info(__METHOD__ . " sending message to {$recipient->email_address} succeeded");
             return true;
@@ -68,7 +69,7 @@ class Mailer
         $this->phpMailer->AddAddress($email_address);
         $this->phpMailer->Subject = $subject;
         $this->phpMailer->MsgHTML($body);
-        
+
         if ($this->phpMailer->send()) {
             Logger::info(__METHOD__ . " sending message to {$email_address} succeeded");
             return true;

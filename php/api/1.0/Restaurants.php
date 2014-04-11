@@ -85,7 +85,7 @@ class RestaurantsAPI
             datetime,
             restaurant_id
         ) VALUES (
-            1,
+            {$current_user->id},
             '$datetime',
             $restaurantId
         )");
