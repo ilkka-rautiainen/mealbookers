@@ -82,6 +82,16 @@ angular.module('Mealbookers', [
         controller: 'SuggestionController'
     })
 
+    .state('Navigation.Menu.TermsOfUse', {
+        url: "/terms",
+        templateUrl: "partials/modals/TermsOfUse.html",
+        data: {
+            modal: true,
+            modalId: "terms-of-use-modal"
+        },
+        controller: 'TermsOfUseController'
+    })
+
     .state('Navigation.Menu.AccountSettings', {
         url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",

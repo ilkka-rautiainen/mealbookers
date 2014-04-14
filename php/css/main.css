@@ -1,7 +1,6 @@
 body {
     font-family: 'Open Sans';
     background-color: whitesmoke;
-    padding-bottom: 20px;
 }
 
 body.modal-open {
@@ -129,6 +128,22 @@ label {
     {
         position: relative;
         top: auto;
+    }
+
+    #footer ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        height: 40px;
+        margin-right: 20px;
+    }
+
+    #footer ul li {
+        padding: 0;
+        margin: 0;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
     }
 }
 
@@ -691,4 +706,50 @@ strong, b {
     #content.ng-leave-active {
         opacity: 0;
     }
+
+    #footer ul {
+        float: right;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        height: 40px;
+        margin-right: 20px;
+    }
+
+    #footer ul li {
+        float: left;
+        padding: 0;
+        margin: 0;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    #footer ul li:not(:last-child):after {
+        padding-left: 5px;
+        padding-right: 5px;
+        content: "|";
+    }
+}
+
+html, body {
+    height: 100%;
+}
+
+#page {
+    min-height: 100%;
+    position: relative;
+}
+
+#content {
+    padding-bottom: 70px;
+}
+
+#footer {
+    background-color: #D6E2FF;
+    margin-top: 20px;
+    border-top: 3px solid #e6e6e6;
+    height: 43px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
