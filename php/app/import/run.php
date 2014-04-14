@@ -21,7 +21,7 @@ foreach ($importers as $importer) {
         $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
     }
     catch (ImportException $e) {
-        $errorMessage = __FILE__ . ":" . __LINE__ . " Error in import: "
+        $errorMessage = __FILE__ . ":" . __LINE__ . " Error in " . get_class($importer) . ": "
             . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
         Logger::error($errorMessage);
         print $errorMessage . "<br />";
