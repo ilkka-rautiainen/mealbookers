@@ -542,6 +542,9 @@ angular.module('Mealbookers.controllers', [])
         for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
             $(".row-" + i.toString()).equalHeights().css("visibility", "visible");
         }
+        $("#menuContainer").sortable({
+            handle: '.sortable-handle'
+        });
     });
 
     $scope.getOpeningHoursTooltip = function(restaurant) {
