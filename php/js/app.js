@@ -573,7 +573,7 @@ angular.module('Mealbookers', [
     angular.forEach(["suggestionRefresh", "restaurantRefresh"], function(value) {
         $rootScope.$on(value, function() {
             $(".restaurant").css("height", "auto");
-            $rootScope.$broadcast("restaurantRefresh");
+            $rootScope.$broadcast("restaurantResize");
         });
     });
 

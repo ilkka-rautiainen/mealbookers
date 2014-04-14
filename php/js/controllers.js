@@ -519,12 +519,12 @@ angular.module('Mealbookers.controllers', [])
     $scope.restaurantsRendered = 0;
     $scope.$on('restaurantRendered', function() {
         if ($scope.restaurantsRendered + 1 == $scope.restaurants.length) {
-            $scope.$broadcast("restaurantRefresh");
+            $scope.$broadcast("restaurantResize");
         }
         $scope.restaurantsRendered++;
     });
 
-    $scope.$on("restaurantRefresh", function() {
+    $scope.$on("restaurantResize", function() {
         // Show openingh hours tooltip
         $(".opening-hour-tooltip").tooltip({
             delay: {
@@ -534,16 +534,27 @@ angular.module('Mealbookers.controllers', [])
         });
 
         // Equal heights for restaurant rows
-        var maxIdx;
-        $(".restaurant").each(function(idx, el) {
-            $(el).addClass("row-" + Math.floor(idx / $rootScope.columns).toString()).css("height", "auto");
-            maxIdx = idx;
-        });
-        for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
-            $(".row-" + i.toString()).equalHeights().css("visibility", "visible");
-        }
+        var equalizeRows = function() {
+            var maxIdx;
+            $(".restaurant").each(function(idx, el) {
+                $(el).attr("restaurant-row", Math.floor(idx / $rootScope.columns)).css("height", "auto");
+                maxIdx = idx;
+            });
+            for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
+                $("[restaurant-row='" + i.toString() + "']").equalHeights().css("visibility", "visible");
+            }
+        };
+        equalizeRows();
         $("#menuContainer").sortable({
-            handle: '.sortable-handle'
+            handle: '.sortable-handle',
+            start: function() {
+                $(".restaurant").equalHeights();
+                $(".ui-sortable-placeholder").height($(".restaurant").height());
+                $("[restaurant-row]").removeAttr("restaurant-row");
+            },
+            stop: function() {
+                equalizeRows();
+            }
         });
     });
 
