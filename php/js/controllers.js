@@ -519,14 +519,22 @@ angular.module('Mealbookers.controllers', [])
     $scope.restaurantsRendered = 0;
     $scope.$on('restaurantRendered', function() {
         if ($scope.restaurantsRendered + 1 == $scope.restaurants.length) {
-            $(".opening-hour-tooltip").tooltip({
-                delay: {
-                    show: 500,
-                    hide: 0
-                }
-            });
+            $scope.$broadcast("restaurantRefresh");
         }
         $scope.restaurantsRendered++;
+    });
+
+    $scope.$on("restaurantRefresh", function() {
+        $(".opening-hour-tooltip").tooltip({
+            delay: {
+                show: 500,
+                hide: 0
+            }
+        });
+        $(".restaurant").each(function(idx, el) {
+            console.log(idx);
+        });
+        // $(".restaurant").css("visibility", "visible");
     });
 
     $scope.getOpeningHoursTooltip = function(restaurant) {

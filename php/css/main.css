@@ -665,7 +665,7 @@ strong, b {
 
     .restaurant-outer {
         padding: 0 10px 0 10px;
-        visibility: hidden;
+        /*visibility: hidden;*/
     }
 
     #content.ng-enter, #content.ng-leave {

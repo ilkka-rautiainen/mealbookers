@@ -17,24 +17,9 @@ angular.module('Mealbookers.directives', [])
         replace: true,
         templateUrl: 'partials/directives/restaurant.html',
         controller: function($scope) {
-            var resize = function() {
-                $timeout(function() {
-
-                    if ($rootScope.widthClass != 'xs') {
-                        // $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("height", ($("#restaurant-" + $scope.restaurant.id).parent().height()).toString() + 'px');
-                        // $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "hidden");
-                        // $timeout(function() {
-                        //     $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "visible");
-                        // }, 500);
-                        $("#restaurant-" + $scope.restaurant.id).css("visibility", "visible");
-                    }
-                }, 0);
-            };
-            resize();
             $timeout(function() {
                 $scope.$emit("restaurantRendered");
             }, 0);
-            $scope.$on("restaurantsResize", resize);
         }
     };
 }])
