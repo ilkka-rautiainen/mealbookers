@@ -171,10 +171,6 @@ label {
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #D6E2FF), color-stop(1, #ABCAFF));
     background-image: -webkit-linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
     background-image: linear-gradient(top, #D6E2FF 0%, #ABCAFF 100%);
-    -webkit-transition: height 0.30s ease-in-out;
-    -moz-transition: height 0.30s ease-in-out;
-    -o-transition: height 0.30s ease-in-out;
-    transition: height 0.30s ease-in-out;
 }
 
 .restaurant-thumbnail {
@@ -665,7 +661,7 @@ strong, b {
 
     .restaurant-outer {
         padding: 0 10px 0 10px;
-        /*visibility: hidden;*/
+        visibility: hidden;
     }
 
     #content.ng-enter, #content.ng-leave {

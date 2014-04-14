@@ -453,7 +453,7 @@ angular.module('Mealbookers.controllers', [])
 
 }])
 
-.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', '$log', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams, $log) {
+.controller('MenuController', ['$scope', '$rootScope', '$window', '$location', '$http', '$state', '$filter', '$stateParams', '$log', '$timeout', function($scope, $rootScope, $window, $location, $http, $state, $filter, $stateParams, $log, $timeout) {
 
     if ($stateParams.day == 'today') {
         $rootScope.weekDay = $rootScope.today;
@@ -525,16 +525,23 @@ angular.module('Mealbookers.controllers', [])
     });
 
     $scope.$on("restaurantRefresh", function() {
+        // Show openingh hours tooltip
         $(".opening-hour-tooltip").tooltip({
             delay: {
                 show: 500,
                 hide: 0
             }
         });
+
+        // Equal heights for restaurant rows
+        var maxIdx;
         $(".restaurant").each(function(idx, el) {
-            console.log(idx);
+            $(el).addClass("row-" + Math.floor(idx / $rootScope.columns).toString()).css("height", "auto");
+            maxIdx = idx;
         });
-        // $(".restaurant").css("visibility", "visible");
+        for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
+            $(".row-" + i.toString()).equalHeights().css("visibility", "visible");
+        }
     });
 
     $scope.getOpeningHoursTooltip = function(restaurant) {

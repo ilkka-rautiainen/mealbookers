@@ -3,7 +3,6 @@
 
 // Declare app level module which depends on filters, and services
 angular.module('Mealbookers', [
-    'ngAnimate',
     'Mealbookers.filters',
     'Mealbookers.services',
     'Mealbookers.directives',
