@@ -498,6 +498,10 @@ angular.module('Mealbookers.controllers', [])
         $scope.restaurantsRendered++;
     });
 
+    $rootScope.$watch('widthClass', function() {
+        $scope.$broadcast("resizeRestaurants");
+    });
+
     // Resizes the restaurants
     $scope.$on("resizeRestaurants", function() {
         // Show openingh hours tooltip
