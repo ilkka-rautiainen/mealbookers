@@ -488,15 +488,18 @@ angular.module('Mealbookers.controllers', [])
     };
 
     // Do stuff when restaurants are rendered
+
+    // Do stuff when restaurants are rendered for the first time
     $scope.restaurantsRendered = 0;
     $scope.$on('restaurantRendered', function() {
         if ($scope.restaurantsRendered + 1 == $scope.restaurants.length) {
-            $scope.$broadcast("restaurantResize");
+            $scope.$broadcast("resizeRestaurants");
         }
         $scope.restaurantsRendered++;
     });
 
-    $scope.$on("restaurantResize", function() {
+    // Resizes the restaurants
+    $scope.$on("resizeRestaurants", function() {
         // Show openingh hours tooltip
         $(".opening-hour-tooltip").tooltip({
             delay: {
@@ -531,17 +534,19 @@ angular.module('Mealbookers.controllers', [])
         });
     });
 
+    // Saves the new order
     $scope.saveRestaurantOrder = function() {
         var restaurants = [];
         $(".restaurant").each(function(idx, el) {
             restaurants.push($(el).parent().attr("data-id"));
         });
+        console.log(restaurants);
         $http.post('api/1.0/user/restaurant-order', restaurants).success(function(result) {
             // Check the result
             if (result && result.status == 'ok') {
                 $log.info("Restaurant order saved");
                 $rootScope.alert('alert-success', 'restaurant_order_success');
-                // $scope.reloadRestaurants();
+                $scope.refreshRestaurants();
             }
             else {
                 $log.error("Unknown response");

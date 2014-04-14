@@ -374,7 +374,7 @@ angular.module('Mealbookers', [
             }
 
             $log.debug("Suggestions refreshed");
-            $rootScope.$broadcast("suggestionRefresh");
+            $rootScope.$broadcast("suggestionRefreshed");
             if (typeof done == 'function') {
                 done();
             }
@@ -387,7 +387,7 @@ angular.module('Mealbookers', [
         for (var i = 0; i < $rootScope.restaurants.length; i++) {
             $rootScope.restaurants[i].suggestionList = [];
         }
-        $rootScope.$broadcast("suggestionRefresh");
+        $rootScope.$broadcast("suggestionRefreshed");
     };
 
     $rootScope.liveViewUpdate = function() {
@@ -482,13 +482,13 @@ angular.module('Mealbookers', [
         }).success(function(result) {
             $log.debug("Restaurants refreshed");
             $rootScope.restaurants = result;
-            $rootScope.$broadcast("restaurantRefresh");
+            $rootScope.$broadcast("restaurantRefreshed");
 
             if (typeof done == 'function') {
                 done();
             }
-        }).error(function() {
-            $log.error("Error while refreshing restaurants");
+        }).error(function(response, httpCode, headers) {
+            $rootScope.operationFailed(httpCode, 'restaurant_reload_failed', null, headers());
         });
     };
 
@@ -570,10 +570,9 @@ angular.module('Mealbookers', [
         }
     });
 
-    angular.forEach(["suggestionRefresh", "restaurantRefresh"], function(value) {
+    angular.forEach(["suggestionRefreshed", "restaurantRefreshed"], function(value) {
         $rootScope.$on(value, function() {
-            $(".restaurant").css("height", "auto");
-            $rootScope.$broadcast("restaurantResize");
+            $rootScope.$broadcast("resizeRestaurants");
         });
     });
 
