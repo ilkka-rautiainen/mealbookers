@@ -15,12 +15,7 @@
 </div>
 
 <div id="menuContainer" class="container">
-    <div class="row restaurant-row" ng-repeat="restaurantRow in restaurantGrid[weekDay]">
-        <restaurant ng-repeat="restaurant in restaurantRow" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess"></restaurant>
-        <restaurant-place-holder ng-if="restaurantRow.length < columns - 2"></restaurant-place-holder>
-        <restaurant-place-holder ng-if="restaurantRow.length < columns - 1"></restaurant-place-holder>
-        <restaurant-place-holder ng-if="restaurantRow.length < columns"></restaurant-place-holder>
-    </div>
+    <restaurant ng-repeat="restaurant in restaurants track by $index" index="$index" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess"></restaurant>
 </div>
 
 <div ui-view autoscroll="false"></div>

@@ -28,11 +28,11 @@ angular.module('Mealbookers.directives', [])
                     });
 
                     if ($rootScope.widthClass != 'xs') {
-                        $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("height", ($("#restaurant-" + $scope.restaurant.id).parent().height()).toString() + 'px');
-                        $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "hidden");
-                        $timeout(function() {
-                            $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "visible");
-                        }, 500);
+                        // $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("height", ($("#restaurant-" + $scope.restaurant.id).parent().height()).toString() + 'px');
+                        // $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "hidden");
+                        // $timeout(function() {
+                        //     $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("overflow-y", "visible");
+                        // }, 500);
                         $("#restaurant-" + $scope.restaurant.id).css("visibility", "visible");
                     }
                 }, 0);
@@ -42,14 +42,6 @@ angular.module('Mealbookers.directives', [])
         }
     };
 }])
-
-.directive('restaurantPlaceHolder', function(){
-    return {
-        restrict: 'E',
-        replace: true,
-        template: '<div class="col-md-3 col-sm-6 restaurant-placeholder"></div>'
-    };
-})
 
 .directive('focusOn', function() {
     return function(scope, elem, attr) {
