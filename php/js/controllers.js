@@ -1370,3 +1370,10 @@ angular.module('Mealbookers.controllers', [])
         }
     };
 }])
+
+.controller('TermsOfUseController', ['$state', function($state) {
+    $("#terms-of-use-modal").modal();
+    $('#terms-of-use-modal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+}])
