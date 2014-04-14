@@ -27,4 +27,4 @@ foreach ($importers as $importer) {
         print $errorMessage . "<br />";
     }
 }
-print "import executed";
+print "Import executed";
