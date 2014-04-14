@@ -572,7 +572,9 @@ angular.module('Mealbookers', [
 
     angular.forEach(["suggestionRefreshed", "restaurantRefreshed"], function(value) {
         $rootScope.$on(value, function() {
-            $rootScope.$broadcast("resizeRestaurants");
+            $timeout(function() {
+                $rootScope.$broadcast("resizeRestaurants");
+            }, 0);
         });
     });
 

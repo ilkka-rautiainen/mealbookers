@@ -540,7 +540,6 @@ angular.module('Mealbookers.controllers', [])
         $(".restaurant").each(function(idx, el) {
             restaurants.push($(el).parent().attr("data-id"));
         });
-        console.log(restaurants);
         $http.post('api/1.0/user/restaurant-order', restaurants).success(function(result) {
             // Check the result
             if (result && result.status == 'ok') {
