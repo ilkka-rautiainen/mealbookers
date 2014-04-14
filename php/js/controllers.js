@@ -549,7 +549,7 @@ angular.module('Mealbookers.controllers', [])
             handle: '.sortable-handle',
             start: function() {
                 $(".restaurant").equalHeights();
-                $(".ui-sortable-placeholder").height($(".restaurant").height());
+                $(".ui-sortable-placeholder").height($(".restaurant").height() + 20);
                 $("[restaurant-row]").removeAttr("restaurant-row");
             },
             stop: function() {
