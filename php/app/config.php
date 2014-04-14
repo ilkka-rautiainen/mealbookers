@@ -53,7 +53,7 @@ $GLOBALS['config'] = array(
         'smtp_password' => 'booker123',
         'from_address' => 'mealbookers@gmail.com',
     ),
-	'developerMode' => true,
+	'developerMode' => false,
     'limits' => array(
         'suggestion_cancelable_time' => 30 * 60, // Time (in past) for suggestion to be cancelable/acceptable
         'suggestion_create_in_past_time' => 5 * 60, // How long in past suggestion can be created
