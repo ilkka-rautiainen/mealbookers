@@ -515,6 +515,20 @@ angular.module('Mealbookers.controllers', [])
         $scope.makeRestaurantGrid();
     });
 
+    // Do stuff when restaurants are rendered
+    $scope.restaurantsRendered = 0;
+    $scope.$on('restaurantRendered', function() {
+        if ($scope.restaurantsRendered + 1 == $scope.restaurants.length) {
+            $(".opening-hour-tooltip").tooltip({
+                delay: {
+                    show: 500,
+                    hide: 0
+                }
+            });
+        }
+        $scope.restaurantsRendered++;
+    });
+
     $scope.getOpeningHoursTooltip = function(restaurant) {
         var openingHours = [];
         for (var i in restaurant.openingHours[$scope.weekDay].all) {

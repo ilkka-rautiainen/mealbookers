@@ -19,13 +19,6 @@ angular.module('Mealbookers.directives', [])
         controller: function($scope) {
             var resize = function() {
                 $timeout(function() {
-                    // Opening hours tooltip
-                    $(".opening-hour-tooltip").tooltip({
-                        delay: {
-                            show: 500,
-                            hide: 0
-                        }
-                    });
 
                     if ($rootScope.widthClass != 'xs') {
                         // $("#restaurant-" + $scope.restaurant.id + " .restaurant").css("height", ($("#restaurant-" + $scope.restaurant.id).parent().height()).toString() + 'px');
@@ -38,6 +31,9 @@ angular.module('Mealbookers.directives', [])
                 }, 0);
             };
             resize();
+            $timeout(function() {
+                $scope.$emit("restaurantRendered");
+            }, 0);
             $scope.$on("restaurantsResize", resize);
         }
     };
