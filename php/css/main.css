@@ -755,12 +755,11 @@ html, body {
 }
 
 #content {
-    padding-bottom: 70px;
+    padding-bottom: 50px;
 }
 
 #footer {
     background-color: #D6E2FF;
-    margin-top: 20px;
     border-top: 3px solid #e6e6e6;
     height: 43px;
     position: absolute;
