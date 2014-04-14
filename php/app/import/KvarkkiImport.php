@@ -1,6 +1,6 @@
 <?php
 
-class KvarkkiImport extends AmicaImport
+class KvarkkiImport extends AmicaImport implements iImport
 {
 	protected $restaurant_id = 2;
 	protected $url = "http://www.amica.fi/kvarkki";
@@ -41,7 +41,6 @@ class KvarkkiImport extends AmicaImport
         }
 
         $imploded = implode("|", $processed_lines);
-        Logger::debug(__METHOD__ . " $imploded");
         if (!preg_match("/ma[\s]*\\-[\s]*to[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
             . "lounas[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"
             . "pe[\s]+kl[\S]*\\.?[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])[\s]*\\-[\s]*(([0-9]|0[0-9]|1[0-9]|2[0-3])[:.][0-5][0-9])\\|"

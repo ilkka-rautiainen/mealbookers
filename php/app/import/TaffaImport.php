@@ -1,6 +1,6 @@
 <?php
 
-class TaffaImport extends Import
+class TaffaImport extends Import implements iImport
 {
     protected $restaurant_id = 7;
 

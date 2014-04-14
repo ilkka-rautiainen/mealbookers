@@ -1,6 +1,6 @@
 <?php
 
-abstract class Import
+abstract class Import implements iImport
 {
 
     protected $restaurant;
@@ -40,7 +40,7 @@ abstract class Import
         $this->is_import_needed = true;
     }
 
-    public function run()
+    public function run($save_opening_hours)
     {
         throw new ImportException("Not implemented");
     }

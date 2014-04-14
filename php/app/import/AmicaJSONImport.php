@@ -1,6 +1,6 @@
 <?php
 
-abstract class AmicaJSONImport extends Import
+abstract class AmicaJSONImport extends Import implements iImport
 {
 
     /**
@@ -40,7 +40,10 @@ abstract class AmicaJSONImport extends Import
 
         foreach ($this->langs as $lang => $lang_config) {
             try {
-                Logger::debug(__METHOD__ . " start lang $lang");
+                Logger::debug(__METHOD__ . " start lang $lang, url: http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
+                    . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
+                    . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
+
                 $source = $this->fetchURL("http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
                     . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
                     . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
@@ -48,7 +51,7 @@ abstract class AmicaJSONImport extends Import
                 $menu = json_decode($source, true);
                 if (!$menu || json_last_error())
                     throw new ParseException("Couldn't parse json");
-                
+
                 if (!is_array($menu['MenusForDays']))
                     throw new ParseException("MenusForDays not an array");
 
@@ -57,7 +60,7 @@ abstract class AmicaJSONImport extends Import
                     Logger::trace(__METHOD__ . " start day " . $day_menu['Date']);
                     if (!is_array($day_menu['SetMenus']))
                         throw new ParseException("SetMenus not an array");
-                    
+
                     $this->startDay($day_menu['Date']);
                     foreach ($day_menu['SetMenus'] as $meal) {
                         $this->addMeal($meal, $lang);

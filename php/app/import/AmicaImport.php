@@ -54,7 +54,7 @@ abstract class AmicaImport extends Import
      */
     public function run($save_opening_hours = false)
     {
-        Logger::note(__METHOD__ . " start");
+        Logger::note(__METHOD__ . " start " . $this->restaurant->name);
         require_once __DIR__ . '/../lib/phpQuery.php';
 
         if (!$this->is_import_needed) {
@@ -192,8 +192,8 @@ abstract class AmicaImport extends Import
     {
         Logger::trace(__METHOD__ . " with meals: " . count($day_lines));
 
-        if (count($day_lines) == 1) {
-            $day_lines = $this->fixOneLine($day_lines[0]);
+        if (count($day_lines) <= 2) {
+            $day_lines = $this->fixOneLine(implode(" ", $day_lines));
         }
 
         $this->startDay($day);
@@ -281,7 +281,7 @@ abstract class AmicaImport extends Import
      */
     private function formatAttributes($line)
     {
-        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*/i", $line, $matches);
+        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]{0,2}\,?[\s]*/i", $line, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;

@@ -1,6 +1,6 @@
 <?php
 
-class TUASImport extends AmicaImport
+class TUASImport extends AmicaImport implements iImport
 {
     protected $restaurant_id = 3;
     protected $url = "http://www.amica.fi/tuas";
@@ -59,7 +59,6 @@ class TUASImport extends AmicaImport
             Logger::debug(__METHOD__ . " lines didn't match regex");
         }
         else {
-            Logger::debug(__METHOD__ . " lines matched: " . print_r($matches, true));
             $mon_thu_start = str_replace(".", ":", $matches[1]);
             $mon_thu_end = str_replace(".", ":", $matches[3]);
             $fri_start = str_replace(".", ":", $matches[5]);

@@ -1,6 +1,6 @@
 <?php
 
-class Puu2Import extends AmicaImport
+class Puu2Import extends AmicaImport implements iImport
 {
     protected $restaurant_id = 4;
     protected $url = "http://www.amica.fi/puu2";
