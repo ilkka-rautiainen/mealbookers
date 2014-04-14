@@ -22,7 +22,6 @@ class AmicaImportWrapper implements iImport
     {
         Logger::debug(__METHOD__ . " called");
 
-        $imported = false;
         foreach ($this->importers as $importer) {
             try {
                 $importer->init();
@@ -30,7 +29,6 @@ class AmicaImportWrapper implements iImport
                     $importer->reset();
                 }
                 $importer->run($save_opening_hours);
-                $imported = true;
                 break;
             }
             catch (ImportException $e) {
@@ -39,9 +37,6 @@ class AmicaImportWrapper implements iImport
             }
             // Import opening hours only once
             $save_opening_hours = false;
-        }
-        if (!$imported) {
-            throw new ImportException("None of the tried importers worked");
         }
     }
 }

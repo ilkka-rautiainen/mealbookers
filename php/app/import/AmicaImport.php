@@ -167,7 +167,7 @@ abstract class AmicaImport extends Import
 
     private function fixOneLine($line)
     {
-        if (!preg_match_all('/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)/', $line, $matches, PREG_OFFSET_CAPTURE)) {
+        if (!preg_match_all('/\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*\,?[\s]*/', $line, $matches, PREG_OFFSET_CAPTURE)) {
             return array($line);
         }
         else {
@@ -281,7 +281,7 @@ abstract class AmicaImport extends Import
      */
     private function formatAttributes($line)
     {
-        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]{0,2}\,?[\s]*/i", $line, $matches);
+        preg_match_all("/[\s]*\(((Veg|VS|G|L|VL|M|\*)(\,[\s]*))*(Veg|VS|G|L|VL|M|\*)(?:\,[\s]*)?\)[\s]*\,?[\s]*/i", $line, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
