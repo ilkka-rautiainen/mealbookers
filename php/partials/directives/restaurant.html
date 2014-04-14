@@ -5,6 +5,11 @@
             <!-- Restaurant name -->
             <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
 
+            <!-- Move restaurant in the grid -->
+            <div class="move-restaurant" ng-mouseover="restaurant.moveActive = true;" ng-mouseout="restaurant.moveActive = false;">
+                <i class="glyphicon glyphicon-move" ng-class="{'nearly-invisible': !restaurant.moveActive}"></i>
+            </div>
+
             <!-- Add suggestion -->
             <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
                 <i class="glyphicon glyphicon-plus"></i>
