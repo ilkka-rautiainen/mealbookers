@@ -36,7 +36,6 @@ abstract class Import implements iImport
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND
                 day <= '" . $this->getWeekEndDay() . "'");
-        DB::inst()->query("DELETE FROM restaurant_opening_hours WHERE restaurant_id = {$this->restaurant->id}");
         $this->is_import_needed = true;
     }
 
