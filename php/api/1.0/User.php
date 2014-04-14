@@ -4,6 +4,7 @@ Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login/forgot/new/@token', array('UserAPI', 'createNewPassword'));
 Flight::route('POST /user/login/forgot', array('UserAPI', 'sendForgotPasswordLink'));
 Flight::route('GET /user/login/forgot/@token', array('UserAPI', 'getUserForForgotPassword'));
+Flight::route('POST /user/restaurant-order', array('UserAPI', 'updateRestaurantOrder'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
 Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
 Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'));
@@ -372,6 +373,39 @@ class UserAPI
 
         print json_encode(array(
             'status' => 'ok'
+        ));
+    }
+
+    function updateRestaurantOrder()
+    {
+        global $current_user;
+
+        Logger::debug(__METHOD__ . " POST /user/restaurant-order called");
+        Application::inst()->checkAuthentication();
+
+        $data = Application::inst()->getPostData();
+
+        if (!is_array($data) || !count($data)) {
+            Application::inst()->exitWithHttpCode(400, 'invalid_data');
+        }
+
+        DB::inst()->query("DELETE FROM users_restaurants_order WHERE user_id = {$current_user->id}");
+
+        $insert = array();
+        $points = 0;
+        for ($i = count($data) - 1; $i >= 0; $i--) {
+            if (!isset($data[$i])) {
+                Application::inst()->exitWithHttpCode(400, 'inconsistent_data');
+            }
+            $inserts[] = "({$current_user->id}, " . intval($data[$i]) . ", $points)";
+            $points++;
+        }
+
+        DB::inst()->query("INSERT INTO users_restaurants_order (user_id, restaurant_id, order_points)
+            VALUES " . implode(", ", $inserts));
+
+        print json_encode(array(
+            'status' => 'ok',
         ));
     }
 

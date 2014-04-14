@@ -511,23 +511,23 @@ angular.module('Mealbookers', [
         $rootScope.refreshCurrentUser(function() {
             // Base case: errorMessage_httpCode_failReason
             if (failReason && $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]);
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason], true);
             }
             // General case with failReason: general_code_failReason
             else if (failReason && !skipGeneralCodeError && $rootScope.localization['general_' + httpCode + '_' + failReason]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization['general_' + httpCode + '_' + failReason]);
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization['general_' + httpCode + '_' + failReason], true);
             }
             // Second case: errorMessage_httpCode
             else if ($rootScope.localization[errorMessage + '_' + httpCode]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode]);
+                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode], true);
             }
             // Third case: general_code
             else if (!skipGeneralCodeError && $rootScope.localization['general_' + httpCode]) {
-                alertFunction('alert-warning', $rootScope.localization['general_' + httpCode]);
+                alertFunction('alert-warning', $rootScope.localization['general_' + httpCode], true);
             }
             // Else: errorMessage
             else {
-                alertFunction('alert-danger', $rootScope.localization[errorMessage]);
+                alertFunction('alert-danger', $rootScope.localization[errorMessage], true);
             }
         });
     };

@@ -472,48 +472,20 @@ angular.module('Mealbookers.controllers', [])
         message: ''
     };
 
-    $scope.makeRestaurantGrid = function() {
-        $scope.restaurantGrid = [];
-        for (var day = $rootScope.today; day <= 7; day++) {
-            $scope.restaurantGrid[day] = $scope.getRestaurantGrid(day);
-        }
-    };
-    $scope.getRestaurantGrid = function(day) {
-        var grid = [];
-
-        // Sort open first
-        $rootScope.restaurants.sort(function compareOpenFirst(a, b) {
-            if (a.openingHours[day].closed && !b.openingHours[day].closed)
-                return 1;
-            if (!a.openingHours[day].closed && b.openingHours[day].closed)
-                return -1;
-            if (a.order < b.order)
-                return -1;
-            if (a.order > b.order)
-                return 1;
-            return 0;
+    // Reload restaurants
+    $scope.reloadRestaurants = function() {
+        $http.get('api/1.0/restaurants', {
+            params: {
+                lang: $rootScope.currentUser.language
+            }
+        }).success(function(result) {
+            $log.debug("Restaurants reloaded");
+            $rootScope.restaurants = result;
+            $scope.$broadcast("restaurantResize");
+        }).error(function(response, httpCode, headers) {
+            $rootScope.operationFailed(httpCode, 'restaurant_reload_failed', null, headers());
         });
-
-        // Make the grid
-        for (var i = 0, row = 0, c = 0; i < $rootScope.restaurants.length; i++) {
-            if (typeof grid[row] != 'object')
-                grid[row] = [];
-
-            // if (day >= 6 && $rootScope.restaurants[i].openingHours[day].closed)
-            //     continue;
-
-            grid[row].push($rootScope.restaurants[i]);
-            c++;
-
-            if (c % $rootScope.columns == 0)
-                row++;
-        }
-        return grid;
     };
-
-    $rootScope.$watchCollection('[restaurants, widthClass]', function() {
-        $scope.makeRestaurantGrid();
-    });
 
     // Do stuff when restaurants are rendered
     $scope.restaurantsRendered = 0;
@@ -554,9 +526,33 @@ angular.module('Mealbookers.controllers', [])
             },
             stop: function() {
                 equalizeRows();
+                $scope.saveRestaurantOrder();
             }
         });
     });
+
+    $scope.saveRestaurantOrder = function() {
+        var restaurants = [];
+        $(".restaurant").each(function(idx, el) {
+            restaurants.push($(el).parent().attr("data-id"));
+        });
+        $http.post('api/1.0/user/restaurant-order', restaurants).success(function(result) {
+            // Check the result
+            if (result && result.status == 'ok') {
+                $log.info("Restaurant order saved");
+                $rootScope.alert('alert-success', 'restaurant_order_success');
+                // $scope.reloadRestaurants();
+            }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.alert('alert-danger', 'restaurant_order_failed');
+            }
+        })
+        .error(function(response, httpCode, headers) {
+            $rootScope.operationFailed(httpCode, 'restaurant_order_failed', null, headers());
+        });
+    };
 
     $scope.getOpeningHoursTooltip = function(restaurant) {
         var openingHours = [];

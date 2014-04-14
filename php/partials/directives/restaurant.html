@@ -1,4 +1,4 @@
-<div class="restaurant-outer col-lg-3 col-md-4 col-sm-6 col-xs-12" id="restaurant-{{ restaurant.id }}">
+<div class="restaurant-outer col-lg-3 col-md-4 col-sm-6 col-xs-12" id="restaurant-{{ restaurant.id }}" data-id="{{ restaurant.id }}">
     <div class="restaurant">
         <div class="restaurant-thumbnail">
 
@@ -6,7 +6,7 @@
             <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
 
             <!-- Move restaurant in the grid -->
-            <div class="move-restaurant" ng-mouseover="restaurant.moveActive = true;" ng-mouseout="restaurant.moveActive = false;">
+            <div ng-if="currentUser.role != 'guest' && widthClass != 'xs'" class="move-restaurant" ng-mouseover="restaurant.moveActive = true;" ng-mouseout="restaurant.moveActive = false;">
                 <i class="glyphicon glyphicon-move sortable-handle" ng-class="{'nearly-invisible': !restaurant.moveActive}"></i>
             </div>
 

@@ -3,12 +3,12 @@
 class RestaurantFactory
 {
     private static $instance = null;
-    
+
     /**
      * Singleton pattern: private constructor
      */
     private function __construct() { }
-    
+
     /**
      * Singleton pattern: Get instance
      */
@@ -16,14 +16,27 @@ class RestaurantFactory
     {
         if (is_null(self::$instance))
             self::$instance = new RestaurantFactory();
-        
+
         return self::$instance;
     }
-    
-    public function getAllRestaurants()
+
+    public function getAllRestaurants($viewer = null)
     {
         $restaurants = array();
-        $result = DB::inst()->query("SELECT * FROM restaurants ORDER BY name ASC");
+        if (!is_null($viewer)) {
+            $result = DB::inst()->query("SELECT restaurants.* FROM restaurants
+                LEFT OUTER JOIN (
+                    SELECT *
+                    FROM users_restaurants_order
+                    WHERE user_id = {$viewer->id}
+                ) order_table
+                ON order_table.restaurant_id = restaurants.id
+                ORDER BY order_table.order_points DESC, restaurants.name ASC
+            ");
+        }
+        else {
+            $result = DB::inst()->query("SELECT * FROM restaurants ORDER BY name ASC");
+        }
         while ($row = DB::inst()->fetchAssoc($result)) {
             $restaurant = new Restaurant();
             $restaurant->populateFromRow($row);
@@ -41,7 +54,7 @@ class RestaurantFactory
                 DATE(suggestions.datetime) <= '" . Application::inst()->getDateForDay('this_week_sunday') . "' AND
                 suggestions_users.user_id = {$viewer->id}
             GROUP BY suggestions.id
-            ORDER BY 
+            ORDER BY
                 suggestions.restaurant_id ASC,
                 suggestions.datetime ASC");
 
@@ -65,7 +78,7 @@ class RestaurantFactory
             $suggestion->fetchAcceptedMembers($viewer);
             $suggestion_list->addSuggestion($suggestion);
         }
-        
+
         if ($suggestion_list->length()) {
             $restaurants[$current_restaurant_id] = $suggestion_list->getAsArray();
         }

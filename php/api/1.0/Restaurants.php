@@ -24,7 +24,11 @@ class RestaurantsAPI
         if (!in_array($lang, array('fi', 'en')))
             $lang = Conf::inst()->get('restaurantsDefaultLanguage');
 
-        $restaurants = RestaurantFactory::inst()->getAllRestaurants();
+        if ($current_user->role != 'guest')
+            $restaurants = RestaurantFactory::inst()->getAllRestaurants($current_user);
+        else
+            $restaurants = RestaurantFactory::inst()->getAllRestaurants();
+
         $result = array();
         $order = 0;
         foreach ($restaurants as $restaurant) {
