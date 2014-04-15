@@ -296,13 +296,13 @@ $GLOBALS['language']['en'] = array(
             . ' You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
-        'mailer_subject_email_verification' => 'Sähköpostin vahvistus',
+        'mailer_subject_email_verification' => 'Email address verfication',
         'mailer_body_email_verification' =>
-            'Hei!<br /><br />Vahvista sähköpostiosoitteesi klikkaamalla'
-            . ' <a href="http://{http_host}/#/menu/email/verify/{hash}">tästä</a>.'
-            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
-            . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
-            . ' johon ei tarvitse vastata.</small>',
+            'Hello!<br /><br />Please verify your email address by clicking the following link<br /><br />'
+            . ' <a href="http://{http_host}/#/menu/email/verify/{hash}">http://{http_host}/#/menu/email/verify/{hash}</a>.'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}">here</a>.'
+            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it.</small>',
         'mailer_subject_new_password' => 'Password change',
         'mailer_body_new_password' =>
             'Hello!<br /><br />Create a new password '
