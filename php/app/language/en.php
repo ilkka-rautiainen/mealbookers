@@ -3,7 +3,7 @@
 $GLOBALS['language']['en'] = array(
     'app_name' => 'Mealbookers',
     'administrator' => 'Administrator',
-    'in_otaniemi' => 'Otaniemi menu\'s on',
+    'in_otaniemi' => 'Otaniemi menus on',
     'today' => 'Today',
     'tomorrow' => 'Tomorrow',
     'weekday_1' => 'Monday',
