@@ -227,7 +227,20 @@ $GLOBALS['language']['en'] = array(
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
     'suggestion_no_menu_available' => 'No menu available',
     'action_failed' => 'Action failed',
-    'terms_of_use_text' => 'You shall use the service right.',
+    'terms_of_use_text' => '<strong>Description of the service</strong><br>You can view the menus of the lunch restaurants in Otaniemi '
+        .'and invite your friends to eat with you. You can create groups in the service to help you to invite '
+        .'several friends at the same time.<br><br> <strong>Use of data</strong><br> User data is not '
+        .'sold or given to third parties. However we reserve the right to make and distribute some anonymous charts of '
+        .'the users eating habits.<br><br> <b>Using the service</b><br>Service should be used as these terms '
+        .'state without bothering other users unnecessarily. Many of your actions in this service sends '
+        .'emails to other user so to avoid unnecessary emails plese use the service with care. Also '
+        .'modifying your group against the spirit of it is not desirable.<br><br><strong>Responsibility</strong><br>The service '
+        .'is provided as it is. We do not guarantee the availability, faultlessness, reliability or security of the service. '
+        .'If you want to verify that the opening hours and the menus are correct we recommend you to visit '
+        .'the homepage of the restaurant. We do not answer for the consequences if the service causes direct, indirect or '
+        .'special kind of harm.<br><br><strong>Changes</strong><br>We reserve the right to update the service '
+        .'and its terms of use. Updates on the terms of use are informed to users in this modal. Users of the server '
+        .'agree on the changes by using the service so please check this modal regularly.',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_header' => "<!DOCTYPE html>\n<html><head><style type=\"text/css\">body {font-family: verdana;}</style></head><body>",
