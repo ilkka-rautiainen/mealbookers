@@ -204,9 +204,9 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'log_in_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.loginProcess = false;
@@ -259,9 +259,9 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.alert('alert-success', 'forgot_password_succeeded');
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'forgot_password_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.sendProcess = false;
@@ -295,8 +295,10 @@ angular.module('Mealbookers.controllers', [])
             $rootScope.logOut();
         }
         else {
+            $log.error("Unknown response");
+            $log.error(result);
             $state.go("^");
-            $rootScope.alert('alert-danger', 'new_password_fetch_failed');
+            $rootScope.operationFailed(null, 'new_password_fetch_failed');
         }
     }).error(function(response, httpCode, headers) {
         $state.go("^");
@@ -321,9 +323,9 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.alert('alert-success', 'new_password_succeeded');
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'new_password_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.sendProcess = false;
@@ -365,7 +367,7 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('register_invitation_fetching_failed'));
+                $rootScope.operationFailed(null, 'register_invitation_fetching_failed', $scope.modalAlert);
             }
             $("#register-modal").modal('show');
         }).error(function(response, httpCode, headers) {
@@ -411,10 +413,10 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.registerSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
+                $rootScope.operationFailed(null, 'register_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.registerSaveProcess = false;
@@ -459,23 +461,6 @@ angular.module('Mealbookers.controllers', [])
         type: '',
         message: ''
     };
-
-    // Reload restaurants
-    $scope.reloadRestaurants = function() {
-        $http.get('api/1.0/restaurants', {
-            params: {
-                lang: $rootScope.currentUser.language
-            }
-        }).success(function(result) {
-            $log.debug("Restaurants reloaded");
-            $rootScope.restaurants = result;
-            $scope.$broadcast("restaurantResize");
-        }).error(function(response, httpCode, headers) {
-            $rootScope.operationFailed(httpCode, 'restaurant_reload_failed', null, headers());
-        });
-    };
-
-    // Do stuff when restaurants are rendered
 
     // Do stuff when restaurants are rendered for the first time
     $scope.restaurantsRendered = 0;
@@ -542,7 +527,7 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $rootScope.alert('alert-danger', 'restaurant_order_failed');
+                $rootScope.operationFailed(null, 'restaurant_order_failed');
             }
         })
         .error(function(response, httpCode, headers) {
@@ -604,7 +589,7 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 suggestion.processing = false;
-                $rootScope.alert('alert-danger', 'suggestion_manage_failed');
+                $rootScope.operationFailed(httpCode, 'suggestion_manage_failed');
             }
         })
         .error(function(response, httpCode, headers) {
@@ -661,10 +646,10 @@ angular.module('Mealbookers.controllers', [])
                 $scope.results = result.results;
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.searchProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
+                $rootScope.operationFailed(null, 'user_management_search_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.searchProcess = false;
@@ -702,8 +687,8 @@ angular.module('Mealbookers.controllers', [])
                     $scope.user = result.user;
                 }
                 else {
-                    console.error("Unknown response");
-                    console.error(result);
+                    $log.error("Unknown response");
+                    $log.error(result);
                     $state.go("^");
                     $rootScope.operationFailed(null, 'account_settings_user_fetch_failed', $rootScope.modalAlert,
                         null, {
@@ -786,10 +771,10 @@ angular.module('Mealbookers.controllers', [])
                 }
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.languageSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+                $rootScope.operationFailed(null, 'account_save_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.languageSaveProcess = false;
@@ -831,7 +816,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+                $rootScope.operationFailed(null, 'account_save_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.saveProcess = false;
@@ -877,6 +862,11 @@ angular.module('Mealbookers.controllers', [])
                         $log.log("Account removed");
                     });
                 }
+            }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'account_remove_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert, headers());
