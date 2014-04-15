@@ -37,10 +37,10 @@ class UserAPI
                 FROM users
                 LEFT JOIN group_memberships ON users.id = group_memberships.user_id
                 LEFT JOIN groups ON groups.id = group_memberships.group_id
-                WHERE users.email_address LIKE '$user%' OR
-                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
-                users.first_name LIKE '$user%' OR
-                users.last_name LIKE '$user%'
+                WHERE users.email_address LIKE '%$user%' OR
+                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '%$user%' OR
+                users.first_name LIKE '%$user%' OR
+                users.last_name LIKE '%$user%'
                 GROUP BY users.id
                 LIMIT 30
             ");
@@ -54,7 +54,7 @@ class UserAPI
                 INNER JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
                 INNER JOIN group_memberships gm ON gm.group_id = groups.id
-                WHERE groups.name LIKE '$group%')
+                WHERE groups.name LIKE '%$group%')
                 GROUP BY users.id
                 LIMIT 30
             ");
@@ -68,11 +68,11 @@ class UserAPI
                 INNER JOIN groups ON groups.id = group_memberships.group_id
                 WHERE users.id IN (SELECT DISTINCT gm.user_id FROM groups
                 INNER JOIN group_memberships gm ON gm.group_id = groups.id
-                WHERE (users.email_address LIKE '$user%' OR
-                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '$user%' OR
-                users.first_name LIKE '$user%' OR
-                users.last_name LIKE '$user%') AND
-                groups.name LIKE '$group%')
+                WHERE (users.email_address LIKE '%$user%' OR
+                CONCAT_WS(' ', users.first_name, users.last_name) LIKE '%$user%' OR
+                users.first_name LIKE '%$user%' OR
+                users.last_name LIKE '%$user%') AND
+                groups.name LIKE '%$group%')
                 GROUP BY users.id
                 LIMIT 30
             ");
