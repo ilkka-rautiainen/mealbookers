@@ -898,19 +898,17 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_user_fetch_failed'));
+                $state.go("^");
+                $rootScope.operationFailed(null, 'group_settings_user_fetch_failed', $rootScope.modalAlert, null, {
+                    modalAlertTarget: 'user-management-modal'
+                });
             }
         }).error(function(response, httpCode, headers) {
             $state.go("^");
-            $rootScope.operationFailed(
-                httpCode,
-                'group_settings_user_fetch_failed',
-                $rootScope.modalAlert,
-                headers(),
-                {
+            $rootScope.operationFailed(httpCode, 'group_settings_user_fetch_failed', $rootScope.modalAlert,
+                headers(), {
                     modalAlertTarget: 'user-management-modal'
-                }
-            );
+            });
         });
     };
 

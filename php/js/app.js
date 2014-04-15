@@ -510,6 +510,8 @@ angular.module('Mealbookers', [
             }
         };
 
+        if (httpCode === null)
+            httpCode = 0;
         httpCode = httpCode.toString();
 
         var failReason = null, failLevel = null, skipGeneralCodeError = null;
