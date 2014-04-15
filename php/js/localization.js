@@ -32,8 +32,8 @@ angular.module('Mealbookers.localization', [])
     return localize;
 }])
 
-.filter('i18n', ['localize', function (localize) {
+.filter('i18n', ['localize', '$sce', function (localize, $sce) {
     return function (input) {
-        return localize.getLocalizedString(input);
+        return $sce.trustAsHtml(localize.getLocalizedString(input));
     };
 }]);
