@@ -27,9 +27,9 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'wrong_user') {
                 $rootScope.logOut(false);
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'));
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'), 'logInModal');
                 $rootScope.postLoginState = {
-                    name: "Navigation.AcceptSuggestion", 
+                    name: "Navigation.AcceptSuggestion",
                     stateParams: {
                         token: $stateParams.token
                     }
@@ -37,9 +37,9 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'not_logged_in') {
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'));
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'), 'logInModal');
                 $rootScope.postLoginState = {
-                    name: "Navigation.AcceptSuggestion", 
+                    name: "Navigation.AcceptSuggestion",
                     stateParams: {
                         token: $stateParams.token
                     }
@@ -204,9 +204,9 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('log_in_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'log_in_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.loginProcess = false;
@@ -215,10 +215,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'login-modal');
         if (message.length) {
             $location.hash('login-modal');
             $anchorScroll();
@@ -262,9 +259,9 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.alert('alert-success', 'forgot_password_succeeded');
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('forgot_password_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'forgot_password_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.sendProcess = false;
@@ -273,10 +270,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'forgot-password-modal');
         if (message.length) {
             $location.hash('forgot-password-modal');
             $anchorScroll();
@@ -301,8 +295,10 @@ angular.module('Mealbookers.controllers', [])
             $rootScope.logOut();
         }
         else {
+            $log.error("Unknown response");
+            $log.error(result);
             $state.go("^");
-            $rootScope.alert('alert-danger', 'new_password_fetch_failed');
+            $rootScope.operationFailed(null, 'new_password_fetch_failed');
         }
     }).error(function(response, httpCode, headers) {
         $state.go("^");
@@ -327,9 +323,9 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.alert('alert-success', 'new_password_succeeded');
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('new_password_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'new_password_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.sendProcess = false;
@@ -347,10 +343,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'create-new-password-modal');
         if (message.length) {
             $location.hash('create-new-password-modal');
             $anchorScroll();
@@ -374,7 +367,7 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('register_invitation_fetching_failed'));
+                $rootScope.operationFailed(null, 'register_invitation_fetching_failed', $scope.modalAlert);
             }
             $("#register-modal").modal('show');
         }).error(function(response, httpCode, headers) {
@@ -420,10 +413,10 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.registerSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('register_failed'));
+                $rootScope.operationFailed(null, 'register_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.registerSaveProcess = false;
@@ -441,10 +434,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'register-modal');
         if (message.length) {
             $location.hash('register-modal');
             $anchorScroll();
@@ -471,23 +461,6 @@ angular.module('Mealbookers.controllers', [])
         type: '',
         message: ''
     };
-
-    // Reload restaurants
-    $scope.reloadRestaurants = function() {
-        $http.get('api/1.0/restaurants', {
-            params: {
-                lang: $rootScope.currentUser.language
-            }
-        }).success(function(result) {
-            $log.debug("Restaurants reloaded");
-            $rootScope.restaurants = result;
-            $scope.$broadcast("restaurantResize");
-        }).error(function(response, httpCode, headers) {
-            $rootScope.operationFailed(httpCode, 'restaurant_reload_failed', null, headers());
-        });
-    };
-
-    // Do stuff when restaurants are rendered
 
     // Do stuff when restaurants are rendered for the first time
     $scope.restaurantsRendered = 0;
@@ -554,7 +527,7 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $rootScope.alert('alert-danger', 'restaurant_order_failed');
+                $rootScope.operationFailed(null, 'restaurant_order_failed');
             }
         })
         .error(function(response, httpCode, headers) {
@@ -616,7 +589,7 @@ angular.module('Mealbookers.controllers', [])
                 console.error("Unknown response");
                 console.error(result);
                 suggestion.processing = false;
-                $rootScope.alert('alert-danger', 'suggestion_manage_failed');
+                $rootScope.operationFailed(httpCode, 'suggestion_manage_failed');
             }
         })
         .error(function(response, httpCode, headers) {
@@ -673,10 +646,10 @@ angular.module('Mealbookers.controllers', [])
                 $scope.results = result.results;
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.searchProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('user_management_search_failed'));
+                $rootScope.operationFailed(null, 'user_management_search_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.searchProcess = false;
@@ -685,21 +658,20 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'user-management-modal');
         if (message.length) {
-            $location.hash('users-modal');
+            $location.hash('user-management-modal');
             $anchorScroll();
         }
     };
 
     $scope.openAccountSettingsFor = function(user) {
+        $scope.modalAlert('', '');
         $state.go(".AccountSettings", {userId: user.id});
     };
 
     $scope.openGroupSettingsFor = function(user) {
+        $scope.modalAlert('', '');
         $state.go(".GroupSettings", {userId: user.id});
     };
 }])
@@ -715,12 +687,20 @@ angular.module('Mealbookers.controllers', [])
                     $scope.user = result.user;
                 }
                 else {
-                    console.error("Unknown response");
-                    console.error(result);
-                    $scope.modalAlert('alert-danger', $filter('i18n')('account_settings_user_fetch_failed'));
+                    $log.error("Unknown response");
+                    $log.error(result);
+                    $state.go("^");
+                    $rootScope.operationFailed(null, 'account_settings_user_fetch_failed', $rootScope.modalAlert,
+                        null, {
+                            modalAlertTarget: 'user-management-modal'
+                    });
                 }
             }).error(function(response, httpCode, headers) {
-                $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $scope.modalAlert, headers());
+                $state.go("^");
+                $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $rootScope.modalAlert,
+                    headers(), {
+                        modalAlertTarget: 'user-management-modal'
+                });
             });
             $scope.isCurrentUser = false;
         }
@@ -791,10 +771,10 @@ angular.module('Mealbookers.controllers', [])
                 }
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.languageSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+                $rootScope.operationFailed(null, 'account_save_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.languageSaveProcess = false;
@@ -836,7 +816,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('account_save_failed'))
+                $rootScope.operationFailed(null, 'account_save_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.saveProcess = false;
@@ -883,18 +863,20 @@ angular.module('Mealbookers.controllers', [])
                     });
                 }
             }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'account_remove_failed', $scope.modalAlert);
+            }
         }).error(function(response, httpCode, headers) {
             $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert, headers());
         });
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'accountSettingsModal');
         if (message.length) {
-            $location.hash('account-modal');
+            $location.hash('accountSettingsModal');
             $anchorScroll();
         }
     };
@@ -914,10 +896,17 @@ angular.module('Mealbookers.controllers', [])
             else {
                 $log.error("Unknown response");
                 $log.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_user_fetch_failed'));
+                $state.go("^");
+                $rootScope.operationFailed(null, 'group_settings_user_fetch_failed', $rootScope.modalAlert, null, {
+                    modalAlertTarget: 'user-management-modal'
+                });
             }
         }).error(function(response, httpCode, headers) {
-            $rootScope.operationFailed(httpCode, 'group_settings_user_fetch_failed', $scope.modalAlert, headers());
+            $state.go("^");
+            $rootScope.operationFailed(httpCode, 'group_settings_user_fetch_failed', $rootScope.modalAlert,
+                headers(), {
+                    modalAlertTarget: 'user-management-modal'
+            });
         });
     };
 
@@ -970,22 +959,21 @@ angular.module('Mealbookers.controllers', [])
     };
 
     // Construct groups with the user in them as member
-    angular.forEach(["userReady","currentUserRefresh"], function(value) {
-        $scope.$on(value, function() {
-            var groups = angular.copy($scope.user.groups);
-            $scope.user.groupsWithMe = [];
-            for (var i in groups) {
-                groups[i].members.unshift(jQuery.extend({}, $scope.user.me));
-                $scope.user.groupsWithMe.push(groups[i]);
-            }
-        });
-    });
+    $scope.buildUserGroups = function() {
+        var groups = angular.copy($scope.user.groups);
+        $scope.user.groupsWithMe = [];
+        for (var i in groups) {
+            groups[i].members.unshift(jQuery.extend({}, $scope.user.me));
+            $scope.user.groupsWithMe.push(groups[i]);
+        }
+    };
+    if ($scope.isCurrentUser) {
+        $scope.$on("currentUserRefresh", $scope.buildUserGroups);
+    }
+    $scope.$on("userReady", $scope.buildUserGroups);
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'group-modal');
         if (message.length) {
             $location.hash('group-modal');
             $anchorScroll();
@@ -1035,7 +1023,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 group.addMemberSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_invite_member_failed'));
+                $rootScope.operationFailed(null, 'group_settings_invite_member_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             group.addMemberSaveProcess = false;
@@ -1064,7 +1052,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 group.editNameSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_edit_failed'))
+                $rootScope.operationFailed(null, 'group_edit_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             group.editNameSaveProcess = false;
@@ -1124,7 +1112,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 member.deleteSaveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_member_delete_failed'));
+                $rootScope.operationFailed(null, 'group_member_delete_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             member.deleteSaveProcess = false;
@@ -1176,7 +1164,7 @@ angular.module('Mealbookers.controllers', [])
                 $log.error("Unknown response");
                 $log.error(result);
                 $scope.newGroup.saving = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_add_group_failed'));
+                $rootScope.operationFailed(null, 'group_add_group_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.newGroup.saving = false;
@@ -1221,9 +1209,9 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
-                $scope.modalAlert('alert-danger', $filter('i18n')('group_join_failed'));
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.operationFailed(null, 'group_join_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.joinGroupSaveProcess = false;
@@ -1235,7 +1223,7 @@ angular.module('Mealbookers.controllers', [])
 
 
 
-.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', '$timeout', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll, $timeout) {
+.controller('SuggestionController', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', '$http', '$location', '$anchorScroll', '$timeout', '$log', function($scope, $rootScope, $state, $stateParams, $filter, $http, $location, $anchorScroll, $timeout, $log) {
 
     if (!$stateParams.restaurantId) {
         return $state.go("^");
@@ -1361,10 +1349,10 @@ angular.module('Mealbookers.controllers', [])
                 });
             }
             else {
-                console.error("Unknown response");
-                console.error(result);
+                $log.error("Unknown response");
+                $log.error(result);
                 $scope.saveProcess = false;
-                $scope.modalAlert('alert-danger', $filter('i18n')('suggestion_save_failed'));
+                $rootScope.operationFailed(null, 'suggestion_save_failed', $scope.modalAlert);
             }
         }).error(function(response, httpCode, headers) {
             $scope.saveProcess = false;
@@ -1407,12 +1395,9 @@ angular.module('Mealbookers.controllers', [])
     });
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'suggestionModal');
         if (message.length) {
-            $location.hash('modal');
+            $location.hash('suggestionModal');
             $anchorScroll();
         }
     };
