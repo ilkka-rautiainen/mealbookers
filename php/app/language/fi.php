@@ -227,7 +227,20 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on jo päättynyt',
     'suggestion_no_menu_available' => 'Ruokalistaa ei saatavilla',
     'action_failed' => 'Toimenpide epäonnistui',
-    'terms_of_use_text' => 'Palvelua tulee käyttää oikein.',
+    'terms_of_use_text' => '<strong>Palvelun kuvaus</strong><br> Palvelun avulla voit selata Otaniemen lounasravintoloiden '
+        .'ruokalistoja ja kutsua kavereitasi syömään kanssasi. Palvelussa voit luoda ryhmiä kutsutaksesi '
+        .'useamman kaverin kerrallaan syömään.<br><br> <strong>Tietosuoja & tietojenkäsittely</strong><br> Käyttäjätietoja ei '
+        .'luovuteta eteenpäin kolmansille osapuolille. Pidätämme kuitenkin oikeuden luoda ja välittää anonyymejä tilastoja '
+        .'käyttäjien ruokailutottumuksista.<br><br> <b>Palvelun käyttö</b><br> Palvelua tulee käyttää käyttöehtojen '
+        .'mukaisesti ja häiritsemättä kohtuuttomasti muita palvelun käyttäjiä. Monista palvelun toimenpiteistä lähetetään '
+        .'sähköpostiviestejä muille käyttäjille, joten ylimääräinen leikkiminen palvelun kanssa ei ole suotavaa. Myöskään '
+        .'ryhmien turha muokkaaaminen ryhmän hengen vastaisesti ei ole myöskään suotavaa.<br><br><strong>Vastuu</strong><br>Palvelu '
+        .'tarjotaan sellaisenaan kun se on. Emme takaa palvelun saatavuutta, virheettömyyttä, luotettavuutta tai turvallisuutta. '
+        .'Jos haluat varmistaa ravintoloiden aukioloaikojen ja ruokalistojen oikeellisuuden niin kehottamme, että käytte '
+        .'ravintolan omilla kotisivuilla tarkistamassa asian. Emme myöskään vastaa palvelun aiheuttamista suorista, epäsuorista, '
+        .'erityisistä tai välillisistä vahingoista.<br><br><strong>Muutokset</strong><br>Pidätämme oikeudet muutoksiin palvelussa '
+        .'sekä sen käyttöehdoissa. Käyttöehtojen muutokset ilmoitetaan käyttäjille tätä modaalia päivittämällä. Palvelun käyttäjät '
+        .'hyväksyvät muutokset käyttämällä tätä palvelua, jonka vuoksi on suositeltavaa tarkastaa käyttöehdot säännöllisesti.',
     'backend_only' => array(
         'mailer_sender_name' => 'Mealbookers',
         'mailer_header' => "<!DOCTYPE html>\n<html><head><style type=\"text/css\">body {font-family: verdana;}</style></head><body>",
