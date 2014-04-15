@@ -338,15 +338,17 @@ angular.module('Mealbookers', [
         delete $rootScope.modalAlertMessage;
     };
 
-    $rootScope.modalAlert = function(type, message) {
+    $rootScope.modalAlert = function(type, message, target) {
         if (!$rootScope.modalAlertMessage) {
             $rootScope.modalAlertMessage = {
                 type: '',
-                message: ''
+                message: '',
+                target: ''
             };
         }
         $rootScope.modalAlertMessage.type = type;
         $rootScope.modalAlertMessage.message = message;
+        $rootScope.modalAlertMessage.target = target;
     };
 
     $rootScope.refreshSuggestions = function(done) {
@@ -492,12 +494,21 @@ angular.module('Mealbookers', [
         });
     };
 
-    $rootScope.operationFailed = function(httpCode, errorMessage, customAlertFunction, headers) {
-        var alertFunction;
-        if (typeof customAlertFunction == 'function')
-            alertFunction = customAlertFunction;
-        else
-            alertFunction = $rootScope.alert;
+    $rootScope.operationFailed = function(httpCode, errorMessageKey, customAlertFunction, headers, data) {
+        var makeAlert = function(level, messageKey) {
+            var alertFunction;
+            if (typeof customAlertFunction == 'function') {
+                if (data && data.modalAlertTarget) {
+                    customAlertFunction(level, $rootScope.localization[messageKey], data.modalAlertTarget);
+                }
+                else {
+                    customAlertFunction(level, $rootScope.localization[messageKey]);
+                }
+            }
+            else {
+                $rootScope.alert(level, messageKey);
+            }
+        };
 
         httpCode = httpCode.toString();
 
@@ -509,25 +520,25 @@ angular.module('Mealbookers', [
         }
 
         $rootScope.refreshCurrentUser(function() {
-            // Base case: errorMessage_httpCode_failReason
-            if (failReason && $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode + '_' + failReason], true);
+            // Base case: errorMessageKey_httpCode_failReason
+            if (failReason && $rootScope.localization[errorMessageKey + '_' + httpCode + '_' + failReason]) {
+                makeAlert((failLevel) ? failLevel : 'alert-warning', errorMessageKey + '_' + httpCode + '_' + failReason);
             }
             // General case with failReason: general_code_failReason
             else if (failReason && !skipGeneralCodeError && $rootScope.localization['general_' + httpCode + '_' + failReason]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization['general_' + httpCode + '_' + failReason], true);
+                makeAlert((failLevel) ? failLevel : 'alert-warning', 'general_' + httpCode + '_' + failReason);
             }
-            // Second case: errorMessage_httpCode
-            else if ($rootScope.localization[errorMessage + '_' + httpCode]) {
-                alertFunction((failLevel) ? failLevel : 'alert-warning', $rootScope.localization[errorMessage + '_' + httpCode], true);
+            // Second case: errorMessageKey_httpCode
+            else if ($rootScope.localization[errorMessageKey + '_' + httpCode]) {
+                makeAlert((failLevel) ? failLevel : 'alert-warning', errorMessageKey + '_' + httpCode);
             }
             // Third case: general_code
             else if (!skipGeneralCodeError && $rootScope.localization['general_' + httpCode]) {
-                alertFunction('alert-warning', $rootScope.localization['general_' + httpCode], true);
+                makeAlert('alert-warning', 'general_' + httpCode);
             }
-            // Else: errorMessage
+            // Else: errorMessageKey
             else {
-                alertFunction('alert-danger', $rootScope.localization[errorMessage], true);
+                makeAlert('alert-danger', errorMessageKey);
             }
         });
     };

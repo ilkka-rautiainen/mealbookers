@@ -27,9 +27,9 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'wrong_user') {
                 $rootScope.logOut(false);
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'));
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'), 'logInModal');
                 $rootScope.postLoginState = {
-                    name: "Navigation.AcceptSuggestion", 
+                    name: "Navigation.AcceptSuggestion",
                     stateParams: {
                         token: $stateParams.token
                     }
@@ -37,9 +37,9 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'not_logged_in') {
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'));
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'), 'logInModal');
                 $rootScope.postLoginState = {
-                    name: "Navigation.AcceptSuggestion", 
+                    name: "Navigation.AcceptSuggestion",
                     stateParams: {
                         token: $stateParams.token
                     }
@@ -215,10 +215,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'login-modal');
         if (message.length) {
             $location.hash('login-modal');
             $anchorScroll();
@@ -273,10 +270,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'forgot-password-modal');
         if (message.length) {
             $location.hash('forgot-password-modal');
             $anchorScroll();
@@ -347,10 +341,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'create-new-password-modal');
         if (message.length) {
             $location.hash('create-new-password-modal');
             $anchorScroll();
@@ -441,10 +432,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'register-modal');
         if (message.length) {
             $location.hash('register-modal');
             $anchorScroll();
@@ -685,21 +673,20 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'user-management-modal');
         if (message.length) {
-            $location.hash('users-modal');
+            $location.hash('user-management-modal');
             $anchorScroll();
         }
     };
 
     $scope.openAccountSettingsFor = function(user) {
+        $scope.modalAlert('', '');
         $state.go(".AccountSettings", {userId: user.id});
     };
 
     $scope.openGroupSettingsFor = function(user) {
+        $scope.modalAlert('', '');
         $state.go(".GroupSettings", {userId: user.id});
     };
 }])
@@ -889,10 +876,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'account-modal');
         if (message.length) {
             $location.hash('account-modal');
             $anchorScroll();
@@ -917,7 +901,16 @@ angular.module('Mealbookers.controllers', [])
                 $scope.modalAlert('alert-danger', $filter('i18n')('group_settings_user_fetch_failed'));
             }
         }).error(function(response, httpCode, headers) {
-            $rootScope.operationFailed(httpCode, 'group_settings_user_fetch_failed', $scope.modalAlert, headers());
+            $state.go("^");
+            $rootScope.operationFailed(
+                httpCode,
+                'group_settings_user_fetch_failed',
+                $rootScope.modalAlert,
+                headers(),
+                {
+                    modalAlertTarget: 'user-management-modal'
+                }
+            );
         });
     };
 
@@ -970,22 +963,21 @@ angular.module('Mealbookers.controllers', [])
     };
 
     // Construct groups with the user in them as member
-    angular.forEach(["userReady","currentUserRefresh"], function(value) {
-        $scope.$on(value, function() {
-            var groups = angular.copy($scope.user.groups);
-            $scope.user.groupsWithMe = [];
-            for (var i in groups) {
-                groups[i].members.unshift(jQuery.extend({}, $scope.user.me));
-                $scope.user.groupsWithMe.push(groups[i]);
-            }
-        });
-    });
+    $scope.buildUserGroups = function() {
+        var groups = angular.copy($scope.user.groups);
+        $scope.user.groupsWithMe = [];
+        for (var i in groups) {
+            groups[i].members.unshift(jQuery.extend({}, $scope.user.me));
+            $scope.user.groupsWithMe.push(groups[i]);
+        }
+    };
+    if ($scope.isCurrentUser) {
+        $scope.$on("currentUserRefresh", $scope.buildUserGroups);
+    }
+    $scope.$on("userReady", $scope.buildUserGroups);
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'group-modal');
         if (message.length) {
             $location.hash('group-modal');
             $anchorScroll();
@@ -1407,12 +1399,9 @@ angular.module('Mealbookers.controllers', [])
     });
 
     $scope.modalAlert = function(type, message) {
-        $scope.modalAlertMessage = {
-            type: type,
-            message: message
-        };
+        $rootScope.modalAlert(type, message, 'suggestionModal');
         if (message.length) {
-            $location.hash('modal');
+            $location.hash('suggestionModal');
             $anchorScroll();
         }
     };
