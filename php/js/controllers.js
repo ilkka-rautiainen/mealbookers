@@ -704,10 +704,18 @@ angular.module('Mealbookers.controllers', [])
                 else {
                     console.error("Unknown response");
                     console.error(result);
-                    $scope.modalAlert('alert-danger', $filter('i18n')('account_settings_user_fetch_failed'));
+                    $state.go("^");
+                    $rootScope.operationFailed(null, 'account_settings_user_fetch_failed', $rootScope.modalAlert,
+                        null, {
+                            modalAlertTarget: 'user-management-modal'
+                    });
                 }
             }).error(function(response, httpCode, headers) {
-                $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $scope.modalAlert, headers());
+                $state.go("^");
+                $rootScope.operationFailed(httpCode, 'account_settings_user_fetch_failed', $rootScope.modalAlert,
+                    headers(), {
+                        modalAlertTarget: 'user-management-modal'
+                });
             });
             $scope.isCurrentUser = false;
         }
@@ -876,9 +884,9 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $rootScope.modalAlert(type, message, 'account-modal');
+        $rootScope.modalAlert(type, message, 'accountSettingsModal');
         if (message.length) {
-            $location.hash('account-modal');
+            $location.hash('accountSettingsModal');
             $anchorScroll();
         }
     };
