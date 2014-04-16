@@ -196,8 +196,9 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.alert = function(type, message, show_direct) {
+        $log.debug("Alert: " + type + ": " + message);
         if (!$rootScope.config.alertTimeouts[type]) {
-            return console.error("Invalid alert type: " + type);
+            return $log.error("Invalid alert type: " + type);
         }
 
         if (!show_direct) {
