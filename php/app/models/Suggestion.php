@@ -40,14 +40,14 @@ class Suggestion {
         $this->outside_members = array();
     }
 
-    public function getDate()
+    public function getDate($format = "j.n.Y")
     {
-        return date("j.n.Y", strtotime($this->datetime));
+        return date($format, strtotime($this->datetime));
     }
 
-    public function getTime()
+    public function getTime($format = "H:i")
     {
-        return date("H:i", strtotime($this->datetime));
+        return $this->getDate($format);
     }
 
     /**
