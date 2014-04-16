@@ -245,17 +245,17 @@ class Application
 
         $formatted_string = $format;
         if ($date == $today) {
-            $today_i18n = strtolower(Lang::inst()->get('today', $viewer));
-            $formatted_string = str_replace("%W", $today_i18n, $format);
+            $today_i18n = mb_strtolower(Lang::inst()->get('today', $viewer));
+            $formatted_string = mb_str_replace("%W", $today_i18n, $format);
         }
         else if ($date == $tomorrow) {
-            $tomorrow_i18n = strtolower(Lang::inst()->get('tomorrow', $viewer));
-            $formatted_string = str_replace("%W", $tomorrow_i18n, $format);
+            $tomorrow_i18n = mb_strtolower(Lang::inst()->get('tomorrow', $viewer));
+            $formatted_string = mb_str_replace("%W", $tomorrow_i18n, $format);
         }
         else {
             $weekday = $this->getWeekdayNumber($timestamp) + 1;
-            $weekday_i18n = strtolower(Lang::inst()->get('weekday_' + $weekday));
-            $formatted_string = str_replace("%w", $weekday_i18n, $format);
+            $weekday_i18n = mb_strtolower(Lang::inst()->get('weekday_' + $weekday));
+            $formatted_string = mb_str_replace("%w", $weekday_i18n, $format);
         }
         $formatted_string = str_replace("%D", date($date_format, $timestamp), $formatted_string);
 
