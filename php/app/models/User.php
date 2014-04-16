@@ -373,7 +373,7 @@ class User
             ),
             array(
                 $creator->getName(),
-                $suggestion->getDate(),
+                Application::inst()->formatWeekDay($suggestion->getDate(), $this),
                 $restaurant->name,
                 $restaurant->getMenuForEmail($suggestion, $this),
                 $suggestion->getTime(),

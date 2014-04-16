@@ -162,9 +162,10 @@ class Application
         return sha1(microtime(true) . mt_rand() . "gwoipasoidfugoiauvas92762439)(/%\")(/%¤#¤)/#¤&\")(¤%");
     }
 
-    public function getWeekdayNumber()
+    public function getWeekdayNumber($timestamp = null)
     {
-        return ((int)date("N")) - 1;
+        $timestamp = (is_null($timestamp) ? time() : $timestamp);
+        return ((int)date("N", $timestamp)) - 1;
     }
 
     public function getDateForDay($which)
@@ -227,5 +228,37 @@ class Application
     public function getHttpHost()
     {
         return Conf::inst()->get('server.http_host');
+    }
+
+    /**
+     * @param $date string 'Y-m-d'
+     * Formats:
+     * %W: today, tomorrow, on wednesday, on thursday...
+     * %w: on monday, on tuesday, on wednesday, on thursday...
+     * %D: date formatted as the $date_format parameter states
+     */
+    public function formatWeekDay($date, User $viewer, $format = "%W %D", $date_format = "j.n.Y")
+    {
+        $timestamp = strtotime($date);
+        $today = date("Y-m-d", strtotime("today 00:00:00"));
+        $tomorrow = date("Y-m-d", strtotime("tomorrow 00:00:00"));
+
+        $formatted_string = $format;
+        if ($date == $today) {
+            $today_i18n = strtolower(Lang::inst()->get('today', $viewer));
+            $formatted_string = str_replace("%W", $today_i18n, $format);
+        }
+        else if ($date == $tomorrow) {
+            $tomorrow_i18n = strtolower(Lang::inst()->get('tomorrow', $viewer));
+            $formatted_string = str_replace("%W", $tomorrow_i18n, $format);
+        }
+        else {
+            $weekday = $this->getWeekdayNumber($timestamp) + 1;
+            $weekday_i18n = strtolower(Lang::inst()->get('weekday_' + $weekday));
+            $formatted_string = str_replace("%w", $weekday_i18n, $format);
+        }
+        $formatted_string = str_replace("%D", date($date_format, $timestamp), $formatted_string);
+
+        return $formatted_string;
     }
 }
