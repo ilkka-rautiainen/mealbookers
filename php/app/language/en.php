@@ -259,16 +259,16 @@ $GLOBALS['language']['en'] = array(
         'mailer_body_suggestion_menu_begin' => '<br /><br /><b>Menu</b><br />',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
         'mailer_body_suggestion_accepted_creator' =>
-            'Hello!<br /><br />{accepter} has accepted your suggestion to go to eat at {restaurant}'
-            . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
+            'Hello!<br /><br />{accepter} has accepted your suggestion:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> at <strong>{suggestion_time}</strong>'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} is coming to eat with you',
         'mailer_body_suggestion_accepted_other' =>
-            'Hello!<br /><br />{accepter} is coming to eat with you at {restaurant} on'
-            . ' {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
+            'Hello!<br /><br />{accepter} is coming eat with you:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> at <strong>{suggestion_time}</strong>'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',

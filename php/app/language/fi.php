@@ -259,16 +259,16 @@ $GLOBALS['language']['fi'] = array(
         'mailer_body_suggestion_menu_begin' => '<br /><br /><b>Ruokalista</b><br />',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} on hyväksynyt ehdotuksesi',
         'mailer_body_suggestion_accepted_creator' =>
-            'Hei!<br /><br />{accepter} on hyväksynyt ehdotuksesi mennä {suggestion_date} syömään ravintolaan'
-            . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
+            'Hei!<br /><br />{accepter} on hyväksynyt ehdotuksesi:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> klo <strong>{suggestion_time}</strong>'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_accepted_other' => '{accepter} tulee kanssasi syömään',
         'mailer_body_suggestion_accepted_other' =>
-            'Hei!<br /><br />{accepter} on tulossa kanssasi {suggestion_date} syömään ravintolaan'
-            . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
+            'Hei!<br /><br />{accepter} on tulossa kanssasi syömään:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> klo <strong>{suggestion_time}</strong>'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} ei pääsekään kanssasi syömään',
