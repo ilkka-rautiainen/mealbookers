@@ -225,7 +225,6 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_manage_accepted' => 'Hyväksytty!',
     'suggestion_time_before_lunch' => 'Ota huomioon, että lounas ei ole vielä alkanut',
     'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on jo päättynyt',
-    'suggestion_no_menu_available' => 'Ruokalistaa ei saatavilla',
     'action_failed' => 'Toimenpide epäonnistui',
     'terms_of_use_text' => '<strong>Palvelun kuvaus</strong><br />Palvelun avulla voit selata Otaniemen'
         . ' lounasravintoloiden ruokalistoja ja kutsua kavereitasi syömään kanssasi. Palvelussa voit luoda'
@@ -250,13 +249,14 @@ $GLOBALS['language']['fi'] = array(
         'mailer_footer' => '</body></html>',
         'mailer_subject_suggestion' => '{suggester} haluaa mennä kanssasi syömään',
         'mailer_body_suggestion' =>
-            'Hei!<br /><br />{suggester} on menossa {suggestion_date} syömään ravintolaan {restaurant}.'
-            . ' Hän ehdottaa sinulle aikaa {suggestion_time}.<br /><br /><b>{restaurant} - ruokalista</b><br />'
+            'Hei!<br /><br />{suggester} pyytää sinua syömään:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> klo <strong>{suggestion_time}</strong>'
             . ' {menu}<br /><br />Hyväksy ehdotus klikkaamalla'
             . ' <a href="http://{http_host}/#/menu/suggestion/accept/{token}">tästä</a>.'
             . ' <br /><br />Siirry Mealbookersiin hyväksymättä ehdotusta'
-            . ' <a href="http://{http_host}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',
+        'mailer_body_suggestion_menu_begin' => '<br /><br /><b>Ruokalista</b><br />',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} on hyväksynyt ehdotuksesi',
         'mailer_body_suggestion_accepted_creator' =>
             'Hei!<br /><br />{accepter} on hyväksynyt ehdotuksesi mennä {suggestion_date} syömään ravintolaan'

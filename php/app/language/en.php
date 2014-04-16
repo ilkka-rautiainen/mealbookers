@@ -225,7 +225,6 @@ $GLOBALS['language']['en'] = array(
     'suggestion_manage_accepted' => 'Accepted!',
     'suggestion_time_before_lunch' => 'NB: lunch hasn\'t yet opened at',
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
-    'suggestion_no_menu_available' => 'No menu available',
     'action_failed' => 'Action failed',
     'terms_of_use_text' => '<strong>Description of the service</strong><br />You can view the menus of the'
         . ' lunch restaurants in Otaniemi and invite your friends to eat with you. You can create groups'
@@ -250,13 +249,14 @@ $GLOBALS['language']['en'] = array(
         'mailer_footer' => '</body></html>',
         'mailer_subject_suggestion' => '{suggester} wants to eat with you',
         'mailer_body_suggestion' =>
-            'Hello!<br /><br />{suggester} is going to eat at {restaurant} on {suggestion_date}.'
-            . ' He suggests you to go there at {suggestion_time}.<br /><br /><b>{restaurant} - menu</b><br />'
+            'Hello!<br /><br />{suggester} wants to eat with you:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> at <strong>{suggestion_time}</strong>'
             . ' {menu}<br /><br />Accept the suggestion by clicking'
             . ' <a href="http://{http_host}/#/menu/suggestion/accept/{token}">here</a>.'
             . ' <br /><br />Go to Mealbookers without accepting the suggestion'
-            . ' <a href="http://{http_host}">here</a>.<br /><br />- Mealbookers<br /><br />'
+            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.<br /><br />- Mealbookers<br /><br />'
             . ' <small>This is an automatic mail. You don\'t need to reply to it.</small>',
+        'mailer_body_suggestion_menu_begin' => '<br /><br /><b>Menu</b><br />',
         'mailer_subject_suggestion_accepted_creator' => '{accepter} has accepted your suggestion',
         'mailer_body_suggestion_accepted_creator' =>
             'Hello!<br /><br />{accepter} has accepted your suggestion to go to eat at {restaurant}'

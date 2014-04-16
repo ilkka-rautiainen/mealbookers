@@ -96,10 +96,10 @@ class Restaurant
         }
     }
 
-    public function getMenuForEmail(Suggestion $suggestion, User $user)
+    public function getMenuForEmail(Suggestion $suggestion, User $viewer)
     {
         $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
-            restaurant_id = {$this->id} AND language = '{$user->language}'");
+            restaurant_id = {$this->id} AND language = '{$viewer->language}'");
         if (!DB::inst()->getRowCount()) {
             $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
                 restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLanguage') . "'");
@@ -110,22 +110,24 @@ class Restaurant
             $meals[] = $meal['name'];
         }
 
-        if (count($meals))
-            return implode("<br />", str_replace(
+        if (count($meals)) {
+            return Lang::inst()->get('mailer_body_suggestion_menu_begin', $viewer) . implode("<br />", str_replace(
                 array(
                     '<span class="attribute-group">',
                     '<span class="attribute">',
                     '<span class="line-break">',
                 ),
                 array(
-                    '<span style="padding-left:5px;display:inline-block;">',
-                    '<span style="font-size:10px;text-transform:uppercase;overflow:hidden;color:#c0c0c0;padding:2px0px;font-style:italic;">',
+                    '<span style="padding-left:5px;padding-right:5px;display:inline-block;">',
+                    '<span style="font-size:10px;text-transform:uppercase;overflow:hidden;color:#c0c0c0;padding:2px 0px;font-style:italic;">',
                     '<span style="margin:0;padding-left:10px;">',
                 ),
                 $meals
             ));
-        else
-            return Lang::inst()->get('suggestion_no_menu_available');
+        }
+        else {
+            return "";
+        }
     }
 
     private function getOpeningHoursAsArray()

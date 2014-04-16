@@ -361,6 +361,10 @@ class User
             $creator->getName(),
             Lang::inst()->get('mailer_subject_suggestion', $this)
         );
+        $weekday = "";
+        if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
+            $weekday = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
+        }
         $body = str_replace(
             array(
                 '{suggester}',
@@ -370,15 +374,17 @@ class User
                 '{suggestion_time}',
                 '{http_host}',
                 '{token}',
+                '{day}',
             ),
             array(
                 $creator->getName(),
-                Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this),
+                $weekday,
                 $restaurant->name,
                 $restaurant->getMenuForEmail($suggestion, $this),
                 $suggestion->getTime(),
                 Application::inst()->getHttpHost(),
                 $token,
+                $suggestion->getWeekDay(),
             ),
             Lang::inst()->get('mailer_body_suggestion', $this)
         );
