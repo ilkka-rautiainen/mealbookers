@@ -25,7 +25,7 @@ $GLOBALS['language']['en'] = array(
     'title_Navigation.Menu.UserManagement' => 'User management',
     'title_Navigation.Menu.UserManagement.AccountSettings' => 'Account settings',
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Group settings',
-    'title_Navigation.Menu.TermsOfUse' => 'Terms of use',
+    'title_Navigation.Menu.TermsOfUse' => 'Terms of Use',
     'title_Navigation.AcceptSuggestion' => 'Accepting suggestion',
     'title_Navigation.VerifyEmail' => 'Verifying email address',
     'general_400' => 'Request to the server was invalid',
@@ -99,7 +99,7 @@ $GLOBALS['language']['en'] = array(
     'new_password_failed_404_token_not_found' => 'Password change link has already been used or the user has been deleted',
     'new_password_failed_404_user_not_found' => 'User that has created the password change link wasn\'t found',
     'new_password_failed_409_passwords_dont_match' => 'The new passwords you gave don\'t match',
-    'terms_of_use' => 'Terms of use',
+    'terms_of_use' => 'Terms of Use',
     'meal_section_cafe' => 'Café',
     'meal_section_alacarte' => 'À la carte',
     'meal_section_bistro' => 'Bistro',
@@ -232,9 +232,9 @@ $GLOBALS['language']['en'] = array(
         . ' in the service to enable inviting several friends at the same time to go eat with you.'
         . ' <br /><br /><strong>Data privacy and use</strong><br />User information is not sold or given to'
         . ' third parties. However, we reserve the right to create and distribute anonymous usage statistics.'
-        . ' <br /><br /><b>Usage of the service</b><br />Service should be used as these terms state and not'
+        . ' <br /><br /><b>Use of the service</b><br />Service should be used as these terms state and not'
         . ' disturbing other users of the service. Many of the actions in the service trigger sending of'
-        . ' email notifications to other users in the groups, so unnecessary and abnormal usage of the service'
+        . ' email notifications to other users in the groups, so unnecessary and abnormal use of the service'
         . ' is not permitted. Modifying the name of a user group or adding or removing group members must happen'
         . ' in consensus between the members of the group.<br /><br /><strong>Limitation of liability</strong>'
         . ' <br />The service is provided "as is". We do not guarantee the availability, faultlessness, reliability'
