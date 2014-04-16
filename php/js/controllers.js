@@ -50,7 +50,7 @@ angular.module('Mealbookers.controllers', [])
                 $rootScope.refreshCurrentUser(function() {
                     $rootScope.alert('alert-success', $filter('i18n')('suggestion_accept_succeeded')
                         + ', ' + result.restaurant + ', '
-                        + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay)) + ' ' + result.time);
+                        + $filter('lowercase')($rootScope.getWeekDayText(result.weekDay)) + ' ' + result.time, true);
                 });
             }
             else {
