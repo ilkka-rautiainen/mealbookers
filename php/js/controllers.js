@@ -1356,7 +1356,7 @@ angular.module('Mealbookers.controllers', [])
             }
         }).error(function(response, httpCode, headers) {
             $scope.saveProcess = false;
-            $rootScope.operationFailed(httpCode, 'suggestion_save_failed', $scope.modalAlert, header());
+            $rootScope.operationFailed(httpCode, 'suggestion_save_failed', $scope.modalAlert, headers());
         });
     };
 
