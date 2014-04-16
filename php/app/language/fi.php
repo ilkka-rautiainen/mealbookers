@@ -273,9 +273,9 @@ $GLOBALS['language']['fi'] = array(
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} ei pääsekään kanssasi syömään',
         'mailer_body_suggestion_left_alone' =>
-            'Hei!<br /><br />{canceler} ei pääsekään kanssasi {suggestion_date} syömään ravintolaan'
-            . ' {restaurant} aikaan {suggestion_time}.<br /><br />Voit siirtyä Mealbookersiin'
-            . ' <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
+            'Hei!<br /><br />{canceler} ei pääsekään kanssasi syömään:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> klo <strong>{suggestion_time}</strong>'
+            . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}/#/menu/{day}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} perui ehdotuksen',

@@ -273,9 +273,9 @@ $GLOBALS['language']['en'] = array(
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_left_alone' => '{canceler} can\'t eat with you though',
         'mailer_body_suggestion_left_alone' =>
-            'Hello!<br /><br />{canceler} can\'t come to eat with you at {restaurant}'
-            . ' on {suggestion_date} at {suggestion_time}.<br /><br />You can go to Mealbookers'
-            . ' <a href="http://{http_host}/#/menu/{day}">here</a>.'
+            'Hello!<br /><br />{canceler} can\'t come eat with you:<br /><br /><strong>{restaurant}</strong>'
+            . ' <strong>{suggestion_date}</strong> at <strong>{suggestion_time}</strong>'
+            . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}/#/menu/{day}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_suggestion_deleted' => '{canceler} canceled the suggestion',

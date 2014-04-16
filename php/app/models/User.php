@@ -450,6 +450,10 @@ class User
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
+        $suggestion_date = "";
+        if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
+            $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
+        }
         $subject = str_replace(
             '{canceler}',
             $canceler->getName(),
@@ -466,7 +470,7 @@ class User
             ),
             array(
                 $canceler->getName(),
-                $suggestion->getDate(),
+                $suggestion_date,
                 $restaurant->name,
                 $suggestion->getTime(),
                 Application::inst()->getHttpHost(),
