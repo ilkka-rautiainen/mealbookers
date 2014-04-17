@@ -64,6 +64,10 @@ class Application
         if (!$user) {
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->role = 'guest';
+            if (isset($_COOKIE['language']) && in_array($_COOKIE['language'], array('fi', 'en')))
+                $GLOBALS['current_user']->language = $_COOKIE['language'];
+            else
+                $GLOBALS['current_user']->language = Conf::inst()->get('defaultLanguage');
         }
         else {
             $GLOBALS['current_user'] = $user;

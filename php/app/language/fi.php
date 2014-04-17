@@ -288,8 +288,9 @@ $GLOBALS['language']['fi'] = array(
         'mailer_subject_invite' => '{inviter} kutsuu sinut Mealbookersiin',
         'mailer_body_invite' =>
             'Hei!<br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
-            . ' Mealbookers tekee yhteisen lounasajan ehdottamisen ja löytämisen helpoksi.<br /><br />'
-            . ' Liity jäseneksi ryhmään <a href="http://{http_host}/#/menu/today/register?invitation={code}">tästä</a>'
+            . ' Mealbookers on Otaniemen kattava sosiaalinen ruokalistapalvelu, joka tekee yhteisen lounasajan'
+            . ' ehdottamisen ja löytämisen helpoksi.<br /><br />Liity jäseneksi Mealbookers-ryhmään'
+            . ' <a href="http://{http_host}/#/menu/today/register?invitation={code}">tästä</a>'
             . ' tai jos olet jo rekisteröitynyt palveluun, liity ryhmään kutsukoodilla <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',

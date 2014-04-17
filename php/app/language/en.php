@@ -287,10 +287,11 @@ $GLOBALS['language']['en'] = array(
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite' => '{inviter} invites you to Mealbookers',
         'mailer_body_invite' =>
-            'Hello!<br /><br />{inviter} invites you to Mealbookers and as a member of group {group_name}.'
-            . ' <br /><br />Mealbookers makes it easy to suggest and find common lunch times.<br /><br />'
-            . ' Become member in the group <a href="http://{http_host}/#/menu/today/register?invitation={code}">here</a>'
-            . ' or if you have already registered, join using this invitation code <strong>{code}</strong>.'
+            'Hello!<br /><br />{inviter} invites you to Mealbookers as a member of group {group_name}.'
+            . ' <br /><br />Mealbookers is a social menu service covering Otaniemi. It makes it easy to'
+            . ' suggest and find common lunch times.<br /><br />Join the group at Mealbookers'
+            . ' <a href="http://{http_host}/#/menu/today/register?invitation={code}">here</a>'
+            . ' or if you have already registered, join using this invitation code: <strong>{code}</strong>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',

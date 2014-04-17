@@ -38,7 +38,7 @@ class Lang
             return $language[$lang]['backend_only'][$key];
         }
         else {
-            throw new Exception("No such language label found: $key");
+            throw new Exception("No such language label found: $key, lang: $lang");
         }
     }
 }
