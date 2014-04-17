@@ -356,7 +356,7 @@ class User
         $restaurant = new Restaurant();
         $restaurant->fetch($suggestion->restaurant_id);
 
-        $subject = str_replace(
+        $subject = mb_str_replace(
             '{suggester}',
             $creator->getName(),
             Lang::inst()->get('mailer_subject_suggestion', $this)
@@ -365,7 +365,7 @@ class User
         if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
             $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
         }
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{suggester}',
                 '{suggestion_date}',
@@ -410,12 +410,12 @@ class User
         if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
             $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
         }
-        $subject = str_replace(
+        $subject = mb_str_replace(
             '{accepter}',
             $accepter->getName(),
             Lang::inst()->get('mailer_subject_suggestion_accepted_' . $version_postfix, $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{accepter}',
                 '{suggestion_date}',
@@ -454,12 +454,12 @@ class User
         if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
             $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
         }
-        $subject = str_replace(
+        $subject = mb_str_replace(
             '{canceler}',
             $canceler->getName(),
             Lang::inst()->get('mailer_subject_suggestion_left_alone', $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{canceler}',
                 '{suggestion_date}',
@@ -495,12 +495,12 @@ class User
         if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
             $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
         }
-        $subject = str_replace(
+        $subject = mb_str_replace(
             '{canceler}',
             $canceler->getName(),
             Lang::inst()->get('mailer_subject_suggestion_deleted', $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{canceler}',
                 '{suggestion_date}',
@@ -541,12 +541,12 @@ class User
                 '$code'
             )");
 
-        $subject = str_replace(
+        $subject = mb_str_replace(
             '{inviter}',
             $this->getName(),
             Lang::inst()->get('mailer_subject_invite', $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{inviter}',
                 '{group_name}',
@@ -588,7 +588,7 @@ class User
         else
             $inviter_name = $inviter->getName();
 
-        $subject = str_replace(
+        $subject = mb_str_replace(
             array(
                 '{inviter}',
                 '{group_name}',
@@ -599,7 +599,7 @@ class User
             ),
             Lang::inst()->get('mailer_subject_invite_notification', $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{inviter}',
                 '{group_name}',
@@ -630,7 +630,7 @@ class User
         else
             $deleter_name = $deleter->getName();
 
-        $subject = str_replace(
+        $subject = mb_str_replace(
             array(
                 '{deleter}',
                 '{group_name}',
@@ -641,7 +641,7 @@ class User
             ),
             Lang::inst()->get('mailer_subject_group_leave_notification', $this)
         );
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{deleter}',
                 '{group_name}',
@@ -666,7 +666,7 @@ class User
         $admin_name = $admin->getName($this);
 
         $subject = Lang::inst()->get('mailer_subject_password_change_notification', $this);
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{admin}',
                 '{new_password}',
@@ -691,7 +691,7 @@ class User
         $token = Application::inst()->insertToken($this->id);
 
         $subject = Lang::inst()->get('mailer_subject_email_verification', $this);
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{http_host}',
                 '{hash}',
@@ -714,7 +714,7 @@ class User
         $token = Application::inst()->insertToken($this->id);
 
         $subject = Lang::inst()->get('mailer_subject_new_password', $this);
-        $body = str_replace(
+        $body = mb_str_replace(
             array(
                 '{http_host}',
                 '{token}',
