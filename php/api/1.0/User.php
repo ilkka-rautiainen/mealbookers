@@ -457,7 +457,7 @@ class UserAPI
             throw new HttpException(400, 'email_address_missing');
         }
 
-        if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($data['email'])))
+        if (!preg_match(Application::inst()->getEmailValidationRegex(), mb_strtoupper($data['email'])))
             throw new HttpException(409, 'invalid_email');
 
         if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
@@ -567,7 +567,7 @@ class UserAPI
         }
 
         $email_address = $data['email'];
-        if (!preg_match(Application::inst()->getEmailValidationRegex(), strtoupper($email_address)))
+        if (!preg_match(Application::inst()->getEmailValidationRegex(), mb_strtoupper($email_address)))
             throw new HttpException(409, 'invalid_email');
 
         if (!strlen($data['first_name']))

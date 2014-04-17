@@ -173,7 +173,7 @@ class GroupAPI
         }
 
         $email_address = $data['email_address'];
-        if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", strtoupper($email_address))) {
+        if (!preg_match("/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/", mb_strtoupper($email_address))) {
             throw new HttpException(409, 'invalid_email');
         }
 
