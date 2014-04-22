@@ -58,6 +58,9 @@ class Mailer
             return true;
         }
         else {
+            Application::inst()->logError('Mailer', 'Sending failed', __FILE__, __LINE__, debug_backtrace(), array(
+                'email_address' => $recipient->email_address,
+            ));
             Logger::error(__METHOD__ . " sending message to {$recipient->email_address} failed");
             return false;
         }
@@ -81,6 +84,9 @@ class Mailer
             return true;
         }
         else {
+            Application::inst()->logError('Mailer', 'Sending failed', __FILE__, __LINE__, debug_backtrace(), array(
+                'email_address' => $email_address,
+            ));
             Logger::error(__METHOD__ . " sending message to {$email_address} failed");
             return false;
         }

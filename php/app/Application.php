@@ -137,6 +137,38 @@ class Application
         die;
     }
 
+    public function logError($type, $message, $file, $line, $stack_trace, $info = null)
+    {
+        $trace = array();
+        foreach ($stack_trace as $trace_row) {
+            $trace[] = array(
+                'file' => $trace_row['file'],
+                'line' => $trace_row['line'],
+                'function' => $trace_row['function'],
+                'class' => $trace_row['class'],
+            );
+        }
+        DB::inst()->query("INSERT INTO exceptions (
+                datetime,
+                type,
+                message,
+                file,
+                line,
+                stack_trace,
+                request,
+                info
+            ) VALUES (
+                '" . date("Y-m-d H:i:s") . "',
+                '" . DB::inst()->quote($type) . "',
+                '" . DB::inst()->quote($message) . "',
+                '" . DB::inst()->quote($file) . "',
+                '" . $line . "',
+                '" . DB::inst()->quote(json_encode($trace)) . "',
+                '" . DB::inst()->quote(json_encode($_SERVER)) . "',
+                " . ((is_null($info)) ? "NULL" : "'" . DB::inst()->quote(json_encode($info)) . "'") . "
+            )");
+    }
+
     public function getPostData()
     {
         $data = json_decode(file_get_contents('php://input'), true);

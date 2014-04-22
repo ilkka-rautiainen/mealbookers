@@ -137,6 +137,10 @@ class Engine {
      */
     public function handleError($errno, $errstr, $errfile, $errline) {
         if ($errno & error_reporting()) {
+            @\Logger::error(__METHOD__ . " $errno $errstr $errfile $errline");
+            @\Application::inst()->logError('General', $errstr, $errfile, $errline, debug_backtrace(), array(
+                'errno' => $errno,
+            ));
             throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
         }
     }
