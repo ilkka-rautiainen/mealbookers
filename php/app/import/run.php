@@ -26,17 +26,9 @@ $importers = array(
 );
 
 foreach ($importers as $importer) {
-    try {
-        $importer->init();
-        if ($reset)
-            $importer->reset();
-        $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
-    }
-    catch (ImportException $e) {
-        $errorMessage = __FILE__ . ":" . __LINE__ . " Error in " . get_class($importer) . ": "
-            . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine();
-        Logger::error($errorMessage);
-        print $errorMessage . "<br />";
-    }
+    $importer->init();
+    if ($reset)
+        $importer->reset();
+    $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
 }
 print "import executed";
