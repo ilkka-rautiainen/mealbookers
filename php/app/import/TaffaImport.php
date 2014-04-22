@@ -35,6 +35,8 @@ class TaffaImport extends Import implements iImport
         ),
     );
 
+    private $current_language = 'all';
+
     /**
      * Import and Save opening hours
      */
@@ -45,10 +47,10 @@ class TaffaImport extends Import implements iImport
 
         $alacarte_element = pq('#page > p:last');
         if (!$alacarte_element)
-            throw new ParseException("No alacarte element found");
+            throw new ImportException("No alacarte element found", $this->restaurant->name, 'opening_hours');
         $opening_hour_element = pq($alacarte_element)->prev();
         if (!$opening_hour_element)
-            throw new ParseException("No opening hour element found");
+            throw new ImportException("No opening hour element found", $this->restaurant->name, 'opening_hours');
 
         $fetch_alacarte = false;
         if (pq($alacarte_element)->html() == 'À la carten slutar serveras en halv timme före stängningstid.')
@@ -128,48 +130,57 @@ class TaffaImport extends Import implements iImport
         if ($save_opening_hours)
             $this->saveOpeningHours();
 
-        foreach (array_keys($this->langs) as $lang) {
-            $source = $this->fetchURL("https://www.teknologforeningen.fi/menu.html?lang=$lang");
-            phpQuery::newDocument($source);
+        foreach ($this->langs as $lang => $lang_config) {
+            $this->current_language = $lang;
+            try {
+                $source = $this->fetchURL("https://www.teknologforeningen.fi/menu.html?lang=$lang");
+                phpQuery::newDocument($source);
 
-            $last_current_day = -1;
+                $last_current_day = -1;
 
-            // Loop through the days
-            $children = pq('#page div:eq(1)')->children('p, ul');
-            if (!$children)
-                throw new ParseException("No menu element found");
+                // Loop through the days
+                $children = pq('#page div:eq(1)')->children('p, ul');
+                if (!$children)
+                    throw new ImportException("No menu element found", $this->restaurant->name, $this->current_language);
 
-            foreach ($children as $child) {
-                if ($child->tagName == 'p') {
-                    $text = pq($child)->text();
-                    $end = mb_strpos($text, ' ');
-                    if ($end === false)
-                        $end = mb_strlen($text);
-                    // Check the day
-                    $day_string = mb_substr($text, 0, $end);
-                    $current_day = array_search($day_string, $this->langs[$lang]['weekdays']);
-                    if ($current_day === false)
-                        throw new ParseException("Weekday not recognized");
-                    if ($current_day < $last_current_day)
-                        break;
-                    $last_current_day = $current_day;
-                    $this->startDay($current_day);
-                }
-                else if ($child->tagName == 'ul') {
-                    foreach (pq($child)->children('li') as $li) {
-                        $line = pq($li)->text();
-
-                        $section = $this->getSectionName($line, $lang);
-                        $line = $this->formatAttributes($line);
-
-                        $meal = new Meal();
-                        $meal->language = $lang;
-                        $meal->name = $line;
-                        $meal->section = $section;
-                        $this->addMeal($meal);
+                foreach ($children as $child) {
+                    if ($child->tagName == 'p') {
+                        $text = pq($child)->text();
+                        $end = mb_strpos($text, ' ');
+                        if ($end === false)
+                            $end = mb_strlen($text);
+                        // Check the day
+                        $day_string = mb_substr($text, 0, $end);
+                        $current_day = array_search($day_string, $lang_config['weekdays']);
+                        if ($current_day === false)
+                            throw new ImportException("Weekday not recognized", $this->restaurant->name, $this->current_language);
+                        if ($current_day < $last_current_day)
+                            break;
+                        $last_current_day = $current_day;
+                        $this->startDay($current_day);
                     }
-                    $this->endDayAndSave();
+                    else if ($child->tagName == 'ul') {
+                        foreach (pq($child)->children('li') as $li) {
+                            $line = pq($li)->text();
+
+                            $section = $this->getSectionName($line, $lang);
+                            $line = $this->formatAttributes($line);
+
+                            $meal = new Meal();
+                            $meal->language = $lang;
+                            $meal->name = $line;
+                            $meal->section = $section;
+                            $this->addMeal($meal);
+                        }
+                        $this->endDayAndSave();
+                    }
                 }
+            }
+            catch (ImportException $e) {
+                DB::inst()->rollbackTransaction();
+                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
+                    . ", from:" . $e->getFile() . ":" . $e->getLine()
+                    . ", in restaurant: {$this->restaurant->name}");
             }
         }
     }

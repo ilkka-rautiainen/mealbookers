@@ -19,6 +19,8 @@ abstract class AmicaJSONImport extends Import implements iImport
         ),
     );
 
+    private $current_language = 'all';
+
     /**
      * Runs the import
      */
@@ -39,6 +41,7 @@ abstract class AmicaJSONImport extends Import implements iImport
         }
 
         foreach ($this->langs as $lang => $lang_config) {
+            $this->current_language = $lang;
             try {
                 Logger::debug(__METHOD__ . " start lang $lang, url: http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
                     . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
@@ -50,16 +53,16 @@ abstract class AmicaJSONImport extends Import implements iImport
 
                 $menu = json_decode($source, true);
                 if (!$menu || json_last_error())
-                    throw new ParseException("Couldn't parse json");
+                    throw new ImportException("Couldn't parse json", $this->restaurant->name, $this->current_language);
 
                 if (!is_array($menu['MenusForDays']))
-                    throw new ParseException("MenusForDays not an array");
+                    throw new ImportException("MenusForDays not an array", $this->restaurant->name, $this->current_language);
 
                 // Loop the days and meals
                 foreach ($menu['MenusForDays'] as $day_menu) {
                     Logger::trace(__METHOD__ . " start day " . $day_menu['Date']);
                     if (!is_array($day_menu['SetMenus']))
-                        throw new ParseException("SetMenus not an array");
+                        throw new ImportException("SetMenus not an array", $this->restaurant->name, $this->current_language);
 
                     $this->startDay($day_menu['Date']);
                     foreach ($day_menu['SetMenus'] as $meal) {
@@ -73,12 +76,8 @@ abstract class AmicaJSONImport extends Import implements iImport
                 Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
                     . ", from:" . $e->getFile() . ":" . $e->getLine()
                     . ", in restaurant: {$this->restaurant->name}");
-                $exception = $e;
             }
         }
-
-        if (isset($exception))
-            throw $exception;
 
         Logger::note(__METHOD__ . " succeeded");
         $this->postImport();
@@ -93,9 +92,9 @@ abstract class AmicaJSONImport extends Import implements iImport
         $date = substr($date, 0, 10);
         $time = strtotime($date);
         if ($time < strtotime(Application::inst()->getDateForDay('this_week_monday')))
-            throw new ImportException("Date $date was too early");
+            throw new ImportException("Date $date was too early", $this->restaurant->name, $this->current_language);
         else if ($time > strtotime(Application::inst()->getDateForDay('this_week_sunday')))
-            throw new ImportException("Date $date was too late");
+            throw new ImportException("Date $date was too late", $this->restaurant->name, $this->current_language);
 
         parent::startDay(((int)date("N", $time)) - 1);
     }

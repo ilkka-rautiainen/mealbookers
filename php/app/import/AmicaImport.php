@@ -49,6 +49,8 @@ abstract class AmicaImport extends Import
         ),
     );
 
+    private $current_language = 'all';
+
     /**
      * Runs the import
      */
@@ -69,12 +71,12 @@ abstract class AmicaImport extends Import
             $source,
             $matches
         ))
-            throw new ParseException("Error in Amica import: no id found");
+            throw new ImportException("Error in Amica import: no id found", $this->restaurant->name, $this->current_language);
 
         phpQuery::newDocument($source);
         $daterange = trim(pq("#ctl00_RegionPageBody_RegionPage_RegionContent_RegionMainContent_RegionMainContentMiddle_MainContentMenu_ctl00_HeadingMenu")->html());
         if (!$this->isValidDaterange($daterange))
-            throw new ImportException("Wrong menu, date range was: $daterange");
+            throw new ImportException("Wrong menu, date range was: $daterange", $this->restaurant->name, $this->current_language);
 
         if ($save_opening_hours)
             $this->saveOpeningHours();
@@ -86,7 +88,7 @@ abstract class AmicaImport extends Import
             $source,
             $matches
         ))
-            throw new ParseException("Error in Amica import: no menu type or number found");
+            throw new ImportException("Error in Amica import: no menu type or number found", $this->restaurant->name, $this->current_language);
 
         $menu_type = $matches[1];
         $menu_number = $matches[2];
@@ -96,6 +98,7 @@ abstract class AmicaImport extends Import
         $error = false;
 
         foreach ($this->langs as $lang => $lang_config) {
+            $this->current_language = $lang;
             try {
                 Logger::debug(__METHOD__ . " start lang $lang");
                 $source = $this->fetchURL("http://www.amica.fi/Templates/RestaurantPage/RestaurantMenuPrintPage.aspx?id=$id&page=$id&bn=$lang&a=$menu_type&s=$menu_number");
@@ -119,12 +122,8 @@ abstract class AmicaImport extends Import
                 Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
                     . ", from:" . $e->getFile() . ":" . $e->getLine()
                     . ", in restaurant: {$this->restaurant->name}");
-                $exception = $e;
             }
         }
-
-        if (isset($exception))
-            throw $exception;
 
         Logger::note(__METHOD__ . " succeeded");
         $this->postImport();
@@ -137,7 +136,7 @@ abstract class AmicaImport extends Import
     {
         $html = pq('#ctl00_RegionPageBody_RegionPage_MenuLabel')->html();
         if (!$html) {
-            throw new ParseException("No menu element found");
+            throw new ImportException("No menu element found", $this->restaurant->name, $this->current_language);
         }
         $html = str_replace(array('<br>'), array(" "), $html);
         $lines = preg_split("/[\s]*\r?\n[\s]*/", trim(pq($html)->text()));
@@ -318,7 +317,7 @@ abstract class AmicaImport extends Import
             $daterange,
             $matches))
         {
-            throw new ParseException("Didn't find date range in the document");
+            throw new ImportException("Didn't find date range in the document", $this->restaurant->name, $this->current_language);
         }
         $start = mktime(0, 0, 0, $matches[2], $matches[1], $matches[3]);
         $end = mktime(0, 0, 0, $matches[5], $matches[4], $matches[6]);

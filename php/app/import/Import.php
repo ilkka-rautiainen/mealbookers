@@ -41,12 +41,12 @@ abstract class Import implements iImport
 
     public function run($save_opening_hours)
     {
-        throw new ImportException("Not implemented");
+        throw new ImportException("Not implemented", $this->restaurant->name, 'all');
     }
 
     protected function saveOpeningHours()
     {
-        throw new ImportException("Not implemented");
+        throw new ImportException("Not implemented", $this->restaurant->name, 'all');
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class Import implements iImport
         $result = curl_exec($c);
 
         if ($error = curl_error($c))
-            throw new ImportException("CURL error " . curl_errno($c) . ": " . $error);
+            throw new ImportException("CURL error " . curl_errno($c) . ": " . $error, $this->restaurant->name, 'unknown');
 
         curl_close($c);
 
