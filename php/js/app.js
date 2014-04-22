@@ -559,14 +559,16 @@ angular.module('Mealbookers', [
             $("#" + toState.data.modalId).css("visibility", "visible");
         }
 
-        // From user management child modal to parent modal
-        if (fromState.data && fromState.data.modal && toState.name == 'Navigation.Menu.UserManagement') {
+        // From child modal to parent modal
+        if (fromState.data && fromState.data.modal
+            && toState.data && toState.data.modal
+            && fromState.name.substring(0, toState.name.length) == toState.name)
+        {
             $rootScope.$broadcast("childModalClosed");
         }
 
         // To modal
         if (toState.data && toState.data.modal) {
-            $(".modal-backdrop").remove();
             $timeout(function() {
                 $("body").addClass("modal-open");
                 $("#" + toState.data.modalId).focus();

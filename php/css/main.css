@@ -7,6 +7,10 @@ body.modal-open {
     overflow: hidden;
 }
 
+.modal-backdrop + .modal-backdrop {
+    opacity: 0 !important;
+}
+
 .well h3.name {
     margin-top: -4px;
 }
