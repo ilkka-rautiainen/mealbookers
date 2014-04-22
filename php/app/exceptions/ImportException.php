@@ -1,3 +1,3 @@
 <?php
 
-class ImportException extends Exception { }
+class ImportException extends LoggedException { }

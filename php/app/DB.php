@@ -7,7 +7,7 @@ class DB
     private $insertId;
     private $lastResult;
     private $transactionActive = false;
-    
+
     /**
      * Singleton pattern: private constructor
      * Connects to PostgreSQL database
@@ -30,14 +30,14 @@ class DB
         }
         if ($this->connection->connect_error)
             throw new Exception($mysqli->connect_error);
-        
+
         if (!$this->connection->set_charset("utf8"))
             throw new Exception("Unable to set character set in db connection");
 
         if (!$this->connection->select_db(Conf::inst()->get('db.dbname')))
             throw new Exception("Could not choose database");
     }
-    
+
     /**
      * Singleton pattern: Get instance
      */
@@ -45,31 +45,32 @@ class DB
     {
         if (is_null(self::$instance))
             self::$instance = new DB();
-        
+
         return self::$instance;
     }
-    
+
     /**
      * Performs a db query
-     * @param $queryString
+     * @param $query_string
      */
-    public function query($queryString)
+    public function query($query_string, $throw_exception = true)
     {
         Logger::trace(__METHOD__ . " " . str_replace(
             array("\r\n", "\n", "                    ", "                ", "            ", "        ", "    "),
             array(" ", " ", " ", " ", " ", " ", " "),
-            $queryString
+            $query_string
         ));
-        if (!$result = $this->connection->query($queryString)) {
+        if (!$result = $this->connection->query($query_string)) {
             Logger::error(__METHOD__ . " MySQL error: " . $this->connection->error);
-            throw new SqlException($this->connection->error);
+            if ($throw_exception)
+                throw new SqlException($this->connection->error, $query_string);
         }
 
         $this->insertId = $this->connection->insert_id;
-        
+
         return $result;
     }
-    
+
     /**
      * Fetches the query result as an associative array
      * @param $result got from query()
@@ -78,7 +79,7 @@ class DB
     {
         return $result->fetch_assoc();
     }
-    
+
     /**
      * Fetches the query result as numerically indexed array
      * @param $result got from query()
@@ -87,7 +88,7 @@ class DB
     {
         return $result->fetch_row();
     }
-    
+
     /**
      * Fetches the first field from the result array
      * @param $result got from query()
@@ -109,7 +110,7 @@ class DB
     {
         return $this->insertId;
     }
-    
+
     /**
      * Fetches the query result as array
      * @param $result got from query()
@@ -118,37 +119,37 @@ class DB
     {
         return $this->connection->affected_rows;
     }
-    
+
     /**
      * Gets first field of the first row in the result
-     * @param $queryString
+     * @param $query_string
      * @return mixed result field or NULL if no more results
      */
-    public function getOne($queryString)
+    public function getOne($query_string)
     {
-        $result = $this->query($queryString);
+        $result = $this->query($query_string);
         $row = $result->fetch_array();
         if (!$row || !is_array($row) || !isset($row[0]))
             return null;
-        
+
         return $row[0];
     }
-    
+
     /**
      * Gets first row in the result
-     * @param $queryString
+     * @param $query_string
      * @return mixed row array or NULL if no more results
      */
-    public function getRowAssoc($queryString)
+    public function getRowAssoc($query_string)
     {
-        $result = $this->connection->query($queryString);
+        $result = $this->connection->query($query_string);
         $row = $result->fetch_assoc();
         if (!$row || !is_array($row))
             return null;
-        
+
         return $row;
     }
-    
+
     /**
      * Escape the given string
      * @param $string
@@ -193,7 +194,7 @@ class DB
     {
         global $config;
         Logger::info(__METHOD__ . " run sql updates");
-        
+
         $this->query("SHOW TABLES");
         if ($this->getRowCount() == 0)
             $this->runUpdate("initial_create_database.sql");
