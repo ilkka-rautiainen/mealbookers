@@ -1,7 +1,7 @@
 <?php
 
 class Suggestion {
-    
+
     public $id;
     public $datetime;
     public $creator_id;

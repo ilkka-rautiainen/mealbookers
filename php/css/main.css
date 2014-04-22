@@ -379,21 +379,21 @@ label {
     margin-left: 5px;
 }
 
-#suggestionModal input.suggest-time {
+#suggestion-modal input.suggest-time {
     width: 95px;
 }
 
-#suggestionModal .suggest-time-error {
+#suggestion-modal .suggest-time-error {
     margin-top: 5px;
 }
 
-#suggestionModal fieldset.well legend {
+#suggestion-modal fieldset.well legend {
     border-bottom: none;
     width: auto;
     margin-bottom: -15px;
 }
 
-#suggestionModal .group-container {
+#suggestion-modal .group-container {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -402,7 +402,7 @@ label {
     user-select: none;
 }
 
-#suggestionModal .group, #suggestionModal .member {
+#suggestion-modal .group, #suggestion-modal .member {
     -webkit-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
     -moz-box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
     box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.075);
@@ -411,7 +411,7 @@ label {
     cursor: pointer;
 }
 
-#suggestionModal .group {
+#suggestion-modal .group {
     padding: 0px 8px 4px 12px;
     min-height: 40px;
     line-height: 40px;
@@ -426,11 +426,11 @@ label {
     user-select: none;
 }
 
-#suggestionModal .group:last-child {
+#suggestion-modal .group:last-child {
     margin-bottom: 0px;
 }
 
-#suggestionModal .member {
+#suggestion-modal .member {
     text-align: center;
     line-height: 37px;
     border: 1px solid #e7e7e7;
@@ -445,15 +445,15 @@ label {
     margin-bottom: 7px;
 }
 
-#suggestionModal .member:last-child {
+#suggestion-modal .member:last-child {
     margin-right: 0px;
 }
 
-#suggestionModal .member input[type="checkbox"] {
+#suggestion-modal .member input[type="checkbox"] {
     cursor: pointer;
 }
 
-#suggestionModal .group-selected, #suggestionModal .member-selected {
+#suggestion-modal .group-selected, #suggestion-modal .member-selected {
     border-color: rgba(82, 168, 236, 0.8);
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
@@ -461,7 +461,7 @@ label {
     outline: 0;
 }
 
-#suggestionModal .opening-hours {
+#suggestion-modal .opening-hours {
     float: right;
     font-family: 'Open Sans';
     font-weight: normal;
@@ -469,7 +469,7 @@ label {
     text-align: right;
 }
 
-#suggestionModal .opening-hours strong {
+#suggestion-modal .opening-hours strong {
     font-size: 9pt;
 }
 
@@ -567,67 +567,67 @@ span.line-break {
     clear: both;
 }
 
-#accountSettingsModal h4 {
+#account-settings-modal h4 {
     font-family: 'Open Sans';
     font-weight: bold;
 }
 
-#accountSettingsModal .remove-account button {
+#account-settings-modal .remove-account button {
     display: none;
 }
 
-#accountSettingsModal .modal-footer .remove-account button {
+#account-settings-modal .modal-footer .remove-account button {
     float: left;
 }
 
-#accountSettingsModal .remove-account button.visible {
+#account-settings-modal .remove-account button.visible {
     display: inline-block;
 }
 
-#accountSettingsModal .language-radio-container {
+#account-settings-modal .language-radio-container {
     display: inline-block;
     width: 15px;
 }
 
-#groupSettingsModal .member {
+#group-settings-modal .member {
     height: 30px;
     line-height: 30px;
     padding-left: 5px;
 }
 
-#groupSettingsModal .member .icon {
+#group-settings-modal .member .icon {
     padding-right: 3px;
 }
 
-#groupSettingsModal .member .member-delete-button-group {
+#group-settings-modal .member .member-delete-button-group {
     padding-left: 5px;
 }
 
-#groupSettingsModal .button {
+#group-settings-modal .button {
     cursor: pointer;
 }
 
-#groupSettingsModal .member .delete-confirm-button {
+#group-settings-modal .member .delete-confirm-button {
     height: 25px;
     padding-top: 2px;
 }
 
-#groupSettingsModal .invitations .invitation {
+#group-settings-modal .invitations .invitation {
     min-height: 25px;
     line-height: 25px;
     padding-left: 5px;
 }
 
-#groupSettingsModal .invitations .invitation .icon {
+#group-settings-modal .invitations .invitation .icon {
     padding-right: 3px;
     color: gray;
 }
 
-#groupSettingsModal .new-group {
+#group-settings-modal .new-group {
     margin-bottom: 10px;
 }
 
-#groupSettingsModal .join-group {
+#group-settings-modal .join-group {
     margin-top: 10px;
 }
 
