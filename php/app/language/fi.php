@@ -223,8 +223,8 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_manage_canceled' => 'Peruttu!',
     'suggestion_manage_canceled_and_deleted' => 'Peruttu! Koko ehdotus poistettiin, koska olit sen viimeinen jäsen.',
     'suggestion_manage_accepted' => 'Hyväksytty!',
-    'suggestion_time_before_lunch' => 'Ota huomioon, että lounas ei ole vielä alkanut',
-    'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on jo päättynyt',
+    'suggestion_time_before_lunch' => 'Ota huomioon, että lounas alkaa vasta',
+    'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on päättynyt jo',
     'action_failed' => 'Toimenpide epäonnistui',
     'terms_of_use_text' => '<strong>Palvelun kuvaus</strong><br />Palvelun avulla voit selata Otaniemen'
         . ' lounasravintoloiden ruokalistoja ja kutsua kavereitasi syömään kanssasi. Palvelussa voit luoda'

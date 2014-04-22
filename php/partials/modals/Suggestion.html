@@ -22,8 +22,8 @@
                     <div class="form-group">
                         <label for="time"><strong>{{ 'suggest_time' | i18n }}</strong></label><br />
                         <input class="form-control suggest-time" id="suggest-time" ng-model="suggestTime" maxlength="5" name="time" type="tel" placeholder="{{ 'suggest_time_placeholder' | i18n }}" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" focus-on="modalOpened" autocorrect="off" required />
-                        <div ng-if="suggestTimeValidityError() == 1" class="text-warning suggest-time-error"><i class="glyphicon glyphicon-warning-sign"></i> {{ 'suggestion_time_before_lunch' | i18n }} {{ suggestTime }}</div>
-                        <div ng-if="suggestTimeValidityError() == 2" class="text-warning suggest-time-error"><i class="glyphicon glyphicon-warning-sign"></i> {{ 'suggestion_time_after_lunch' | i18n }} {{ suggestTime }}</div>
+                        <div ng-if="suggestTimeValidityError() == 1" class="text-warning suggest-time-error"><i class="glyphicon glyphicon-warning-sign"></i> {{ 'suggestion_time_before_lunch' | i18n }} {{ suggestRestaurant.openingHours[weekDay].lunch.start }}</div>
+                        <div ng-if="suggestTimeValidityError() == 2" class="text-warning suggest-time-error"><i class="glyphicon glyphicon-warning-sign"></i> {{ 'suggestion_time_after_lunch' | i18n }} {{ suggestRestaurant.openingHours[weekDay].lunch.end }}</div>
                     </div>
 
                     <!-- Suggestion members -->
