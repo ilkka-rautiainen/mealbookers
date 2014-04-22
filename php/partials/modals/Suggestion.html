@@ -9,7 +9,7 @@
                 <div class="modal-body">
 
                     <!-- Modal alert -->
-                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message && modalAlertMessage.target == 'suggestion-modal'" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
 
                     <!-- Opening times -->
                     <div class="opening-hours">

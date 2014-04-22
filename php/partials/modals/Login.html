@@ -8,7 +8,7 @@
                     <h4 class="modal-title">{{ 'log_in' | i18n }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message && modalAlertMessage.target == 'login-modal'" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
                     <div class="form-group">
                         <label for="email_log_in">{{ 'email' | i18n }}</label>
                         <input type="email" class="form-control" id="email_log_in" ng-model="login.email" focus-on="modalOpened" tabindex="1" required>

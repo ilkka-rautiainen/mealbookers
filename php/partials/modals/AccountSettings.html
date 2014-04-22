@@ -7,7 +7,7 @@
                     <h4 class="modal-title">{{ user.name }} - {{ 'account_settings' | i18n }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
+                    <div class="alert" ng-class="modalAlertMessage.type" ng-if="modalAlertMessage.message && modalAlertMessage.target == 'account-settings-modal'" ng-show="modalAlertMessage.message.length">{{ modalAlertMessage.message }}</div>
 
                     <!-- Account email -->
                     <div class="form-group">
