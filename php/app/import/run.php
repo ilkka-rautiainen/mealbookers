@@ -23,6 +23,7 @@ $importers = array(
     new SilinteriImport(),
     new LaureaImport(),
     new TaffaImport(),
+    new DipoliImport(),
 );
 
 foreach ($importers as $importer) {
