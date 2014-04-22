@@ -27,7 +27,7 @@ angular.module('Mealbookers.controllers', [])
             else if (result.status == 'wrong_user') {
                 $rootScope.logOut(false);
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'), 'logInModal');
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_wrong_user'), 'login-modal');
                 $rootScope.postLoginState = {
                     name: "Navigation.AcceptSuggestion",
                     stateParams: {
@@ -37,7 +37,7 @@ angular.module('Mealbookers.controllers', [])
             }
             else if (result.status == 'not_logged_in') {
                 $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'), 'logInModal');
+                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'), 'login-modal');
                 $rootScope.postLoginState = {
                     name: "Navigation.AcceptSuggestion",
                     stateParams: {
@@ -158,13 +158,13 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('LoginController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll) {
 
-    $("#logInModal").modal();
-    $('#logInModal').on('hidden.bs.modal', function () {
+    $("#login-modal").modal();
+    $('#login-modal').on('hidden.bs.modal', function () {
         delete $rootScope.postLoginState;
         $state.go("^");
     });
 
-    $('#logInModal').on('shown.bs.modal', function () {
+    $('#login-modal').on('shown.bs.modal', function () {
         $scope.$broadcast('modalOpened');
     });
 
@@ -183,7 +183,7 @@ angular.module('Mealbookers.controllers', [])
             if (result && result.status == 'ok') {
                 $log.info("Logged in");
                 $rootScope.refreshCurrentUser(function() {
-                    $("#logInModal").modal('hide');
+                    $("#login-modal").modal('hide');
 
                     var ready = function() {
                         if ($rootScope.postLoginState) {
@@ -217,8 +217,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.modalAlert = function(type, message) {
         $rootScope.modalAlert(type, message, 'login-modal');
         if (message.length) {
-            $location.hash('login-modal');
-            $anchorScroll();
+            $("#login-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -272,8 +271,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.modalAlert = function(type, message) {
         $rootScope.modalAlert(type, message, 'forgot-password-modal');
         if (message.length) {
-            $location.hash('forgot-password-modal');
-            $anchorScroll();
+            $("#forgot-password-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -345,8 +343,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.modalAlert = function(type, message) {
         $rootScope.modalAlert(type, message, 'create-new-password-modal');
         if (message.length) {
-            $location.hash('create-new-password-modal');
-            $anchorScroll();
+            $("#create-new-password-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -436,8 +433,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.modalAlert = function(type, message) {
         $rootScope.modalAlert(type, message, 'register-modal');
         if (message.length) {
-            $location.hash('register-modal');
-            $anchorScroll();
+            $("#register-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -660,8 +656,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.modalAlert = function(type, message) {
         $rootScope.modalAlert(type, message, 'user-management-modal');
         if (message.length) {
-            $location.hash('user-management-modal');
-            $anchorScroll();
+            $("#user-management-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -717,18 +712,18 @@ angular.module('Mealbookers.controllers', [])
     // Stop live view if current user
     if ($scope.isCurrentUser) {
         $rootScope.refreshCurrentUserAndStopLiveView(function() {
-            $("#accountSettingsModal").modal();
+            $("#account-settings-modal").modal();
 
-            $('#accountSettingsModal').on('hidden.bs.modal', function () {
+            $('#account-settings-modal').on('hidden.bs.modal', function () {
                 $rootScope.startLiveView();
                 $state.go("^");
             });
         });
     }
     else {
-        $("#accountSettingsModal").modal();
+        $("#account-settings-modal").modal();
 
-        $('#accountSettingsModal').on('hidden.bs.modal', function () {
+        $('#account-settings-modal').on('hidden.bs.modal', function () {
             $state.go("^");
         });
     }
@@ -809,7 +804,7 @@ angular.module('Mealbookers.controllers', [])
                 $scope.resetPassword();
                 $scope.saveProcess = false;
                 $rootScope.alert('alert-success', 'account_save_succeeded');
-                $("#accountSettingsModal").modal('hide');
+                $("#account-settings-modal").modal('hide');
                 $log.log("Account settings saved");
             }
             else {
@@ -852,7 +847,7 @@ angular.module('Mealbookers.controllers', [])
 
         $http.delete(address).success(function(result) {
             if (result && result.status == 'ok') {
-                $("#accountSettingsModal").modal('hide');
+                $("#account-settings-modal").modal('hide');
                 if ($scope.isCurrentUser) {
                     $.removeCookie('id');
                     $.removeCookie('check');
@@ -874,10 +869,9 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.modalAlert = function(type, message) {
-        $rootScope.modalAlert(type, message, 'accountSettingsModal');
+        $rootScope.modalAlert(type, message, 'account-settings-modal');
         if (message.length) {
-            $location.hash('accountSettingsModal');
-            $anchorScroll();
+            $("#account-settings-modal").animate({ scrollTop: 0 });
         }
     };
 }])
@@ -930,9 +924,9 @@ angular.module('Mealbookers.controllers', [])
     // Stop live view if current user
     if ($scope.isCurrentUser) {
         $rootScope.refreshCurrentUserAndStopLiveView(function() {
-            $("#groupSettingsModal").modal();
+            $("#group-settings-modal").modal();
 
-            $("#groupSettingsModal").on('hidden.bs.modal', function () {
+            $("#group-settings-modal").on('hidden.bs.modal', function () {
                 $rootScope.startLiveView();
                 $state.go("^");
             });
@@ -941,9 +935,9 @@ angular.module('Mealbookers.controllers', [])
         });
     }
     else {
-        $("#groupSettingsModal").modal();
+        $("#group-settings-modal").modal();
 
-        $("#groupSettingsModal").on('hidden.bs.modal', function () {
+        $("#group-settings-modal").on('hidden.bs.modal', function () {
             $state.go("^");
         });
     }
@@ -973,10 +967,9 @@ angular.module('Mealbookers.controllers', [])
     $scope.$on("userReady", $scope.buildUserGroups);
 
     $scope.modalAlert = function(type, message) {
-        $rootScope.modalAlert(type, message, 'group-modal');
+        $rootScope.modalAlert(type, message, 'group-settings-modal');
         if (message.length) {
-            $location.hash('group-modal');
-            $anchorScroll();
+            $("#group-settings-modal").animate({ scrollTop: 0 });
         }
     };
 
@@ -1243,11 +1236,11 @@ angular.module('Mealbookers.controllers', [])
     $scope.suggestTime = "";
     $scope.saveProcess = false;
 
-    $("#suggestionModal").modal();
-    $('#suggestionModal').on('hidden.bs.modal', function () {
+    $("#suggestion-modal").modal();
+    $('#suggestion-modal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
-    $('#suggestionModal').on('shown.bs.modal', function () {
+    $('#suggestion-modal').on('shown.bs.modal', function () {
         $scope.$broadcast('modalOpened');
     });
 
@@ -1337,7 +1330,7 @@ angular.module('Mealbookers.controllers', [])
             if (result && result.status == 'ok') {
                 $rootScope.refreshCurrentUser(function() {
                     $scope.saveProcess = false;
-                    $("#suggestionModal").modal('hide');
+                    $("#suggestion-modal").modal('hide');
 
                     if (result.failed_to_send_invitation_email) {
                         $rootScope.alert('alert-warning', $filter('i18n')('suggest_failed_to_send_invitation_email')
@@ -1395,10 +1388,9 @@ angular.module('Mealbookers.controllers', [])
     });
 
     $scope.modalAlert = function(type, message) {
-        $rootScope.modalAlert(type, message, 'suggestionModal');
+        $rootScope.modalAlert(type, message, 'suggestion-modal');
         if (message.length) {
-            $location.hash('suggestionModal');
-            $anchorScroll();
+            $("#suggestion-modal").animate({ scrollTop: 0 });
         }
     };
 }])

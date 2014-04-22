@@ -37,7 +37,7 @@ angular.module('Mealbookers', [
         controller: 'LoginController',
         data: {
             modal: true,
-            modalId: "logInModal"
+            modalId: "login-modal"
         },
     })
 
@@ -76,7 +76,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/modals/Suggestion.html",
         data: {
             modal: true,
-            modalId: "suggestionModal"
+            modalId: "suggestion-modal"
         },
         controller: 'SuggestionController'
     })
@@ -96,7 +96,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/modals/AccountSettings.html",
         data: {
             modal: true,
-            modalId: "accountSettingsModal"
+            modalId: "account-settings-modal"
         },
         controller: 'AccountSettingsController'
     })
@@ -106,7 +106,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/modals/GroupSettings.html",
         data: {
             modal: true,
-            modalId: "GroupSettingsModal"
+            modalId: "group-settings-modal"
         },
         controller: 'GroupSettingsController'
     })
@@ -126,7 +126,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/modals/AccountSettings.html",
         data: {
             modal: true,
-            modalId: "accountSettingsModal"
+            modalId: "account-settings-modal"
         },
         controller: 'AccountSettingsController'
     })
@@ -136,7 +136,7 @@ angular.module('Mealbookers', [
         templateUrl: "partials/modals/GroupSettings.html",
         data: {
             modal: true,
-            modalId: "groupSettingsModal"
+            modalId: "group-settings-modal"
         },
         controller: 'GroupSettingsController'
     })
