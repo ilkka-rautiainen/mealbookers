@@ -1,9 +1,9 @@
 <?php
 
-class DipoliImport extends SodexoImport implements iImport
+class KoneImport extends SodexoImport implements iImport
 {
-    protected $restaurant_id = 12;
-    protected $sodexo_id = 14;
+    protected $restaurant_id = 8;
+    protected $sodexo_id = 140;
     
 
     /**
