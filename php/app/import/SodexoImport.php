@@ -47,9 +47,14 @@ abstract class SodexoImport extends Import
     * Takes in atributes in Sodexo JSON format and transforms and adds HTML tags
     */
     protected function atributeHandeling($properties){
-    	// TODO split properties and add correct handeling
-    	$returnValue = "<span class=\"attribute-group\">";
-    	return "<span class=\"attribute-group\"><span class=\"attribute\">".$properties."</span></span>";
+    	$propertiesList = explode(",", $properties); // Splits properties to array
+    	$returnString = "<span class=\"attribute-group\">";  // Atribute group span open
+    	foreach ($propertiesList as $propertie) {
+    		// Atribute span open
+    		$returnString = $returnString . "<span class=\"attribute\">" . $propertie . "</span>";
+    	}
+    	$returnString = $returnString . "</span>"; // Atribute group span close
+    	return $returnString;
     }
     /**
     * Returns correc Sodexo uri
