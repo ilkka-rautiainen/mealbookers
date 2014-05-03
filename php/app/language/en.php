@@ -293,8 +293,13 @@ $GLOBALS['language']['en'] = array(
             . ' suggest and find common lunch times.<br /><br />Join the group at Mealbookers'
             . ' <a href="http://{http_host}/#/menu/today/register?invitation={code}">here</a>'
             . ' or if you have already registered, join using this invitation code: <strong>{code}</strong>.'
-            . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
-            . ' You don\'t need to reply to it.</small>',
+            . ' <br /><br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
+            . ' Mealbookers on Otaniemen kattava sosiaalinen ruokalistapalvelu, joka tekee yhteisen lounasajan'
+            . ' ehdottamisen ja löytämisen helpoksi.<br /><br />Liity jäseneksi Mealbookers-ryhmään'
+            . ' <a href="http://{http_host}/#/menu/today/register?invitation={code}">tästä</a>'
+            . ' tai jos olet jo rekisteröitynyt palveluun, liity ryhmään kutsukoodilla <strong>{code}</strong>.'
+            . ' <br /><br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
+            . ' You don\'t need to reply to it. / Tämä on automaattinen viesti, johon ei tarvitse vastata.</small>',
         'mailer_subject_invite_notification' => '{inviter} joined you to group {group_name}',
         'mailer_body_invite_notification' =>
             'Hello!<br /><br />{inviter} joined you to group {group_name} at Mealbookers.<br /><br />'
