@@ -2,6 +2,10 @@
 
 abstract class SodexoImport extends Import
 {
+	/**
+	* All weekdays are listed here and are needed for searching Sodexo JSON feed
+	* Weekdays work as keys for menus
+	*/
 	protected $days = array(
         'monday',
         'tuesday',
@@ -11,8 +15,12 @@ abstract class SodexoImport extends Import
         'saturday',
         'sunday',
     );
+    protected $sodexoUriBase = "http://www.sodexo.fi/ruokalistat/output/weekly_json/";
     /**
-     * Load JSON data from given url
+     * Load JSON data from given 
+     * --------------------------
+     * Retuns nothing if no JSON data received from given url
+     * Retuns data array of JSON data if data found from given url
      */
     public function getJSONData($jsonurl)
     {
@@ -26,11 +34,35 @@ abstract class SodexoImport extends Import
     }
     /**
      * Returns date in Sodexo JSON API format
+     * ---------------------------------------
+     * Get date of last monday and returns it in correct string format for Sodexo API
      */
     protected function getWeekStartDay()
     {
         return date("Y/m/d" , strtotime("last monday", strtotime("tomorrow")));
     }
+    /*
+    * Transforms atributes to Mealbookers format
+    * ------------------------------------------
+    * Takes in atributes in Sodexo JSON format and transforms and adds HTML tags
+    */
+    protected function atributeHandeling($properties){
+    	$propertiesList = explode(",", $properties); // Splits properties to array
+    	$returnString = "<span class=\"attribute-group\">";  // Atribute group span open
+    	foreach ($propertiesList as $propertie) {
+    		// Atribute span open
+    		$returnString = $returnString . "<span class=\"attribute\">" . $propertie . "</span>";
+    	}
+    	$returnString = $returnString . "</span>"; // Atribute group span close
+    	return $returnString;
+    }
+    /**
+    * Returns correc Sodexo uri
+    */
+    protected function getSodexoUri(){
+    	return $this->sodexoUriBase.$this->sodexo_id."/".$this->getWeekStartDay()."/fi";
+    }
+
     /**
      * Runs the import
      */
@@ -47,26 +79,40 @@ abstract class SodexoImport extends Import
         // Save opening hours
         if ($save_opening_hours)
             $this->saveOpeningHours();
-        // TODO: URL Handeling
-        $data = $this->getJSONData("http://www.sodexo.fi/ruokalistat/output/weekly_json/".$this->sodexo_id."/".$this->getWeekStartDay()."/fi");
-        Logger::note(__METHOD__ . $data);
-        $last_current_day = -1;
-        
-
+        $data = $this->getJSONData($this->getSodexoUri());
+        $last_current_day = -1; // initialize value
+        /**
+        * Reading all menus from each day
+        */
         foreach ($this->days as $day) {
             $last_current_day = $last_current_day + 1;
             $this->startDay($last_current_day);
-            foreach ($data["menus"][$day] as $course) {
-                /* Finnish */
-                $meal = new Meal();
-                $meal->language = "fi";
-                $meal->name = $course["title_fi"]."<span class=\"attribute-group\"><span class=\"attribute\">".$course["properties"]."</span></span>";
-                $this->addMeal($meal);
-                /* English */
-                $meal = new Meal();
-                $meal->language = "en";
-                $meal->name = $course["title_en"]."<span class=\"attribute-group\"><span class=\"attribute\">".$course["properties"]."</span></span>";
-                $this->addMeal($meal);
+            if (array_key_exists($day, $data["menus"])){
+	            foreach ($data["menus"][$day] as $course) {
+	                /* Finnish */
+	                $meal = new Meal();
+	                $meal->language = "fi";
+	                $nameStr = "";
+	              	if (array_key_exists("title_fi", $course))
+	                	$nameStr = $course["title_fi"];
+	                if (array_key_exists("properties", $course))
+	                	$nameStr = $nameStr . $this->atributeHandeling($course["properties"]);
+	                $meal->name = $nameStr;
+	                $this->addMeal($meal);
+	                /* English */
+	                $meal = new Meal();
+	                $meal->language = "en";
+	                $nameStr = "";
+	              	if (array_key_exists("title_en", $course))
+	                	$nameStr = $course["title_en"];
+	                if (array_key_exists("desc_fi", $course))
+	                	if ($nameStr == "")
+	                		$nameStr = $course["desc_fi"];
+	                if (array_key_exists("properties", $course))
+	                	$nameStr = $nameStr . $this->atributeHandeling($course["properties"]);
+	                $meal->name = $nameStr;
+	                $this->addMeal($meal);
+            	}
             }
             $this->endDayAndSave();
         }
