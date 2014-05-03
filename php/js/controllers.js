@@ -461,8 +461,43 @@ angular.module('Mealbookers.controllers', [])
     // Do stuff when restaurants are rendered for the first time
     $scope.restaurantsRendered = 0;
     $scope.$on('restaurantRendered', function() {
+        // All restaurants rendered
         if ($scope.restaurantsRendered + 1 == $scope.restaurants.length) {
             $scope.$broadcast("resizeRestaurants");
+
+            // Make restaurants sortable
+            new Sortable($("#menuContainer").get(0), {
+                group: "name",
+                handle: ".sortable-handle",
+                draggable: ".restaurant-outer",
+                ghostClass: "sortable-ghost",
+                // At start of drag
+                onStart: function (evt){
+                    $("[restaurant-row]").removeAttr("restaurant-row");
+                },
+                // On order change
+                onOrderChange: function (evt){
+                    $timeout(function() {
+                        $scope.equalizeRows();
+                    }, 0);
+                },
+                // After drag if there's changes
+                onUpdate: function (evt){
+                    $scope.saveRestaurantOrder();
+                },
+                // Always after drag
+                onEnd: function (evt){
+                    $scope.equalizeRows();
+                }
+            });
+
+            // Show openingh hours tooltip
+            $(".opening-hour-tooltip").tooltip({
+                delay: {
+                    show: 500,
+                    hide: 0
+                }
+            });
         }
         $scope.restaurantsRendered++;
     });
@@ -473,39 +508,20 @@ angular.module('Mealbookers.controllers', [])
 
     // Resizes the restaurants
     $scope.$on("resizeRestaurants", function() {
-        // Show openingh hours tooltip
-        $(".opening-hour-tooltip").tooltip({
-            delay: {
-                show: 500,
-                hide: 0
-            }
-        });
-
-        // Equal heights for restaurant rows
-        var equalizeRows = function() {
-            var maxIdx;
-            $(".restaurant").each(function(idx, el) {
-                $(el).attr("restaurant-row", Math.floor(idx / $rootScope.columns)).css("height", "auto");
-                maxIdx = idx;
-            });
-            for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
-                $("[restaurant-row='" + i.toString() + "']").equalHeights().css("visibility", "visible");
-            }
-        };
-        equalizeRows();
-        $("#menuContainer").sortable({
-            handle: '.sortable-handle',
-            start: function() {
-                $(".restaurant").equalHeights();
-                $(".ui-sortable-placeholder").height($(".restaurant").height() + 20);
-                $("[restaurant-row]").removeAttr("restaurant-row");
-            },
-            stop: function() {
-                equalizeRows();
-                $scope.saveRestaurantOrder();
-            }
-        });
+        $scope.equalizeRows();
     });
+
+    // Equal heights for restaurant rows
+    $scope.equalizeRows = function() {
+        var maxIdx;
+        $(".restaurant").each(function(idx, el) {
+            $(el).attr("restaurant-row", Math.floor(idx / $rootScope.columns)).css("height", "auto");
+            maxIdx = idx;
+        });
+        for (var i = 0; i <= Math.floor(maxIdx / $rootScope.columns); i++) {
+            $("[restaurant-row='" + i.toString() + "']").equalHeights().css("visibility", "visible");
+        }
+    };
 
     // Saves the new order
     $scope.saveRestaurantOrder = function() {

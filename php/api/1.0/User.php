@@ -389,6 +389,7 @@ class UserAPI
             Application::inst()->exitWithHttpCode(400, 'invalid_data');
         }
 
+        DB::inst()->startTransaction();
         DB::inst()->query("DELETE FROM users_restaurants_order WHERE user_id = {$current_user->id}");
 
         $insert = array();
@@ -403,6 +404,7 @@ class UserAPI
 
         DB::inst()->query("INSERT INTO users_restaurants_order (user_id, restaurant_id, order_points)
             VALUES " . implode(", ", $inserts));
+        DB::inst()->commitTransaction();
 
         print json_encode(array(
             'status' => 'ok',
