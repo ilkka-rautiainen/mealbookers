@@ -169,6 +169,7 @@ $GLOBALS['language']['fi'] = array(
     'group_edit_failed_409_invalid_name' => 'Ryhmän nimi ei ole kelvollinen',
     'group_settings_invite_member_failed' => 'Jäsenen kutsuminen epäonnistui',
     'group_settings_invite_member_failed_409_invalid_email' => 'Sähköpostiosoite ei ole kelvollinen',
+    'group_settings_invite_member_failed_409_already_invited' => 'Antamasi sähköpostiosoite on jo kutsuttu ryhmään',
     'group_settings_invite_member_failed_409_already_member' => 'Ryhmässä on jo jäsen antamallasi sähköpostiosoitteella',
     'group_settings_invite_member_failed_500_failed_to_send_invite' => 'Kutsuviestin lähetys epäonnistui',
     'group_add_member_success_invited_new' => 'Kutsu lähetetty',

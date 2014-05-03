@@ -196,6 +196,12 @@ class GroupAPI
                 'notification_error' => $notification_error,
             ));
         }
+        // Check if there's an invited member with the given email address
+        else if (DB::inst()->getOne("SELECT COUNT(id) FROM invitations WHERE
+            group_id = $groupId AND email_address = '" . DB::inst()->quote($email_address) . "' LIMIT 1"))
+        {
+            throw new HttpException(409, 'already_invited');
+        }
         // Invite new member
         else {
             if (!$user->inviteNewMember($email_address, $group)) {

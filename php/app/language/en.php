@@ -169,6 +169,7 @@ $GLOBALS['language']['en'] = array(
     'group_edit_failed_409_invalid_name' => 'Invalid group name given',
     'group_settings_invite_member_failed' => 'Inviting member failed',
     'group_settings_invite_member_failed_409_invalid_email' => 'Invalid email address given',
+    'group_settings_invite_member_failed_409_already_invited' => 'The given email has been invited to the group already',
     'group_settings_invite_member_failed_409_already_member' => 'There\'s already a member in the group with the given email address',
     'group_settings_invite_member_failed_500_failed_to_send_invite' => 'Sending invitation email failed',
     'group_add_member_success_invited_new' => 'Invitation sent',
