@@ -32,6 +32,7 @@ class AmicaImportWrapper implements iImport
                 break;
             }
             catch (ImportException $e) {
+                DB::inst()->rollbackTransaction();
                 Logger::error(__FILE__ . ":" . __LINE__ . " Error in " . get_class($importer) . ": "
                     . $e->getMessage() . ", from:" . $e->getFile() . ":" . $e->getLine());
             }

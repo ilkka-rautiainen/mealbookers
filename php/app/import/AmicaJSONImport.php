@@ -42,40 +42,32 @@ abstract class AmicaJSONImport extends Import implements iImport
 
         foreach ($this->langs as $lang => $lang_config) {
             $this->current_language = $lang;
-            try {
-                Logger::debug(__METHOD__ . " start lang $lang, url: http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
-                    . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
-                    . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
+            Logger::debug(__METHOD__ . " start lang $lang, url: http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
+                . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
+                . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
 
-                $source = $this->fetchURL("http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
-                    . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
-                    . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
+            $source = $this->fetchURL("http://www.amica.fi/modules/json/json/Index?CostNumber={$this->costNumber}&Language=$lang&"
+                . "firstDay=" . Application::inst()->getDateForDay('this_week_monday')
+                . "&lastDay=" . Application::inst()->getDateForDay('this_week_sunday'));
 
-                $menu = json_decode($source, true);
-                if (!$menu || json_last_error())
-                    throw new ImportException("Couldn't parse json", $this->restaurant->name, $this->current_language);
+            $menu = json_decode($source, true);
+            if (!$menu || json_last_error())
+                throw new ImportException("Couldn't parse json", $this->restaurant->name, $this->current_language);
 
-                if (!is_array($menu['MenusForDays']))
-                    throw new ImportException("MenusForDays not an array", $this->restaurant->name, $this->current_language);
+            if (!is_array($menu['MenusForDays']))
+                throw new ImportException("MenusForDays not an array", $this->restaurant->name, $this->current_language);
 
-                // Loop the days and meals
-                foreach ($menu['MenusForDays'] as $day_menu) {
-                    Logger::trace(__METHOD__ . " start day " . $day_menu['Date']);
-                    if (!is_array($day_menu['SetMenus']))
-                        throw new ImportException("SetMenus not an array", $this->restaurant->name, $this->current_language);
+            // Loop the days and meals
+            foreach ($menu['MenusForDays'] as $day_menu) {
+                Logger::trace(__METHOD__ . " start day " . $day_menu['Date']);
+                if (!is_array($day_menu['SetMenus']))
+                    throw new ImportException("SetMenus not an array", $this->restaurant->name, $this->current_language);
 
-                    $this->startDay($day_menu['Date']);
-                    foreach ($day_menu['SetMenus'] as $meal) {
-                        $this->addMeal($meal, $lang);
-                    }
-                    $this->endDayAndSave();
+                $this->startDay($day_menu['Date']);
+                foreach ($day_menu['SetMenus'] as $meal) {
+                    $this->addMeal($meal, $lang);
                 }
-            }
-            catch (ImportException $e) {
-                DB::inst()->rollbackTransaction();
-                Logger::error(__METHOD__ . " Error in import: " . $e->getMessage()
-                    . ", from:" . $e->getFile() . ":" . $e->getLine()
-                    . ", in restaurant: {$this->restaurant->name}");
+                $this->endDayAndSave();
             }
         }
 
