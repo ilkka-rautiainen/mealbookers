@@ -49,7 +49,7 @@ class KvarkkiImport extends AmicaImport implements iImport
             $imploded,
             $matches))
         {
-            Logger::debug(__METHOD__ . " lines didn't match regex");
+            Logger::error(__METHOD__ . " lines didn't match regex");
         }
         else {
             Logger::debug(__METHOD__ . " lines matched");

@@ -108,6 +108,7 @@ $GLOBALS['language']['fi'] = array(
     'opening_hour_type_lunch' => 'Lounas',
     'opening_hour_type_alacarte' => 'À la carte',
     'opening_hour_type_breakfast' => 'Aamiainen',
+    'opening_hour_type_cafe' => 'Kahvila',
     'restaurant_order_success' => 'Järjestys tallennettu',
     'restaurant_order_failed' => 'Järjestyksen tallentaminen epäonnistui',
     'restaurant_reload_failed' => 'Ravintoloiden haku epäonnistui',

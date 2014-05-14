@@ -108,6 +108,7 @@ $GLOBALS['language']['en'] = array(
     'opening_hour_type_lunch' => 'Lunch',
     'opening_hour_type_alacarte' => 'À la carte',
     'opening_hour_type_breakfast' => 'Breakfast',
+    'opening_hour_type_cafe' => 'Café',
     'restaurant_order_success' => 'The new order is saved',
     'restaurant_order_failed' => 'Failed to save the new order',
     'restaurant_reload_failed' => 'Fetching restaurants failed',
