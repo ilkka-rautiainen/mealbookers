@@ -237,7 +237,7 @@ $GLOBALS['language']['en'] = array(
         . ' email notifications to other users in the groups, so unnecessary and abnormal use of the service'
         . ' is not permitted. Modifying the name of a user group or adding or removing group members must happen'
         . ' in consensus between the members of the group. Application programming interfaces related to the service'
-        . ' must not be used commercially without acceptance from the service provider.<br /><br /><strong>Limitation'
+        . ' must not be used without acceptance from the service provider.<br /><br /><strong>Limitation'
         . ' of liability</strong><br />The service is provided "as is". We do not guarantee the availability,'
         . ' faultlessness, reliability or security of the service. To be confirmed about the correctness of the opening'
         . ' hours and the menuscheck them in the restaurant\'s own web service. We are not liable for any direct,'

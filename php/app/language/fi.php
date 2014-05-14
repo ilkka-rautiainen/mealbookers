@@ -236,7 +236,7 @@ $GLOBALS['language']['fi'] = array(
         . ' palvelun toimenpiteistä lähetetään ilmoituksia sähköpostilla muille ryhmän jäsenille, joten'
         . ' ylimääräinen, normaalista poikkeava palvelun käyttö ei ole sallittua. Käyttäjäryhmän nimen muokkaaminen'
         . ' ja jäsenten lisääminen sekä poistaminen tulee tapahtua ryhmän kaikkien jäsenten välisessä'
-        . ' yhteisymmärryksessä. Palveluun liittyviä ohjelmointirajapintoja ei saa käyttää kaupallisesti ilman'
+        . ' yhteisymmärryksessä. Palveluun liittyviä ohjelmointirajapintoja ei saa käyttää ilman'
         . ' palveluntuottajan lupaa.<br /><br /><strong>Vastuunrajoitus</strong><br />Palvelu tarjotaan sellaisenaan.'
         . ' Emme takaa palvelun saatavuutta, virheettömyyttä, luotettavuutta tai turvallisuutta. Varmistuaksesi'
         . ' ravintoloiden aukioloaikojen ja ruokalistojen oikeellisuudesta tarkasta ne ravintolan omasta'
