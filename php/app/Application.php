@@ -166,7 +166,7 @@ class Application
                 '" . DB::inst()->quote(json_encode($trace)) . "',
                 '" . DB::inst()->quote(json_encode($_SERVER)) . "',
                 " . ((is_null($info)) ? "NULL" : "'" . DB::inst()->quote(json_encode($info)) . "'") . "
-            )");
+            )", false);
     }
 
     public function getPostData()
