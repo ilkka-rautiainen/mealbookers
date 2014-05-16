@@ -36,4 +36,6 @@ foreach ($importers as $importer) {
         $importer->reset();
     $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
 }
-print "import executed";
+
+if (!isset($_GET['cron']))
+    print "import executed";
