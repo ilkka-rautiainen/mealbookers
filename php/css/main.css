@@ -134,6 +134,10 @@ label {
         top: auto;
     }
 
+    .main-alert {
+        margin-right: 0px !important;
+    }
+
     #footer ul {
         list-style-type: none;
         padding: 0;
@@ -492,10 +496,6 @@ label {
     padding-right: 25px;
     cursor: pointer;
     overflow-y: hidden;
-}
-
-.main-alert.xs {
-    margin-right: 0px;
 }
 
 .main-alert .close {
