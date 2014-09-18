@@ -31,10 +31,16 @@ $importers = array(
 );
 
 foreach ($importers as $importer) {
-    $importer->init();
-    if ($reset)
-        $importer->reset();
-    $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
+    try {
+        $importer->init();
+        if ($reset)
+            $importer->reset();
+        $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
+    }
+    catch (Exception $e) {
+        if (!isset($_GET['cron']))
+            print "Import failed: " . get_class($importer) . "<br />";
+    }
 }
 
 if (!isset($_GET['cron']))
