@@ -1,2 +1,3 @@
 /phpmyadmin*
 /config_override.php
+/sftp-config.json
