@@ -602,7 +602,7 @@ class UserAPI
                 notify_suggestion_deleted,
                 notify_group_memberships
             ) VALUES (
-                '" . DB::inst()->quote($data['email']) . "',
+                '" . DB::inst()->quote($data['email'], false) . "',
                 '$passhash',
                 '" . DB::inst()->quote($data['first_name']) . "',
                 '" . DB::inst()->quote($data['last_name']) . "',

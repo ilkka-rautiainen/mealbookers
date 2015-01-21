@@ -535,7 +535,7 @@ class User
                 inviter_id,
                 code
             ) VALUES (
-                '" . DB::inst()->quote($email_address) . "',
+                '" . DB::inst()->quote($email_address, false) . "',
                 {$group->id},
                 {$this->id},
                 '$code'

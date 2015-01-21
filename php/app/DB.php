@@ -155,19 +155,24 @@ class DB
      * @param $string
      * @return escaped string
      */
-    public function quote($string)
+    public function quote($string, $escape_wildcards = true)
     {
-        return str_replace(
-            array(
-                '%',
-                '_',
-            ),
-            array(
-                '\%',
-                '\_',
-            ),
-            $this->connection->escape_string($string)
-        );
+        if ($escape_wildcards) {
+            return str_replace(
+                array(
+                    '%',
+                    '_',
+                ),
+                array(
+                    '\%',
+                    '\_',
+                ),
+                $this->connection->escape_string($string)
+            );
+        }
+        else {
+            return $this->connection->escape_string($string);
+        }
     }
 
     /**
