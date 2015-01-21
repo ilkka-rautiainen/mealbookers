@@ -35,16 +35,6 @@ angular.module('Mealbookers.controllers', [])
                     }
                 };
             }
-            else if (result.status == 'not_logged_in') {
-                $state.go("Navigation.Menu.Login", {day: 'today'});
-                $rootScope.modalAlert('alert-info', $filter('i18n')('suggestion_accept_not_logged_in'), 'login-modal');
-                $rootScope.postLoginState = {
-                    name: "Navigation.AcceptSuggestion",
-                    stateParams: {
-                        token: $stateParams.token
-                    }
-                };
-            }
             else if (result && result.status == 'ok') {
                 $state.go("Navigation.Menu", {day: result.weekDay});
                 $rootScope.refreshCurrentUser(function() {

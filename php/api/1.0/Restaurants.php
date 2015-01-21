@@ -151,10 +151,6 @@ class RestaurantsAPI
         Logger::info(__METHOD__ . " POST /suggestion/$token called");
 
         try {
-            if ($current_user->role == 'guest') {
-                throw new ApiException('not_logged_in');
-            }
-            Application::inst()->checkAuthentication();
 
             try {
                 $suggestion_user_id = Application::inst()->getTokenId($token, false);
@@ -175,8 +171,14 @@ class RestaurantsAPI
             $suggestion = new Suggestion();
             $suggestion->fetch($suggestion_user->suggestion_id);
 
-            if ($suggestion_user->user_id != $current_user->id) {
-                throw new ApiException('wrong_user');
+            // Fetch the user the suggestion was sent to
+            try {
+                $user = new User();
+                $user->fetch($suggestion_user->user_id);
+                Application::inst()->setSessionLogin($user);
+            }
+            catch (NotFoundException $e) {
+                throw new ApiException('not_found');
             }
 
             // Not manageable anymore

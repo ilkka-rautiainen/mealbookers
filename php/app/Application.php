@@ -41,26 +41,28 @@ class Application
      *  - Loads current user
      *  - Loads admin user
      */
-    public function initAuthentication()
+    public function initAuthentication($user = false)
     {
-        $user = false;
+        // No user given -> check from cookies
+        if (!$user) {
+            if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
+                $user_id = (int)$_COOKIE['id'];
+                $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id
+                    AND email_verified = 1");
 
-        if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {
-            $user_id = (int)$_COOKIE['id'];
-            $passhash = DB::inst()->getOne("SELECT passhash FROM users WHERE id = $user_id
-                AND email_verified = 1");
+                if (!is_null($passhash)) {
+                    $passhash = Application::inst()->hash($passhash);
 
-            if (!is_null($passhash)) {
-                $passhash = Application::inst()->hash($passhash);
-
-                // Valid authentication
-                if ($passhash == $_COOKIE['check']) {
-                    $user = new User();
-                    $user->fetch($user_id);
+                    // Valid authentication
+                    if ($passhash == $_COOKIE['check']) {
+                        $user = new User();
+                        $user->fetch($user_id);
+                    }
                 }
             }
         }
 
+        // Set current user
         if (!$user) {
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->role = 'guest';
@@ -296,5 +298,17 @@ class Application
         $formatted_string = str_replace("%D", date($date_format, $timestamp), $formatted_string);
 
         return $formatted_string;
+    }
+
+    /**
+     * Sets a login for the given user. Login is valid for the session only.
+     * This is used when user gets a automatic login e.g. from email link.
+     */
+    public function setSessionLogin(User $user)
+    {
+        setcookie("id", $user->id, 0, Conf::inst()->get('server.relative_path'));
+        setcookie("check", Application::inst()->hash(DB::inst()->getOne("SELECT passhash FROM users WHERE id = {$user->id} LIMIT 1")), 0, Conf::inst()->get('server.relative_path'));
+        setcookie("remember", "0", 0, Conf::inst()->get('server.relative_path'));
+        $this->initAuthentication($user);
     }
 }
