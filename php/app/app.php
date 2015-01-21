@@ -16,6 +16,6 @@ function classLoader($name)
 require_once 'lib/mb_str_replace.php';
 spl_autoload_register('classLoader');
 mb_internal_encoding("UTF-8");
-Logger::info(__METHOD__ . " ## Start execution");
+Logger::debug(__METHOD__ . " ## Start execution");
 Application::inst()->initAuthentication();
 DB::inst();
