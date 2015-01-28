@@ -6,6 +6,7 @@ Flight::route('POST /user/login/forgot', array('UserAPI', 'sendForgotPasswordLin
 Flight::route('GET /user/login/forgot/@token', array('UserAPI', 'getUserForForgotPassword'));
 Flight::route('POST /user/restaurant-order', array('UserAPI', 'updateRestaurantOrder'));
 Flight::route('POST /user/login', array('UserAPI', 'login'));
+Flight::route('POST /user/logout', array('UserAPI', 'logout'));
 Flight::route('POST /user/register', array('UserAPI', 'registerUser'));
 Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'));
 Flight::route('POST /user(/@userId)/language', array('UserAPI', 'updateUserLanguage'));
@@ -27,8 +28,8 @@ class UserAPI
             throw new HttpException(409, 'no_search_term', 'info');
         }
 
-        $user = str_replace("*", "%", DB::inst()->quote($user));
-        $group = str_replace("*", "%", DB::inst()->quote($group));
+        $user = str_replace("*", "%", DB::inst()->quoteLike($user));
+        $group = str_replace("*", "%", DB::inst()->quoteLike($group));
 
         if ($user && !$group) {
             $result = DB::inst()->query("SELECT
@@ -426,7 +427,7 @@ class UserAPI
 
 
         if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-            email_address = '" . DB::inst()->quote($data["email"]) . "' AND
+            email_address = '" . DB::inst()->quote($data["email"], false) . "' AND
             passhash = '$passhash'"))
         {
             throw new HttpException(409, 'wrong_username_or_password');
@@ -449,6 +450,19 @@ class UserAPI
         ));
     }
 
+    function logout()
+    {
+        Logger::debug(__METHOD__ . " POST /user/logout called");
+
+        setcookie("id", "", 0, Conf::inst()->get('server.relative_path'));
+        setcookie("check", "", 0, Conf::inst()->get('server.relative_path'));
+        setcookie("remember", "", 0, Conf::inst()->get('server.relative_path'));
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
+    }
+
     function sendForgotPasswordLink()
     {
         Logger::debug(__METHOD__ . " POST /user/login/forgot called");
@@ -463,7 +477,7 @@ class UserAPI
             throw new HttpException(409, 'invalid_email');
 
         if (!$user_id = DB::inst()->getOne("SELECT id FROM users WHERE
-            email_address = '" . DB::inst()->quote($data["email"]) . "'"))
+            email_address = '" . DB::inst()->quote($data["email"], false) . "'"))
         {
             throw new HttpException(404, 'email_not_found');
         }
@@ -564,6 +578,8 @@ class UserAPI
             || !isset($data['password_repeat'])
             || !isset($data['language'])
             || !isset($data['invitation_code'])
+            || !isset($data['study_programme'])
+            || !isset($data['study_programme_other'])
         ) {
             throw new HttpException(400, 'data_invalid');
         }
@@ -576,6 +592,8 @@ class UserAPI
             throw new HttpException(409, 'no_first_name');
         if (!strlen($data['last_name']))
             throw new HttpException(409, 'no_last_name');
+        if (!strlen($data['study_programme']) && !$data['study_programme_other'])
+            throw new HttpException(409, 'give_study_programme');
 
         if ($data['password'] != $data['password_repeat'])
             throw new HttpException(409, 'passwords_dont_match');
@@ -600,12 +618,13 @@ class UserAPI
                 notify_suggestion_accepted,
                 notify_suggestion_left_alone,
                 notify_suggestion_deleted,
-                notify_group_memberships
+                notify_group_memberships,
+                study_programme
             ) VALUES (
                 '" . DB::inst()->quote($data['email'], false) . "',
                 '$passhash',
-                '" . DB::inst()->quote($data['first_name']) . "',
-                '" . DB::inst()->quote($data['last_name']) . "',
+                '" . DB::inst()->quote($data['first_name'], false) . "',
+                '" . DB::inst()->quote($data['last_name'], false) . "',
                 '" . $data['language'] . "',
                 '" . time() . "',
                 0,
@@ -613,7 +632,8 @@ class UserAPI
                 1,
                 1,
                 1,
-                1
+                1,
+                '" . DB::inst()->quote($data['study_programme'], false) . "'
             )");
 
         $user = new User();

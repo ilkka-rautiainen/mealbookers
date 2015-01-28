@@ -1,10 +1,9 @@
 <?php
 
-class DipoliImport extends SodexoImport implements iImport
+class DipoliImport extends SodexoImport
 {
     protected $restaurant_id = 12;
     protected $sodexo_id = 14;
-    
 
     /**
      * Import and Save opening hours
@@ -13,14 +12,4 @@ class DipoliImport extends SodexoImport implements iImport
     {
         //TODO
     }
-
-    private function decreaseWithHalfHour($time)
-    {
-        return date("H:i", strtotime("1.2.2010 $time") - 1800);
-    }
-    
-
-
-
-
 }

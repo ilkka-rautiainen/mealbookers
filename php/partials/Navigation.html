@@ -56,7 +56,12 @@
                         </li>
                     </ul>
                 </li>
-                <li ng-show="currentUser.role != 'guest'"><a ng-click="logOut(true); hideNavbarCollapse();">{{ 'log_out' | i18n}}</a></li>
+                <li ng-show="currentUser.role != 'guest'">
+                    <a ng-click="logOut(true); hideNavbarCollapse();">
+                        <i class="glyphicon glyphicon-refresh saving-icon" ng-show="logoutProcess"></i> &nbsp;
+                        {{ 'log_out' | i18n}}
+                    </a>
+                </li>
             </ul>
         </div><!--/.nav-collapse -->
         <div id="main-alert-container">
@@ -73,6 +78,7 @@
 <div id="footer">
     <div class="container">
         <ul>
+            <li><a href ui-sref="Navigation.Menu.Contact"><i class="fa fa-user"></i> {{ 'contact' | i18n }}</a></li>
             <li><a href ui-sref="Navigation.Menu.TermsOfUse"><i class="glyphicon glyphicon-book"></i> {{ 'terms_of_use' | i18n }}</a></li>
         </ul>
     </div>

@@ -26,6 +26,7 @@ $GLOBALS['language']['fi'] = array(
     'title_Navigation.Menu.UserManagement.AccountSettings' => 'Käyttäjätiedot',
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Ryhmät',
     'title_Navigation.Menu.TermsOfUse' => 'Käyttöehdot',
+    'title_Navigation.Menu.Contact' => 'Yhteydenotto',
     'title_Navigation.AcceptSuggestion' => 'Hyväksytään ehdotusta',
     'title_Navigation.VerifyEmail' => 'Vahvistetaan sähköpostiosoitetta',
     'general_400' => 'Kysely palvelimelle oli viallinen',
@@ -58,6 +59,7 @@ $GLOBALS['language']['fi'] = array(
     'register_failed_409_invalid_email' => 'Sähköpostiosoite ei ole kelvollinen',
     'register_failed_409_no_first_name' => 'Anna etunimi',
     'register_failed_409_no_last_name' => 'Anna sukunimi',
+    'register_failed_409_give_study_programme' => 'Anna koulutusohjelma',
     'register_failed_500_verification_email_sending_failed' => 'Rekisteröinti epäonnistui: Sähköpostiosoitteen vahvistusviestin lähetys epäonnistui',
     'register_succeeded' => 'Rekisteröityminen onnistui, tarkista vahvistusviesti sähköpostistasi.',
     'register_verifying_email' => 'Vahvistetaan sähköpostiosoitetta...',
@@ -70,6 +72,7 @@ $GLOBALS['language']['fi'] = array(
     'log_in' => 'Kirjaudu sisään',
     'log_in_password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
+    'logout_failed' => 'Uloskirjautuminen epäonnistui',
     'log_in_failed' => 'Sisäänkirjautuminen epäonnistui',
     'log_in_failed_409_wrong_username_or_password' => 'Väärä sähköpostiosoite tai salasana',
     'log_in_failed_409_email_not_verified' => 'Sähköpostiosoitetta ei ole vielä vahvistettu',
@@ -100,6 +103,17 @@ $GLOBALS['language']['fi'] = array(
     'new_password_failed_404_user_not_found' => 'Salasanan vaihtolinkin luonutta käyttäjää ei löytynyt',
     'new_password_failed_409_passwords_dont_match' => 'Antamasi uudet salasanat eivät täsmää',
     'terms_of_use' => 'Käyttöehdot',
+    'contact' => 'Yhteydenotto',
+    'header' => 'Otsikko',
+    'message' => 'Viesti',
+    'send' => 'Lähetä',
+    'your_email' => 'Sähköpostiosoitteesi',
+    'contact_text' => 'Kaikki palaute ja kysymykset ovat tervetulleita!',
+    'contact_save_failed' => 'Tallennus epäonnistui',
+    'contact_save_failed_409_invalid_email' => 'Sähköpostiosoite ei ole kelvollinen',
+    'contact_save_failed_409_missing_data' => 'Syötä puuttuvat tiedot',
+    'contact_save_failed_500_email_failed' => 'Viestin tallentaminen epäonnistui',
+    'contact_saved_successfully' => 'Viesti lähetetty',
     'meal_section_cafe' => 'Kahvila',
     'meal_section_alacarte' => 'À la carte',
     'meal_section_bistro' => 'Bistro',
@@ -177,6 +191,10 @@ $GLOBALS['language']['fi'] = array(
     'group_add_member_success_joined_existing' => 'Jäsen liitetty ryhmään',
     'group_add_member_success_joined_existing_but_notification_error' => 'Jäsen liitetty ryhmään, mutta ilmoitusviestin lähettäminen käyttäjälle epäonnistui',
     'group_member_remove' => 'Poista jäsen ryhmästä',
+    'group_invitation_remove' => 'Peruuta kutsu',
+    'group_invitation_delete_failed' => 'Kutsun peruuttaminen epäonnistui',
+    'group_invitation_delete_failed_404_invitation_not_found' => 'Kutsua ei löytynyt',
+    'group_invitation_deleted_succesfully' => 'Kutsu peruutettu',
     'group_member_delete_failed' => 'Jäsenen poistaminen epäonnistui',
     'group_member_delete_failed_404_group_member_not_found' => 'Kyseistä ryhmän jäsentä ei löytynyt',
     'group_member_delete_failed_400_deleted_user_not_member_of_group' => 'Käyttäjä, jota yritit poistaa ryhmästä, ei ole ryhmän jäsen',
@@ -228,6 +246,24 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_time_before_lunch' => 'Ota huomioon, että lounas alkaa vasta',
     'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on päättynyt jo',
     'action_failed' => 'Toimenpide epäonnistui',
+    'register_other' => 'Henkilökunta/muu',
+    'register_study_year' => 'Opiskeluvuosi',
+    'register_study_programme' => 'Koulutusohjelma',
+    'register_study_programmes' => array(
+        'Arkkitehtuuri',
+        'Automaatio- ja informaatioteknologia',
+        'Bioinformaatioteknologia',
+        'Elektroniikka ja sähkötekniikka',
+        'Energia- ja ympäristötekniikka',
+        'Informaatioverkostot',
+        'Kemian-, bio- ja materiaalitekniikka',
+        'Kone- ja rakennustekniikka',
+        'Maisema-arkkitehtuuri',
+        'Rakennettu ympäristö',
+        'Teknillinen fysiikka',
+        'Tietotekniikka',
+        'Tuotantotalous',
+    ),
     'terms_of_use_text' => '<strong>Palvelun kuvaus</strong><br />Palvelun avulla voit selata Otaniemen'
         . ' lounasravintoloiden ruokalistoja ja kutsua kavereitasi syömään kanssasi. Palvelussa voit luoda'
         . ' ryhmiä kutsutaksesi useamman kaverin kerrallaan syömään.<br /><br /><strong>Tietosuoja & tietojenkäsittely</strong>'
@@ -335,5 +371,10 @@ $GLOBALS['language']['fi'] = array(
             . ' <br /><br />Voit siirtyä Mealbookersiin <a href="http://{http_host}">tästä</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>Tämä on automaattinen viesti,'
             . ' johon ei tarvitse vastata.</small>',
+        'mailer_subject_contact_email' => 'Yhteydenotto Mealbookersista',
+        'mailer_body_contact_email' =>
+            'Hei!<br /><br />Osoitteesta {sender} tuli yhteydenotto:<br /><br />Aihe: {subject}'
+            . ' <br />Viesti:<br />{text}<br /><br />Voit siirtyä Mealbookersiin'
+            . ' <a href="http://{http_host}">tästä</a>.<br /><br />- Mealbookers',
     ),
 );

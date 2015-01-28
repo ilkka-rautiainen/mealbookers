@@ -4,7 +4,7 @@ abstract class Import implements iImport
 {
 
     protected $restaurant;
-    private $current_day;
+    private $current_date;
     private $day_meals;
     protected $is_import_needed;
 
@@ -55,20 +55,33 @@ abstract class Import implements iImport
     protected function startDay($weekDayNumber)
     {
         Logger::debug(__METHOD__ . " $weekDayNumber");
-        if (!is_null($this->current_day))
+        if (!is_null($this->current_date))
             throw new Exception("Unable to start day, day already active");
         DB::inst()->startTransaction();
-        $this->current_day = $weekDayNumber;
+        $this->current_date = date("Y-m-d", strtotime("+" . $weekDayNumber . " days", strtotime($this->getWeekStartDay())));
+        $this->day_meals = array();
+    }
+
+    /**
+     * @param string $date Y-m-d
+     */
+    protected function startDayForDate($date)
+    {
+        Logger::debug(__METHOD__ . " $date");
+        if (!is_null($this->current_date))
+            throw new Exception("Unable to start day, day already active");
+        DB::inst()->startTransaction();
+        $this->current_date = $date;
         $this->day_meals = array();
     }
 
     protected function addMeal(Meal $meal)
     {
-        if (is_null($this->current_day))
+        if (is_null($this->current_date))
             throw new Exception("Unable to add meal, day not started");
 
         $meal->restaurant = $this->restaurant;
-        $meal->day = date("Y-m-d", strtotime("+" . $this->current_day . " days", strtotime($this->getWeekStartDay())));
+        $meal->day = $this->current_date;
         $meal->save();
 
         Logger::trace(__METHOD__ . " meal added: {$meal->name}");
@@ -77,7 +90,7 @@ abstract class Import implements iImport
     protected function endDayAndSave()
     {
         Logger::debug(__METHOD__);
-        $this->current_day = null;
+        $this->current_date = null;
         if (!is_array($this->day_meals))
             return;
 
@@ -86,7 +99,7 @@ abstract class Import implements iImport
 
     protected function isDayActive()
     {
-        return (!is_null($this->current_day));
+        return (!is_null($this->current_date));
     }
 
     protected function getWeekStartDay()

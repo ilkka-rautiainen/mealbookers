@@ -5,6 +5,7 @@ Flight::route('POST /user(/@userId)/groups/@groupId/members', array('GroupAPI', 
 Flight::route('POST /user(/@userId)/groups/@groupId', array('GroupAPI', 'editGroupName'));
 Flight::route('POST /user(/@userId)/groups', array('GroupAPI', 'addGroup'));
 Flight::route('DELETE /user(/@userId)/groups/@groupId/members/@memberId', array('GroupAPI', 'removeGroupMember'));
+Flight::route('DELETE /user(/@userId)/groups/@groupId/invitations/@invitationId', array('GroupAPI', 'removeGroupInvitation'));
 
 class GroupAPI
 {
@@ -298,6 +299,55 @@ class GroupAPI
                 'notification_failed' => !$notificationSucceeded,
             ));
         }
+    }
+
+    function removeGroupInvitation($userId, $groupId, $invitationId)
+    {
+        global $current_user;
+
+        if ($userId) {
+            Application::inst()->checkAuthentication('admin');
+
+            try {
+                $user = new User();
+                $user->fetch($userId);
+            }
+            catch (NotFoundException $e) {
+                throw new HttpException(404, 'user_not_found');
+            }
+            Logger::info(__METHOD__ . " DELETE /user/$userId/groups/$groupId/invitations/$invitationId called by user {$user->id}");
+        }
+        else {
+            Application::inst()->checkAuthentication();
+
+            $user = &$current_user;
+            Logger::info(__METHOD__ . " DELETE /user/groups/$groupId/invitations/$invitationId called by user {$user->id}");
+        }
+
+        $groupId = (int)$groupId;
+        $invitationId = (int)$invitationId;
+
+        try {
+            $group = new Group();
+            $group->fetch($groupId);
+        }
+        catch (NotFoundException $e) {
+            throw new HttpException(404, 'group_not_found');
+        }
+
+        if (!$user->isMemberOfGroup($group)) {
+            throw new HttpException(403, 'not_member_of_group', 'danger');
+        }
+
+        if (!DB::inst()->query("SELECT * FROM invitations WHERE group_id = $groupId AND id = $invitationId")) {
+            throw new HttpException(404, 'invitation_not_found');
+        }
+
+        DB::inst()->query("DELETE FROM invitations WHERE id = $invitationId");
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
     }
 
     function joinGroup($userId, $groupId)

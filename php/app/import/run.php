@@ -35,6 +35,7 @@ foreach ($importers as $importer) {
         $importer->init();
         if ($reset)
             $importer->reset();
+        print "running importer " . get_class($importer) . "<br />";
         $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
     }
     catch (Exception $e) {

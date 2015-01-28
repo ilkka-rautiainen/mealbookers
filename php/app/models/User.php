@@ -685,7 +685,6 @@ class User
 
     public function sendEmailVerification()
     {
-        global $admin;
         Logger::debug(__METHOD__ . " sending user {$this->id} email verification mail");
 
         $token = Application::inst()->insertToken($this->id);
@@ -708,7 +707,6 @@ class User
 
     public function sendNewPasswordEmail()
     {
-        global $admin;
         Logger::debug(__METHOD__ . " sending user {$this->id} new password email");
 
         $token = Application::inst()->insertToken($this->id);
@@ -724,6 +722,30 @@ class User
                 $token,
             ),
             Lang::inst()->get('mailer_body_new_password', $this)
+        );
+
+        return Mailer::inst()->send($subject, $body, $this);
+    }
+
+    public function sendContactEmail($subject, $text, $sender)
+    {
+        Logger::debug(__METHOD__ . " sending user {$this->id} contact email");
+
+        $subject = Lang::inst()->get('mailer_subject_contact_email', $this);
+        $body = mb_str_replace(
+            array(
+                '{http_host}',
+                '{sender}',
+                '{subject}',
+                '{text}',
+            ),
+            array(
+                Application::inst()->getHttpHost(),
+                $sender,
+                $subject,
+                $text,
+            ),
+            Lang::inst()->get('mailer_body_contact_email', $this)
         );
 
         return Mailer::inst()->send($subject, $body, $this);

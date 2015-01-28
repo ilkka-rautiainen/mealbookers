@@ -33,7 +33,7 @@
                             <h4><input type="checkbox" ng-checked="group.selectedForSuggestion" ng-click="toggleGroup(group)" /> <span ng-click="toggleGroup(group)">{{ group.name }}</span></h4>
 
                             <div>
-                                <div ng-repeat="member in group.members" class="member" ng-click="toggleMember(member)" title="{{ member.name }}">
+                                <div ng-repeat="member in group.members" class="member" ng-click="toggleMember(member)" title="{{ member.name }}" ng-class="{nonactive: !member.selectedForSuggestion}">
                                     <input type="checkbox" ng-checked="member.selectedForSuggestion" /> {{ member.initials }}
                                 </div>
                             </div>
@@ -41,11 +41,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-default" ng-disabled="saveProcess">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
+                    <button type="submit" class="btn btn-primary" ng-disabled="saveProcess">
                         <i class="glyphicon glyphicon-refresh saving-icon" ng-show="saveProcess"></i>
                         {{ 'suggest' | i18n }}
                     </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | i18n }}</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->

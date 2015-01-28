@@ -91,6 +91,16 @@ angular.module('Mealbookers', [
         controller: 'TermsOfUseController'
     })
 
+    .state('Navigation.Menu.Contact', {
+        url: "/contact",
+        templateUrl: "partials/modals/Contact.html",
+        data: {
+            modal: true,
+            modalId: "contact-modal"
+        },
+        controller: 'ContactController'
+    })
+
     .state('Navigation.Menu.AccountSettings', {
         url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",
@@ -318,16 +328,26 @@ angular.module('Mealbookers', [
         $.cookie('language', newLang, {expires: 365, path: '/'});
     });
 
+    /**
+     * Logs the user out
+     */
     $rootScope.logOut = function(showAlert) {
         $rootScope.stopLiveView();
-        $.removeCookie('id');
-        $.removeCookie('check');
-        $.removeCookie('remember');
-        $rootScope.refreshCurrentUser(function() {
-            $log.info("Logged out");
-            if (showAlert)
-                $rootScope.alert('alert-success', 'logged_out');
-        });
+        if (!$rootScope.logoutProcess) {
+            $rootScope.logoutProcess = true;
+            $http.post('api/1.0/user/logout').success(function() {
+                $rootScope.refreshCurrentUser(function() {
+                    $log.info("Logged out");
+                    if (showAlert) {
+                        $rootScope.alert('alert-success', 'logged_out');
+                    }
+                    $rootScope.logoutProcess = false;
+                });
+            }).error(function(response, httpCode, headers) {
+                $rootScope.logoutProcess = false;
+                $rootScope.operationFailed(httpCode, 'logout_failed', null, headers());
+            });
+        }
     };
 
     $rootScope.resetToMenu = function() {
@@ -495,6 +515,9 @@ angular.module('Mealbookers', [
         });
     };
 
+    /**
+     * customAlertFunction optional, give this if you want to show alert e.g. in modal itself
+     */
     $rootScope.operationFailed = function(httpCode, errorMessageKey, customAlertFunction, headers, data) {
         var makeAlert = function(level, messageKey) {
             var alertFunction;

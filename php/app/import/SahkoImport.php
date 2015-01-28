@@ -1,10 +1,9 @@
 <?php
 
-class SahkoImport extends SodexoImport implements iImport
+class SahkoImport extends SodexoImport
 {
     protected $restaurant_id = 10;
     protected $sodexo_id = 140;
-    
 
     /**
      * Import and Save opening hours
@@ -13,14 +12,4 @@ class SahkoImport extends SodexoImport implements iImport
     {
         //TODO
     }
-
-    private function decreaseWithHalfHour($time)
-    {
-        return date("H:i", strtotime("1.2.2010 $time") - 1800);
-    }
-    
-
-
-
-
 }

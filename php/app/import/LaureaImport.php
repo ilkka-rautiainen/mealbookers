@@ -1,12 +1,15 @@
 <?php
 
-class LaureaImport extends AmicaImportWrapper implements iImport
+class LaureaImport extends AmicaImport
 {
-    public function __construct()
+    protected $restaurant_id = 6;
+    protected $cost_number = "3292";
+
+    /**
+     * Import and Save opening hours
+     */
+    protected function saveOpeningHours()
     {
-        $this->importers = array(
-            new LaureaJSONImport(),
-            new LaureaNormalImport()
-        );
+        //TODO
     }
 }

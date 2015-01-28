@@ -1,4 +1,3 @@
-<!-- Suggestion Modal -->
 <div class="modal fade" id="group-settings-modal" tabindex="-1" role="dialog" aria-hidden="false">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -63,8 +62,19 @@
                     <div ng-if="group.invitations" class="invitations">
                         <strong>{{ 'group_invitations' | i18n }}</strong>
                         <div ng-repeat="invitation in group.invitations" class="invitation">
-                            <i class="glyphicon glyphicon-user icon"></i>
-                            {{ invitation.email_address }}
+                            <div class="pull-left">
+                                <i class="glyphicon glyphicon-user icon"></i>
+                                {{ invitation.email_address }}
+                                <!-- Invite delete -->
+                                <i class="glyphicon glyphicon-remove button" ng-click="invitation.deleteOpened = true;" ng-show="!invitation.deleteOpened" title="{{ 'group_invitation_remove' | i18n }}"></i>
+                            </div>
+                            <div class="pull-left invitation-delete-button-group">
+                                <button class="btn btn-success delete-confirm-button" ng-show="invitation.deleteOpened" ng-click="invitation.deleteOpened = false;" >{{ 'cancel' | i18n }}</button>
+                                <button class="btn btn-danger delete-confirm-button" ng-show="invitation.deleteOpened" ng-disabled="invitation.deleteSaveProcess" ng-click="deleteGroupInvitation(group, invitation)">
+                                    <i class="glyphicon glyphicon-refresh saving-icon" ng-show="invitation.deleteSaveProcess"></i>
+                                    {{ 'delete' | i18n }}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -166,4 +176,4 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div><!-- /.modal

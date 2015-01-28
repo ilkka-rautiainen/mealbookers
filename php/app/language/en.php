@@ -26,6 +26,7 @@ $GLOBALS['language']['en'] = array(
     'title_Navigation.Menu.UserManagement.AccountSettings' => 'Account settings',
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Group settings',
     'title_Navigation.Menu.TermsOfUse' => 'Terms of Use',
+    'title_Navigation.Menu.Contact' => 'Contact',
     'title_Navigation.AcceptSuggestion' => 'Accepting suggestion',
     'title_Navigation.VerifyEmail' => 'Verifying email address',
     'general_400' => 'Request to the server was invalid',
@@ -58,6 +59,7 @@ $GLOBALS['language']['en'] = array(
     'register_failed_409_invalid_email' => 'Invalid email address given',
     'register_failed_409_no_first_name' => 'Give first name',
     'register_failed_409_no_last_name' => 'Give last name',
+    'register_failed_409_give_study_programme' => 'Give study programme',
     'register_failed_500_verification_email_sending_failed' => 'Registration failed: Couldn\'t send email address verification email',
     'register_succeeded' => 'Registration succeeded, check the verification email in your mailbox.',
     'register_verifying_email' => 'Verifying your email address...',
@@ -70,6 +72,7 @@ $GLOBALS['language']['en'] = array(
     'log_in' => 'Log in',
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
+    'logout_failed' => 'Logout failed',
     'log_in_failed' => 'Login failed',
     'log_in_failed_409_wrong_username_or_password' => 'Wrong email or password',
     'log_in_failed_409_email_not_verified' => 'Email address has not been verified yet',
@@ -100,6 +103,17 @@ $GLOBALS['language']['en'] = array(
     'new_password_failed_404_user_not_found' => 'User that has created the password change link wasn\'t found',
     'new_password_failed_409_passwords_dont_match' => 'The new passwords you gave don\'t match',
     'terms_of_use' => 'Terms of Use',
+    'contact' => 'Contact',
+    'header' => 'Subject',
+    'message' => 'Message',
+    'send' => 'Send',
+    'your_email' => 'Your email address',
+    'contact_text' => 'Any feedback or questions are welcome!',
+    'contact_save_failed' => 'Save failed',
+    'contact_save_failed_409_invalid_email' => 'Invalid email address',
+    'contact_save_failed_409_missing_data' => 'Fill in the missing information',
+    'contact_save_failed_500_email_failed' => 'Saving the message failed',
+    'contact_saved_successfully' => 'Message sent',
     'meal_section_cafe' => 'Café',
     'meal_section_alacarte' => 'À la carte',
     'meal_section_bistro' => 'Bistro',
@@ -177,6 +191,10 @@ $GLOBALS['language']['en'] = array(
     'group_add_member_success_joined_existing' => 'Member joined to the group',
     'group_add_member_success_joined_existing_but_notification_error' => 'Member has been joined to the group but we failed to send a notification about it',
     'group_member_remove' => 'Remove member from group',
+    'group_invitation_remove' => 'Cancel the invitation',
+    'group_invitation_delete_failed' => 'Canceling the invitation failed',
+    'group_invitation_delete_failed_404_invitation_not_found' => 'The invitation was not found',
+    'group_invitation_deleted_succesfully' => 'Invitation cancelled',
     'group_member_delete_failed' => 'Removing the group member failed',
     'group_member_delete_failed_404_group_member_not_found' => 'The group member wasn\'t found',
     'group_member_delete_failed_400_deleted_user_not_member_of_group' => 'The user who you tried to remove from the group, isn\'t a member in it',
@@ -228,6 +246,24 @@ $GLOBALS['language']['en'] = array(
     'suggestion_time_before_lunch' => 'NB: lunch opens at',
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
     'action_failed' => 'Action failed',
+    'register_other' => 'Personnel/other',
+    'register_study_year' => 'Study year',
+    'register_study_programme' => 'Study programme',
+    'register_study_programmes' => array(
+        'Arkkitehtuuri',
+        'Automaatio- ja informaatioteknologia',
+        'Bioinformaatioteknologia',
+        'Elektroniikka ja sähkötekniikka',
+        'Energia- ja ympäristötekniikka',
+        'Informaatioverkostot',
+        'Kemian-, bio- ja materiaalitekniikka',
+        'Kone- ja rakennustekniikka',
+        'Maisema-arkkitehtuuri',
+        'Rakennettu ympäristö',
+        'Teknillinen fysiikka',
+        'Tietotekniikka',
+        'Tuotantotalous',
+    ),
     'terms_of_use_text' => '<strong>Description of the service</strong><br />You can view the menus of the'
         . ' lunch restaurants in Otaniemi and invite your friends to eat with you. You can create groups'
         . ' in the service to enable inviting several friends at the same time to go eat with you.'
@@ -241,7 +277,7 @@ $GLOBALS['language']['en'] = array(
         . ' must not be used without acceptance from the service provider.<br /><br /><strong>Limitation'
         . ' of liability</strong><br />The service is provided "as is". We do not guarantee the availability,'
         . ' faultlessness, reliability or security of the service. To be confirmed about the correctness of the opening'
-        . ' hours and the menuscheck them in the restaurant\'s own web service. We are not liable for any direct,'
+        . ' hours and the menus check them in the restaurant\'s own web service. We are not liable for any direct,'
         . ' indirect, special or consequential damage or loss caused by the service, use of the service or the content'
         . ' of the service.<br /><br /><strong>Changes</strong><br />We reserve the right to update the service'
         . ' and its terms of use. Updates on the terms of use are informed to users in this modal. Users of the service'
@@ -335,5 +371,10 @@ $GLOBALS['language']['en'] = array(
             . ' <br /><br />You can go to Mealbookers <a href="http://{http_host}">here</a>.'
             . ' <br /><br />- Mealbookers<br /><br /><small>This is an automatic mail.'
             . ' You don\'t need to reply to it.</small>',
+        'mailer_subject_contact_email' => 'Message from Mealbookers user',
+        'mailer_body_contact_email' =>
+            'Hello!<br /><br />A message from sender {sender}:<br /><br />Subject: {subject}'
+            . ' <br />Message:<br />{text}<br /><br />You can go to Mealbookers'
+            . ' <a href="http://{http_host}">here</a>.<br /><br />- Mealbookers',
     ),
 );

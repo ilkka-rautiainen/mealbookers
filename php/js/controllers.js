@@ -366,6 +366,9 @@ angular.module('Mealbookers.controllers', [])
         $("#register-modal").modal();
     }
 
+    // Init the study programme selection
+    $scope.studyProgrammes = $filter('i18n')('register_study_programmes');
+
 
     $('#register-modal').on('hidden.bs.modal', function () {
         $state.go("^");
@@ -382,7 +385,9 @@ angular.module('Mealbookers.controllers', [])
         password_repeat: "",
         first_name: "",
         last_name: "",
-        language: $rootScope.currentUser.language
+        language: $rootScope.currentUser.language,
+        study_programme: "",
+        study_programme_other: false
     };
 
     $scope.save = function() {
@@ -414,6 +419,10 @@ angular.module('Mealbookers.controllers', [])
     $scope.validateForm = function() {
         if ($scope.register.password != $scope.register.password_repeat) {
             $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_passwords_dont_match'));
+            return false;
+        }
+        else if (!$scope.register.study_programme_other && !$scope.register.study_programme) {
+            $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_give_study_programme'));
             return false;
         }
 
@@ -517,7 +526,12 @@ angular.module('Mealbookers.controllers', [])
     $scope.saveRestaurantOrder = function() {
         var restaurants = [];
         $(".restaurant").each(function(idx, el) {
-            restaurants.push($(el).parent().attr("data-id"));
+            if ($(el).parent().attr("id").match(/[0-9]+/)) {
+                restaurants.push($(el).parent().attr("id").match(/[0-9]+/)[0]);
+            }
+            else {
+                restaurants.push($(el).parent().attr("data-id"));
+            }
         });
         $http.post('api/1.0/user/restaurant-order', restaurants).success(function(result) {
             // Check the result
@@ -845,33 +859,47 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.removeAccount = function() {
-        var address;
-        if ($scope.isCurrentUser)
-            address = 'api/1.0/user';
-        else
-            address = 'api/1.0/user/' + $scope.user.id;
+        if (!$scope.accountDeleteProcess) {
+            $scope.accountDeleteProcess = true;
 
-        $http.delete(address).success(function(result) {
-            if (result && result.status == 'ok') {
-                $("#account-settings-modal").modal('hide');
-                if ($scope.isCurrentUser) {
-                    $.removeCookie('id');
-                    $.removeCookie('check');
-                    $.removeCookie('remember');
-                    $rootScope.refreshCurrentUser(function() {
-                        $rootScope.alert('alert-success', 'account_remove_success');
-                        $log.log("Account removed");
-                    });
+            var address;
+            if ($scope.isCurrentUser)
+                address = 'api/1.0/user';
+            else
+                address = 'api/1.0/user/' + $scope.user.id;
+
+            $http.delete(address).success(function(result) {
+                if (result && result.status == 'ok') {
+                    // TODO: could this be done with a $rootScope.logOut(false) -call with custom alert
+                    if ($scope.isCurrentUser) {
+                        // Logout if it's me
+                        $rootScope.stopLiveView();
+                        $http.post('api/1.0/user/logout').success(function() {
+                            $rootScope.refreshCurrentUser(function() {
+                                $("#account-settings-modal").modal('hide');
+                                $rootScope.alert('alert-success', 'account_remove_success');
+                                $log.log("Account removed");
+                                $scope.accountDeleteProcess = false;
+                            });
+                        }).error(function(response, httpCode, headers) {
+                            $rootScope.accountDeleteProcess = false;
+                            $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert);
+                        });
+                    }
+                    else {
+                        $scope.accountDeleteProcess = false;
+                    }
                 }
-            }
-            else {
-                $log.error("Unknown response");
-                $log.error(result);
-                $rootScope.operationFailed(null, 'account_remove_failed', $scope.modalAlert);
-            }
-        }).error(function(response, httpCode, headers) {
-            $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert, headers());
-        });
+                else {
+                    $scope.accountDeleteProcess = false;
+                    $log.error("Unknown response");
+                    $log.error(result);
+                    $rootScope.operationFailed(null, 'account_remove_failed', $scope.modalAlert);
+                }
+            }).error(function(response, httpCode, headers) {
+                $rootScope.operationFailed(httpCode, 'account_remove_failed', $scope.modalAlert, headers());
+            });
+        }
     };
 
     $scope.modalAlert = function(type, message) {
@@ -1116,6 +1144,41 @@ angular.module('Mealbookers.controllers', [])
         }).error(function(response, httpCode, headers) {
             member.deleteSaveProcess = false;
             $rootScope.operationFailed(httpCode, 'group_member_delete_failed', $scope.modalAlert, headers());
+        });
+    }
+
+    $scope.deleteGroupInvitation = function(group, invitation) {
+        invitation.deleteSaveProcess = true;
+        $scope.modalAlert('', '');
+
+        var address;
+        if ($scope.isCurrentUser)
+            address = 'api/1.0/user/groups/' + group.id + '/invitations/' + invitation.id;
+        else
+            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/invitations/' + invitation.id;
+
+        $http.delete(address).success(function(result) {
+            if (result && result.status == 'ok') {
+                $log.log("Removed invitation from group");
+                $scope.refreshUser(function() {
+                    for (var i = 0; i < group.invitations.length; i++) {
+                        if (group.invitations[i].id == invitation.id) {
+                            group.invitations.splice(i, 1);
+                            break;
+                        }
+                    }
+                    $scope.modalAlert('alert-success', $filter('i18n')('group_invitation_deleted_succesfully'));
+                });
+            }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                invitation.deleteSaveProcess = false;
+                $rootScope.operationFailed(null, 'group_invitation_delete_failed', $scope.modalAlert);
+            }
+        }).error(function(response, httpCode, headers) {
+            invitation.deleteSaveProcess = false;
+            $rootScope.operationFailed(httpCode, 'group_invitation_delete_failed', $scope.modalAlert, headers());
         });
     }
 
@@ -1406,4 +1469,39 @@ angular.module('Mealbookers.controllers', [])
     $('#terms-of-use-modal').on('hidden.bs.modal', function () {
         $state.go("^");
     });
+}])
+
+.controller('ContactController', ['$state', '$scope', '$http', '$rootScope', function($state, $scope, $http, $rootScope) {
+    $("#contact-modal").modal();
+    $('#contact-modal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
+
+    $scope.message = {
+        email: '',
+        title: '',
+        text: ''
+    };
+
+    $scope.saveProcess = false;
+
+    /**
+     * Send the form
+     */
+    $scope.save = function() {
+        $scope.saveProcess = true;
+        $rootScope.removeModalAlert();
+        $http.post('api/1.0/app/contact', $scope.message).success(function(result) {
+
+            $scope.saveProcess = false;
+            $("#contact-modal").modal('hide');
+
+            $rootScope.alert('alert-success', 'contact_saved_successfully');
+
+        }).error(function(response, httpCode, headers) {
+            $scope.saveProcess = false;
+            $rootScope.operationFailed(httpCode, 'contact_save_failed', $rootScope.modalAlert, headers(), {modalAlertTarget: 'contact-modal'});
+        });
+    };
 }])

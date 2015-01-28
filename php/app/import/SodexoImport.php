@@ -15,7 +15,9 @@ abstract class SodexoImport extends Import
         'saturday',
         'sunday',
     );
-    protected $sodexoUriBase = "http://www.sodexo.fi/ruokalistat/output/weekly_json/";
+
+    protected $sodexoUrlBase = "http://www.sodexo.fi/ruokalistat/output/weekly_json/";
+
     /**
      * Load JSON data from given 
      * --------------------------
@@ -32,6 +34,7 @@ abstract class SodexoImport extends Import
         }
         return $data;
     }
+
     /**
      * Returns date in Sodexo JSON API format
      * ---------------------------------------
@@ -41,6 +44,7 @@ abstract class SodexoImport extends Import
     {
         return date("Y/m/d" , strtotime("last monday", strtotime("tomorrow")));
     }
+
     /*
     * Transforms atributes to Mealbookers format
     * ------------------------------------------
@@ -56,11 +60,12 @@ abstract class SodexoImport extends Import
     	$returnString = $returnString . "</span>"; // Atribute group span close
     	return $returnString;
     }
+
     /**
-    * Returns correc Sodexo uri
+    * Returns correct Sodexo uri
     */
     protected function getSodexoUri(){
-    	return $this->sodexoUriBase.$this->sodexo_id."/".$this->getWeekStartDay()."/fi";
+    	return $this->sodexoUrlBase . $this->sodexo_id . "/" . $this->getWeekStartDay() . "/fi";
     }
 
     /**
@@ -69,7 +74,6 @@ abstract class SodexoImport extends Import
     public function run($save_opening_hours = false)
     {
         Logger::note(__METHOD__ . " start");
-        require_once __DIR__ . '/../lib/phpQuery.php';
 
         if (!$this->is_import_needed) {
             Logger::info(__METHOD__ . " import not needed, skipping");
@@ -116,5 +120,5 @@ abstract class SodexoImport extends Import
             }
             $this->endDayAndSave();
         }
-    }    
+    }
 }

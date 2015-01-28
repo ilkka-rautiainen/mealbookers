@@ -10,11 +10,6 @@
                 <i class="glyphicon glyphicon-move sortable-handle" ng-class="{'nearly-invisible': !restaurant.moveActive}"></i>
             </div>
 
-            <!-- Add suggestion -->
-            <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
-                <i class="glyphicon glyphicon-plus"></i>
-            </div>
-
             <!-- Lunch times -->
             <div ng-show="!restaurant.openingHours[weekDay].closed" class="opening-hours">
                 <span class="opening-hour-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" ng-attr-title="{{ getOpeningHoursTooltip(restaurant) }}">{{ restaurant.openingHours[weekDay].lunch | formatOpeningHour }}</span>
@@ -62,15 +57,20 @@
                         {{ 'suggestion_cancel' | i18n }}
                     </button>
                 </div>
-                <hr class="featurette-divider meal-divider" ng-show="restaurant.mealList[weekDay - 1].length">
+                <hr class="featurette-divider meal-divider" ng-show="restaurant.mealList[weekDay - 1].length" />
             </div>
 
             <!-- Meals -->
             <div ng-repeat="meal in restaurant.mealList[weekDay - 1]" class="meal-group" ng-hide="restaurant.openingHours[weekDay].closed">
                 <span ng-if="meal.section" class="meal-section">{{ 'meal_section_' + meal.section | i18n }}</span>
                 <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
-                <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider">
+                <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider" />
             </div>
+        </div>
+
+        <!-- Add suggestion -->
+        <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
+            <i class="fa fa-plus"></i>
         </div>
     </div>
 </div>
