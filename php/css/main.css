@@ -236,7 +236,7 @@ label {
     line-height: 45px;
     width: 45px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #B1CDFE;
     border-radius: 100%;
     cursor: pointer;
 
@@ -376,12 +376,43 @@ label {
     user-select: none;
 }
 
-.page-header-container .languages:hover {
+.page-header-container .languages .language:hover {
     text-decoration: underline;
 }
 
 .page-header-container .languages .language i {
     margin-right: 3px;
+}
+
+.page-header-container .languages .link, .page-header-container .languages .language {
+    float: left;
+}
+
+.page-header-container .languages .link {
+    padding-right: 15px;
+}
+
+.page-header-container .languages .link a {
+    color: #999;
+}
+
+.page-header-container .links {
+    position: absolute;
+    right: 5px;
+    top: -10px;
+    font-size: 11px;
+    color: #999;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.page-header-container .links a {
+    color: #999;
+    padding-right: 15px;
 }
 
 .page-header {

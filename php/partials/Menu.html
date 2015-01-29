@@ -2,7 +2,13 @@
     <div class="col-xs-12 page-header">
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
     </div>
-    <div class="languages" ng-if="widthClass != 'xs'">
+    <div class="languages visible-sm visible-md visible-lg">
+        <div class="link" ng-if="currentUser.role != 'guest' && !currentUser.friends">
+            <a ui-sref="Navigation.Menu.GroupSettings" href>{{ 'form_groups' | i18n}}</a>
+        </div>
+        <div class="link" ng-if="currentUser.role == 'guest'">
+            <a ui-sref="Navigation.Menu.WhatMealbookers" href>{{ 'what_mealbookers' | i18n}}</a>
+        </div>
         <div class="language" ng-show="currentUser.language != 'fi'" ng-click="changeLanguage('fi')">
             <i class="glyphicon glyphicon-refresh saving-icon" ng-show="languageChangeProcess"></i>
             <span>Suomeksi</span>
@@ -11,6 +17,12 @@
             <i class="glyphicon glyphicon-refresh saving-icon" ng-show="languageChangeProcess"></i>
             <span>In English</span>
         </div>
+    </div>
+    <div class="links visible-xs">
+        <a ui-sref="Navigation.Menu.WhatMealbookers" href ng-if="currentUser.role == 'guest'">{{ 'what_mealbookers' | i18n}}</a>
+        <a ui-sref="Navigation.Menu.Login" href ng-if="currentUser.role == 'guest'">{{ 'login_short' | i18n}}</a>
+        <a ui-sref="Navigation.Menu.Register" href ng-if="currentUser.role == 'guest'">{{ 'register' | i18n}}</a>
+        <a ui-sref="Navigation.Menu.GroupSettings" href ng-if="currentUser.role != 'guest' && !currentUser.friends">{{ 'form_groups' | i18n }}</a>
     </div>
 </div>
 

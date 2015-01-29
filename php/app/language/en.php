@@ -18,7 +18,7 @@ $GLOBALS['language']['en'] = array(
     'title_Navigation.Menu.Login' => 'Log in',
     'title_Navigation.Menu.LoginForgotPassword' => 'New password',
     'title_Navigation.Menu.LoginCreateNewPassword' => 'New password',
-    'title_Navigation.Menu.Register' => 'Register',
+    'title_Navigation.Menu.Register' => 'Sign up',
     'title_Navigation.Menu.Suggestion' => 'Suggestion',
     'title_Navigation.Menu.AccountSettings' => 'Account settings',
     'title_Navigation.Menu.GroupSettings' => 'Group settings',
@@ -27,6 +27,7 @@ $GLOBALS['language']['en'] = array(
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Group settings',
     'title_Navigation.Menu.TermsOfUse' => 'Terms of Use',
     'title_Navigation.Menu.Contact' => 'Contact',
+    'title_Navigation.Menu.WhatMealbookers' => 'Mealbookers',
     'title_Navigation.AcceptSuggestion' => 'Accepting suggestion',
     'title_Navigation.VerifyEmail' => 'Verifying email address',
     'general_400' => 'Request to the server was invalid',
@@ -45,31 +46,35 @@ $GLOBALS['language']['en'] = array(
     'save' => 'Save',
     'save_and_close' => 'Save and close',
     'ok' => 'OK',
+    'back' => 'Back',
     'name' => 'Name',
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'email' => 'Email',
-    'register' => 'Register',
-    'register_to_mealbookers' => 'Register to Mealbookers',
+    'register' => 'Sign up',
+    'register_as_user' => 'Sign up',
+    'register_to_mealbookers' => 'Sign up to Mealbookers',
     'register_password' => 'New password (min. 5 characters)',
     'register_password_repeat' => 'Repeat the password',
-    'register_failed' => 'Registration failed',
+    'register_failed' => 'Signing up failed',
     'register_failed_409_passwords_dont_match' => 'Passwords don\'t match',
     'register_failed_409_email_exists' => 'There is already a user account with the given email address',
     'register_failed_409_invalid_email' => 'Invalid email address given',
     'register_failed_409_no_first_name' => 'Give first name',
     'register_failed_409_no_last_name' => 'Give last name',
-    'register_failed_409_give_study_programme' => 'Give study programme',
-    'register_failed_500_verification_email_sending_failed' => 'Registration failed: Couldn\'t send email address verification email',
-    'register_succeeded' => 'Registration succeeded, check the verification email in your mailbox.',
+    'register_failed_409_give_study_programme' => 'Give the study programme',
+    'register_failed_409_give_study_year' => 'Give the year of study',
+    'register_failed_500_verification_email_sending_failed' => 'Signing up failed: Couldn\'t send email address verification email',
+    'register_succeeded' => 'Signed up successfully, now check the verification email in your mailbox.',
     'register_verifying_email' => 'Verifying your email address...',
     'register_email_verify_failed' => 'Failed to verify the email address',
     'register_email_verify_succeeded' => 'Email address verified successfully, welcome to Mealbookers!',
     'register_email_verify_token_not_found' => 'Your verification link has already been used or it wasn\'t valid',
-    'register_invitation_fetching_failed' => 'An error occured while fetching your invitation to the group, but you can register to Mealbookers anyway',
-    'register_invitation_fetching_failed_404_invitation_not_found' => 'Your invitation to the group wasn\'t found, but you can register to Mealbookers anyway',
+    'register_invitation_fetching_failed' => 'An error occured while fetching your invitation to the group, but you can sign up to Mealbookers anyway',
+    'register_invitation_fetching_failed_404_invitation_not_found' => 'Your invitation to the group wasn\'t found, but you can sign up to Mealbookers anyway',
     'register_membership_to_group' => 'Membership in group',
     'log_in' => 'Log in',
+    'login_short' => 'Log in',
     'log_in_password' => 'Password',
     'log_in_remember_me' => 'Remember me',
     'logout_failed' => 'Logout failed',
@@ -247,7 +252,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
     'action_failed' => 'Action failed',
     'register_other' => 'Personnel/other',
-    'register_study_year' => 'Study year',
+    'register_study_year' => 'Year of study',
     'register_study_programme' => 'Study programme',
     'register_study_programmes' => array(
         'Arkkitehtuuri',
@@ -264,6 +269,11 @@ $GLOBALS['language']['en'] = array(
         'Tietotekniikka',
         'Tuotantotalous',
     ),
+    'what_mealbookers' => 'What is Mealbookers?',
+    'what_mealbookers_text' => 'Mealbookers is a social menu service for those in Otaniemi. Sign up'
+        . ' to form groups. It\'s unbelievably easy to organize common eating times with the group members.'
+        . ' <br /><br />Happy Mealbooking!',
+    'form_groups' => 'Create or join a group',
     'terms_of_use_text' => '<strong>Description of the service</strong><br />You can view the menus of the'
         . ' lunch restaurants in Otaniemi and invite your friends to eat with you. You can create groups'
         . ' in the service to enable inviting several friends at the same time to go eat with you.'
@@ -330,7 +340,7 @@ $GLOBALS['language']['en'] = array(
             . ' <br /><br />Mealbookers is a social menu service covering Otaniemi. It makes it easy to'
             . ' suggest and find common lunch times.<br /><br />Join the group at Mealbookers'
             . ' <a href="http://{http_host}/#/menu/today/register?invitation={code}">here</a>'
-            . ' or if you have already registered, join using this invitation code: <strong>{code}</strong>.'
+            . ' or if you have already signed up, join using this invitation code: <strong>{code}</strong>.'
             . ' <br /><br /><br />{inviter} kutsuu sinut Mealbookersiin käyttäjäryhmään {group_name}.<br /><br />'
             . ' Mealbookers on Otaniemen kattava sosiaalinen ruokalistapalvelu, joka tekee yhteisen lounasajan'
             . ' ehdottamisen ja löytämisen helpoksi.<br /><br />Liity jäseneksi Mealbookers-ryhmään'

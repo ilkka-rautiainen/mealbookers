@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `study_year` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `study_programme`, ADD INDEX (`study_year`) ;

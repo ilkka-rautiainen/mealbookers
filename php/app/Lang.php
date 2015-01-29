@@ -23,13 +23,15 @@ class Lang
         return self::$instance;
     }
 
-    public function get($key, $user = null) {
+    public function get($key, $user = null, $lang = null) {
         global $language, $current_user;
 
-        if (is_null($user)) {
-            $user = &$current_user;
+        if (is_null($lang)) {
+            if (is_null($user)) {
+                $user = &$current_user;
+            }
+            $lang = $user->language;
         }
-        $lang = $user->language;
 
         if (isset($language[$lang][$key])) {
             return $language[$lang][$key];

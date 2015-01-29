@@ -578,6 +578,7 @@ class UserAPI
             || !isset($data['password_repeat'])
             || !isset($data['language'])
             || !isset($data['invitation_code'])
+            || !isset($data['study_year'])
             || !isset($data['study_programme'])
             || !isset($data['study_programme_other'])
         ) {
@@ -592,8 +593,16 @@ class UserAPI
             throw new HttpException(409, 'no_first_name');
         if (!strlen($data['last_name']))
             throw new HttpException(409, 'no_last_name');
-        if (!strlen($data['study_programme']) && !$data['study_programme_other'])
+
+        if ((!strlen($data['study_programme']) || !in_array($data['study_programme'], Lang::inst()->get('register_study_programmes', null, $data['language']))) && !$data['study_programme_other'])
             throw new HttpException(409, 'give_study_programme');
+        else if ($data['study_programme_other'])
+            $data['study_programme'] = '';
+
+        if (strlen($data['study_programme']) && !in_array($data['study_year'], array(1, 2, 3, 4, 5, 'n')))
+            throw new HttpException(409, 'give_study_year');
+        else if ($data['study_programme_other'])
+            $data['study_year'] = '';
 
         if ($data['password'] != $data['password_repeat'])
             throw new HttpException(409, 'passwords_dont_match');
@@ -619,21 +628,23 @@ class UserAPI
                 notify_suggestion_left_alone,
                 notify_suggestion_deleted,
                 notify_group_memberships,
-                study_programme
+                study_programme,
+                study_year
             ) VALUES (
-                '" . DB::inst()->quote($data['email'], false) . "',
+                '" . DB::inst()->quote($data['email']) . "',
                 '$passhash',
-                '" . DB::inst()->quote($data['first_name'], false) . "',
-                '" . DB::inst()->quote($data['last_name'], false) . "',
+                '" . DB::inst()->quote($data['first_name']) . "',
+                '" . DB::inst()->quote($data['last_name']) . "',
                 '" . $data['language'] . "',
                 '" . time() . "',
-                0,
+                0
+,                1,
                 1,
                 1,
                 1,
                 1,
-                1,
-                '" . DB::inst()->quote($data['study_programme'], false) . "'
+                '" . DB::inst()->quote($data['study_programme']) . "',
+                " . self::getStartYearFromStudyYear($data['study_year']) . "
             )");
 
         $user = new User();
@@ -659,6 +670,27 @@ class UserAPI
         print json_encode(array(
             'status' => 'ok',
         ));
+    }
+
+    /**
+     * Helper
+     */
+    function getStartYearFromStudyYear($study_year)
+    {
+        $array = array(
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            'n' => 6
+        );
+        if (!in_array($study_year, array_keys($array)))
+            return "NULL";
+
+        $month = (int)date("n");
+        $isSpring = $month >= 1 && $month <= 7;
+        return ((int)date("Y")) - $array[$study_year] - ($isSpring ? 1 : 0);
     }
 
     function verifyEmail($token)

@@ -27,6 +27,7 @@ $GLOBALS['language']['fi'] = array(
     'title_Navigation.Menu.UserManagement.GroupSettings' => 'Ryhmät',
     'title_Navigation.Menu.TermsOfUse' => 'Käyttöehdot',
     'title_Navigation.Menu.Contact' => 'Yhteydenotto',
+    'title_Navigation.Menu.WhatMealbookers' => 'Mealbookers',
     'title_Navigation.AcceptSuggestion' => 'Hyväksytään ehdotusta',
     'title_Navigation.VerifyEmail' => 'Vahvistetaan sähköpostiosoitetta',
     'general_400' => 'Kysely palvelimelle oli viallinen',
@@ -45,11 +46,13 @@ $GLOBALS['language']['fi'] = array(
     'save' => 'Tallenna',
     'save_and_close' => 'Tallenna ja sulje',
     'ok' => 'OK',
+    'back' => 'Takaisin',
     'name' => 'Nimi',
     'first_name' => 'Etunimi',
     'last_name' => 'Sukunimi',
     'email' => 'Sähköposti',
     'register' => 'Rekisteröidy',
+    'register_as_user' => 'Rekisteröidy käyttäjäksi',
     'register_to_mealbookers' => 'Rekisteröidy Mealbookersiin',
     'register_password' => 'Salasana (väh. 5 merkkiä)',
     'register_password_repeat' => 'Salasana uudelleen',
@@ -60,6 +63,7 @@ $GLOBALS['language']['fi'] = array(
     'register_failed_409_no_first_name' => 'Anna etunimi',
     'register_failed_409_no_last_name' => 'Anna sukunimi',
     'register_failed_409_give_study_programme' => 'Anna koulutusohjelma',
+    'register_failed_409_give_study_year' => 'Anna opiskeluvuotesi',
     'register_failed_500_verification_email_sending_failed' => 'Rekisteröinti epäonnistui: Sähköpostiosoitteen vahvistusviestin lähetys epäonnistui',
     'register_succeeded' => 'Rekisteröityminen onnistui, tarkista vahvistusviesti sähköpostistasi.',
     'register_verifying_email' => 'Vahvistetaan sähköpostiosoitetta...',
@@ -70,6 +74,7 @@ $GLOBALS['language']['fi'] = array(
     'register_invitation_fetching_failed_404_invitation_not_found' => 'Kutsuasi ei löytynyt, mutta voit silti rekisteröityä Mealbookersiin',
     'register_membership_to_group' => 'Jäsenyys ryhmään',
     'log_in' => 'Kirjaudu sisään',
+    'login_short' => 'Kirjaudu',
     'log_in_password' => 'Salasana',
     'log_in_remember_me' => 'Muista minut',
     'logout_failed' => 'Uloskirjautuminen epäonnistui',
@@ -264,6 +269,11 @@ $GLOBALS['language']['fi'] = array(
         'Tietotekniikka',
         'Tuotantotalous',
     ),
+    'what_mealbookers' => 'Mikä ihmeen Mealbookers?',
+    'what_mealbookers_text' => 'Mealbookers on sosiaalinen ruokalistapalvelu Otaniemeläisille. Rekisteröidy,'
+        . ' niin voit muodostaa ryhmiä, joiden kesken ruokailuaikojen järjestäminen on ennennäkemättömän helppoa!'
+        . ' <br /><br />Hauskaa Mealbookailua!',
+    'form_groups' => 'Luo ryhmä / liity ryhmään',
     'terms_of_use_text' => '<strong>Palvelun kuvaus</strong><br />Palvelun avulla voit selata Otaniemen'
         . ' lounasravintoloiden ruokalistoja ja kutsua kavereitasi syömään kanssasi. Palvelussa voit luoda'
         . ' ryhmiä kutsutaksesi useamman kaverin kerrallaan syömään.<br /><br /><strong>Tietosuoja & tietojenkäsittely</strong>'

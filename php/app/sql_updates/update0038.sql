@@ -1,0 +1,1 @@
+ALTER TABLE `users` CHANGE `study_year` `study_year` INT(4) UNSIGNED NULL DEFAULT NULL;

@@ -101,6 +101,16 @@ angular.module('Mealbookers', [
         controller: 'ContactController'
     })
 
+    .state('Navigation.Menu.WhatMealbookers', {
+        url: "/mealbookers",
+        templateUrl: "partials/modals/WhatMealbookers.html",
+        data: {
+            modal: true,
+            modalId: "mealbookers-modal"
+        },
+        controller: 'WhatMealbookersController'
+    })
+
     .state('Navigation.Menu.AccountSettings', {
         url: "/settings/account",
         templateUrl: "partials/modals/AccountSettings.html",

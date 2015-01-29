@@ -72,5 +72,8 @@
         <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
             <i class="fa fa-plus"></i>
         </div>
+        <div class="suggestion" ng-click="gotoWhatMealbookers()" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role != 'guest'">
+            <i class="fa fa-plus"></i>
+        </div>
     </div>
 </div>

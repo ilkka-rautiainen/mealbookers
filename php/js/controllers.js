@@ -387,6 +387,7 @@ angular.module('Mealbookers.controllers', [])
         last_name: "",
         language: $rootScope.currentUser.language,
         study_programme: "",
+        study_year: "",
         study_programme_other: false
     };
 
@@ -565,6 +566,10 @@ angular.module('Mealbookers.controllers', [])
      */
     $scope.openSuggestion = function(restaurantId) {
         $state.go(".Suggestion", {restaurantId: restaurantId});
+    };
+
+    $scope.gotoWhatMealbookers = function() {
+        $state.go(".WhatMealbookers");
     };
 
     $scope.manageSuggestion = function(restaurant, suggestion, day, accept) {
@@ -1503,5 +1508,16 @@ angular.module('Mealbookers.controllers', [])
             $scope.saveProcess = false;
             $rootScope.operationFailed(httpCode, 'contact_save_failed', $rootScope.modalAlert, headers(), {modalAlertTarget: 'contact-modal'});
         });
+    };
+}])
+
+.controller('WhatMealbookersController', ['$state', '$scope', function($state, $scope) {
+    $("#mealbookers-modal").modal();
+    $('#mealbookers-modal').on('hidden.bs.modal', function () {
+        $state.go("^");
+    });
+
+    $scope.gotoRegister = function() {
+        $state.go("^.Register");
     };
 }])
