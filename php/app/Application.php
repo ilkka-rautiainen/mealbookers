@@ -43,6 +43,7 @@ class Application
      */
     public function initAuthentication($user = false)
     {
+        // Logger::error(__METHOD__ . " server neim: " . print_r($_SERVER, true));
         // No user given -> check from cookies
         if (!$user) {
             if (isset($_COOKIE['id']) && isset($_COOKIE['check'])) {

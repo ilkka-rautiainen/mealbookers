@@ -28,6 +28,9 @@ $importers = array(
     new KoneImport(),
     new SahkoImport(),
     new TtaloImport(),
+    new ArtturiImport(),
+    new ElectraImport(),
+    new CantinaImport(),
 );
 
 foreach ($importers as $importer) {

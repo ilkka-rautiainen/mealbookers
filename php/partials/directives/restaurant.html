@@ -2,6 +2,14 @@
     <div class="restaurant">
         <div class="restaurant-thumbnail">
 
+            <!-- Add suggestion -->
+            <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
+                <i class="fa fa-plus"></i>
+            </div>
+            <div class="suggestion" ng-click="gotoWhatMealbookers()" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role != 'guest'">
+                <i class="fa fa-plus"></i>
+            </div>
+
             <!-- Restaurant name -->
             <h3 class="restaurant-name" style="text-align: center;">{{ restaurant.name }}</h3>
 
@@ -66,14 +74,6 @@
                 <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
                 <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider" />
             </div>
-        </div>
-
-        <!-- Add suggestion -->
-        <div class="suggestion" ng-click="openSuggestion(restaurant.id)" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role == 'guest' || restaurant.openingHours[weekDay].closed || !currentUser.friends">
-            <i class="fa fa-plus"></i>
-        </div>
-        <div class="suggestion" ng-click="gotoWhatMealbookers()" title="{{ 'suggest_eating_time' | i18n }}" ng-hide="currentUser.role != 'guest'">
-            <i class="fa fa-plus"></i>
         </div>
     </div>
 </div>

@@ -268,7 +268,7 @@ angular.module('Mealbookers', [
         else {
             var params = {};
         }
-        $http.get('api/1.0/user', {
+        $http.get('/mealbookers/api/1.0/user', {
             params: params
         }).success(function(result) {
             if (typeof result.status == 'string' && result.status == 'up_to_date') {
@@ -345,7 +345,7 @@ angular.module('Mealbookers', [
         $rootScope.stopLiveView();
         if (!$rootScope.logoutProcess) {
             $rootScope.logoutProcess = true;
-            $http.post('api/1.0/user/logout').success(function() {
+            $http.post('/mealbookers/api/1.0/user/logout').success(function() {
                 $rootScope.refreshCurrentUser(function() {
                     $log.info("Logged out");
                     if (showAlert) {
@@ -383,7 +383,7 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.refreshSuggestions = function(done) {
-        $http.get('api/1.0/restaurants/suggestions').success(function(data) {
+        $http.get('/mealbookers/api/1.0/restaurants/suggestions').success(function(data) {
 
             for (var i = 0; i < $rootScope.restaurants.length; i++) {
                 $rootScope.restaurants[i].suggestionList = [];
@@ -480,7 +480,7 @@ angular.module('Mealbookers', [
     };
 
     $rootScope.liveViewRecovery = function() {
-        $http.get('api/1.0/app/status').success(function(result) {
+        $http.get('/mealbookers/api/1.0/app/status').success(function(result) {
             if (result.status == 'ok') {
                 $log.info("Live view recovered");
                 $interval.cancel($rootScope.liveViewRecoveryInterval);
@@ -493,7 +493,7 @@ angular.module('Mealbookers', [
 
     $rootScope.refreshLocalization = function(done) {
         // Get localization
-        $http.get('api/1.0/app/language/' + $rootScope.currentUser.language).success(function(result)
+        $http.get('/mealbookers/api/1.0/app/language/' + $rootScope.currentUser.language).success(function(result)
         {
             $log.debug("Localization refreshed");
             $rootScope.localization = result;
@@ -508,7 +508,7 @@ angular.module('Mealbookers', [
 
     $rootScope.refreshRestaurants = function(done) {
         // Get restaurants
-        $http.get('api/1.0/restaurants', {
+        $http.get('/mealbookers/api/1.0/restaurants', {
             params: {
                 lang: $rootScope.currentUser.language
             }
@@ -631,7 +631,7 @@ angular.module('Mealbookers', [
         if (state == 'currentState') {
             state = $state.current.name;
         }
-        $rootScope.title = $filter('i18n')('title_' + state) + $filter('i18n')('title_postfix');
+        $rootScope.title = $filter('i18n')('title_' + state) + (($filter('i18n')('title_' + state) == 'Mealbookers') ? '' : $filter('i18n')('title_postfix'));
     };
 
     $rootScope.getWeekDayText = function(day) {

@@ -7,7 +7,7 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', function($http, $filter, $rootScope, $state, $stateParams) {
     if ($stateParams.token) {
-        $http.post('api/1.0/suggestion/' + $stateParams.token).success(function(result) {
+        $http.post('/mealbookers/api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', 'suggestion_accept_failed');
@@ -58,7 +58,7 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('VerifyEmailController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', function($http, $filter, $rootScope, $state, $stateParams) {
     if ($stateParams.token) {
-        $http.post('api/1.0/user/email/verify/' + $stateParams.token).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/email/verify/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
                 $state.go("Navigation.Menu", {day: 'today'});
                 $rootScope.alert('alert-danger', 'register_email_verify_failed');
@@ -126,7 +126,7 @@ angular.module('Mealbookers.controllers', [])
         if ($rootScope.currentUser.role != 'guest') {
             $scope.languageChangeProcess = true;
             $rootScope.currentUser.language = lang;
-            $http.post('api/1.0/user/language', {
+            $http.post('/mealbookers/api/1.0/user/language', {
                 language: $rootScope.currentUser.language
             }).success(function() {
                 $rootScope.refreshLocalization(function() {
@@ -168,7 +168,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.loginProcess = true;
         $scope.login.email = $("#email_log_in").val();
         $scope.login.password = $("#password_log_in").val();
-        $http.post('api/1.0/user/login', $scope.login).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/login', $scope.login).success(function(result) {
             $scope.loginProcess = false;
             if (result && result.status == 'ok') {
                 $log.info("Logged in");
@@ -181,7 +181,9 @@ angular.module('Mealbookers.controllers', [])
                             delete $rootScope.postLoginState;
                         }
                         else {
-                            $rootScope.alert('alert-success', 'logged_in');
+                            $rootScope.refreshRestaurants(function() {
+                                $rootScope.alert('alert-success', 'logged_in');
+                            });
                         }
                     };
 
@@ -240,7 +242,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.processForm = function() {
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot', $scope.forgot).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/login/forgot', $scope.forgot).success(function(result) {
             $scope.sendProcess = false;
             if (result && result.status == 'ok') {
                 $log.info("Password request sent");
@@ -269,7 +271,7 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('LoginCreateNewPasswordController', ['$scope', '$rootScope', '$http', '$state', '$log', '$filter', '$location', '$anchorScroll', '$stateParams', function($scope, $rootScope, $http, $state, $log, $filter, $location, $anchorScroll, $stateParams) {
 
-    $http.get('api/1.0/user/login/forgot/' + $stateParams.token).success(function(result) {
+    $http.get('/mealbookers/api/1.0/user/login/forgot/' + $stateParams.token).success(function(result) {
         if (result && result.status == 'ok' && result.user.role != 'guest') {
             $scope.user = result.user;
             $("#create-new-password-modal").modal();
@@ -303,7 +305,7 @@ angular.module('Mealbookers.controllers', [])
             return;
         $scope.modalAlert('', '');
         $scope.sendProcess = true;
-        $http.post('api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/login/forgot/new/' + $stateParams.token, $scope.password).success(function(result) {
             $scope.sendProcess = false;
             if (result && result.status == 'ok') {
                 $log.info("Password request sent");
@@ -345,7 +347,7 @@ angular.module('Mealbookers.controllers', [])
     var invitation = $location.search().invitation;
     if (invitation) {
         $("#register-modal").modal('hide');
-        $http.get('api/1.0/invitation/' + invitation).success(function(result) {
+        $http.get('/mealbookers/api/1.0/invitation/' + invitation).success(function(result) {
             if (result && result.status == 'ok') {
                 $scope.register.email = result.invitation.email_address;
                 $scope.group_name = result.invitation.group_name;
@@ -397,7 +399,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.registerSaveProcess = true;
         $scope.modalAlert('', '');
 
-        $http.post('api/1.0/user/register', $scope.register).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/register', $scope.register).success(function(result) {
             if (result && result.status == 'ok') {
                 $log.info("Registration done");
                 $rootScope.refreshCurrentUser(function() {
@@ -534,7 +536,7 @@ angular.module('Mealbookers.controllers', [])
                 restaurants.push($(el).parent().attr("data-id"));
             }
         });
-        $http.post('api/1.0/user/restaurant-order', restaurants).success(function(result) {
+        $http.post('/mealbookers/api/1.0/user/restaurant-order', restaurants).success(function(result) {
             // Check the result
             if (result && result.status == 'ok') {
                 $log.info("Restaurant order saved");
@@ -587,7 +589,7 @@ angular.module('Mealbookers.controllers', [])
 
         // Execute the operation
         suggestion.processing = true;
-        $http.post('api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
+        $http.post('/mealbookers/api/1.0/restaurants/' + restaurant.id + '/suggestions/' + suggestion.id, {
             action: action
         }).success(function(result) {
             // Check the result
@@ -656,7 +658,7 @@ angular.module('Mealbookers.controllers', [])
     };
 
     $scope.search = function() {
-        $http.get('api/1.0/users', {
+        $http.get('/mealbookers/api/1.0/users', {
             params: {
                 user: $scope.search.user,
                 group: $scope.search.group
@@ -702,7 +704,7 @@ angular.module('Mealbookers.controllers', [])
     if ($stateParams.userId) {
         // Load user if someone other
         if ($stateParams.userId != $rootScope.currentUser.id) {
-            $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
+            $http.get('/mealbookers/api/1.0/user/' + $stateParams.userId).success(function(result) {
                 if (result && result.status == 'ok') {
                     $scope.user = result.user;
                 }
@@ -772,9 +774,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/language';
+            address = '/mealbookers/api/1.0/user/language';
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/language';
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/language';
 
         $http.post(address, {
             language: $scope.user.language
@@ -811,9 +813,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user';
+            address = '/mealbookers/api/1.0/user';
         else
-            address = 'api/1.0/user/' + $scope.user.id;
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id;
 
         $http.post(address, {
             password: $scope.password,
@@ -869,9 +871,9 @@ angular.module('Mealbookers.controllers', [])
 
             var address;
             if ($scope.isCurrentUser)
-                address = 'api/1.0/user';
+                address = '/mealbookers/api/1.0/user';
             else
-                address = 'api/1.0/user/' + $scope.user.id;
+                address = '/mealbookers/api/1.0/user/' + $scope.user.id;
 
             $http.delete(address).success(function(result) {
                 if (result && result.status == 'ok') {
@@ -879,7 +881,7 @@ angular.module('Mealbookers.controllers', [])
                     if ($scope.isCurrentUser) {
                         // Logout if it's me
                         $rootScope.stopLiveView();
-                        $http.post('api/1.0/user/logout').success(function() {
+                        $http.post('/mealbookers/api/1.0/user/logout').success(function() {
                             $rootScope.refreshCurrentUser(function() {
                                 $("#account-settings-modal").modal('hide');
                                 $rootScope.alert('alert-success', 'account_remove_success');
@@ -919,7 +921,7 @@ angular.module('Mealbookers.controllers', [])
 
     // Function for loading the user for the scope
     $scope.loadOtherUser = function(done) {
-        $http.get('api/1.0/user/' + $stateParams.userId).success(function(result) {
+        $http.get('/mealbookers/api/1.0/user/' + $stateParams.userId).success(function(result) {
             if (result && result.status == 'ok') {
                 $scope.user = result.user;
                 $scope.$broadcast("userReady");
@@ -1027,9 +1029,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups/' + group.id + '/members';
+            address = '/mealbookers/api/1.0/user/groups/' + group.id + '/members';
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members';
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members';
 
         $http.post(address, {
             email_address: (group.newMemberEmail) ? group.newMemberEmail : ''
@@ -1069,9 +1071,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups/' + group.id;
+            address = '/mealbookers/api/1.0/user/groups/' + group.id;
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups/' + group.id;
 
         $http.post(address, {
             name: group.name
@@ -1098,9 +1100,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups/' + group.id + '/members/' + member.id;
+            address = '/mealbookers/api/1.0/user/groups/' + group.id + '/members/' + member.id;
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/members/' + member.id;
 
         $http.delete(address).success(function(result) {
             if (result && result.status == 'ok') {
@@ -1158,9 +1160,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups/' + group.id + '/invitations/' + invitation.id;
+            address = '/mealbookers/api/1.0/user/groups/' + group.id + '/invitations/' + invitation.id;
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/invitations/' + invitation.id;
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups/' + group.id + '/invitations/' + invitation.id;
 
         $http.delete(address).success(function(result) {
             if (result && result.status == 'ok') {
@@ -1209,9 +1211,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups';
+            address = '/mealbookers/api/1.0/user/groups';
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups';
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups';
 
         $http.post(address, {
             name: $scope.newGroup.name || ''
@@ -1260,9 +1262,9 @@ angular.module('Mealbookers.controllers', [])
 
         var address;
         if ($scope.isCurrentUser)
-            address = 'api/1.0/user/groups/join';
+            address = '/mealbookers/api/1.0/user/groups/join';
         else
-            address = 'api/1.0/user/' + $scope.user.id + '/groups/join';
+            address = '/mealbookers/api/1.0/user/' + $scope.user.id + '/groups/join';
 
         $http.post(address, {
             code: $scope.invitationCode.text
@@ -1396,7 +1398,7 @@ angular.module('Mealbookers.controllers', [])
         $scope.saveProcess = true;
         $scope.modalAlert('', '');
 
-        $http.post('api/1.0/restaurants/' + $scope.suggestRestaurant.id + '/suggestions', {
+        $http.post('/mealbookers/api/1.0/restaurants/' + $scope.suggestRestaurant.id + '/suggestions', {
             day: $rootScope.weekDay - 1,
             time: $scope.suggestTime,
             members: members
@@ -1497,7 +1499,7 @@ angular.module('Mealbookers.controllers', [])
     $scope.save = function() {
         $scope.saveProcess = true;
         $rootScope.removeModalAlert();
-        $http.post('api/1.0/app/contact', $scope.message).success(function(result) {
+        $http.post('/mealbookers/api/1.0/app/contact', $scope.message).success(function(result) {
 
             $scope.saveProcess = false;
             $("#contact-modal").modal('hide');

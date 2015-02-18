@@ -24,7 +24,7 @@ services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $inj
  */
 services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http, $rootScope, $q, $log) {
     // Init promises
-    var currentUserPromise = $http.get('api/1.0/user'), localizationPromise, restaurantsPromise;
+    var currentUserPromise = $http.get('/mealbookers/api/1.0/user'), localizationPromise, restaurantsPromise;
 
     // Get deferred
     var deferred = $q.defer();
@@ -41,7 +41,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
         }
 
         // Get localization
-        localizationPromise = $http.get('api/1.0/app/language/'
+        localizationPromise = $http.get('/mealbookers/api/1.0/app/language/'
             + $rootScope.currentUser.language).then(function(result)
         {
             $log.debug("Localization loaded");
@@ -52,7 +52,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
         });
 
         // Get restaurants
-        restaurantsPromise = $http.get('api/1.0/restaurants', {
+        restaurantsPromise = $http.get('/mealbookers/api/1.0/restaurants', {
             params: {
                 lang: $rootScope.currentUser.language
             }
