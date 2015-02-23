@@ -37,6 +37,15 @@ class Restaurant
         );
     }
 
+    public function getAsArrayBase()
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'link' => $this->link,
+        );
+    }
+
     public function fetchMealList($lang)
     {
         $mealList = new MealList();

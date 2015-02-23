@@ -5,7 +5,16 @@
 angular.module('Mealbookers.controllers', [])
 
 
-.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', function($http, $filter, $rootScope, $state, $stateParams) {
+.controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', '$location', function($http, $filter, $rootScope, $state, $stateParams, $location) {
+
+    // Check for android user
+    var getParams = $location.search();
+    if (getParams !== null && getParams.source) {
+        if (getParams.source == 'android') {
+            $rootScope.currentUser.appUser = true;
+        }
+    }
+
     if ($stateParams.token) {
         $http.post('/mealbookers/api/1.0/suggestion/' + $stateParams.token).success(function(result) {
             if (typeof result != 'object' || result.status == undefined) {
@@ -86,7 +95,17 @@ angular.module('Mealbookers.controllers', [])
 }])
 
 
-.controller('NavigationController', ['$scope', '$rootScope', '$location', '$state', '$http', function($scope, $rootScope, $location, $state, $http) {
+.controller('NavigationController', ['$scope', '$rootScope', '$location', '$state', '$http', '$log', function($scope, $rootScope, $location, $state, $http, $log) {
+
+    var getParams = $location.search();
+    if (getParams !== null && getParams.source) {
+        if (getParams.source == 'android') {
+            $rootScope.currentUser.appUser = true;
+            if (getParams.email && getParams.password) {
+                $rootScope.logIn(getParams.email, getParams.password);
+            }
+        }
+    }
 
     $scope.openAccountSettings = function() {
         $state.go("Navigation.Menu.AccountSettings");
@@ -825,7 +844,8 @@ angular.module('Mealbookers.controllers', [])
                 first_name: $scope.user.first_name,
                 last_name: $scope.user.last_name
             },
-            role: $scope.user.role
+            role: $scope.user.role,
+            suggestion_method: $scope.user.suggestion_method
         }).success(function(result) {
             if (result && result.status == 'ok') {
                 $scope.resetPassword();

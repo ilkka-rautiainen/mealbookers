@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `suggestion_method` ENUM('email','androidApp') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'email' ;

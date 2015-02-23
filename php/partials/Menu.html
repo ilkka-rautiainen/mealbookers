@@ -1,5 +1,5 @@
 <div class="container page-header-container">
-    <div class="col-xs-12 page-header">
+    <div class="col-xs-12 page-header" ng-hide="currentUser.appUser">
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
     </div>
     <div class="languages visible-sm visible-md visible-lg">

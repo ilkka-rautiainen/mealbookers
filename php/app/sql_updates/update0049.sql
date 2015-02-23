@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` CHANGE `other_user_id` `other_user_id` INT(10) UNSIGNED NULL DEFAULT NULL;

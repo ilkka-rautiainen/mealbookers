@@ -1,0 +1,8 @@
+CREATE TABLE `notifications` (
+    `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT(10) UNSIGNED NOT NULL,
+    `time` INT(10) UNSIGNED NOT NULL,
+    `type` SMALLINT(2) UNSIGNED NOT NULL,
+    `suggestion_id` INT(10) UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;

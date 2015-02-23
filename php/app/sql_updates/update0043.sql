@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` ADD INDEX(`suggestion_id`);

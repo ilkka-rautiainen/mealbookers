@@ -1,5 +1,5 @@
 
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-hide="currentUser.appUser">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -63,13 +63,14 @@
                     </a>
                 </li>
             </ul>
-        </div><!--/.nav-collapse -->
-        <div id="main-alert-container">
-            <div class="alert main-alert {{ alertMessage.type }}" ng-click="dismissAlert()" ng-if="alertMessage.message.length">
-                <i class="glyphicon" ng-class="{'glyphicon-ok': alertMessage.type == 'alert-success', 'glyphicon-exclamation-sign': alertMessage.type == 'alert-warning', 'glyphicon-warning-sign': alertMessage.type == 'alert-danger', 'glyphicon-bell': alertMessage.type == 'alert-info'}"></i>&nbsp;&nbsp;{{ alertMessage.message }}
-                <div class="close">&times;</div>
-            </div>
         </div>
+    </div>
+</div>
+<!--/.nav-collapse -->
+<div id="main-alert-container">
+    <div class="alert main-alert {{ alertMessage.type }}" ng-click="dismissAlert()" ng-if="alertMessage.message.length">
+        <i class="glyphicon" ng-class="{'glyphicon-ok': alertMessage.type == 'alert-success', 'glyphicon-exclamation-sign': alertMessage.type == 'alert-warning', 'glyphicon-warning-sign': alertMessage.type == 'alert-danger', 'glyphicon-bell': alertMessage.type == 'alert-info'}"></i>&nbsp;&nbsp;{{ alertMessage.message }}
+        <div class="close">&times;</div>
     </div>
 </div>
 

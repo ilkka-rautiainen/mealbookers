@@ -153,6 +153,31 @@ class Suggestion {
         );
     }
 
+    public function getAsArrayWithInitialsContext($initials_context)
+    {
+        global $current_user;
+
+        if ($this->creator_id) {
+            $creator = new User();
+            $creator->fetch($this->creator_id);
+            $creator->createInitialsInContext($initials_context);
+            $creator_array = $creator->getAsArray();
+        }
+        else {
+            $creator_array = null;
+        }
+
+        return array(
+            'id' => $this->id,
+            'time' => $this->getTime(),
+            'creator' => $creator_array,
+            'members' => $this->members,
+            'outside_members' => $this->outside_members,
+            'accepted' => $this->hasUserAccepted($current_user),
+            'manageable' => $this->isManageable(),
+        );
+    }
+
     private function hasUserAccepted(User $user)
     {
         $accepted = DB::inst()->getOne("SELECT accepted FROM suggestions_users 

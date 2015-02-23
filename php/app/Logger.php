@@ -47,7 +47,7 @@ class Logger
     /**
      * Put a log message to log
      */
-    private function log($level, $message)
+    private function log($level, $message, $backtrace = false)
     {
         global $current_user;
         if (!isset($current_user->id))
@@ -55,7 +55,15 @@ class Logger
         else
             $id = $current_user->id;
 
-        if (fwrite($this->file, gmdate("d/m/y H:i:s"). substr((string)microtime(), 1, 4) . " [$id][" . strtoupper($level) . "] $message\n") === false)
+
+        $backtrace_str = "";
+        if ($backtrace) {
+            foreach (debug_backtrace() as $bt) {
+                $backtrace_str .= "   $bt[file]:$bt[line] $bt[class]::$bt[function]\n";
+            }
+        }
+
+        if (fwrite($this->file, gmdate("d/m/y H:i:s"). substr((string)microtime(), 1, 4) . " [$id][" . strtoupper($level) . "] $message\n$backtrace_str") === false)
             throw new Exception("Unable to write to log");
     }
 
@@ -67,6 +75,7 @@ class Logger
      */
     public static function __callStatic($name, $arguments)
     {
+        $backtrace = false;
         if (!in_array($name, self::inst()->levelNames))
             throw new Exception("No such logging level: $name");
         else if (self::inst()->levels[$name] > self::inst()->loggingLevel)
@@ -74,6 +83,10 @@ class Logger
         else if (count($arguments) != 1)
             throw new Exception("Invalid number of arguments");
 
-        return self::inst()->log($name, $arguments[0]);
+        if (self::inst()->levels[$name] <= self::inst()->levels['error']) {
+            $backtrace = true;
+        }
+
+        return self::inst()->log($name, $arguments[0], $backtrace);
     }
 }

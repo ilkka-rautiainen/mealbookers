@@ -339,6 +339,50 @@ angular.module('Mealbookers', [
     });
 
     /**
+     * Login
+     */
+    $rootScope.logIn = function(email, password) {
+
+        var login = {
+            email: email,
+            password: password,
+            remember: true
+        };
+        $http.post('/mealbookers/api/1.0/user/login', login).success(function(result) {
+            if (result && result.status == 'ok') {
+                $log.info("Logged in");
+                $rootScope.refreshCurrentUser(function() {
+                    var ready = function() {
+                        if ($rootScope.postLoginState) {
+                            $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
+                            delete $rootScope.postLoginState;
+                        }
+                        else {
+                            $rootScope.refreshRestaurants(function() {
+                                $rootScope.alert('alert-success', 'logged_in');
+                            });
+                        }
+                    };
+
+                    if ($rootScope.currentUser.language != $rootScope.localizationCurrentLanguage) {
+                        $rootScope.refreshLocalization(ready);
+                    }
+                    else {
+                        ready();
+                    }
+                });
+            }
+            else {
+                $log.error("Unknown response");
+                $log.error(result);
+                $rootScope.alert('alert-danger', 'log_in_failed');
+            }
+        }).error(function(response, httpCode, headers) {
+            $rootScope.alert('alert-danger', 'log_in_failed');
+        });
+    };
+
+    /**
      * Logs the user out
      */
     $rootScope.logOut = function(showAlert) {

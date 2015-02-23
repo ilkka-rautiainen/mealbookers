@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` ADD `other_user_id` INT(10) UNSIGNED NOT NULL , ADD INDEX (`other_user_id`) ;

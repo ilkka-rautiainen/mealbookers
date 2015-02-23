@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `last_notification_sync` INT(10) UNSIGNED NULL DEFAULT NULL ;

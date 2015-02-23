@@ -162,7 +162,7 @@ class RestaurantsAPI
             if (!DB::inst()->getOne("SELECT id FROM suggestions_users
                 WHERE id = $suggestion_user_id LIMIT 1"))
             {
-                Application::inst()->deleteToken();
+                Application::inst()->deleteToken($token);
                 throw new ApiException('deleted');
             }
 
@@ -183,7 +183,7 @@ class RestaurantsAPI
 
             // Not manageable anymore
             if (!$suggestion->isManageable(false)) {
-                Application::inst()->deleteToken();
+                Application::inst()->deleteToken($token);
                 throw new ApiException('too_old', array(
                     'weekDay' => $suggestion->getWeekDay() + 1,
                 ));

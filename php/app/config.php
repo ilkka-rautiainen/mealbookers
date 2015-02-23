@@ -59,6 +59,10 @@ $GLOBALS['config'] = array(
         'suggestion_create_in_past_time' => 5 * 60, // How long in past suggestion can be created
         'backend_threshold' => 60, // How much backend permits over the limit
         'force_ui_refresh' => 60 * 15, // If ui hasn't updated within this time, refresh is forced
+        'notification_validity_time' => 60 * 60 * 10, // Remove older notifications than this
+    ),
+    'gcm' => array(
+        'api_key' => '',
     ),
 );
 

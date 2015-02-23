@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` ADD `suggestion_time_str` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL , ADD `restaurant_name_str` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ;

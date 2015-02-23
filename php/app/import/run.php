@@ -28,7 +28,7 @@ $importers = array(
     new KoneImport(),
     new SahkoImport(),
     new TtaloImport(),
-    new ArtturiImport(),
+    // new ArtturiImport(),
     new ElectraImport(),
     new CantinaImport(),
 );
@@ -38,7 +38,8 @@ foreach ($importers as $importer) {
         $importer->init();
         if ($reset)
             $importer->reset();
-        print "running importer " . get_class($importer) . "<br />";
+        if (!isset($_GET['cron']))
+            print "running importer " . get_class($importer) . "<br />";
         $importer->run(((isset($_GET['opening_hours']) && !empty($_GET['opening_hours'])) ? true : false));
     }
     catch (Exception $e) {
@@ -49,3 +50,6 @@ foreach ($importers as $importer) {
 
 if (!isset($_GET['cron']))
     print "import executed";
+
+EventLog::inst()->deleteOld();
+Notifications::inst()->deleteOld();

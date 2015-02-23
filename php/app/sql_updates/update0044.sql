@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` ADD FOREIGN KEY (`suggestion_id`) REFERENCES `np37882_mealbookers`.`suggestions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

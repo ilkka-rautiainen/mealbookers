@@ -1,5 +1,7 @@
 <?php
 
+Flight::route('POST /user/notificationReceived', array('UserAPI', 'markNotificationReceived'));
+Flight::route('POST /user/registerAndroidGCM', array('UserAPI', 'registerAndroidGCM'));
 Flight::route('GET /user(/@userId)', array('UserAPI', 'getUser'));
 Flight::route('POST /user/login/forgot/new/@token', array('UserAPI', 'createNewPassword'));
 Flight::route('POST /user/login/forgot', array('UserAPI', 'sendForgotPasswordLink'));
@@ -160,10 +162,53 @@ class UserAPI
         $result['language'] = $user->language;
         $result['role'] = $user->role;
         $result['timestamp'] = time();
+        $result['has_android_app'] = (DB::inst()->getOne("SELECT android_gcm_regid FROM users WHERE id = {$user->id}")) ? true : false;
+        $result['suggestion_method'] = $user->suggestion_method;
 
         print json_encode(array(
             'status' => 'ok',
             'user' => $result,
+        ));
+    }
+
+    function markNotificationReceived()
+    {
+        global $current_user;
+
+        Logger::debug(__METHOD__ . " POST /user/markNotificationReceived called");
+        Application::inst()->checkAuthentication();
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['id'])) {
+            throw new HttpException(400, 'id missing');
+        }
+        $id = (int) $data['id'];
+
+        DB::inst()->query("UPDATE notifications SET received = 1 WHERE id = $id AND user_id = {$current_user->id}");
+
+        print json_encode(array(
+            'status' => 'ok',
+        ));
+    }
+
+    function registerAndroidGCM()
+    {
+        global $current_user;
+
+        Logger::debug(__METHOD__ . " POST /user/registerAndroidGCM called");
+        Application::inst()->checkAuthentication();
+
+        $data = Application::inst()->getPostData();
+
+        if (!isset($data['regid'])) {
+            throw new HttpException(400, 'regid missing');
+        }
+
+        DB::inst()->query("UPDATE users SET android_gcm_regid = '" . DB::inst()->quote($data['regid']) . "', suggestion_method = 'androidApp' WHERE id = {$current_user->id}");
+
+        print json_encode(array(
+            'status' => 'ok',
         ));
     }
 
@@ -278,6 +323,11 @@ class UserAPI
                 notify_suggestion_deleted = " . ((int)((boolean) $data['suggestion']['deleted'])) . ",
                 notify_group_memberships = " . ((int)((boolean) $data['group']['memberships'])) . "
             WHERE id = {$user->id}");
+
+        if (in_array($data['suggestion_method'], array('email', 'androidApp'))) {
+            DB::inst()->query("UPDATE users SET suggestion_method = '" . $data['suggestion_method'] . "' WHERE id = {$user->id}");
+        }
+
 
         // UPDATE PASSWORD
         // New password given

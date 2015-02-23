@@ -18,6 +18,7 @@ class User
     private $initials;
     private $groups;
     private $groupmates;
+    private $last_notification_sync;
 
     public function fetch($id)
     {
@@ -47,6 +48,8 @@ class User
         $this->initials = '';
         $this->groups = array();
         $this->groupmates = array();
+        $this->last_notification_sync = $row['last_notification_sync'];
+        $this->suggestion_method = $row['suggestion_method'];
     }
 
     public function delete()
@@ -68,6 +71,7 @@ class User
                 'accepted' => (boolean)$this->notify_suggestion_accepted,
                 'left_alone' => (boolean)$this->notify_suggestion_left_alone,
                 'deleted' => (boolean)$this->notify_suggestion_deleted,
+                'primary_method' => (DB::inst()->getOne("SELECT android_gcm_regid FROM users WHERE id = {$this->id}")) ? 'androidApp' : 'email',
             ),
             'group' => array(
                 'memberships' => (boolean)$this->notify_group_memberships,
@@ -365,6 +369,9 @@ class User
         if ($suggestion->getDate("Y-m-d") != date("Y-m-d")) {
             $suggestion_date = Application::inst()->formatWeekDay($suggestion->getDate("Y-m-d"), $this);
         }
+
+        $menu_for_email = $restaurant->getMenuForEmail($suggestion, $this);
+
         $body = mb_str_replace(
             array(
                 '{suggester}',
@@ -380,7 +387,7 @@ class User
                 $creator->getName(),
                 $suggestion_date,
                 $restaurant->name,
-                $restaurant->getMenuForEmail($suggestion, $this),
+                $menu_for_email,
                 $suggestion->getTime(),
                 Application::inst()->getHttpHost(),
                 $token,
@@ -389,7 +396,13 @@ class User
             Lang::inst()->get('mailer_body_suggestion', $this)
         );
 
-        return Mailer::inst()->send($subject, $body, $this);
+        if ($this->suggestion_method == 'email') {
+            return Mailer::inst()->send($subject, $body, $this);
+        }
+        else {
+            Notifications::inst()->add($this, $suggestion, Notifications::NOTIFICATION_TYPE_SUGGEST, $token, null, $menu_for_email);
+            return true;
+        }
     }
 
     public function notifySuggestionAccepted(Suggestion $suggestion, User $accepter, $is_creator)
@@ -435,7 +448,13 @@ class User
             Lang::inst()->get('mailer_body_suggestion_accepted_' . $version_postfix, $this)
         );
 
-        return Mailer::inst()->send($subject, $body, $this);
+        if ($this->suggestion_method == 'email') {
+            return Mailer::inst()->send($subject, $body, $this);
+        }
+        else {
+            Notifications::inst()->add($this, $suggestion, Notifications::NOTIFICATION_TYPE_ACCEPT, "", $accepter);
+            return true;
+        }
     }
 
     public function notifyBeenLeftAlone(Suggestion $suggestion, User $canceler)
@@ -479,7 +498,13 @@ class User
             Lang::inst()->get('mailer_body_suggestion_left_alone', $this)
         );
 
-        return Mailer::inst()->send($subject, $body, $this);
+        if ($this->suggestion_method == 'email') {
+            return Mailer::inst()->send($subject, $body, $this);
+        }
+        else {
+            Notifications::inst()->add($this, $suggestion, Notifications::NOTIFICATION_TYPE_LEFT_ALONE);
+            return true;
+        }
     }
 
     public function notifySuggestionDeleted(Suggestion $suggestion, User $canceler, Restaurant $restaurant)
@@ -520,7 +545,13 @@ class User
             Lang::inst()->get('mailer_body_suggestion_deleted', $this)
         );
 
-        return Mailer::inst()->send($subject, $body, $this);
+        if ($this->suggestion_method == 'email') {
+            return Mailer::inst()->send($subject, $body, $this);
+        }
+        else {
+            Notifications::inst()->add($this, $suggestion, Notifications::NOTIFICATION_TYPE_CANCEL, "", $canceler);
+            return true;
+        }
     }
 
     public function inviteNewMember($email_address, Group $group)

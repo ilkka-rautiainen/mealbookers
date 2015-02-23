@@ -37,6 +37,13 @@
 
                     <!-- Notification settings -->
                     <h4>{{ 'account_notification_settings' | i18n }}</h4>
+
+                    <div ng-if="user.has_android_app">
+                        <strong>{{ 'account_notification_primary_header' | i18n }}</strong><br />
+                        <input type="radio" ng-model="user.suggestion_method" value="email" /> {{ 'account_notification_primary_email' | i18n }}<br />
+                        <input type="radio" ng-model="user.suggestion_method" value="androidApp" /> {{ 'account_notification_primary_android_app' | i18n }}<br />
+                    </div>
+
                     <strong>{{ 'account_notification_suggestion_header' | i18n }}</strong><br />
                     <input type="checkbox" ng-model="user.notification_settings.suggestion.received" /> {{ 'account_notification_suggestion_received' | i18n }}<br />
                     <input type="checkbox" ng-model="user.notification_settings.suggestion.accepted" /> {{ 'account_notification_suggestion_accepted' | i18n }}<br />
