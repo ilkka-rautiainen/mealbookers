@@ -1,5 +1,5 @@
 **Mealbookers**
 
-[mealbookers.net]: mealbookers.net
+[mealbookers.net](http://mealbookers.net)
 
 The social menu application for Otaniemi students.
