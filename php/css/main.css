@@ -142,24 +142,36 @@ label {
 
 
     #content {
-        padding-bottom: 90px;
+        padding-bottom: 130px;
+    }
+
+    #content.appUser {
+        padding-bottom: 90px !important;
     }
 
     #footer {
         background-color: #D6E2FF;
         border-top: 3px solid #e6e6e6;
-        height: 83px;
+        height: 123px;
         position: absolute;
         bottom: 0;
         width: 100%;
+    }
+
+    #footer.appUser {
+        height: 83px !important;
     }
 
     #footer ul {
         list-style-type: none;
         padding: 0;
         margin: 0;
-        height: 80px;
+        height: 120px;
         margin-right: 20px;
+    }
+
+    #footer.appUser ul {
+        height: 80px !important;
     }
 
     #footer ul li {
@@ -863,7 +875,7 @@ strong, b {
     }
 
     #footer ul li:not(:last-child) {
-        padding-left: 20px;
+        /*padding-left: 20px;*/
         padding-right: 20px;
         /*content: "|";*/
     }

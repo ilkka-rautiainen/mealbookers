@@ -74,11 +74,12 @@
     </div>
 </div>
 
-<div ui-view id="content"></div>
+<div ui-view id="content" ng-class="{appUser: currentUser.appUser}"></div>
 
-<div id="footer">
+<div id="footer" ng-class="{appUser: currentUser.appUser}">
     <div class="container">
         <ul>
+            <li ng-if="!currentUser.appUser"><a href="/apps/mealbookers.apk"><i class="fa fa-android"></i> {{ 'download_android_app' | i18n }}</a></li>
             <li><a href ui-sref="Navigation.Menu.Contact"><i class="fa fa-user"></i> {{ 'contact' | i18n }}</a></li>
             <li><a href ui-sref="Navigation.Menu.TermsOfUse"><i class="glyphicon glyphicon-book"></i> {{ 'terms_of_use' | i18n }}</a></li>
         </ul>

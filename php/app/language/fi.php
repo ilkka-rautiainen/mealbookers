@@ -253,6 +253,7 @@ $GLOBALS['language']['fi'] = array(
     'suggestion_manage_accepted' => 'Hyväksytty!',
     'suggestion_time_before_lunch' => 'Ota huomioon, että lounas alkaa vasta',
     'suggestion_time_after_lunch' => 'Ota huomioon, että lounas on päättynyt jo',
+    'download_android_app' => 'Lataa Android-sovellus',
     'action_failed' => 'Toimenpide epäonnistui',
     'register_other' => 'Henkilökunta/muu',
     'register_study_year' => 'Opiskeluvuosi',

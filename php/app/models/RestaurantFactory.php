@@ -31,7 +31,15 @@ class RestaurantFactory
                     WHERE user_id = {$viewer->id}
                 ) order_table
                 ON order_table.restaurant_id = restaurants.id
-                ORDER BY order_table.order_points DESC, restaurants.name ASC
+                LEFT JOIN suggestions_users
+                    ON suggestions_users.id = (SELECT id FROM suggestions_users WHERE
+                        suggestions_users.created > UNIX_TIMESTAMP(CURDATE()) AND user_id = {$viewer->id}
+                        AND restaurants.id = (SELECT restaurant_id FROM suggestions WHERE id = suggestions_users.suggestion_id)
+                        ORDER BY suggestions_users.created DESC LIMIT 1)
+                ORDER BY
+                    suggestions_users.created DESc,
+                    order_table.order_points DESC,
+                    restaurants.name ASC
             ");
         }
         else {

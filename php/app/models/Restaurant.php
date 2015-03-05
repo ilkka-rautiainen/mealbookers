@@ -139,6 +139,42 @@ class Restaurant
         }
     }
 
+    public function getMenuForNotification(Suggestion $suggestion, User $viewer)
+    {
+        $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+            restaurant_id = {$this->id} AND language = '{$viewer->language}'");
+        if (!DB::inst()->getRowCount()) {
+            $result = DB::inst()->query("SELECT * FROM meals WHERE day = DATE('{$suggestion->datetime}') AND
+                restaurant_id = {$this->id} AND language = '" . Conf::inst()->get('mealDefaultLanguage') . "'");
+        }
+
+        $meals = array();
+        while ($meal = DB::inst()->fetchAssoc($result)) {
+            $meals[] = $meal['name'];
+        }
+
+        if (count($meals)) {
+            return mb_substr(implode("\n", str_replace(
+                array(
+                    '<span class="attribute-group">',
+                    '<span class="attribute">',
+                    '<span class="line-break">',
+                    '</span>',
+                ),
+                array(
+                    '',
+                    '',
+                    "\n",
+                    '',
+                ),
+                $meals
+            )), 0, 700);
+        }
+        else {
+            return "";
+        }
+    }
+
     private function getOpeningHoursAsArray()
     {
         $today = Application::inst()->getWeekdayNumber();

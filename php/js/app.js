@@ -217,12 +217,17 @@ angular.module('Mealbookers', [
 
     $rootScope.alert = function(type, message, show_direct) {
         $log.debug("Alert: " + type + ": " + message);
+
         if (!$rootScope.config.alertTimeouts[type]) {
             return $log.error("Invalid alert type: " + type);
         }
 
         if (!show_direct) {
             message = $filter('i18n')(message);
+        }
+
+        if (type == 'alert-success' && typeof AndroidApp != "undefined") {
+            return AndroidApp.alert(message);
         }
 
         $rootScope.alertMessage = {
@@ -353,6 +358,7 @@ angular.module('Mealbookers', [
                 $log.info("Logged in");
                 $rootScope.refreshCurrentUser(function() {
                     var ready = function() {
+                        $rootScope.$emit('login');
                         if ($rootScope.postLoginState) {
                             $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
                             delete $rootScope.postLoginState;
@@ -391,6 +397,7 @@ angular.module('Mealbookers', [
             $rootScope.logoutProcess = true;
             $http.post('/mealbookers/api/1.0/user/logout').success(function() {
                 $rootScope.refreshCurrentUser(function() {
+                    $rootScope.$emit('logout');
                     $log.info("Logged out");
                     if (showAlert) {
                         $rootScope.alert('alert-success', 'logged_out');
@@ -719,6 +726,18 @@ angular.module('Mealbookers', [
 
     setWidthClass();
     $($window).bind('resize', setWidthClass);
+
+    $rootScope.$on('login', function() {
+        if (typeof AndroidApp != "undefined") {
+            AndroidApp.onLogin();
+        }
+    });
+
+    $rootScope.$on('logout', function() {
+        if (typeof AndroidApp != "undefined") {
+            AndroidApp.onLogout();
+        }
+    });
 }]);
 
 function RefreshDataException(message) {

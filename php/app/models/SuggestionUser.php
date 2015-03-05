@@ -26,6 +26,7 @@ class SuggestionUser {
         $this->user_id = $row['user_id'];
         $this->accepted = $row['accepted'];
         $this->accepted_timestamp = $row['accepted_timestamp'];
+        $this->created = $row['created'];
     }
 
     public function accept()

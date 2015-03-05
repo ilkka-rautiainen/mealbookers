@@ -1,8 +1,8 @@
-<div class="container page-header-container">
-    <div class="col-xs-12 page-header" ng-hide="currentUser.appUser">
+<div class="container page-header-container" ng-hide="currentUser.appUser">
+    <div class="col-xs-12 page-header">
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
     </div>
-    <div class="languages visible-sm visible-md visible-lg">
+    <div class="languages visible-sm visible-md visible-lg" ng-hide="currentUser.appUser">
         <div class="link" ng-if="currentUser.role != 'guest' && !currentUser.friends">
             <a ui-sref="Navigation.Menu.GroupSettings" href>{{ 'form_groups' | i18n}}</a>
         </div>
@@ -25,6 +25,8 @@
         <a ui-sref="Navigation.Menu.GroupSettings" href ng-if="currentUser.role != 'guest' && !currentUser.friends">{{ 'form_groups' | i18n }}</a>
     </div>
 </div>
+
+<div style="height: 5px;" ng-show="currentUser.appUser"></div>
 
 <div id="menuContainer" class="container">
     <restaurant ng-repeat="restaurant in restaurants" restaurant="restaurant" week-day="weekDay" width-class="widthClass" week-day-change-process="weekDayChangeProcess"></restaurant>

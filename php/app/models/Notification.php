@@ -27,7 +27,7 @@ class Notification {
         $this->other_user_first_name = $row['other_user_first_name'];
     }
 
-    public function getAsArrayWithInitialsContext($initials_context)
+    public function getAsArrayWithInitialsContext($initials_context, User $viewer)
     {
         return array(
             'id' => $this->id,
@@ -38,6 +38,7 @@ class Notification {
             'token' => $this->token,
             'suggestion' => ($this->suggestion) ? $this->suggestion->getAsArrayWithInitialsContext($initials_context) : null,
             'restaurant' => ($this->restaurant) ? $this->restaurant->getAsArrayBase() : null,
+            'menu' => ($this->restaurant && $this->suggestion && $this->type == Notifications::NOTIFICATION_TYPE_SUGGEST) ? $this->restaurant->getMenuForNotification($this->suggestion, $viewer) : null,
             'other_user' => ($this->other_user_id) ? $this->getOtherUserAsArray($initials_context) : null,
             'suggestion_time_str' => $this->suggestion_time_str,
             'restaurant_name_str' => $this->restaurant_name_str,

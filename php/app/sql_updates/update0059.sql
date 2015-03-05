@@ -1,0 +1,1 @@
+ALTER TABLE `suggestions_users` ADD `created` INT(10) UNSIGNED NOT NULL ;

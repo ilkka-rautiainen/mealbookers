@@ -48,11 +48,19 @@ class GCM
         return self::$instance;
     }
 
-    //------------------------------
-    // Define custom GCM function
-    //------------------------------
+    public function send(User $user, $data)
+    {
+        for ($i = 0; $i < 5; $i++) {
+            try {
+                return $this->_send($user, $data);
+            }
+            catch (GCMRetryableException $e) {
+                usleep(100);
+            }
+        }
+    }
 
-    function send(User $user, $data)
+    private function _send(User $user, $data)
     {
         Logger::info(__METHOD__ . " sending GCM message to user {$user->id}");
         //------------------------------
@@ -138,18 +146,26 @@ class GCM
         $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if (mb_substr($http_status, 0, 1) != '2') {
             Logger::error(__METHOD__ . " GCM error. Status code was $http_status, result was " . print_r($result, true));
+            throw new GCMRetryableException("Status code was $http_status");
         }
         else {
             Logger::info(__METHOD__ . " GCM request status code: $http_status");
         }
         
         $result_object = json_decode($result, true);
-        Logger::info(__METHOD__ . " GCM result: " . print_r($result, true) . " , result object: " . print_r($result_object, true));
+        // Logger::info(__METHOD__ . " GCM result: " . print_r($result, true) . " , result object: " . print_r($result_object, true));
         if ($result_object) {
             // {"multicast_id":9212869635928457591,"success":0,"failure":1,"canonical_ids":0,"results":[{"error":"NotRegistered"}]}
-            if ($result_object['success'] == 0 && $result_object['results'][0]['error']) {
-                Logger::info(__METHOD__ . " GCM: user {$user->id} client unregistered");
-                DB::inst()->query("UPDATE users SET android_gcm_regid = NULL, suggestion_method = 'email' WHERE id = {$user->id}");
+            
+            if ($result_object['results'][0]['error']) {
+                Logger::warn(__METHOD__ . " GCM: user {$user->id} gcm failed with error " . $result_object['results'][0]['error']);
+                if ($result_object['results'][0]['error'] == 'Unavailable') {
+                    throw new GCMRetryableException("Error was set: " . $result_object['results'][0]['error']);
+                }
+                else {
+                    Logger::info(__METHOD__ . " Setting user {$user->id} android_gcm_regid to null");
+                    DB::inst()->query("UPDATE users SET android_gcm_regid = NULL, suggestion_method = 'email' WHERE id = {$user->id}");
+                }
             }
         }
 
@@ -159,8 +175,9 @@ class GCM
 
         if ( curl_errno( $ch ) )
         {
-            Logger::error(__METHOD__ . 'GCM error: ' . curl_error( $ch ));
-            return 'GCM error: ' . curl_error( $ch );
+            Logger::error(__METHOD__ . "Curl error: " . curl_error( $ch ));
+            throw new GCMRetryableException("Curl error: " . curl_error( $ch ));
+            
         }
 
         //------------------------------

@@ -6,23 +6,23 @@ var services = angular.module('Mealbookers.services', ['ngResource']);
 
 services.value('version', '0.1');
 
-services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $injector) {
-    return function (exception, cause) {
-        var rootScope = $injector.get('$rootScope');
-        if (exception.type == 'RefreshDataException' && rootScope.liveViewOn) {
-            $log.warn('Live view interrupted');
-            rootScope.startLiveViewRecovery();
-        }
-        else {
-            throw exception;
-        }
-    };
-}]);
+// services.factory('$exceptionHandler', ['$log', '$injector', function ($log, $injector) {
+//     return function (exception, cause) {
+//         var rootScope = $injector.get('$rootScope');
+//         if (exception.type == 'RefreshDataException' && rootScope.liveViewOn) {
+//             $log.warn('Live view interrupted');
+//             rootScope.startLiveViewRecovery();
+//         }
+//         else {
+//             throw exception;
+//         }
+//     };
+// }]);
 
 /**
  * Load current user and localization
  */
-services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http, $rootScope, $q, $log) {
+services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', '$timeout', function($http, $rootScope, $q, $log, $timeout) {
     // Init promises
     var currentUserPromise = $http.get('/mealbookers/api/1.0/user'), localizationPromise, restaurantsPromise;
 
@@ -35,9 +35,15 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
 
         if ($rootScope.currentUser.role != 'guest') {
             $rootScope.startLiveView();
+            if (typeof AndroidApp != "undefined") {
+                AndroidApp.isLoggedIn(true);
+            }
         }
         else {
             $rootScope.fetchGuestLanguage();
+            if (typeof AndroidApp != "undefined") {
+                AndroidApp.isLoggedIn(false);
+            }
         }
 
         // Get localization
@@ -66,6 +72,7 @@ services.factory('InitApp', ['$http', '$rootScope', '$q', '$log', function($http
         // Wait for both of them to be ready
         $q.all([localizationPromise, restaurantsPromise]).then(function(response) {
             $rootScope.initAppDone = true;
+            $timeout(function() { $log.debug("App init done"); }, 0);
             deferred.resolve(response);
         });
     }, function() {

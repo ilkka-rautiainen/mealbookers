@@ -209,12 +209,14 @@ class Suggestion {
                 suggestion_id,
                 user_id,
                 accepted,
-                accepted_timestamp
+                accepted_timestamp,
+                created
             ) VALUES (
                 {$this->id},
                 {$member->id},
                 " . ($accepted ? '1' : '0') . ",
-                " . ($accepted ? time() : 'NULL') . "
+                " . ($accepted ? time() : 'NULL') . ",
+                UNIX_TIMESTAMP()
             )");
         $token = Application::inst()->insertToken(DB::inst()->getInsertId());
         return $token;

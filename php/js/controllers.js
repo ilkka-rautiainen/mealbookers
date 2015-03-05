@@ -104,6 +104,9 @@ angular.module('Mealbookers.controllers', [])
             if (getParams.email && getParams.password) {
                 $rootScope.logIn(getParams.email, getParams.password);
             }
+            else if (getParams.logout == "1") {
+                $rootScope.logOut(true);
+            }
         }
     }
 
@@ -195,6 +198,7 @@ angular.module('Mealbookers.controllers', [])
                     $("#login-modal").modal('hide');
 
                     var ready = function() {
+                        $rootScope.$emit('login');
                         if ($rootScope.postLoginState) {
                             $state.go($rootScope.postLoginState.name, $rootScope.postLoginState.stateParams);
                             delete $rootScope.postLoginState;

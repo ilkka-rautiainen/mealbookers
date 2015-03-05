@@ -83,7 +83,7 @@ class Notifications
         $initials_context = $user->getInitialsContext();
 
         $data = array(
-            'notification' => $notification->getAsArrayWithInitialsContext($initials_context),
+            'notification' => $notification->getAsArrayWithInitialsContext($initials_context, $user),
         );
 
         GCM::inst()->send($user, $data);

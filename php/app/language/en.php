@@ -253,6 +253,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_manage_accepted' => 'Accepted!',
     'suggestion_time_before_lunch' => 'NB: lunch opens at',
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
+    'download_android_app' => 'App for Android',
     'action_failed' => 'Action failed',
     'register_other' => 'Personnel/other',
     'register_study_year' => 'Year of study',
