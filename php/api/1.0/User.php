@@ -644,15 +644,15 @@ class UserAPI
         if (!strlen($data['last_name']))
             throw new HttpException(409, 'no_last_name');
 
-        if ((!strlen($data['study_programme']) || !in_array($data['study_programme'], Lang::inst()->get('register_study_programmes', null, $data['language']))) && !$data['study_programme_other'])
-            throw new HttpException(409, 'give_study_programme');
-        else if ($data['study_programme_other'])
-            $data['study_programme'] = '';
+        // if ((!strlen($data['study_programme']) || !in_array($data['study_programme'], Lang::inst()->get('register_study_programmes', null, $data['language']))) && !$data['study_programme_other'])
+        //     throw new HttpException(409, 'give_study_programme');
+        // else if ($data['study_programme_other'])
+        //     $data['study_programme'] = '';
 
-        if (strlen($data['study_programme']) && !in_array($data['study_year'], array(1, 2, 3, 4, 5, 'n')))
-            throw new HttpException(409, 'give_study_year');
-        else if ($data['study_programme_other'])
-            $data['study_year'] = '';
+        // if (strlen($data['study_programme']) && !in_array($data['study_year'], array(1, 2, 3, 4, 5, 'n')))
+        //     throw new HttpException(409, 'give_study_year');
+        // else if ($data['study_programme_other'])
+        //     $data['study_year'] = '';
 
         if ($data['password'] != $data['password_repeat'])
             throw new HttpException(409, 'passwords_dont_match');

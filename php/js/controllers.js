@@ -392,7 +392,7 @@ angular.module('Mealbookers.controllers', [])
     }
 
     // Init the study programme selection
-    $scope.studyProgrammes = $filter('i18n')('register_study_programmes');
+    // $scope.studyProgrammes = $filter('i18n')('register_study_programmes');
 
 
     $('#register-modal').on('hidden.bs.modal', function () {
@@ -447,10 +447,10 @@ angular.module('Mealbookers.controllers', [])
             $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_passwords_dont_match'));
             return false;
         }
-        else if (!$scope.register.study_programme_other && !$scope.register.study_programme) {
-            $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_give_study_programme'));
-            return false;
-        }
+        // else if (!$scope.register.study_programme_other && !$scope.register.study_programme) {
+        //     $scope.modalAlert('alert-warning', $filter('i18n')('register_failed_409_give_study_programme'));
+        //     return false;
+        // }
 
         return true;
     };

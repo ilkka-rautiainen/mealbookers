@@ -1,4 +1,4 @@
-<!-- Sign up Modal -->
+Sign up Modal -->
 <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form role="form" ng-submit="save()">
@@ -45,30 +45,30 @@
                     <div class="clearfix"></div>
 
                     <!-- Study programme -->
-                    <div class="form-col-container">
+                    <!-- <div class="form-col-container">
                         <div class="col-sm-6 col-xs-12 form-group">
                             <label for="study_programme">{{ 'register_study_programme' | i18n }}</label>
                             <select ng-options="studyProgramme for studyProgramme in studyProgrammes" ng-model="register.study_programme" id="study_programme" ng-disabled="register.study_programme_other" class="form-control"></select>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
+                    <div class="clearfix"></div> -->
 
                     <!-- Study year -->
-                    <div class="form-col-container" ng-if="register.study_programme">
+                    <!-- <div class="form-col-container" ng-if="register.study_programme">
                         <div class="col-sm-6 col-xs-12 form-group">
                             <label for="study_year">{{ 'register_study_year' | i18n }}</label>
                             <select ng-options="studyYear for studyYear in [1, 2, 3, 4, 5, 'n']" ng-model="register.study_year" id="study_year" class="form-control" ng-disabled="register.study_programme_other"></select>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
+                    <div class="clearfix"></div> -->
 
                     <!-- Study-program other -->
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="study-program-other">
                                 <input type="checkbox" ng-model="register.study_programme_other" id="study-program-other">
                                 {{ 'register_other' | i18n }}
                         </label>
-                    </div>
+                    </div> -->
 
                     <!-- Invite group -->
                     <div ng-show="register.invitation_code">
@@ -85,4 +85,4 @@
             </div><!-- /.modal-content -->
         </form>
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div><!-- /.modal
