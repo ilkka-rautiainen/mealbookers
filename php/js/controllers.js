@@ -7,10 +7,10 @@ angular.module('Mealbookers.controllers', [])
 
 .controller('AcceptSuggestionController', ['$http', '$filter', '$rootScope', '$state', '$stateParams', '$location', function($http, $filter, $rootScope, $state, $stateParams, $location) {
 
-    // Check for android user
+    // Check for mobile user
     var getParams = $location.search();
     if (getParams !== null && getParams.source) {
-        if (getParams.source == 'android') {
+        if (getParams.source == 'android' || getParams.source == 'ios') {
             $rootScope.currentUser.appUser = true;
         }
     }
@@ -99,7 +99,7 @@ angular.module('Mealbookers.controllers', [])
 
     var getParams = $location.search();
     if (getParams !== null && getParams.source) {
-        if (getParams.source == 'android') {
+        if (getParams.source == 'android' || getParams.source == 'ios') {
             $rootScope.currentUser.appUser = true;
             if (getParams.email && getParams.password) {
                 $rootScope.logIn(getParams.email, getParams.password);
