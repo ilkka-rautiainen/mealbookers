@@ -1,0 +1,1 @@
+UPDATE `restaurants` SET `location` = GeomFromText('POINT(60.1839392 24.8184775)') WHERE `restaurants`.`id` = 18;

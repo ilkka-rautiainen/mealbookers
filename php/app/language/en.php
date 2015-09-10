@@ -255,6 +255,7 @@ $GLOBALS['language']['en'] = array(
     'suggestion_time_after_lunch' => 'NB: lunch has already closed at',
     'download_android_app' => 'App for Android',
     'action_failed' => 'Action failed',
+    'campus_restaurant_map' => 'Restaurant map',
     'register_other' => 'Personnel/other',
     'register_study_year' => 'Year of study',
     'register_study_programme' => 'Study programme',

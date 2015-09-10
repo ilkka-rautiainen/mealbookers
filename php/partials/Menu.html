@@ -3,6 +3,9 @@
         {{ 'in_otaniemi' | i18n }} {{ 'weekday_' + weekDay | i18n | lowercase }}
     </div>
     <div class="languages visible-sm visible-md visible-lg" ng-hide="currentUser.appUser">
+        <div class="link">
+            <a href="http://www.aalto.fi/fi/midcom-serveattachmentguid-1e552d5a80651c852d511e581d13b8555f5d472d472/Kampusravintolat_kartta_2015.pdf" target="_blank">{{ 'campus_restaurant_map' | i18n}}</a>
+        </div>
         <div class="link" ng-if="currentUser.role != 'guest' && !currentUser.friends">
             <a ui-sref="Navigation.Menu.GroupSettings" href>{{ 'form_groups' | i18n}}</a>
         </div>
@@ -19,6 +22,7 @@
         </div>
     </div>
     <div class="links visible-xs">
+        <a href="http://www.aalto.fi/fi/midcom-serveattachmentguid-1e552d5a80651c852d511e581d13b8555f5d472d472/Kampusravintolat_kartta_2015.pdf" target="_blank">{{ 'campus_restaurant_map' | i18n}}</a>
         <a ui-sref="Navigation.Menu.WhatMealbookers" href ng-if="currentUser.role == 'guest'">{{ 'what_mealbookers' | i18n}}</a>
         <a ui-sref="Navigation.Menu.Login" href ng-if="currentUser.role == 'guest'">{{ 'login_short' | i18n}}</a>
         <a ui-sref="Navigation.Menu.Register" href ng-if="currentUser.role == 'guest'">{{ 'register' | i18n}}</a>

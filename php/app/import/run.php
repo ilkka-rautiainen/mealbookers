@@ -21,16 +21,20 @@ $importers = array(
     new TUASImport(),
     new Puu2Import(),
     new SilinteriImport(),
-    new LaureaImport(),
+    // new LaureaImport(),
     new TaffaImport(),
-    new DipoliImport(),
+    // new DipoliImport(),
     new KasperImport(),
     new KoneImport(),
     new SahkoImport(),
     new TtaloImport(),
     // new ArtturiImport(),
     new ElectraImport(),
-    new CantinaImport(),
+    // new CantinaImport(),
+    new SubwayImport(),
+    new ValimoImport(),
+    new VM5Import(),
+    new Tietotie6Import(),
 );
 
 foreach ($importers as $importer) {
@@ -45,6 +49,7 @@ foreach ($importers as $importer) {
     catch (Exception $e) {
         if (!isset($_GET['cron']))
             print "Import failed: " . get_class($importer) . "<br />";
+        Logger::error(__METHOD__ . "Import failed: " . get_class($importer) . " " . $e->getMessage());
     }
 }
 

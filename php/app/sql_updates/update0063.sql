@@ -1,0 +1,1 @@
+INSERT INTO `np37882_mealbookers`.`restaurants` (`id`, `name`, `street_address`, `location`, `link`, `personnell_only`) VALUES ('17', 'VM5', 'Vuorimiehentie 5', GeomFromText('POINT(60.1830986 24.8274987)'), 'http://www.amica.fi/ravintolat/ravintolat-kaupungeittain/espoo/vm5/', '0');

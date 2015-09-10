@@ -1,0 +1,1 @@
+INSERT INTO `np37882_mealbookers`.`restaurants` (`id`, `name`, `street_address`, `location`, `link`, `personnell_only`) VALUES ('16', 'Valimo', 'Metallimiehenkuja 2', GeomFromText('POINT(60.1836623 24.8286629)'), 'http://www.sodexo.fi/aalto-valimo', '0');
