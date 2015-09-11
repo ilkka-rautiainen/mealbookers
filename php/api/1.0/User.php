@@ -14,10 +14,35 @@ Flight::route('POST /user/email/verify/@token', array('UserAPI', 'verifyEmail'))
 Flight::route('POST /user(/@userId)/language', array('UserAPI', 'updateUserLanguage'));
 Flight::route('POST /user(/@userId)', array('UserAPI', 'updateUser'));
 Flight::route('DELETE /user(/@userId)', array('UserAPI', 'deleteUser'));
+Flight::route('GET /users/stats', array('UserAPI', 'statistics'));
 Flight::route('GET /users', array('UserAPI', 'searchUsers'));
 
 class UserAPI
 {
+    function statistics()
+    {
+        Logger::debug(__METHOD__ . " GET /users/stats called");
+
+        $userCount = DB::inst()->getOne("SELECT COUNT(*) FROM users");
+        $groupCount = DB::inst()->getOne("SELECT COUNT(*) FROM groups");
+        $newUsersToday = DB::inst()->getOne("SELECT COUNT(*) FROM users WHERE joined >= " . strtotime('midnight', time()));
+        $newUsersLastWeek = DB::inst()->getOne("SELECT COUNT(*) FROM users WHERE joined >= " . strtotime('midnight', time() - 86400*7));
+
+        $userNames = array();
+        $userNameQuery = DB::inst()->query("SELECT CONCAT_WS(' ', first_name, last_name, email_address) AS `name` FROM users ORDER BY joined DESC");
+        while ($row = DB::inst()->fetchAssoc($userNameQuery)) {
+            $userNames[] = $row['name'];
+        }
+
+        print json_encode(array(
+            'userCount' => $userCount,
+            'groupCount' => $groupCount,
+            'newUsersToday' => $newUsersToday,
+            'newUsersLastWeek' => $newUsersLastWeek,
+            'userNames' => $userNames,
+        ));
+    }
+
     function searchUsers()
     {
         Logger::debug(__METHOD__ . " GET /users called");

@@ -64,6 +64,7 @@ $GLOBALS['config'] = array(
     'gcm' => array(
         'api_key' => '',
     ),
+    'stats_pwd' => '',
 );
 
 if (file_exists(__DIR__ . "/../config_override.php"))
