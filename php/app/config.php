@@ -68,4 +68,7 @@ $GLOBALS['config'] = array(
 );
 
 if (file_exists(__DIR__ . "/../config_override.php"))
-	require_once __DIR__ . '/../config_override.php';
+    require_once __DIR__ . '/../config_override.php';
+
+if (file_exists(__DIR__ . "/../config_override_common.php"))
+	require_once __DIR__ . '/../config_override_common.php';

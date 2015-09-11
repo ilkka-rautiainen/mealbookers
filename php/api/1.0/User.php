@@ -23,6 +23,10 @@ class UserAPI
     {
         Logger::debug(__METHOD__ . " GET /users/stats called");
 
+        if ($_GET['pw'] != Conf::inst()->get('stats_pwd')) {
+            return;
+        }
+
         $userCount = DB::inst()->getOne("SELECT COUNT(*) FROM users");
         $groupCount = DB::inst()->getOne("SELECT COUNT(*) FROM groups");
         $newUsersToday = DB::inst()->getOne("SELECT COUNT(*) FROM users WHERE joined >= " . strtotime('midnight', time()));
@@ -687,7 +691,7 @@ class UserAPI
             throw new HttpException(409, 'weak_password');
 
         if (!in_array($data['language'], array('fi', 'en')))
-            $data['language'] = Config::inst()->get('defaultLanguage');
+            $data['language'] = Conf::inst()->get('defaultLanguage');
 
         DB::inst()->startTransaction();
         $result = DB::inst()->query("INSERT INTO users (
