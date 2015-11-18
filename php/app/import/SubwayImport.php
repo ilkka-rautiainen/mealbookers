@@ -133,6 +133,8 @@ class SubwayImport extends Import implements iImport
             'Americal Steakhouse Melt',
             'Kalkkuna',
             'Vegepihvi',
+            'Kinkku',
+            'Kana Fajita',
         );
 
         $mealsEn = array(
@@ -141,6 +143,8 @@ class SubwayImport extends Import implements iImport
             'Americal Steakhouse Melt',
             'Turkey',
             'Veggie Patty',
+            'Ham',
+            'Chicken Fajita',
         );
 
         // Save the meals
