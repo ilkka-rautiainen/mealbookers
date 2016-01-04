@@ -7,6 +7,7 @@ abstract class Import implements iImport
     private $current_date;
     private $day_meals;
     protected $is_import_needed;
+    protected $is_import_needed_today;
 
     public function init()
     {
@@ -22,6 +23,9 @@ abstract class Import implements iImport
             WHERE restaurant_id = {$this->restaurant->id} AND
                 day >= '" . $this->getWeekStartDay() . "' AND
                 day <= '" . $this->getWeekEndDay() . "'") == 0);
+        $this->is_import_needed_today = (DB::inst()->getOne("SELECT COUNT(id) FROM meals
+            WHERE restaurant_id = {$this->restaurant->id} AND
+                day = '" . date('Y-m-d') . "'") == 0);
     }
 
     /**
@@ -37,6 +41,7 @@ abstract class Import implements iImport
                 day >= '" . $this->getWeekStartDay() . "' AND
                 day <= '" . $this->getWeekEndDay() . "'");
         $this->is_import_needed = true;
+        $this->is_import_needed_today = true;
     }
 
     public function run($save_opening_hours)
@@ -60,6 +65,11 @@ abstract class Import implements iImport
         DB::inst()->startTransaction();
         $this->current_date = date("Y-m-d", strtotime("+" . $weekDayNumber . " days", strtotime($this->getWeekStartDay())));
         $this->day_meals = array();
+    }
+
+    protected function startDayToday()
+    {
+        $this->startDay(date('N')-1);
     }
 
     /**

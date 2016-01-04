@@ -42,6 +42,8 @@ class TaffaImport extends Import implements iImport
      */
     protected function saveOpeningHours()
     {
+        // TODO: The sturcture has changed
+        return;
         $source = $this->fetchURL("https://www.teknologforeningen.fi/menu.html?lang=fi");
         phpQuery::newDocument($source);
 
@@ -121,8 +123,8 @@ class TaffaImport extends Import implements iImport
         Logger::note(__METHOD__ . " start");
         require_once __DIR__ . '/../lib/phpQuery.php';
 
-        if (!$this->is_import_needed) {
-            Logger::info(__METHOD__ . " import not needed, skipping");
+        if (!$this->is_import_needed_today) {
+            Logger::info(__METHOD__ . " import not needed today, skipping");
             return;
         }
 
@@ -133,48 +135,29 @@ class TaffaImport extends Import implements iImport
         foreach ($this->langs as $lang => $lang_config) {
             $this->current_language = $lang;
             try {
-                $source = $this->fetchURL("https://www.teknologforeningen.fi/menu.html?lang=$lang");
+                $source = $this->fetchURL("https://www.teknologforeningen.fi/?lang=$lang");
                 phpQuery::newDocument($source);
 
                 $last_current_day = -1;
 
-                // Loop through the days
-                $children = pq('#page div:eq(1)')->children('p, ul');
+                $children = pq('.todays-menu ul')->children('li');
                 if (!$children)
                     throw new ImportException("No menu element found", $this->restaurant->name, $this->current_language);
 
-                foreach ($children as $child) {
-                    if ($child->tagName == 'p') {
-                        $text = pq($child)->text();
-                        $end = mb_strpos($text, ' ');
-                        if ($end === false)
-                            $end = mb_strlen($text);
-                        // Check the day
-                        $day_string = mb_substr($text, 0, $end);
-                        $current_day = array_search($day_string, $lang_config['weekdays']);
-                        if ($current_day === false)
-                            throw new ImportException("Weekday not recognized", $this->restaurant->name, $this->current_language);
-                        if ($current_day < $last_current_day)
-                            break;
-                        $last_current_day = $current_day;
-                        $this->startDay($current_day);
-                    }
-                    else if ($child->tagName == 'ul') {
-                        foreach (pq($child)->children('li') as $li) {
-                            $line = pq($li)->text();
+                $this->startDayToday();
+                foreach ($children as $li) {
+                    $line = pq($li)->text();
 
-                            $section = $this->getSectionName($line, $lang);
-                            $line = $this->formatAttributes($line);
+                    $section = $this->getSectionName($line, $lang);
+                    $line = $this->formatAttributes($line);
 
-                            $meal = new Meal();
-                            $meal->language = $lang;
-                            $meal->name = $line;
-                            $meal->section = $section;
-                            $this->addMeal($meal);
-                        }
-                        $this->endDayAndSave();
-                    }
+                    $meal = new Meal();
+                    $meal->language = $lang;
+                    $meal->name = $line;
+                    $meal->section = $section;
+                    $this->addMeal($meal);
                 }
+                $this->endDayAndSave();
             }
             catch (ImportException $e) {
                 DB::inst()->rollbackTransaction();
@@ -199,12 +182,12 @@ class TaffaImport extends Import implements iImport
 
     private function formatAttributes($line)
     {
-        preg_match_all("/[\s]+(((g|l|vl|m) ?)+)$/", $line, $matches);
+        preg_match_all("/[\s]+(((L|G|T|S|A|VL|M) ?)+)$/", $line, $matches);
 
         $subMatches = $matchStarts = array();
         $lastMatchStart = -1;
         foreach ($matches[0] as $subMatch) {
-            preg_match_all("/g|l|vl|m/", $subMatch, $subMatchArray);
+            preg_match_all("/L|G|T|S|A|VL|M/", $subMatch, $subMatchArray);
             foreach ($subMatchArray[0] as $key => $value)
                 $subMatchArray[0][$key] = $value;
             $lastMatchStart = mb_stripos($line, $subMatch, $lastMatchStart + 1);
