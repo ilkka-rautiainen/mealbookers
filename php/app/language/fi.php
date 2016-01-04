@@ -123,6 +123,7 @@ $GLOBALS['language']['fi'] = array(
     'meal_section_alacarte' => 'À la carte',
     'meal_section_bistro' => 'Bistro',
     'meal_section_tune_own_burger' => 'Tuunaa oma hampurilaisesi',
+    'no_meals' => 'Ruokalistaa ei saatavilla',
     'opening_hour_type_normal' => 'Avoinna',
     'opening_hour_type_lunch' => 'Lounas',
     'opening_hour_type_alacarte' => 'À la carte',

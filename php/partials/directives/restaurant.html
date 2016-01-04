@@ -74,6 +74,8 @@
                 <span ng-bind-html="meal.name | mealRow" class="meal-row"></span>
                 <hr ng-if="$index < restaurant.mealList[weekDay - 1].length - 1" class="featurette-divider meal-divider" />
             </div>
+
+            <div ng-if="!restaurant.mealList[weekDay - 1]" class="meal-group">{{ 'no_meals' | i18n }}</div>
         </div>
     </div>
 </div>
