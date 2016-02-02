@@ -624,10 +624,13 @@ angular.module('Mealbookers.controllers', [])
                     }
                     // Accepted or canceled (not last one out)
                     else {
-                        if (accept)
-                            $rootScope.alert('alert-success', 'suggestion_manage_accepted');
-                        else
+                        if (accept) {
+                            $rootScope.alert('alert-success', $filter('i18n')('suggestion_manage_accepted')
+                                + ' ' + suggestion.time, true);
+                        }
+                        else {
                             $rootScope.alert('alert-success', 'suggestion_manage_canceled');
+                        }
                     }
                 });
             }
