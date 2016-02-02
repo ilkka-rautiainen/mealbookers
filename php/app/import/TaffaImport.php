@@ -140,7 +140,7 @@ class TaffaImport extends Import implements iImport
 
                 $last_current_day = -1;
 
-                $children = pq('.todays-menu ul')->children('li');
+                $children = pq('.todays-menu > ul')->children('li');
                 if (!$children)
                     throw new ImportException("No menu element found", $this->restaurant->name, $this->current_language);
 
