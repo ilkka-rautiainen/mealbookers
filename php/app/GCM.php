@@ -157,7 +157,11 @@ class GCM
         if ($result_object) {
             // {"multicast_id":9212869635928457591,"success":0,"failure":1,"canonical_ids":0,"results":[{"error":"NotRegistered"}]}
             
-            if ($result_object['results'][0]['error']) {
+            if (isset($result_object['results']) &&
+                isset($result_object['results'][0]) && 
+                isset($result_object['results'][0]['error']) &&
+                $result_object['results'][0]['error'])
+            {
                 Logger::warn(__METHOD__ . " GCM: user {$user->id} gcm failed with error " . $result_object['results'][0]['error']);
                 if ($result_object['results'][0]['error'] == 'Unavailable') {
                     throw new GCMRetryableException("Error was set: " . $result_object['results'][0]['error']);
