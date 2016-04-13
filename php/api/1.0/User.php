@@ -19,7 +19,7 @@ Flight::route('GET /users', array('UserAPI', 'searchUsers'));
 
 class UserAPI
 {
-    function statistics()
+    public static function statistics()
     {
         Logger::debug(__METHOD__ . " GET /users/stats called");
 
@@ -47,7 +47,7 @@ class UserAPI
         ));
     }
 
-    function searchUsers()
+    public static function searchUsers()
     {
         Logger::debug(__METHOD__ . " GET /users called");
         Application::inst()->checkAuthentication('admin');
@@ -126,7 +126,7 @@ class UserAPI
         ));
     }
 
-    function getUser($userId = null, $omit_authentication = false)
+    public static function getUser($userId = null, $omit_authentication = false)
     {
         global $current_user;
 
@@ -200,7 +200,7 @@ class UserAPI
         ));
     }
 
-    function markNotificationReceived()
+    public static function markNotificationReceived()
     {
         global $current_user;
 
@@ -221,7 +221,7 @@ class UserAPI
         ));
     }
 
-    function registerAndroidGCM()
+    public static function registerAndroidGCM()
     {
         global $current_user;
 
@@ -241,7 +241,7 @@ class UserAPI
         ));
     }
 
-    function deleteUser($userId = null)
+    public static function deleteUser($userId = null)
     {
         global $current_user;
 
@@ -271,7 +271,7 @@ class UserAPI
         ));
     }
 
-    function updateUser($userId = null)
+    public static function updateUser($userId = null)
     {
         global $current_user;
 
@@ -421,7 +421,7 @@ class UserAPI
         ));
     }
 
-    function updateUserLanguage($userId = null)
+    public static function updateUserLanguage($userId = null)
     {
         global $current_user;
 
@@ -456,7 +456,7 @@ class UserAPI
         ));
     }
 
-    function updateRestaurantOrder()
+    public static function updateRestaurantOrder()
     {
         global $current_user;
 
@@ -491,7 +491,7 @@ class UserAPI
         ));
     }
 
-    function login()
+    public static function login()
     {
         Logger::debug(__METHOD__ . " POST /user/login called");
 
@@ -529,7 +529,7 @@ class UserAPI
         ));
     }
 
-    function logout()
+    public static function logout()
     {
         Logger::debug(__METHOD__ . " POST /user/logout called");
 
@@ -542,7 +542,7 @@ class UserAPI
         ));
     }
 
-    function sendForgotPasswordLink()
+    public static function sendForgotPasswordLink()
     {
         Logger::debug(__METHOD__ . " POST /user/login/forgot called");
 
@@ -573,7 +573,7 @@ class UserAPI
         ));
     }
 
-    function getUserForForgotPassword($token)
+    public static function getUserForForgotPassword($token)
     {
         Logger::debug(__METHOD__ . " GET /user/login/forgot/$token called");
 
@@ -591,7 +591,7 @@ class UserAPI
         UserApi::getUser($user_id, true);
     }
 
-    function createNewPassword($token)
+    public static function createNewPassword($token)
     {
         Logger::debug(__METHOD__ . " POST /user/login/forgot/new/$token called");
 
@@ -641,7 +641,7 @@ class UserAPI
         ));
     }
 
-    function registerUser()
+    public static function registerUser()
     {
         Logger::debug(__METHOD__ . " GET /user/register called");
 
@@ -754,7 +754,7 @@ class UserAPI
     /**
      * Helper
      */
-    function getStartYearFromStudyYear($study_year)
+    public static function getStartYearFromStudyYear($study_year)
     {
         $array = array(
             1 => 1,
@@ -772,7 +772,7 @@ class UserAPI
         return ((int)date("Y")) - $array[$study_year] - ($isSpring ? 1 : 0);
     }
 
-    function verifyEmail($token)
+    public static function verifyEmail($token)
     {
         Logger::debug(__METHOD__ . " POST /user/email/verify/$token called");
 

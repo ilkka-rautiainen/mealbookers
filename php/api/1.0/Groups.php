@@ -9,7 +9,7 @@ Flight::route('DELETE /user(/@userId)/groups/@groupId/invitations/@invitationId'
 
 class GroupAPI
 {
-    function addGroup($userId = null)
+    public static function addGroup($userId = null)
     {
         global $current_user;
 
@@ -69,7 +69,7 @@ class GroupAPI
         }
     }
 
-    function editGroupName($userId, $groupId)
+    public static function editGroupName($userId, $groupId)
     {
         global $current_user;
 
@@ -126,7 +126,7 @@ class GroupAPI
         ));
     }
 
-    function inviteMemberToGroup($userId, $groupId)
+    public static function inviteMemberToGroup($userId, $groupId)
     {
         global $current_user;
 
@@ -216,7 +216,7 @@ class GroupAPI
         DB::inst()->commitTransaction();
     }
 
-    function removeGroupMember($userId, $groupId, $memberId)
+    public static function removeGroupMember($userId, $groupId, $memberId)
     {
         global $current_user;
 
@@ -301,7 +301,7 @@ class GroupAPI
         }
     }
 
-    function removeGroupInvitation($userId, $groupId, $invitationId)
+    public static function removeGroupInvitation($userId, $groupId, $invitationId)
     {
         global $current_user;
 
@@ -350,7 +350,7 @@ class GroupAPI
         ));
     }
 
-    function joinGroup($userId, $groupId)
+    public static function joinGroup($userId, $groupId)
     {
         global $current_user;
 

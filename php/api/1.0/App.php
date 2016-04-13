@@ -7,7 +7,7 @@ Flight::route('POST /app/contact', array('AppAPI', 'contact'));
 
 class AppAPI
 {
-    function getStatus($passphrase, $rows = 1000)
+    public static function getStatus($passphrase, $rows = 1000)
     {
         Logger::info(__METHOD__ . " GET /app/status called");
         print json_encode(array(
@@ -15,7 +15,7 @@ class AppAPI
         ));
     }
 
-    function getLog($passphrase, $rows = 1000)
+    public static function getLog($passphrase, $rows = 1000)
     {
         Logger::info(__METHOD__ . " GET /app/log called");
         Application::inst()->checkAuthentication('admin');
@@ -29,7 +29,7 @@ class AppAPI
         print "<pre>" . implode("", (array_reverse(array_slice(array_reverse(file($filename)), 0, $rows)))) . "</pre>";
     }
 
-    function getLanguage($lang = 'en')
+    public static function getLanguage($lang = 'en')
     {
         require __DIR__ . '/../../app/language/include.php';
         global $language;
@@ -46,7 +46,7 @@ class AppAPI
         print json_encode($lang);
     }
 
-	function contact()
+	public static function contact()
 	{
         Logger::debug(__METHOD__ . " POST /app/contact called");
 

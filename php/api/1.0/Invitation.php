@@ -4,7 +4,7 @@ Flight::route('GET /invitation/@code', array('InvitationAPI', 'getInvitationInfo
 
 class InvitationAPI
 {
-    function getInvitationInfo($code)
+    public static function getInvitationInfo($code)
     {
         Logger::debug(__METHOD__ . " GET /invitation/$code called");
 

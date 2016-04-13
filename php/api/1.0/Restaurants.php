@@ -11,7 +11,7 @@ class RestaurantsAPI
 	/**
 	 * Get list of restaurants to the main menu UI
 	 */
-	function getRestaurants()
+	public static function getRestaurants()
 	{
         global $current_user;
 
@@ -42,7 +42,7 @@ class RestaurantsAPI
         print json_encode($result);
 	}
 
-    function getSuggestions()
+    public static function getSuggestions()
     {
         global $current_user;
         Logger::debug(__METHOD__ . " GET /restaurants/suggestions called");
@@ -55,7 +55,7 @@ class RestaurantsAPI
     /**
      * Make or update a suggestion
      */
-    function createSuggestion($restaurantId)
+    public static function createSuggestion($restaurantId)
     {
         global $current_user;
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions called");
@@ -145,7 +145,7 @@ class RestaurantsAPI
     /**
      * Accept a suggestion
      */
-    function acceptSuggestionFromEmail($token)
+    public static function acceptSuggestionFromEmail($token)
     {
         global $current_user;
         Logger::info(__METHOD__ . " POST /suggestion/$token called");
@@ -206,7 +206,7 @@ class RestaurantsAPI
         }
     }
 
-    function manageSuggestionFromSite($restaurantId, $suggestionId)
+    public static function manageSuggestionFromSite($restaurantId, $suggestionId)
     {
         global $current_user;
         Logger::info(__METHOD__ . " POST /restaurants/$restaurantId/suggestions/$suggestionId called");
