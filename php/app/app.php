@@ -13,6 +13,7 @@ function classLoader($name)
 	else if (file_exists(__DIR__ . "/exceptions/$name.php"))
 		require_once __DIR__ . "/exceptions/$name.php";
 }
+error_reporting(E_ALL ^ E_STRICT);
 require_once 'lib/mb_str_replace.php';
 spl_autoload_register('classLoader');
 mb_internal_encoding("UTF-8");
