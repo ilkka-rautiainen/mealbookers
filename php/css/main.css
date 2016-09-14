@@ -575,10 +575,11 @@ label {
 }
 
 #main-alert-container {
-    margin-right: 5px;
-    float: right;
-    position: relative;
-    width: 100%;
+    position: fixed;
+    right: 5px;
+    top: 50px;
+    max-width: calc(100% - 10px) !important;
+    width: 400px;
     z-index: 5000;
 }
 
@@ -588,6 +589,7 @@ label {
     right: -2px;
     margin-right: 17px;
     padding-right: 25px;
+    width: 100%;
     cursor: pointer;
     overflow-y: hidden;
 }
