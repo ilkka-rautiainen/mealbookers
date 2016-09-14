@@ -10,7 +10,7 @@ class Mailer
      */
     private function __construct()
     {
-        require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+        require_once __DIR__ . '/lib/PHPMailer/PHPMailerAutoload.php';
         $this->phpMailer = new PHPMailer();
         $this->phpMailer->CharSet = 'utf-8';
         $this->phpMailer->Port = Conf::inst()->get('mail.smtp_port');
@@ -22,6 +22,13 @@ class Mailer
         $this->phpMailer->SMTPAuth = Conf::inst()->get('mail.smtp_auth');
         $this->phpMailer->Username = Conf::inst()->get('mail.smtp_username');
         $this->phpMailer->Password = Conf::inst()->get('mail.smtp_password');
+        $this->phpMailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
     }
 
     /**
