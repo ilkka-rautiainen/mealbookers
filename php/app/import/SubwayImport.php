@@ -128,23 +128,23 @@ class SubwayImport extends Import implements iImport
         }
 
         $meals = array(
-            'Kananrinta',
-            'Spicy Italian',
-            'Americal Steakhouse Melt',
-            'Kalkkuna',
-            'Vegepihvi',
-            'Kinkku',
             'Kana Fajita',
+            'Tonnikala',
+            'Kananrinta',
+            'Italian B.M.T.',
+            'Vegepihvi',
+            'Americal Steakhouse Melt',
+            'Kinkku',
         );
 
         $mealsEn = array(
-            'Chicken Breast',
-            'Spicy Italian',
-            'Americal Steakhouse Melt',
-            'Turkey',
-            'Veggie Patty',
-            'Ham',
             'Chicken Fajita',
+            'Tuna',
+            'Chicken Breast',
+            'Italian B.M.T.',
+            'Veggie Patty',
+            'Americal Steakhouse Melt',
+            'Ham',
         );
 
         // Save the meals
